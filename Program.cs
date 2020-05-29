@@ -3,40 +3,38 @@ using DSharpPlus;
 using DSharpPlus.EventArgs;
 using DSharpPlus.Entities;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using System.Collections.Generic;
-using System.IO;
+
 
 namespace Palantir
 {
     class Program
     {
+        private static DiscordUser Bot;
+        public static DiscordClient Client { get; private set; }
         static async Task Main(string[] args)
         {
-            Console.WriteLine("Initializing Palanir...");
+            Console.WriteLine("Initializing Palantir...");
             //List<Lobby> lobbies = JsonConvert.DeserializeObject<List<Lobby>>(File.ReadAllText(@"C:\Users\Tobi\source\repos\toobeeh\Palantir\lobbies.json"));
 
             Feanor.LoadPalantiri();
-
-            var discordClient = new DiscordClient(new DiscordConfiguration
+            Client = new DiscordClient(new DiscordConfiguration
             {
                 Token = "NzE1ODc0Mzk3MDI1NDY4NDE3.XtDksg.vbCY4jq50WGZthP2aZrIBIqzS7Q",
                 TokenType = TokenType.Bot
             });
-            discordClient.MessageCreated += OnMessageCreated;
-            await discordClient.ConnectAsync();
-            Bot = discordClient.CurrentUser;
+            Client.MessageCreated += OnMessageCreated;
+            await Client.ConnectAsync();
+            Bot = Client.CurrentUser;
 
-            Console.WriteLine("Palantir connected. Fool of a Took!");
-
+            Console.WriteLine("Palantir ready. Do not uncover it.");
             Console.WriteLine("Stored guilds:");
-            Feanor.Palantiri.ForEach((p) => { Console.WriteLine("- " + p.GuildID); });
+            Feanor.PalantiriTethers.ForEach((t) => { Console.WriteLine("- " + t.PalantirEndpoint.GuildID); });
+
+            Feanor.ActivatePalantiri();
+            Console.WriteLine("Palantir activated. Fool of a Took!");
 
             await Task.Delay(-1);
         }
-
-        private static DiscordUser Bot;
-
         private static async Task OnMessageCreated(MessageCreateEventArgs e)
         {
             // Is bot mentioned?
