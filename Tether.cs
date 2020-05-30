@@ -16,6 +16,7 @@ namespace Palantir
         private bool abort;
         private DiscordMessage TargetMessage;
         private DiscordChannel TargetChannel;
+        private const int maxErrorCount = 5;
 
 
         public Tether(ObservedGuild guild)
@@ -44,6 +45,24 @@ namespace Palantir
             abort = true;
         }
 
+        private async void RemoveTether()
+        {
+            try
+            {
+                DiscordGuild guild = await Program.Client.GetGuildAsync(PalantirEndpoint.GuildID);
+                Feanor.RemovePalantiri(PalantirEndpoint);
+                StopDataflow();
+                Console.WriteLine("Removed guild " + PalantirEndpoint.GuildID);
+                await guild.GetDefaultChannel().SendMessageAsync("The observed message couldn't be found. Set a new channel!");
+            }
+            catch
+            {
+                Feanor.RemovePalantiri(PalantirEndpoint);
+                StopDataflow();
+                Console.WriteLine("Removed guild " + PalantirEndpoint.GuildID);
+            }
+        }
+
         private async void ObserveLobbies()
         {
             try
@@ -53,27 +72,27 @@ namespace Palantir
             }
             catch
             {
-                try
-                {
-                    DiscordGuild guild = await Program.Client.GetGuildAsync(PalantirEndpoint.GuildID);
-                    Feanor.RemovePalantiri(PalantirEndpoint);
-                    StopDataflow();
-                    Console.WriteLine("Removed guild " + PalantirEndpoint.GuildID);
-                    await guild.GetDefaultChannel().SendMessageAsync("The observed message couldn't be found. Set a new channel!");
-                }
-                catch
-                {
-                    Feanor.RemovePalantiri(PalantirEndpoint);
-                    StopDataflow();
-                    Console.WriteLine("Removed guild " + PalantirEndpoint.GuildID);
-                    return;
-                }
+                RemoveTether();
+                return;
             }
-            
+
+            int notFound = 0;
 
             while (!abort)
             {
-                TargetMessage = await TargetMessage.ModifyAsync(TargetMessage.Content + ".");
+                try
+                {
+                    TargetMessage = await TargetMessage.ModifyAsync(TargetMessage.Content + ".");
+                    notFound = 0;
+                }
+                catch { 
+                    notFound++;
+                    if(notFound > maxErrorCount)
+                    {
+                        RemoveTether();
+                        return;
+                    }
+                }
                 Thread.Sleep(1000);
             }
         }
