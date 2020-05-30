@@ -9,6 +9,7 @@ namespace Palantir
     public static class Feanor
     {
         private const string jsonPath = @"/home/pi/Palantir/Build/palantiri.json";
+        //private const string jsonPath = @"C:\Users\Tobi\source\repos\toobeeh\Palantir\palantiri.json";
         public static List<Tether> PalantiriTethers;
 
         public static void LoadPalantiri()
@@ -73,6 +74,17 @@ namespace Palantir
         public static void ActivatePalantiri()
         {
             PalantiriTethers.ForEach((t) => { t.EstablishDataflow(); });
+        }
+
+        public static bool PalantirTokenExists(string token)
+        {
+            bool exists = false;
+            PalantiriTethers.ForEach((t) =>
+            {
+                if (t.PalantirEndpoint.OberserveToken == token) exists = true;
+            });
+
+            return exists;
         }
 
     }

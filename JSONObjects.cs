@@ -11,7 +11,8 @@ namespace Palantir
         public bool Private { get; set; }
         public string Host { get; set; }
         public string Link { get; set; }
-        public string ServerID { get; set; }
+        public ulong ServerID { get; set; }
+        public string ObserveToken { get; set; }
         public IList<Player> Players { get; set; }
         public IList<Player> Kicked { get; set; }
     }
@@ -21,6 +22,7 @@ namespace Palantir
         public string Name { get; set; }
         public short Score { get; set; }
         public bool Drawing { get; set; }
+        public bool Sender { get; set; }
     }
 
     public class ObservedGuild
@@ -28,5 +30,7 @@ namespace Palantir
         public ulong GuildID { get; set; }
         public ulong ChannelID { get; set; }
         public ulong MessageID { get; set; }
+        public string OberserveToken { get; set; }
+        public string ServerName { get; set; }
     }
 }
