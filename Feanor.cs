@@ -8,7 +8,8 @@ namespace Palantir
 {
     public static class Feanor
     {
-        private const string jsonPath = @"C:\Users\Tobi\source\repos\toobeeh\Palantir\palantiri.json";
+        //private const string jsonPath = @"C:\Users\Tobi\source\repos\toobeeh\Palantir\palantiri.json";
+        private const string jsonPath = @"\home\pi\Palantir\Build\palantiri.json";
         public static List<Tether> PalantiriTethers;
 
         public static void LoadPalantiri()
