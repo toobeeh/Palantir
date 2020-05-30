@@ -46,8 +46,30 @@ namespace Palantir
 
         private async void ObserveLobbies()
         {
-            TargetChannel = await Program.Client.GetChannelAsync(PalantirEndpoint.ChannelID);
-            TargetMessage = await TargetChannel.GetMessageAsync(PalantirEndpoint.MessageID);
+            try
+            {
+                TargetChannel = await Program.Client.GetChannelAsync(PalantirEndpoint.ChannelID);
+                TargetMessage = await TargetChannel.GetMessageAsync(PalantirEndpoint.MessageID);
+            }
+            catch
+            {
+                try
+                {
+                    DiscordGuild guild = await Program.Client.GetGuildAsync(PalantirEndpoint.GuildID);
+                    Feanor.RemovePalantiri(PalantirEndpoint);
+                    StopDataflow();
+                    Console.WriteLine("Removed guild " + PalantirEndpoint.GuildID);
+                    await guild.GetDefaultChannel().SendMessageAsync("The observed message couldn't be found. Set a new channel!");
+                }
+                catch
+                {
+                    Feanor.RemovePalantiri(PalantirEndpoint);
+                    StopDataflow();
+                    Console.WriteLine("Removed guild " + PalantirEndpoint.GuildID);
+                    return;
+                }
+            }
+            
 
             while (!abort)
             {

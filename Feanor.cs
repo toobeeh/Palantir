@@ -24,6 +24,24 @@ namespace Palantir
             });
         }
 
+        public static void RemovePalantiri(ObservedGuild guild)
+        {
+            for (int iGuild = 0, count = PalantiriTethers.Count; iGuild < count; iGuild++)
+            {
+                if (PalantiriTethers[iGuild].PalantirEndpoint.GuildID == guild.GuildID)
+                {
+                    PalantiriTethers.RemoveAt(iGuild);
+                    break;
+                }
+            }
+
+            // save current guild list to json
+            List<ObservedGuild> palantiri = new List<ObservedGuild>();
+            PalantiriTethers.ForEach((t) => { palantiri.Add(t.PalantirEndpoint); });
+            string json = JsonConvert.SerializeObject(palantiri);
+            File.WriteAllText(jsonPath, json);
+        }
+
         public static void SavePalantiri(ObservedGuild guild)
         {
             bool newGuild = true;
