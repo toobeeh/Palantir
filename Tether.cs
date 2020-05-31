@@ -123,7 +123,7 @@ namespace Palantir
             message += "```ini\n";
             message += "[    Currently playing skribbl.io or sketchful.io    ]";
             message += "```";
-            message += "Refreshed: " + DateTime.Now.ToShortTimeString() + " (CET)\nServer token: `"+ PalantirEndpoint.ObserveToken + "`\n\n\n";
+            message += "Refreshed: " + DateTime.Now.ToShortTimeString() + " (GMT)\nServer token: `"+ PalantirEndpoint.ObserveToken + "`\n\n\n";
             
 
             GuildLobbies.ForEach((l) =>
