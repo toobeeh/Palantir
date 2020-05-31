@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using System.IO;
 using Newtonsoft.Json;
+using System.Linq;
 
 namespace Palantir
 {
@@ -105,7 +106,7 @@ namespace Palantir
         private string BuildLobbyContent()
         {
             string message = "";
-            List<string> reports =new List<string>(Directory.GetFiles(directory, "*report*"));
+            List<string> reports =new List<string>(Directory.GetFiles(directory, "*report*").OrderBy(f => new FileInfo(f).Length));
             List<Lobby> Lobbies = new List<Lobby>();
 
             reports.ForEach((r) =>
@@ -135,7 +136,7 @@ namespace Palantir
                 string lobby = "";
 
 
-                lobby += "> **#" + l.ID + "**    :crystal_ball:     " + l.Host + "   **|**   Round " + l.Round + "   **|**   " + (l.Private ? "Private `" + l.Link + "`" : "Public")  + "\n> \n";
+                lobby += "> **#" +GuildLobbies.IndexOf(l) + "**    :crystal_ball:     " + l.Host + "   **|**   Round " + l.Round + "   **|**   " + (l.Private ? "Private `" + l.Link + "`" : "Public")  + "\n> \n";
 
                 string players = "`";
                 string sender = "```ini\n";
