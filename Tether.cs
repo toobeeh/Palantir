@@ -20,7 +20,7 @@ namespace Palantir
         private DiscordChannel TargetChannel;
         private const int maxErrorCount = 5;
         //private const string directory = @"C:\Users\Tobi\source\repos\toobeeh\Palantir\";
-        private const string directory = @"/home/pi/Palantir/Build/";
+        private const string directory = @"/home/pi/Palantir/JsonShared/";
 
 
         public Tether(ObservedGuild guild)
