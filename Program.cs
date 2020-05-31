@@ -56,7 +56,7 @@ namespace Palantir
                     do
                     {
                         token = (new Random()).Next(100000000 - 1).ToString("D8");
-                        guild.OberserveToken = token;
+                        guild.ObserveToken = token;
                     }
                     while (Feanor.PalantirTokenExists(token));
                     

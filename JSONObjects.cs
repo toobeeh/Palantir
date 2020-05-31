@@ -30,7 +30,7 @@ namespace Palantir
         public ulong GuildID { get; set; }
         public ulong ChannelID { get; set; }
         public ulong MessageID { get; set; }
-        public string OberserveToken { get; set; }
+        public string ObserveToken { get; set; }
         public string ServerName { get; set; }
     }
 }

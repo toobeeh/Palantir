@@ -116,14 +116,14 @@ namespace Palantir
             List<Lobby> GuildLobbies = new List<Lobby>();
             Lobbies.ForEach((l) =>
             {
-                if (l.ServerID == PalantirEndpoint.GuildID && l.ObserveToken == PalantirEndpoint.OberserveToken) GuildLobbies.Add(l);
+                if (l.ServerID == PalantirEndpoint.GuildID && l.ObserveToken == PalantirEndpoint.ObserveToken) GuildLobbies.Add(l);
             });
 
             message += "\n\n";
             message += "```ini\n";
             message += "[    Currently playing skribbl.io or sketchful.io    ]";
             message += "```";
-            message += "Refreshed: " + DateTime.Now.ToShortTimeString() + " (CET)\nServer token: `"+ PalantirEndpoint.OberserveToken + "`\n\n\n";
+            message += "Refreshed: " + DateTime.Now.ToShortTimeString() + " (CET)\nServer token: `"+ PalantirEndpoint.ObserveToken + "`\n\n\n";
             
 
             GuildLobbies.ForEach((l) =>

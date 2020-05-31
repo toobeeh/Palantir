@@ -81,7 +81,7 @@ namespace Palantir
             bool exists = false;
             PalantiriTethers.ForEach((t) =>
             {
-                if (t.PalantirEndpoint.OberserveToken == token) exists = true;
+                if (t.PalantirEndpoint.ObserveToken == token) exists = true;
             });
 
             return exists;
