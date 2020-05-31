@@ -110,7 +110,11 @@ namespace Palantir
 
             reports.ForEach((r) =>
             {
-                Lobbies.Add(JsonConvert.DeserializeObject<Lobby>(File.ReadAllText(r)));
+                try
+                {
+                    Lobbies.Add(JsonConvert.DeserializeObject<Lobby>(File.ReadAllText(r)));
+                }
+                catch (Exception e) { Console.WriteLine(e); };
             });
 
             List<Lobby> GuildLobbies = new List<Lobby>();
