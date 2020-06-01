@@ -91,10 +91,11 @@ namespace Palantir
                     TargetMessage = await TargetMessage.ModifyAsync(BuildLobbyContent());
                     notFound = 0;
                 }
-                catch { 
+                catch(Exception e) { 
                     notFound++;
                     if(notFound > maxErrorCount)
                     {
+                        Console.WriteLine("Target Message couldnt be edited. Error: " + e.ToString());
                         RemoveTether();
                         return;
                     }

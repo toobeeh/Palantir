@@ -62,7 +62,7 @@ namespace Palantir
 
 
                     string status = "";
-                    if (args.Length > 2 && args[3] == "keep")
+                    if (args.Length > 3 && args[3] == "keep")
                     {
                         string oldToken = "";
                         Feanor.PalantiriTethers.ForEach((t) =>
