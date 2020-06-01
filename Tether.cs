@@ -135,8 +135,9 @@ namespace Palantir
             {
                 string lobby = "";
 
-
-                lobby += "> **#" +GuildLobbies.IndexOf(l) + "**    :crystal_ball:     " + l.Host + "   **|**   Round " + l.Round + "   **|**   " + (l.Private ? "Private `" + l.Link + "`" : "Public")  + "\n> \n";
+                // set id to index
+                l.ID = GuildLobbies.IndexOf(l);
+                lobby += "> **#" + l.ID + "**    :crystal_ball:     " + l.Host + "   **|**   Round " + l.Round + "   **|**   " + (l.Private ? "Private `" + l.Link + "`" : "Public")  + "\n> \n";
 
                 string players = "`";
                 string sender = "```ini\n";
@@ -166,6 +167,9 @@ namespace Palantir
             });
 
             if (GuildLobbies.Count == 0) message += "\nATM, noone is drawing :( \nAsk some friends to join or go solo!\n\n ";
+
+            string guildLobbysStatus = JsonConvert.SerializeObject(GuildLobbies);
+            File.WriteAllText(directory + "statusGuild" + PalantirEndpoint.GuildID + ".json", guildLobbysStatus);
 
             return message;
         }
