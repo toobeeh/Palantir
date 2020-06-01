@@ -106,7 +106,7 @@ namespace Palantir
         private string BuildLobbyContent()
         {
             string message = "";
-            List<string> reports =new List<string>(Directory.GetFiles(directory, "*report*").OrderBy(f => new FileInfo(f).Length));
+            List<string> reports =new List<string>(Directory.GetFiles(directory, "*report*"));
             List<Lobby> Lobbies = new List<Lobby>();
 
             reports.ForEach((r) =>
