@@ -59,9 +59,22 @@ namespace Palantir
                         guild.ObserveToken = token;
                     }
                     while (Feanor.PalantirTokenExists(token));
-                    
 
-                    await e.Message.RespondAsync("Active lobbies will now be observed in " + e.MentionedChannels[0].Mention + ".\nUsers need following token to connect the browser extension: ```fix\n" + token + "\n``` Pin this message or save the token!");
+
+                    string status = "";
+                    if (args.Length > 2 && args[3] == "keep")
+                    {
+                        string oldToken = "";
+                        Feanor.PalantiriTethers.ForEach((t) =>
+                        {
+                            if (t.PalantirEndpoint.GuildID == guild.GuildID) oldToken = t.PalantirEndpoint.ObserveToken;
+                        });
+
+                        if (oldToken == "") status = "\nThere was no existing token to keep.";
+                        else token = oldToken;
+                    }
+
+                    await e.Message.RespondAsync("Active lobbies will now be observed in " + e.MentionedChannels[0].Mention + ".\nUsers need following token to connect the browser extension: ```fix\n" + token + "\n``` Pin this message or save the token!" + status);
 
                     // save observed
                     Feanor.SavePalantiri(guild);  
