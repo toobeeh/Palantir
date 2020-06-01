@@ -85,10 +85,9 @@ namespace Palantir
 
             while (!abort)
             {
-                TargetMessage = await TargetMessage.ModifyAsync(BuildLobbyContent());
                 try
                 {
-                    
+                    TargetMessage = await TargetMessage.ModifyAsync(BuildLobbyContent());
                     notFound = 0;
                 }
                 catch { 
