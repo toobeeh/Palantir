@@ -75,8 +75,9 @@ namespace Palantir
                 TargetChannel = await Program.Client.GetChannelAsync(PalantirEndpoint.ChannelID);
                 TargetMessage = await TargetChannel.GetMessageAsync(PalantirEndpoint.MessageID);
             }
-            catch
+            catch(Exception e)
             {
+                Console.WriteLine("Exception: " + e.ToString());
                 RemoveTether();
                 return;
             }
