@@ -141,7 +141,7 @@ namespace Palantir
                 string lobby = "";
 
                 // set id to index
-                l.ID = GuildLobbies.IndexOf(l)+1;
+                l.ID = Convert.ToString(GuildLobbies.IndexOf(l)+1);
                 lobby += "> **#" + l.ID + "**    :crystal_ball:     " + l.Host + "   **|**   Language: " + l.Language + "   **|**   Round " + l.Round + "   **|**   " + (l.Private ? "Private `" + l.Link + "`" : "Public")  + "\n> \n";
 
                 string players = "";
