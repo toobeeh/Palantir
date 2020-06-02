@@ -112,11 +112,15 @@ namespace Palantir
 
             reports.ForEach((r) =>
             {
-                try
+                if (File.GetCreationTime(r) < DateTime.Now.AddSeconds(-10)) File.Delete(r);
+                else
                 {
-                    Lobbies.Add(JsonConvert.DeserializeObject<Lobby>(File.ReadAllText(r)));
+                    try
+                    {
+                        Lobbies.Add(JsonConvert.DeserializeObject<Lobby>(File.ReadAllText(r)));
+                    }
+                    catch (Exception e) { Console.WriteLine(e); };
                 }
-                catch (Exception e) { Console.WriteLine(e); };
             });
 
             List<Lobby> GuildLobbies = new List<Lobby>();
