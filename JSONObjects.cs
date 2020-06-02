@@ -27,9 +27,9 @@ namespace Palantir
 
     public class ObservedGuild
     {
-        public ulong GuildID { get; set; }
-        public ulong ChannelID { get; set; }
-        public ulong MessageID { get; set; }
+        public string GuildID { get; set; }
+        public string ChannelID { get; set; }
+        public string MessageID { get; set; }
         public string ObserveToken { get; set; }
         public string ServerName { get; set; }
     }

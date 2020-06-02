@@ -47,9 +47,9 @@ namespace Palantir
                     // Create message in specified channel which later will be the static message to be continuously edited
                     DiscordMessage msg = await e.MentionedChannels[0].SendMessageAsync("Initializing...");
                     ObservedGuild guild = new ObservedGuild();
-                    guild.GuildID = e.Guild.Id;
-                    guild.ChannelID = e.MentionedChannels[0].Id;
-                    guild.MessageID = msg.Id;
+                    guild.GuildID = e.Guild.Id.ToString();
+                    guild.ChannelID = e.MentionedChannels[0].Id.ToString();
+                    guild.MessageID = msg.Id.ToString();
                     guild.ServerName = e.Guild.Name;
 
                     string token="";

@@ -54,7 +54,7 @@ namespace Palantir
         {
             try
             {
-                DiscordGuild guild = await Program.Client.GetGuildAsync(PalantirEndpoint.GuildID);
+                DiscordGuild guild = await Program.Client.GetGuildAsync(Convert.ToUInt64(PalantirEndpoint.GuildID));
                 Feanor.RemovePalantiri(PalantirEndpoint);
                 StopDataflow();
                 Console.WriteLine("Removed guild " + PalantirEndpoint.GuildID);
@@ -72,8 +72,8 @@ namespace Palantir
         {
             try
             {
-                TargetChannel = await Program.Client.GetChannelAsync(PalantirEndpoint.ChannelID);
-                TargetMessage = await TargetChannel.GetMessageAsync(PalantirEndpoint.MessageID);
+                TargetChannel = await Program.Client.GetChannelAsync(Convert.ToUInt64(PalantirEndpoint.ChannelID));
+                TargetMessage = await TargetChannel.GetMessageAsync(Convert.ToUInt64(PalantirEndpoint.MessageID));
             }
             catch(Exception e)
             {
@@ -122,7 +122,7 @@ namespace Palantir
             List<Lobby> GuildLobbies = new List<Lobby>();
             Lobbies.ForEach((l) =>
             {
-                if (l.ServerID == PalantirEndpoint.GuildID && l.ObserveToken == PalantirEndpoint.ObserveToken) GuildLobbies.Add(l);
+                if (l.ServerID.ToString() == PalantirEndpoint.GuildID && l.ObserveToken == PalantirEndpoint.ObserveToken) GuildLobbies.Add(l);
             });
 
             message += "\n\n";
@@ -141,12 +141,13 @@ namespace Palantir
                 lobby += "> **#" + l.ID + "**    :crystal_ball:     " + l.Host + "   **|**   Round " + l.Round + "   **|**   " + (l.Private ? "Private `" + l.Link + "`" : "Public")  + "\n> \n";
 
                 string players = "`";
-                string sender = "```ini\n";
+                string sender = "```fix\n";
                 foreach(Player player in l.Players)
                 {
                     if (player.Sender)
                     {
-                        sender += "[" + player.Name + "]";
+                        //sender += "[" + player.Name + "]";
+                        sender += player.Name;
                         for (int i = player.Name.Length; i < 15; i++) sender += " ";
                         sender += player.Score + " pts";
                         sender += player.Drawing ? " 🖍 \n" : "\n";
@@ -163,7 +164,7 @@ namespace Palantir
                 if (sender.Split("\n").Length > 2) lobby += sender;
                 if (players.Length > 0) lobby += players;
 
-                lobby += "\n\n";
+                lobby += "\n\n\n";
                 message += lobby;
             });
 
