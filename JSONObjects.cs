@@ -10,6 +10,7 @@ namespace Palantir
         public int Round { get; set; }
         public bool Private { get; set; }
         public string Host { get; set; }
+        public string Language { get; set; }
         public string Link { get; set; }
         public ulong ServerID { get; set; }
         public string ObserveToken { get; set; }
