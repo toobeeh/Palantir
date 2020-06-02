@@ -140,7 +140,7 @@ namespace Palantir
                 l.ID = GuildLobbies.IndexOf(l)+1;
                 lobby += "> **#" + l.ID + "**    :crystal_ball:     " + l.Host + "   **|**   Round " + l.Round + "   **|**   " + (l.Private ? "Private `" + l.Link + "`" : "Public")  + "\n> \n";
 
-                string players = "`";
+                string players = "";
                 string sender = "```fix\n";
                 foreach(Player player in l.Players)
                 {
@@ -158,7 +158,7 @@ namespace Palantir
                         players += (player.Drawing ? " 🖍 " : "") + (l.Players.IndexOf(player) < l.Players.Count - 1 ? ", " : "");
                     }
                 }
-                players += "`";
+                players += "";
                 sender += "```";
 
                 if (sender.Split("\n").Length > 2) lobby += sender;
