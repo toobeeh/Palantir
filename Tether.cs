@@ -77,7 +77,7 @@ namespace Palantir
             }
             catch(Exception e)
             {
-                Console.WriteLine("Exception: " + e.ToString());
+                Console.WriteLine("Exception: " + e.ToString() + "\at Channel:" + PalantirEndpoint.ChannelID + ", Msg: "+PalantirEndpoint.MessageID);
                 RemoveTether();
                 return;
             }
@@ -145,8 +145,8 @@ namespace Palantir
             });
 
             message += "\n\n";
-            message += "```ini\n";
-            message += "[    Currently playing skribbl.io or sketchful.io    ]";
+            message += "```fix\n";
+            message += "Currently playing skribbl.io or sketchful.io";
             message += "```";
             message += "Refreshed: " + DateTime.Now.ToShortTimeString() + " (GMT)\nServer token: `"+ PalantirEndpoint.ObserveToken + "`\n\n\n";
             
@@ -194,7 +194,7 @@ namespace Palantir
                 message += lobby;
             });
 
-            if (GuildLobbies.Count == 0) message += "\nATM, noone is drawing :( \nAsk some friends to join or go solo!\n\n ";
+            if (GuildLobbies.Count == 0) message += "\nAtm, noone is playing :( \nAsk some friends to join or go solo!\n\n ";
 
             string guildLobbysStatus = JsonConvert.SerializeObject(GuildLobbies);
             File.WriteAllText(directory + "statusGuild" + PalantirEndpoint.GuildID + ".json", guildLobbysStatus);
