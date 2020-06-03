@@ -108,7 +108,7 @@ namespace Palantir
         {
             string message = "";
             List<string> reports =new List<string>(Directory.GetFiles(directory, "*report*"));
-            List<string> players = new List<string>(Directory.GetFiles(directory + "OnlinePlayers/", "*player*"));
+            List<string> players = new List<string>(Directory.GetFiles(directory + "OnlinePlayers/", "server" + PalantirEndpoint.GuildID + "player*"));
             List<Lobby> Lobbies = new List<Lobby>();
             List<Player> OnlinePlayers = new List<Player>();
 
