@@ -24,6 +24,7 @@ namespace Palantir
         public short Score { get; set; }
         public bool Drawing { get; set; }
         public bool Sender { get; set; }
+        public string ID { get; set; }
     }
 
     public class ObservedGuild
