@@ -77,7 +77,7 @@ namespace Palantir
         public static void SavePalantirMember()
         {
             string json = JsonConvert.SerializeObject(PalantirMembers);
-            File.WriteAllText(json, json);
+            File.WriteAllText(jsonPath + "palantiri.json", json);
         }
 
         public static void ActivatePalantiri()
@@ -91,17 +91,6 @@ namespace Palantir
             PalantiriTethers.ForEach((t) =>
             {
                 if (t.PalantirEndpoint.ObserveToken == token) exists = true;
-            });
-
-            return exists;
-        }
-
-        public static bool MemberLoginExists(int login)
-        {
-            bool exists = false;
-            PalantirMembers.ForEach((m) =>
-            {
-                if (m.UserLogin == login) exists = true;
             });
 
             return exists;
