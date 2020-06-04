@@ -38,12 +38,17 @@ namespace Palantir
             await Task.Delay(-1);
         }
 
+        
+
         private static async Task OnMessageCreated(MessageCreateEventArgs e)
         {
             Console.WriteLine(" Message in: " + e.Channel.Name);
-            if (e.Channel.IsPrivate)
+            if (e.Channel.IsPrivate && e.Author != Client.CurrentUser)
             {
                 DiscordChannel channel = e.Channel;
+                DiscordUser author = await Client.GetUserAsync(e.Author.Id);
+                await channel.SendMessageAsync("hi");
+
                 Console.WriteLine("Private Message in: " + e.Channel.Name);
                 var matches = Feanor.PalantirMembers.Where(mem => mem.UserID == e.Author.Id).ToList();
                 if (matches.Count > 0) await channel.SendMessageAsync("You are already a user.\nYou can login in the extension with following token: `" + matches[0].UserLogin + "`");
