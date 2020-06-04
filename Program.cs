@@ -3,6 +3,7 @@ using DSharpPlus;
 using DSharpPlus.EventArgs;
 using DSharpPlus.Entities;
 using System.Threading.Tasks;
+using System.Linq;
 
 
 namespace Palantir
@@ -23,7 +24,7 @@ namespace Palantir
                 TokenType = TokenType.Bot
             });
             Client.MessageCreated += OnMessageCreated;
-            Client.DmChannelCreated += OnDmCreated;
+
             await Client.ConnectAsync();
             Bot = Client.CurrentUser;
 
@@ -37,20 +38,31 @@ namespace Palantir
             await Task.Delay(-1);
         }
 
-        private static async Task OnDmCreated(DmChannelCreateEventArgs e)
-        {
-
-            string msg = "Hello! :)";
-            await e.Channel.SendMessageAsync(msg);
-        }
-
         private static async Task OnMessageCreated(MessageCreateEventArgs e)
         {
-            if(e.Channel.IsPrivate)
+            if (e.Channel.IsPrivate)
+            {
+                DiscordChannel channel = e.Channel;
+                var matches = Feanor.PalantirMembers.Where(mem => mem.UserID == e.Author.Id).ToList();
+                if (matches.Count > 0) await channel.SendMessageAsync("You are already a user.\nYou can login in the extension with following token: `" + matches[0].UserLogin + "`");
+                else
+                {
+                    Member member = new Member();
+                    member.UserID = e.Author.Id;
+                    do member.UserLogin = (new Random()).Next(99999999); 
+                    while (Feanor.PalantirMembers.Where(m => m.UserLogin == member.UserLogin).ToList().Count > 0);
+
+                    Feanor.PalantirMembers.Add(member);
+
+                    await channel.SendMessageAsync("Hey " + e.Author.Username + "!\nYou can now login to the bowser extension and use Palantir.\nClick the extension icon in your browser, enter your login and add you discord token! \nYour login is: `" + member.UserLogin + "` \nHave fun!");
+                    Feanor.SavePalantirMember();
+                }
+                
+            }
 
 
             // Is bot mentioned?
-            if(e.MentionedUsers[0] != null && e.MentionedUsers[0] == Bot)
+            else if(e.MentionedUsers[0] != null && e.MentionedUsers[0] == Bot)
             {
                 string[] args = e.Message.Content.Split(" ");
                 // Command "observe" with channel as argument?

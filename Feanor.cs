@@ -8,14 +8,17 @@ namespace Palantir
 {
     public static class Feanor
     {
-        private const string jsonPath = @"/home/pi/JsonShared/palantiri.json";
+        private const string jsonPath = @"/home/pi/JsonShared/";
         //private const string jsonPath = @"C:\Users\Tobi\source\repos\toobeeh\Palantir\palantiri.json";
         public static List<Tether> PalantiriTethers;
+        public static List<Member> PalantirMembers;
 
         public static void LoadPalantiri()
         {
-            List <ObservedGuild> palantiri = JsonConvert.DeserializeObject<List<ObservedGuild>>(File.ReadAllText(jsonPath));
-            if(palantiri == null) palantiri = new List<ObservedGuild>();
+            List <ObservedGuild> palantiri = JsonConvert.DeserializeObject<List<ObservedGuild>>(File.ReadAllText(jsonPath + "palantiri.json"));
+            List<Member> PalantirMembers = JsonConvert.DeserializeObject<List<Member>>(File.ReadAllText(jsonPath + "members.json"));
+            if (palantiri == null) palantiri = new List<ObservedGuild>();
+            if (PalantirMembers == null) PalantirMembers = new List<Member>();
 
             PalantiriTethers = new List<Tether>();
             palantiri.ForEach((p) =>
@@ -69,6 +72,12 @@ namespace Palantir
             PalantiriTethers.ForEach((t) => { palantiri.Add(t.PalantirEndpoint); });
             string json = JsonConvert.SerializeObject(palantiri);
             File.WriteAllText(jsonPath, json);
+        }
+
+        public static void SavePalantirMember()
+        {
+            string json = JsonConvert.SerializeObject(PalantirMembers);
+            File.WriteAllText(json, json);
         }
 
         public static void ActivatePalantiri()

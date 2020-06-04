@@ -41,7 +41,7 @@ namespace Palantir
     public class Member
     {
         public ulong UserID { get; set; }
-        public ulong UserLogin { get; set; }
+        public int UserLogin { get; set; }
         public List<ObservedGuild> Guilds { get; set; }
     }
 }
