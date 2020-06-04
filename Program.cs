@@ -63,6 +63,7 @@ namespace Palantir
                     Member member = new Member();
                     member.UserID = e.Author.Id.ToString();
                     member.UserName = e.Author.Username;
+                    member.Guilds = new System.Collections.Generic.List<ObservedGuild>();
                     do member.UserLogin = (new Random()).Next(99999999).ToString();
                     while (Feanor.PalantirMembers.Where(mem => mem.UserLogin == member.UserLogin).ToList().Count > 0);
 
