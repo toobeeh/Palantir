@@ -37,4 +37,11 @@ namespace Palantir
         public string ObserveToken { get; set; }
         public string GuildName { get; set; }
     }
+
+    public class Member
+    {
+        public ulong UserID { get; set; }
+        public ulong UserLogin { get; set; }
+        public List<ObservedGuild> Guilds { get; set; }
+    }
 }

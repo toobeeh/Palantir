@@ -23,6 +23,7 @@ namespace Palantir
                 TokenType = TokenType.Bot
             });
             Client.MessageCreated += OnMessageCreated;
+            Client.DmChannelCreated += OnDmCreated;
             await Client.ConnectAsync();
             Bot = Client.CurrentUser;
 
@@ -35,8 +36,19 @@ namespace Palantir
 
             await Task.Delay(-1);
         }
+
+        private static async Task OnDmCreated(DmChannelCreateEventArgs e)
+        {
+
+            string msg = "Hello! :)";
+            await e.Channel.SendMessageAsync(msg);
+        }
+
         private static async Task OnMessageCreated(MessageCreateEventArgs e)
         {
+            if(e.Channel.IsPrivate)
+
+
             // Is bot mentioned?
             if(e.MentionedUsers[0] != null && e.MentionedUsers[0] == Bot)
             {
