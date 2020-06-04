@@ -48,7 +48,7 @@ namespace Palantir
             if (e.Channel.IsPrivate && e.Author != Client.CurrentUser)
             {
                 DiscordDmChannel channel = (DiscordDmChannel) e.Channel;
-                await channel.SendMessageAsync(Feanor.PalantirMembers.Count.ToString());
+                await channel.SendMessageAsync("hi");
                 var matches = Feanor.PalantirMembers.Where(mem => mem.UserID == e.Author.Id).ToList();
                 if (matches.Count > 0) await channel.SendMessageAsync("You are already a user.\nYou can login in the extension with following token: `" + matches[0].UserLogin + "`");
                 else
