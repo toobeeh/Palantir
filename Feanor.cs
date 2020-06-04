@@ -71,7 +71,7 @@ namespace Palantir
             List<ObservedGuild> palantiri = new List<ObservedGuild>();
             PalantiriTethers.ForEach((t) => { palantiri.Add(t.PalantirEndpoint); });
             string json = JsonConvert.SerializeObject(palantiri);
-            File.WriteAllText(jsonPath, json);
+            File.WriteAllText(jsonPath + "palantiri.json", json);
         }
 
         public static void SavePalantirMember()
