@@ -77,7 +77,7 @@ namespace Palantir
         public static void SavePalantirMember()
         {
             string json = JsonConvert.SerializeObject(PalantirMembers);
-            File.WriteAllText(jsonPath + "palantiri.json", json);
+            File.WriteAllText(jsonPath + "members.json", json);
         }
 
         public static void ActivatePalantiri()
