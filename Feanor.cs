@@ -16,7 +16,7 @@ namespace Palantir
         public static void LoadPalantiri()
         {
             List <ObservedGuild> palantiri = JsonConvert.DeserializeObject<List<ObservedGuild>>(File.ReadAllText(jsonPath + "palantiri.json"));
-            List<Member> PalantirMembers = JsonConvert.DeserializeObject<List<Member>>(File.ReadAllText(jsonPath + "members.json"));
+            PalantirMembers = JsonConvert.DeserializeObject<List<Member>>(File.ReadAllText(jsonPath + "members.json"));
             if (palantiri == null) palantiri = new List<ObservedGuild>();
             if (PalantirMembers == null) PalantirMembers = new List<Member>();
 
