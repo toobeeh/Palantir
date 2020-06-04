@@ -50,7 +50,7 @@ namespace Palantir
                     guild.GuildID = e.Guild.Id.ToString();
                     guild.ChannelID = e.MentionedChannels[0].Id.ToString();
                     guild.MessageID = msg.Id.ToString();
-                    guild.ServerName = e.Guild.Name;
+                    guild.GuildName = e.Guild.Name;
 
                     string token="";
                     do

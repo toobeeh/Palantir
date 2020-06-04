@@ -111,7 +111,6 @@ namespace Palantir
             List<string> players = new List<string>(Directory.GetFiles(directory + "OnlinePlayers/", "server" + PalantirEndpoint.GuildID + "player*"));
             List<Lobby> Lobbies = new List<Lobby>();
             List<Player> OnlinePlayers = new List<Player>();
-            List<Player> SearchingPlayers = new List<Player>();
 
             reports.ForEach((r) =>
             {
@@ -122,7 +121,7 @@ namespace Palantir
                     {
                         Lobbies.Add(JsonConvert.DeserializeObject<Lobby>(File.ReadAllText(r)));
                     }
-                    catch (Exception e) { Console.WriteLine(e); };
+                    catch (Exception e) { Console.WriteLine("Couldnt read lobby file: " + e); };
                 }
             });
 
@@ -133,19 +132,16 @@ namespace Palantir
                 {
                     try
                     {
-                        if (File.GetCreationTime(p) > DateTime.Now.AddSeconds(-2)) SearchingPlayers.Add(JsonConvert.DeserializeObject<Player>(File.ReadAllText(p))); 
-                        else OnlinePlayers.Add(JsonConvert.DeserializeObject<Player>(File.ReadAllText(p)));
+                        OnlinePlayers.Add(JsonConvert.DeserializeObject<Player>(File.ReadAllText(p)));
                     }
-                    catch (Exception e) { Console.WriteLine(e); };
+                    catch (Exception e) { Console.WriteLine("Couldnt read player file: " + e); };
                 }
             });
 
             List<Lobby> GuildLobbies = new List<Lobby>();
-            List<Player> GuildSearching = new List<Player>();
             Lobbies.ForEach((l) =>
             {
-                bool sentBySearching = l.Players.Count(p => p.Sender && SearchingPlayers.Contains(p)) > 0;
-                if (l.ServerID.ToString() == PalantirEndpoint.GuildID && l.ObserveToken == PalantirEndpoint.ObserveToken && !sentBySearching) GuildLobbies.Add(l);
+                if (l.ServerID.ToString() == PalantirEndpoint.GuildID && l.ObserveToken == PalantirEndpoint.ObserveToken) GuildLobbies.Add(l);
             });
 
             message += "\n\n";
@@ -195,15 +191,7 @@ namespace Palantir
                 if (players.Length > 0) lobby += players;
 
                 lobby += "\n\n\n";
-                string searching = "";
-                SearchingPlayers.ForEach((p) =>
-                {
-                    searching += p.Name + ",";
-                });
-                if(searching.Length > 0)
-                {
-                    lobby += "Lupe: " + searching;
-                }
+                
                 message += lobby;
             });
 
