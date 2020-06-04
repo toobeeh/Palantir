@@ -96,5 +96,16 @@ namespace Palantir
             return exists;
         }
 
+        public static bool MemberLoginExists(int login)
+        {
+            bool exists = false;
+            PalantirMembers.ForEach((m) =>
+            {
+                if (m.UserLogin == login) exists = true;
+            });
+
+            return exists;
+        }
+
     }
 }

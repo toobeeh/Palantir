@@ -47,16 +47,24 @@ namespace Palantir
         {
             if (e.Channel.IsPrivate && e.Author != Client.CurrentUser)
             {
-                DiscordDmChannel channel = (DiscordDmChannel) e.Channel;
+                DiscordDmChannel channel = (DiscordDmChannel)e.Channel;
                 await channel.SendMessageAsync("hi");
-                var matches = Feanor.PalantirMembers.Where(mem => mem.UserID == e.Author.Id).ToList();
-                if (matches.Count > 0) await channel.SendMessageAsync("You are already a user.\nYou can login in the extension with following token: `" + matches[0].UserLogin + "`");
+
+                Member match = new Member{UserID = 0};
+
+                Feanor.PalantirMembers.ForEach((m) =>
+                {
+                    if (m.UserID == e.Author.Id) match = m;
+                });
+
+
+                if (match.UserID > 0) await channel.SendMessageAsync("You are already a user.\nYou can login in the extension with following token: `" + match.UserLogin + "`");
                 else
                 {
                     Member member = new Member();
                     member.UserID = e.Author.Id;
-                    do member.UserLogin = (new Random()).Next(99999999); 
-                    while (Feanor.PalantirMembers.Where(m => m.UserLogin == member.UserLogin).ToList().Count > 0);
+                    do member.UserLogin = (new Random()).Next(99999999);
+                    while (Feanor.MemberLoginExists(member.UserLogin));
 
                     Feanor.PalantirMembers.Add(member);
 
