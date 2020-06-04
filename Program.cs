@@ -49,21 +49,21 @@ namespace Palantir
             if (e.Channel.IsPrivate && e.Author != Client.CurrentUser)
             {
                 DiscordDmChannel channel = (DiscordDmChannel)e.Channel;
-                Member match = new Member{UserID = 0};
+                Member match = new Member{UserID = "0"};
                 
                 Feanor.PalantirMembers.ForEach((m) =>
                 {
-                    if (m.UserID == e.Author.Id) match = m;
+                    if (Convert.ToUInt64(m.UserID) == e.Author.Id) match = m;
                 });
 
 
-                if (match.UserID > 0) await channel.SendMessageAsync("Forgot your login? \nHere it is: `" + match.UserLogin + "`");
+                if (match.UserID != "0") await channel.SendMessageAsync("Forgot your login? \nHere it is: `" + match.UserLogin + "`");
                 else
                 {
                     Member member = new Member();
-                    member.UserID = e.Author.Id;
+                    member.UserID = e.Author.Id.ToString();
                     member.UserName = e.Author.Username;
-                    do member.UserLogin = (new Random()).Next(99999999);
+                    do member.UserLogin = (new Random()).Next(99999999).ToString();
                     while (Feanor.PalantirMembers.Where(mem => mem.UserLogin == member.UserLogin).ToList().Count > 0);
 
                     Feanor.PalantirMembers.Add(member);
