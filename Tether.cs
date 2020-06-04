@@ -142,7 +142,11 @@ namespace Palantir
             List<Lobby> GuildLobbies = new List<Lobby>();
             Lobbies.ForEach((l) =>
             {
-                if (l.ServerID.ToString() == PalantirEndpoint.GuildID && l.ObserveToken == PalantirEndpoint.ObserveToken) GuildLobbies.Add(l);
+                if (l.ServerID.ToString() == PalantirEndpoint.GuildID && l.ObserveToken == PalantirEndpoint.ObserveToken)
+                {
+                    GuildLobbies.Add(l);
+                    Console.WriteLine("Lobby for guild " + PalantirEndpoint.GuildName + " was found: " + l.ID);
+                }
             });
 
             message += "\n\n";
