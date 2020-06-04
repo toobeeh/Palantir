@@ -45,39 +45,34 @@ namespace Palantir
 
         private static async Task OnMessageCreated(MessageCreateEventArgs e)
         {
+             // if DM
             if (e.Channel.IsPrivate && e.Author != Client.CurrentUser)
             {
                 DiscordDmChannel channel = (DiscordDmChannel)e.Channel;
                 await channel.SendMessageAsync("hi");
 
                 Member match = new Member{UserID = 0};
-                try
-                {
-                    Feanor.PalantirMembers.ForEach((m) =>
-                    {
-                        if (m.UserID == e.Author.Id) match = m;
-                    });
-
-
-                    if (match.UserID > 0) await channel.SendMessageAsync("You are already a user.\nYou can login in the extension with following token: `" + match.UserLogin + "`");
-                    else
-                    {
-                        Member member = new Member();
-                        member.UserID = e.Author.Id;
-                        do member.UserLogin = (new Random()).Next(99999999);
-                        while (Feanor.MemberLoginExists(member.UserLogin));
-
-                        Feanor.PalantirMembers.Add(member);
-
-                        await channel.SendMessageAsync("Hey " + e.Author.Username + "!\nYou can now login to the bowser extension and use Palantir.\nClick the extension icon in your browser, enter your login and add you discord token! \nYour login is: `" + member.UserLogin + "` \nHave fun!");
-                        Feanor.SavePalantirMember();
-                    }
-                }
-                catch(Exception f) { Console.WriteLine(f.ToString()); }
-               
                 
-            }
+                Feanor.PalantirMembers.ForEach((m) =>
+                {
+                    if (m.UserID == e.Author.Id) match = m;
+                });
 
+
+                if (match.UserID > 0) await channel.SendMessageAsync("Forgot your login? .\nHere it is: `" + match.UserLogin + "`");
+                else
+                {
+                    Member member = new Member();
+                    member.UserID = e.Author.Id;
+                    do member.UserLogin = (new Random()).Next(99999999);
+                    while (Feanor.PalantirMembers.Where(mem => mem.UserLogin == member.UserLogin).ToList().Count > 0);
+
+                    Feanor.PalantirMembers.Add(member);
+
+                    await channel.SendMessageAsync("Hey " + e.Author.Username + "!\nYou can now login to the bowser extension and use Palantir.\nClick the extension icon in your browser, enter your login and add you discord server's token! \nYour login is: `" + member.UserLogin + "` \nHave fun!");
+                    Feanor.SavePalantirMember();
+                }
+            }
 
             // Is bot mentioned?
             else if(e.MentionedUsers[0] != null && e.MentionedUsers[0] == Bot)
