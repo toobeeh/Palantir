@@ -204,7 +204,7 @@ namespace Palantir
             });
 
             string searching = "";
-            foreach (PlayerStatus p in OnlinePlayers.Where(o => o.Status == "searching" && !GuildLobbies.Any(l => l.Players.Any(p => p.ID != o.PlayerMember.UserID)))){
+            foreach (PlayerStatus p in OnlinePlayers.Where(o => o.Status == "searching" && !GuildLobbies.Any(l => l.Players.Any(p => p.ID == o.PlayerMember.UserID)))){
                 searching += p.PlayerMember.UserName + ", ";
             }
 
