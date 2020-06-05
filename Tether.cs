@@ -176,6 +176,7 @@ namespace Palantir
                         Console.Write("LobbyGuildID: " + l.GuildID);
                         p.PlayerMember.Guilds.ForEach((g) => { Console.Write(" G :" + g.GuildID); });
                         Console.Write("\n");
+                        Console.WriteLine("Matched Guilds: " + p.PlayerMember.Guilds.Count(g => g.GuildID == l.GuildID));
                         if (p.Status == "playing" && p.LobbyID == l.ID && p.LobbyPlayerID == player.LobbyPlayerID && p.PlayerMember.Guilds.Count(g => g.GuildID == l.GuildID) > 0) matches++;
                     });
                     
