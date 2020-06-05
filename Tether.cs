@@ -172,7 +172,7 @@ namespace Palantir
                 {
                     int matches = 0;
                     OnlinePlayers.ForEach((p) => {
-                        Console.WriteLine("Status:" + p.Status + " LobbyID:" + p.LobbyID + " - " + lobbyUniqueID + " LobbyplayerID: " + p.LobbyPlayerID + " - " + player.LobbyPlayerID);
+                        Console.WriteLine("LobbyID: '" + p.LobbyID + "' - '" + lobbyUniqueID + "'");
                         Console.Write("LobbyGuildID: " + l.GuildID);
                         p.PlayerMember.Guilds.ForEach((g) => { Console.Write(" G :" + g.GuildID); });
                         Console.Write("\n");
@@ -181,7 +181,7 @@ namespace Palantir
                         Console.WriteLine(p.LobbyID == l.ID);
                         Console.WriteLine(p.LobbyPlayerID == player.LobbyPlayerID);
                         Console.WriteLine(p.PlayerMember.Guilds.Count(g => g.GuildID == l.GuildID) > 0);
-                        if (p.Status == "playing" && p.LobbyID == l.ID && p.LobbyPlayerID == player.LobbyPlayerID && p.PlayerMember.Guilds.Count(g => g.GuildID == l.GuildID) > 0) matches++;
+                        if (p.Status == "playing" && p.LobbyID == lobbyUniqueID && p.LobbyPlayerID == player.LobbyPlayerID && p.PlayerMember.Guilds.Count(g => g.GuildID == l.GuildID) > 0) matches++;
                     });
                     Console.WriteLine("Player " + player.Name + " matches: " + matches);
                     if ( matches > 0) 
