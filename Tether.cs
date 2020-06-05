@@ -70,7 +70,6 @@ namespace Palantir
 
         private async void ObserveLobbies()
         {
-            Thread.Sleep(1000);
             try
             {
                 TargetChannel = await Program.Client.GetChannelAsync(Convert.ToUInt64(PalantirEndpoint.ChannelID));
@@ -80,7 +79,6 @@ namespace Palantir
             {
                 Console.WriteLine("Exception: " + e.ToString() + "at Channel:" + PalantirEndpoint.ChannelID + ", Msg: "+PalantirEndpoint.MessageID);
                 //RemoveTether();
-                Thread.Sleep(5000);
                 return;
             }
 

@@ -17,7 +17,7 @@ namespace Palantir
             Console.WriteLine("Initializing Palantir...");
             //List<Lobby> lobbies = JsonConvert.DeserializeObject<List<Lobby>>(File.ReadAllText(@"C:\Users\Tobi\source\repos\toobeeh\Palantir\lobbies.json"));
 
-            Feanor.LoadPalantiri();
+            
             Client = new DiscordClient(new DiscordConfiguration
             {
                 Token = "NzE1ODc0Mzk3MDI1NDY4NDE3.XtDksg.vbCY4jq50WGZthP2aZrIBIqzS7Q",
@@ -28,6 +28,7 @@ namespace Palantir
             await Client.ConnectAsync();
             Bot = Client.CurrentUser;
 
+            Feanor.LoadPalantiri();
             Console.WriteLine("Palantir ready. Do not uncover it.");
             Console.WriteLine("Stored guilds:");
             Feanor.PalantiriTethers.ForEach((t) => { Console.WriteLine("- " + t.PalantirEndpoint.GuildID); });
