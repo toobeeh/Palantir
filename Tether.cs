@@ -170,21 +170,15 @@ namespace Palantir
                 string sender = "```fix\n";
                 foreach(Player player in l.Players)
                 {
-                    int matches = 0;
-                    OnlinePlayers.ForEach((p) => {
-                        Console.WriteLine("LobbyID: '" + p.LobbyID + "' - '" + lobbyUniqueID + "'");
-                        Console.Write("LobbyGuildID: " + l.GuildID);
-                        p.PlayerMember.Guilds.ForEach((g) => { Console.Write(" G :" + g.GuildID); });
-                        Console.Write("\n");
-                        Console.WriteLine("Matched Guilds: " + p.PlayerMember.Guilds.Count(g => g.GuildID == l.GuildID));
-                        Console.WriteLine(p.Status == "playing");
-                        Console.WriteLine(p.LobbyID == l.ID);
-                        Console.WriteLine(p.LobbyPlayerID == player.LobbyPlayerID);
-                        Console.WriteLine(p.PlayerMember.Guilds.Count(g => g.GuildID == l.GuildID) > 0);
-                        if (p.Status == "playing" && p.LobbyID == lobbyUniqueID && p.LobbyPlayerID == player.LobbyPlayerID && p.PlayerMember.Guilds.Count(g => g.GuildID == l.GuildID) > 0) matches++;
-                    });
-                    Console.WriteLine("Player " + player.Name + " matches: " + matches);
-                    if ( matches > 0) 
+                    //int matches = 0;
+                    //OnlinePlayers.ForEach((p) => {
+                    //    if (p.Status == "playing" && p.LobbyID == lobbyUniqueID && p.LobbyPlayerID == player.LobbyPlayerID && p.PlayerMember.Guilds.Count(g => g.GuildID == l.GuildID) > 0) matches++;
+                    //});
+                    //Console.WriteLine("Player " + player.Name + " matches: " + matches);
+
+                    
+
+                    if (OnlinePlayers.Count(p => p.Status == "playing" && p.LobbyID == lobbyUniqueID && p.LobbyPlayerID == player.LobbyPlayerID && p.PlayerMember.Guilds.Count(g => g.GuildID == l.GuildID) > 0) > 0) 
                         player.Sender = true;
 
 
