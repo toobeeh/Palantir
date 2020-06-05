@@ -170,7 +170,8 @@ namespace Palantir
                 string sender = "```fix\n";
                 foreach(Player player in l.Players)
                 {
-                    if (OnlinePlayers.Count(p => p.Status == "playing" && p.LobbyID == l.ID && p.LobbyPlayerID == player.LobbyPlayerID && p.PlayerMember.Guilds.Count(g=>g.GuildID == l.GuildID) > 0) > 0) 
+                    int matches = OnlinePlayers.Count(p => p.Status == "playing" && p.LobbyID == l.ID && p.LobbyPlayerID == player.LobbyPlayerID && p.PlayerMember.Guilds.Count(g => g.GuildID == l.GuildID) >0 );
+                    if ( matches > 0) 
                         player.Sender = true;
 
 
