@@ -171,7 +171,16 @@ namespace Palantir
                 string sender = "```fix\n";
                 foreach(Player player in l.Players)
                 {
-                    int matches = OnlinePlayers.Count(p => p.Status == "playing" && p.LobbyID == l.ID && p.LobbyPlayerID == player.LobbyPlayerID && p.PlayerMember.Guilds.Count(g => g.GuildID == l.GuildID) >0 );
+                    int matches = 0;
+                    OnlinePlayers.ForEach((p) => {
+                        Console.WriteLine("Status:" + p.Status + " LobbyID:" + p.LobbyID + " - " + l.ID + " LobbyplayerID: " + p.LobbyPlayerID + " - " + player.LobbyPlayerID);
+                        Console.Write("LobbyGuildID: " + l.GuildID);
+                        p.PlayerMember.Guilds.ForEach((g) => { Console.Write(" G :" + g.GuildID); });
+                        Console.Write("\n");
+                        if (p.Status == "playing" && p.LobbyID == l.ID && p.LobbyPlayerID == player.LobbyPlayerID && p.PlayerMember.Guilds.Count(g => g.GuildID == l.GuildID) > 0) matches++;
+                    });
+                    
+
                     if ( matches > 0) 
                         player.Sender = true;
 
