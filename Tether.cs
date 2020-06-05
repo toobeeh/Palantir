@@ -110,7 +110,7 @@ namespace Palantir
             string message = "";
             List<string> reports =new List<string>(Directory.GetFiles(directory, "*reportID*"));
             List<Lobby> Lobbies = new List<Lobby>();
-            List<string> playerstatus = new List<string>(Directory.GetFiles(directory + "OnlienPlayers/", "statusMember*"));
+            List<string> playerstatus = new List<string>(Directory.GetFiles(directory + "OnlinePlayers/", "statusMember*"));
             List<PlayerStatus> OnlinePlayers = new List<PlayerStatus>();
 
             reports.ForEach((r) =>
