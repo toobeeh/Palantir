@@ -79,7 +79,8 @@ namespace Palantir
             catch(Exception e)
             {
                 Console.WriteLine("Exception: " + e.ToString() + "at Channel:" + PalantirEndpoint.ChannelID + ", Msg: "+PalantirEndpoint.MessageID);
-                RemoveTether();
+                //RemoveTether();
+                Thread.Sleep(5000);
                 return;
             }
 
