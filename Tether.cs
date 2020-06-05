@@ -191,7 +191,7 @@ namespace Palantir
                         players += (player.Drawing ? " 🖍, " : ", ");
                     }
                 }
-                players = players[0..^2];
+                if(players.Length > 0)players = players[0..^2];
                 players += "";
                 sender += "```";
 
@@ -207,12 +207,11 @@ namespace Palantir
             foreach (PlayerStatus p in OnlinePlayers.Where(o => !GuildLobbies.Any(l => l.Players.Any(p => p.ID != o.PlayerMember.UserID)))){
                 searching += p.PlayerMember.UserName + ", ";
             }
-            searching = searching[0..^2];
 
-            if (searching.Length > 0) message += ":holy:  " + searching;
+            if (searching.Length > 0) message += ":holy:  " + searching[0..^2];
 
             if (GuildLobbies.Count == 0 && searching.Length == 0) message += "\nAtm, noone is playing :( \nAsk some friends to join or go solo!\n\n ";
-            Console.WriteLine(message);
+            //Console.WriteLine(message);
             string guildLobbysStatus = JsonConvert.SerializeObject(GuildLobbies);
             File.WriteAllText(directory + "statusGuild" + PalantirEndpoint.GuildID + ".json", guildLobbysStatus);
 
