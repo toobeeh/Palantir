@@ -188,9 +188,10 @@ namespace Palantir
                     else 
                     {
                         players += player.Name ;
-                        players += (player.Drawing ? " 🖍 " : "") + (l.Players.IndexOf(player) < l.Players.Count - 1 ? ", " : "");
+                        players += (player.Drawing ? " 🖍, " : ", ");
                     }
                 }
+                players = players[0..^2];
                 players += "";
                 sender += "```";
 
@@ -206,8 +207,9 @@ namespace Palantir
             foreach (PlayerStatus p in OnlinePlayers.Where(o => !GuildLobbies.Any(l => l.Players.Any(p => p.ID != o.PlayerMember.UserID)))){
                 searching += p.PlayerMember.UserName + ", ";
             }
+            searching = searching[0..^2];
 
-            if (searching.Length > 0) message += ":mag:  " + searching;
+            if (searching.Length > 0) message += ":holy:  " + searching;
 
             if (GuildLobbies.Count == 0) message += "\nAtm, noone is playing :( \nAsk some friends to join or go solo!\n\n ";
 
