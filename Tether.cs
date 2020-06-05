@@ -70,7 +70,7 @@ namespace Palantir
 
         private async void ObserveLobbies()
         {
-            
+            Thread.Sleep(1000);
             try
             {
                 TargetChannel = await Program.Client.GetChannelAsync(Convert.ToUInt64(PalantirEndpoint.ChannelID));
