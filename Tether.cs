@@ -162,6 +162,7 @@ namespace Palantir
             GuildLobbies.ForEach((l) =>
             {
                 string lobby = "";
+                string lobbyUniqueID = l.ID;
 
                 // set id to index
                 l.ID = Convert.ToString(GuildLobbies.IndexOf(l)+1);
@@ -173,7 +174,7 @@ namespace Palantir
                 {
                     int matches = 0;
                     OnlinePlayers.ForEach((p) => {
-                        Console.WriteLine("Status:" + p.Status + " LobbyID:" + p.LobbyID + " - " + l.ID + " LobbyplayerID: " + p.LobbyPlayerID + " - " + player.LobbyPlayerID);
+                        Console.WriteLine("Status:" + p.Status + " LobbyID:" + p.LobbyID + " - " + lobbyUniqueID + " LobbyplayerID: " + p.LobbyPlayerID + " - " + player.LobbyPlayerID);
                         Console.Write("LobbyGuildID: " + l.GuildID);
                         p.PlayerMember.Guilds.ForEach((g) => { Console.Write(" G :" + g.GuildID); });
                         Console.Write("\n");
