@@ -109,9 +109,7 @@ namespace Palantir
         {
             string message = "";
             List<string> reports =new List<string>(Directory.GetFiles(directory, "*reportID*"));
-            List<string> players = new List<string>(Directory.GetFiles(directory + "OnlinePlayers/", "server" + PalantirEndpoint.GuildID + "player*"));
             List<Lobby> Lobbies = new List<Lobby>();
-            List<Player> OnlinePlayers = new List<Player>();
 
             reports.ForEach((r) =>
             {
@@ -124,19 +122,6 @@ namespace Palantir
                         Lobbies.Add(JsonConvert.DeserializeObject<Lobby>(File.ReadAllText(r)));
                     }
                     catch (Exception e) { Console.WriteLine("Couldnt read lobby file: " + e); };
-                }
-            });
-
-            players.ForEach((p) =>
-            {
-                if (File.GetCreationTime(p) < DateTime.Now.AddSeconds(-10)) File.Delete(p);
-                else
-                {
-                    try
-                    {
-                        OnlinePlayers.Add(JsonConvert.DeserializeObject<Player>(File.ReadAllText(p)));
-                    }
-                    catch (Exception e) { Console.WriteLine("Couldnt read player file: " + e); };
                 }
             });
 
@@ -169,11 +154,7 @@ namespace Palantir
                 string sender = "```fix\n";
                 foreach(Player player in l.Players)
                 {
-                    // check if player is sender
-                    OnlinePlayers.ForEach((p) =>
-                    {
-                        if (p.Name == player.Name && p.ID == p.ID) player.Sender = true;
-                    });
+                    
 
 
                     if (player.Sender)

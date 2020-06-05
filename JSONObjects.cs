@@ -25,8 +25,6 @@ namespace Palantir
         public bool Drawing { get; set; }
         public bool Sender { get; set; }
         public string ID { get; set; }
-        public string Status { get; set; }
-        public string GuildID { get; set; }
     }
 
     public class ObservedGuild
