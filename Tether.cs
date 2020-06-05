@@ -114,7 +114,7 @@ namespace Palantir
 
             reports.ForEach((r) =>
             {
-                if (File.GetCreationTime(r) < DateTime.Now.AddSeconds(-5)) File.Delete(r);
+                if (File.GetCreationTime(r) < DateTime.Now.AddSeconds(-7)) File.Delete(r);
                 else
                 {
                     try
@@ -128,7 +128,7 @@ namespace Palantir
 
             playerstatus.ForEach((p) =>
             {
-                if (File.GetCreationTime(p) < DateTime.Now.AddSeconds(-5)) File.Delete(p);
+                if (File.GetCreationTime(p) < DateTime.Now.AddSeconds(-7)) File.Delete(p);
                 else
                 {
                     try
@@ -170,21 +170,16 @@ namespace Palantir
                 string sender = "```fix\n";
                 foreach(Player player in l.Players)
                 {
-                    //int matches = 0;
-                    //OnlinePlayers.ForEach((p) => {
-                    //    if (p.Status == "playing" && p.LobbyID == lobbyUniqueID && p.LobbyPlayerID == player.LobbyPlayerID && p.PlayerMember.Guilds.Count(g => g.GuildID == l.GuildID) > 0) matches++;
-                    //});
-                    //Console.WriteLine("Player " + player.Name + " matches: " + matches);
-
-                    
-
-                    if (OnlinePlayers.Count(p => p.Status == "playing" && p.LobbyID == lobbyUniqueID && p.LobbyPlayerID == player.LobbyPlayerID && p.PlayerMember.Guilds.Count(g => g.GuildID == l.GuildID) > 0) > 0) 
+                    PlayerStatus match = OnlinePlayers.FirstOrDefault(p => p.Status == "playing" && p.LobbyID == lobbyUniqueID && p.LobbyPlayerID == player.LobbyPlayerID && p.PlayerMember.Guilds.Count(g => g.GuildID == l.GuildID) > 0);
+                    if(match != null)
+                    {
                         player.Sender = true;
-
+                        player.ID = match.PlayerMember.UserID;
+                    }
 
                     if (player.Sender)
                     {
-                        //sender += "[" + player.Name + "]";
+
                         sender += player.Name;
                         for (int i = player.Name.Length; i < 15; i++) sender += " ";
                         sender += player.Score + " pts";
@@ -206,6 +201,13 @@ namespace Palantir
                 
                 message += lobby;
             });
+
+            string searching = "";
+            foreach (PlayerStatus p in OnlinePlayers.Where(o => !GuildLobbies.Any(l => l.Players.Any(p => p.ID != o.PlayerMember.UserID)))){
+                searching += p.PlayerMember.UserName + ", ";
+            }
+
+            if (searching.Length > 0) message += ":mag:  " + searching;
 
             if (GuildLobbies.Count == 0) message += "\nAtm, noone is playing :( \nAsk some friends to join or go solo!\n\n ";
 
