@@ -211,7 +211,7 @@ namespace Palantir
 
             if (searching.Length > 0) message += ":holy:  " + searching;
 
-            if (GuildLobbies.Count == 0) message += "\nAtm, noone is playing :( \nAsk some friends to join or go solo!\n\n ";
+            if (GuildLobbies.Count == 0 && searching.Length == 0) message += "\nAtm, noone is playing :( \nAsk some friends to join or go solo!\n\n ";
 
             string guildLobbysStatus = JsonConvert.SerializeObject(GuildLobbies);
             File.WriteAllText(directory + "statusGuild" + PalantirEndpoint.GuildID + ".json", guildLobbysStatus);
