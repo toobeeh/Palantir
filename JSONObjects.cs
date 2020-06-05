@@ -18,13 +18,14 @@ namespace Palantir
         public IList<Player> Kicked { get; set; }
     }
 
-    class Player
+    public class Player
     {
         public string Name { get; set; }
         public short Score { get; set; }
         public bool Drawing { get; set; }
         public bool Sender { get; set; }
         public string ID { get; set; }
+        public string LobbyPlayerID { get; set; }
     }
 
     public class ObservedGuild
@@ -42,5 +43,13 @@ namespace Palantir
         public string UserName { get; set; }
         public string UserLogin { get; set; }
         public List<ObservedGuild> Guilds { get; set; }
+    }
+
+    public class PlayerStatus
+    {
+        public Member PlayerMember { get; set; }
+        public string Status { get; set; }
+        public string LobbyID { get; set; }
+        public string LobbyPlayerID { get; set; }
     }
 }

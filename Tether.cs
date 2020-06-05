@@ -78,7 +78,7 @@ namespace Palantir
             }
             catch(Exception e)
             {
-                Console.WriteLine("Exception: " + e.ToString() + "\at Channel:" + PalantirEndpoint.ChannelID + ", Msg: "+PalantirEndpoint.MessageID);
+                Console.WriteLine("Exception: " + e.ToString() + "at Channel:" + PalantirEndpoint.ChannelID + ", Msg: "+PalantirEndpoint.MessageID);
                 RemoveTether();
                 return;
             }
@@ -110,10 +110,12 @@ namespace Palantir
             string message = "";
             List<string> reports =new List<string>(Directory.GetFiles(directory, "*reportID*"));
             List<Lobby> Lobbies = new List<Lobby>();
+            List<string> playerstatus = new List<string>(Directory.GetFiles(directory + "OnlienPlayers/", "statusMember*"));
+            List<PlayerStatus> OnlinePlayers = new List<PlayerStatus>();
 
             reports.ForEach((r) =>
             {
-                if (File.GetCreationTime(r) < DateTime.Now.AddSeconds(-10)) File.Delete(r);
+                if (File.GetCreationTime(r) < DateTime.Now.AddSeconds(-5)) File.Delete(r);
                 else
                 {
                     try
@@ -122,6 +124,20 @@ namespace Palantir
                         Lobbies.Add(JsonConvert.DeserializeObject<Lobby>(File.ReadAllText(r)));
                     }
                     catch (Exception e) { Console.WriteLine("Couldnt read lobby file: " + e); };
+                }
+            });
+
+            playerstatus.ForEach((p) =>
+            {
+                if (File.GetCreationTime(p) < DateTime.Now.AddSeconds(-5)) File.Delete(p);
+                else
+                {
+                    try
+                    {
+                        Console.WriteLine("Found status: " + p);
+                        OnlinePlayers.Add(JsonConvert.DeserializeObject<PlayerStatus>(File.ReadAllText(p)));
+                    }
+                    catch (Exception e) { Console.WriteLine("Couldnt read status file: " + e); };
                 }
             });
 
@@ -154,7 +170,8 @@ namespace Palantir
                 string sender = "```fix\n";
                 foreach(Player player in l.Players)
                 {
-                    
+                    if (OnlinePlayers.Count(p => p.Status == "playing" && p.LobbyID == l.ID && p.LobbyPlayerID == player.LobbyPlayerID && p.PlayerMember.Guilds.Count(g=>g.GuildID == l.GuildID) > 0) > 0) 
+                        player.Sender = true;
 
 
                     if (player.Sender)
