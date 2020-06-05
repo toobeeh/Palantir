@@ -208,7 +208,7 @@ namespace Palantir
                 searching += p.PlayerMember.UserName + ", ";
             }
 
-            if (searching.Length > 0) message += ":holy:  " + searching[0..^2];
+            if (searching.Length > 0) message += "<a:holy:718566312347172934>  " + searching[0..^2];
 
             if (GuildLobbies.Count == 0 && searching.Length == 0) message += "\nAtm, noone is playing :( \nAsk some friends to join or go solo!\n\n ";
             //Console.WriteLine(message);
