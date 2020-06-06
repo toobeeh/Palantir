@@ -23,6 +23,23 @@ namespace Palantir
         //private const string directory = @"C:\Users\Tobi\source\repos\toobeeh\Palantir\";
         private const string directory = @"/home/pi/JsonShared/";
 
+        private List<string> Emojis = (new string[]{
+            "<a:718816563750371358:l1>",
+            "<a:718816563284803615:l2>",
+            "<a:718816563217825845:l3>",
+            "<a:718816562441879602:l4>",
+            "<a:718816561993089056:l5>",
+            "<a:718816561871192088:l6>",
+            "<a:718816561116217395:l7>",
+            "<a:718816560923410452:l8>",
+            "<a:718816560915021884:l9>",
+            "<a:718816560764157955:l10>",
+            "<a:718816559421718598:l11>",
+            "<a:718816559149350973:l12>",
+            "<a:718817051828944926:l13>",
+            "<a:718817049987776534:l14>"
+        }).ToList();
+
 
         public Tether(ObservedGuild guild)
         {
@@ -164,7 +181,7 @@ namespace Palantir
 
                 // set id to index
                 l.ID = Convert.ToString(GuildLobbies.IndexOf(l)+1);
-                lobby += "> **#" + l.ID + "**    :crystal_ball:     " + l.Host + "   **|**   Language: " + l.Language + "   **|**   Round " + l.Round + "   **|**   " + (l.Private ? "Private " + "\n> <" + l.Link + ">" : "Public")  + "\n> \n";
+                lobby += "> **#" + l.ID + "**    " + Emojis[(new Random()).Next(Emojis.Count-1)] + "     " + l.Host + "   **|**   Language: " + l.Language + "   **|**   Round " + l.Round + "   **|**   " + (l.Private ? "Private " + "\n> <" + l.Link + ">" : "Public")  + "\n> \n";
 
                 string players = "";
                 string sender = "```fix\n";
@@ -216,9 +233,9 @@ namespace Palantir
                 searching += p.PlayerMember.UserName + ", ";
             }
 
-            if (searching.Length > 0) message += "<a:onmyway:718807079305084939>  " + searching[0..^2];
+            if (searching.Length > 0) message += "<a:onmyway:718807079305084939>   " + searching[0..^2];
 
-            if (GuildLobbies.Count == 0 && searching.Length == 0) message += "\n<a:alone:718807079434846238> Atm, noone is playing :( \nAsk some friends to join or go solo!\n\n ";
+            if (GuildLobbies.Count == 0 && searching.Length == 0) message += "\n<a:alone:718807079434846238>\nSeems like noone is playing :( \nAsk some friends to join or go solo!\n\n ";
             //Console.WriteLine(message);
             string guildLobbysStatus = JsonConvert.SerializeObject(GuildLobbies);
             File.WriteAllText(directory + "statusGuild" + PalantirEndpoint.GuildID + ".json", guildLobbysStatus);
