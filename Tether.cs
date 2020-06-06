@@ -201,7 +201,14 @@ namespace Palantir
                 lobby += "\n\n\n";
                 
                 message += lobby;
+
+                // Set lobby ID unique so search can identify it 
+                l.ID = l. ID + ":" + l.Players.First(p => p.Sender).ID;
+
             });
+
+            
+            
 
             string searching = "";
             foreach (PlayerStatus p in OnlinePlayers.Where(o => o.Status == "searching" && !GuildLobbies.Any(l => l.Players.Any(p => p.ID == o.PlayerMember.UserID)))){
