@@ -181,7 +181,7 @@ namespace Palantir
 
                 // set id to index
                 l.ID = Convert.ToString(GuildLobbies.IndexOf(l)+1);
-                lobby += "> **#" + l.ID + "**    " + Emojis[(new Random()).Next(Emojis.Count-1)] + "     " + l.Host + "   **|**   Language: " + l.Language + "   **|**   Round " + l.Round + "   **|**   " + (l.Private ? "Private " + "\n> <" + l.Link + ">" : "Public")  + "\n> \n";
+                lobby += "> **#" + l.ID + "**    " + Emojis[(new Random()).Next(Emojis.Count-1)] + "     " + l.Host + "   **|**   Language: " + l.Language + "   **|**   Round " + l.Round + "   **|**   " + (l.Private ? "Private " + "\n> <" + l.Link + ">" : "Public")  + "\n> " + l.Players.Count  + " Players \n";
 
                 string players = "";
                 string sender = "```fix\n";
