@@ -7,6 +7,7 @@ namespace Palantir
     class Lobby
     {
         public string ID { get; set; }
+        public string Key { get; set; }
         public int Round { get; set; }
         public bool Private { get; set; }
         public string Host { get; set; }

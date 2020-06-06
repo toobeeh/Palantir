@@ -219,10 +219,8 @@ namespace Palantir
                 
                 message += lobby;
 
-                // Set lobby ID unique so search can identify it 
-                // Display ID : First Sender Player ID for identifying lobby
-                l.ID = l. ID + ":" + l.Players.First(p => p.Sender).ID + ":" + lobbyUniqueID;
-
+                //Set lobby id to index (for displaying) and unique id (for searching)
+                l.ID = l. ID + ":" + lobbyUniqueID;
             });
 
             
