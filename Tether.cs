@@ -233,7 +233,7 @@ namespace Palantir
 
             if (searching.Length > 0) message += "<a:onmyway:718807079305084939>   " + searching[0..^2];
 
-            if (GuildLobbies.Count == 0 && searching.Length == 0) message += "\n<a:alone:718807079434846238>\nSeems like noone is playing :( \nAsk some friends to join or go solo!\n\n ";
+            if (GuildLobbies.Count == 0 && searching.Length == 0) message += "\n<a:alone:718807079434846238>\nSeems like no-one is playing :( \nAsk some friends to join or go solo!\n\n ";
             //Console.WriteLine(message);
             string guildLobbysStatus = JsonConvert.SerializeObject(GuildLobbies);
             File.WriteAllText(directory + "statusGuild" + PalantirEndpoint.GuildID + ".json", guildLobbysStatus);

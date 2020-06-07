@@ -39,11 +39,6 @@ namespace Palantir
             await Task.Delay(-1);
         }
 
-        private static async Task OnDmCreated(DmChannelCreateEventArgs e)
-        {
-            await e.Channel.SendMessageAsync("hi");
-        }
-
         private static async Task OnMessageCreated(MessageCreateEventArgs e)
         {
              // if DM
@@ -70,7 +65,7 @@ namespace Palantir
 
                     Feanor.PalantirMembers.Add(member);
 
-                    await channel.SendMessageAsync("Hey " + e.Author.Username + "!\nYou can now login to the bowser extension and use Palantir.\nClick the extension icon in your browser, enter your login and add you discord server's token! \nYour login is: `" + member.UserLogin + "` \nHave fun!");
+                    await channel.SendMessageAsync("Hey " + e.Author.Username + "!\nYou can now login to the bowser extension and use Palantir.\nClick the extension icon in your browser, enter your login and add you discord server's token! \nYour login is: `" + member.UserLogin + "`\nHave fun!");
                     Feanor.SavePalantirMember();
                 }
             }
