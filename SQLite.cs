@@ -55,6 +55,7 @@ namespace Palantir
     }
     public class StatusEntity
     {
+        [Key]
         public string Status { get; set; }
         public string Date { get; set; }
     }
