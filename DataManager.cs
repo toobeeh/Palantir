@@ -112,26 +112,26 @@ namespace Palantir
             return exists;
         }
 
-        public List<ReportEntity> GetReports()
-        {
-            //List<ReportEntity> reports = new List<ReportEntity>();
-            //foreach(ReportEntity reportEntity in Database.Reports)
-            //{
-            //    reports.Add(reportEntity);
-            //}
-            //return reports;
-            return Database.Reports.Distinct().ToList();
-        }
+        //public List<ReportEntity> GetReports()
+        //{
+        //    //List<ReportEntity> reports = new List<ReportEntity>();
+        //    //foreach(ReportEntity reportEntity in Database.Reports)
+        //    //{
+        //    //    reports.Add(reportEntity);
+        //    //}
+        //    //return reports;
+        //    return Database.Reports.Distinct().ToList();
+        //}
 
-        public List<StatusEntity> GetStatus()
-        {
-            return Database.Status.Distinct().ToList();
-        }
+        //public List<StatusEntity> GetStatus()
+        //{
+        //    return Database.Status.Distinct().ToList();
+        //}
 
-        public void SetGuildStatus(GuildLobbiesEntity guildLobbiesEntity)
-        {
-            Database.GuildLobbies.Attach(guildLobbiesEntity);
-            Database.SaveChanges();
-        }
+        //public void SetGuildStatus(GuildLobbiesEntity guildLobbiesEntity)
+        //{
+        //    Database.GuildLobbies.Attach(guildLobbiesEntity);
+        //    Database.SaveChanges();
+        //}
     }
 }

@@ -22,7 +22,8 @@ namespace Palantir
         private DiscordChannel TargetChannel;
         private const int maxErrorCount = 5;
         //private const string directory = @"C:\Users\Tobi\source\repos\toobeeh\Palantir\";
-        private const string directory = @"/home/pi/JsonShared/";
+        //private const string directory = @"/home/pi/JsonShared/";
+        private PalantirDbContext Database = new PalantirDbContext();
 
         private List<string> Emojis = (new string[]{
             "<a:l1:718816563750371358>",
@@ -127,10 +128,10 @@ namespace Palantir
             string message = "";
             
             List<Lobby> Lobbies = new List<Lobby>();
-            List<ReportEntity> reports = Program.Feanor.GetReports();
+            List<ReportEntity> reports = Database.Reports.Distinct().ToList();
 
             List<PlayerStatus> OnlinePlayers = new List<PlayerStatus>();
-            List<StatusEntity> playerstatus = Program.Feanor.GetStatus();
+            List<StatusEntity> playerstatus = Database.Status.Distinct().ToList();
 
             reports.ForEach((r) =>
             {
@@ -241,7 +242,8 @@ namespace Palantir
             GuildLobbiesEntity entry = new GuildLobbiesEntity();
             entry.GuildID = PalantirEndpoint.GuildID;
             entry.Lobbies = JsonConvert.SerializeObject(GuildLobbies);
-            Program.Feanor.SetGuildStatus(entry);
+            Database.GuildLobbies.Attach(entry);
+            Database.SaveChanges();
 
 
             return message;
