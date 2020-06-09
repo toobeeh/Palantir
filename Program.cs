@@ -17,7 +17,13 @@ namespace Palantir
             Console.WriteLine("Initializing Palantir...");
             //List<Lobby> lobbies = JsonConvert.DeserializeObject<List<Lobby>>(File.ReadAllText(@"C:\Users\Tobi\source\repos\toobeeh\Palantir\lobbies.json"));
 
-            
+            var db = new PalantirDbContext();
+            foreach(PalantirEntity palantir in db.Palantiri)
+            {
+                Console.WriteLine("Palantir: {0} - {1}", palantir.Token, palantir.Palantir);
+            }
+
+            await Task.Delay(-1);
             Client = new DiscordClient(new DiscordConfiguration
             {
                 Token = "NzE1ODc0Mzk3MDI1NDY4NDE3.XtDksg.vbCY4jq50WGZthP2aZrIBIqzS7Q",

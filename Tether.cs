@@ -240,6 +240,5 @@ namespace Palantir
 
             return message;
         }
-
     }
 }
