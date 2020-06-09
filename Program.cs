@@ -11,17 +11,11 @@ namespace Palantir
     class Program
     {
         private static DiscordUser Bot;
+        public static DataManager Feanor;
         public static DiscordClient Client { get; private set; }
         static async Task Main(string[] args)
         {
             Console.WriteLine("Initializing Palantir...");
-            //List<Lobby> lobbies = JsonConvert.DeserializeObject<List<Lobby>>(File.ReadAllText(@"C:\Users\Tobi\source\repos\toobeeh\Palantir\lobbies.json"));
-
-            var db = new PalantirDbContext();
-            foreach(PalantirEntity palantir in db.Palantiri)
-            {
-                Console.WriteLine("Palantir: {0} - {1}", palantir.Token, palantir.Palantir);
-            }
 
             await Task.Delay(-1);
             Client = new DiscordClient(new DiscordConfiguration
@@ -30,16 +24,19 @@ namespace Palantir
                 TokenType = TokenType.Bot
             });
             Client.MessageCreated += OnMessageCreated;
-
             await Client.ConnectAsync();
             Bot = Client.CurrentUser;
+            Feanor = new DataManager();
 
-            Feanor.LoadPalantiri();
             Console.WriteLine("Palantir ready. Do not uncover it.");
             Console.WriteLine("Stored guilds:");
-            Feanor.PalantiriTethers.ForEach((t) => { Console.WriteLine("- " + t.PalantirEndpoint.GuildID); });
+            Feanor.PalantirTethers.ForEach((t) => { Console.WriteLine("- " + t.PalantirEndpoint.GuildID); });
+            Console.WriteLine("Stored members:");
+            Feanor.PalantirMembers.ForEach((m) => { Console.WriteLine("- " + m.UserName); });
 
+            await Task.Delay(-1);
             Feanor.ActivatePalantiri();
+
             Console.WriteLine("Palantir activated. Fool of a Took!");
 
             await Task.Delay(-1);
@@ -69,10 +66,9 @@ namespace Palantir
                     do member.UserLogin = (new Random()).Next(99999999).ToString();
                     while (Feanor.PalantirMembers.Where(mem => mem.UserLogin == member.UserLogin).ToList().Count > 0);
 
-                    Feanor.PalantirMembers.Add(member);
+                    Feanor.AddMember(member);
 
                     await channel.SendMessageAsync("Hey " + e.Author.Username + "!\nYou can now login to the bowser extension and use Palantir.\nClick the extension icon in your browser, enter your login and add you discord server's token! \nYour login is: `" + member.UserLogin + "`\nHave fun!");
-                    Feanor.SavePalantirMember();
                 }
             }
 
@@ -104,7 +100,7 @@ namespace Palantir
                     if (args.Length > 3 && args[3] == "keep")
                     {
                         string oldToken = "";
-                        Feanor.PalantiriTethers.ForEach((t) =>
+                        Feanor.PalantirTethers.ForEach((t) =>
                         {
                             if (t.PalantirEndpoint.GuildID == guild.GuildID) oldToken = t.PalantirEndpoint.ObserveToken;
                         });

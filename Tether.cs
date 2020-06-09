@@ -72,14 +72,14 @@ namespace Palantir
             try
             {
                 DiscordGuild guild = await Program.Client.GetGuildAsync(Convert.ToUInt64(PalantirEndpoint.GuildID));
-                Feanor.RemovePalantiri(PalantirEndpoint);
+                Program.Feanor.RemovePalantiri(PalantirEndpoint);
                 StopDataflow();
                 Console.WriteLine("Removed guild " + PalantirEndpoint.GuildID);
                 await guild.GetDefaultChannel().SendMessageAsync("The observed message couldn't be found. \nSet a channel using `@Palantir observe #channel`!");
             }
             catch
             {
-                Feanor.RemovePalantiri(PalantirEndpoint);
+                Program.Feanor.RemovePalantiri(PalantirEndpoint);
                 StopDataflow();
                 Console.WriteLine("Removed guild " + PalantirEndpoint.GuildID);
             }
