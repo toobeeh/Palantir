@@ -17,7 +17,6 @@ namespace Palantir
         {
             Console.WriteLine("Initializing Palantir...");
 
-            await Task.Delay(-1);
             Client = new DiscordClient(new DiscordConfiguration
             {
                 Token = "NzE1ODc0Mzk3MDI1NDY4NDE3.XtDksg.vbCY4jq50WGZthP2aZrIBIqzS7Q",
