@@ -23,7 +23,6 @@ namespace Palantir
         private const int maxErrorCount = 5;
         //private const string directory = @"C:\Users\Tobi\source\repos\toobeeh\Palantir\";
         //private const string directory = @"/home/pi/JsonShared/";
-        private PalantirDbContext Database = new PalantirDbContext();
 
         private List<string> Emojis = (new string[]{
             "<a:l1:718816563750371358>",
@@ -126,7 +125,8 @@ namespace Palantir
         private string BuildLobbyContent()
         {
             string message = "";
-            
+            PalantirDbContext Database = new PalantirDbContext();
+
             List<Lobby> Lobbies = new List<Lobby>();
             List<ReportEntity> reports = Database.Reports.Distinct().Where(r=>r.ObserveToken == PalantirEndpoint.ObserveToken).ToList();
 
@@ -261,7 +261,7 @@ namespace Palantir
                 Database.GuildLobbies.Add(entity);
                 Database.SaveChanges();
             }
-
+            Database.Dispose();
             return message;
         }
     }
