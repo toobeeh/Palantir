@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Data.Sqlite;
+using System.ComponentModel.DataAnnotations;
 
 namespace Palantir
 {
@@ -23,27 +24,32 @@ namespace Palantir
 
     public class MemberEntity
     {
+        [Key]
         public string Login { get; set; }
         public string Member { get; set; }
     }
     public class PalantirEntity
     {
+        [Key]
         public string Token { get; set; }
         public string Palantir { get; set; }
     }
     public class ReportEntity
     {
+        [Key]
         public string LobbyID { get; set; }
         public string Report { get; set; }
         public string Date { get; set; }
     }
     public class LobbyEntity
     {
+        [Key]
         public string LobbyID { get; set; }
         public string Lobby { get; set; }
     }
     public class GuildLobbiesEntity
     {
+        [Key]
         public string GuildID { get; set; }
         public string Lobbies { get; set; }
     }
