@@ -9,6 +9,7 @@ using System.Threading;
 using System.IO;
 using Newtonsoft.Json;
 using System.Linq;
+using System.Globalization;
 
 namespace Palantir
 {
@@ -124,34 +125,34 @@ namespace Palantir
         private string BuildLobbyContent()
         {
             string message = "";
-            List<string> reports =new List<string>(Directory.GetFiles(directory, "*reportID*"));
+            
             List<Lobby> Lobbies = new List<Lobby>();
-            List<string> playerstatus = new List<string>(Directory.GetFiles(directory + "OnlinePlayers/", "statusMember*"));
+            List<ReportEntity> reports = Program.Feanor.GetReports();
+
             List<PlayerStatus> OnlinePlayers = new List<PlayerStatus>();
+            List<StatusEntity> playerstatus = Program.Feanor.GetStatus();
 
             reports.ForEach((r) =>
             {
-                if (File.GetCreationTime(r) < DateTime.Now.AddSeconds(-7)) File.Delete(r);
-                else
+                if (DateTime.ParseExact(r.Date, "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture) > DateTime.Now.AddSeconds(-5)) 
                 {
                     try
                     {
-                        Console.WriteLine("Found report: " + r);
-                        Lobbies.Add(JsonConvert.DeserializeObject<Lobby>(File.ReadAllText(r)));
+                        Console.WriteLine("Found report: " + r.LobbyID);
+                        Lobbies.Add(JsonConvert.DeserializeObject<Lobby>(r.Report));
                     }
-                    catch (Exception e) { Console.WriteLine("Couldnt read lobby file: " + e); };
+                    catch (Exception e) { Console.WriteLine("Couldnt read lobby entry: " + e); };
                 }
             });
 
             playerstatus.ForEach((p) =>
             {
-                if (File.GetCreationTime(p) < DateTime.Now.AddSeconds(-7)) File.Delete(p);
-                else
+                if (DateTime.ParseExact(p.Date, "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture) > DateTime.Now.AddSeconds(-5))
                 {
                     try
                     {
-                        Console.WriteLine("Found status: " + p);
-                        OnlinePlayers.Add(JsonConvert.DeserializeObject<PlayerStatus>(File.ReadAllText(p)));
+                        Console.WriteLine("Found status: " + p.Status);
+                        OnlinePlayers.Add(JsonConvert.DeserializeObject<PlayerStatus>(p.Status));
                     }
                     catch (Exception e) { Console.WriteLine("Couldnt read status file: " + e); };
                 }
@@ -235,8 +236,13 @@ namespace Palantir
 
             if (GuildLobbies.Count == 0 && searching.Length == 0) message += "\n<a:alone:718807079434846238>\nSeems like no-one is playing :( \nAsk some friends to join or go solo!\n\n ";
             //Console.WriteLine(message);
-            string guildLobbysStatus = JsonConvert.SerializeObject(GuildLobbies);
-            File.WriteAllText(directory + "statusGuild" + PalantirEndpoint.GuildID + ".json", guildLobbysStatus);
+
+            // write to db
+            GuildLobbiesEntity entry = new GuildLobbiesEntity();
+            entry.GuildID = PalantirEndpoint.GuildID;
+            entry.Lobbies = JsonConvert.SerializeObject(GuildLobbies);
+            Program.Feanor.SetGuildStatus(entry);
+
 
             return message;
         }

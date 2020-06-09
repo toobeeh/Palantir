@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 using Newtonsoft.Json;
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
 using System.IO;
 
 namespace Palantir
@@ -108,6 +110,28 @@ namespace Palantir
                 if (t.PalantirEndpoint.ObserveToken == token) exists = true;
             });
             return exists;
+        }
+
+        public List<ReportEntity> GetReports()
+        {
+            //List<ReportEntity> reports = new List<ReportEntity>();
+            //foreach(ReportEntity reportEntity in Database.Reports)
+            //{
+            //    reports.Add(reportEntity);
+            //}
+            //return reports;
+            return Database.Reports.Distinct().ToList();
+        }
+
+        public List<StatusEntity> GetStatus()
+        {
+            return Database.Status.Distinct().ToList();
+        }
+
+        public void SetGuildStatus(GuildLobbiesEntity guildLobbiesEntity)
+        {
+            Database.GuildLobbies.Attach(guildLobbiesEntity);
+            Database.SaveChanges();
         }
     }
 }

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Palantir
 {
-    class Lobby
+    public class Lobby
     {
         public string ID { get; set; }
         public string Key { get; set; }
