@@ -251,6 +251,14 @@ namespace Palantir
                 entity.Lobbies = JsonConvert.SerializeObject(GuildLobbies);
                 Database.SaveChanges();
             }
+            else
+            {
+                entity = new GuildLobbiesEntity();
+                entity.GuildID = PalantirEndpoint.GuildID;
+                entity.Lobbies = JsonConvert.SerializeObject(GuildLobbies);
+                Database.GuildLobbies.Add(entity);
+                Database.SaveChanges();
+            }
 
             return message;
         }
