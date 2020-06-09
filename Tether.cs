@@ -128,7 +128,7 @@ namespace Palantir
             string message = "";
             
             List<Lobby> Lobbies = new List<Lobby>();
-            List<ReportEntity> reports = Database.Reports.Distinct().ToList();
+            List<ReportEntity> reports = Database.Reports.Distinct().Where(r=>r.ObserveToken == PalantirEndpoint.ObserveToken).ToList();
 
             List<PlayerStatus> OnlinePlayers = new List<PlayerStatus>();
             List<StatusEntity> playerstatus = Database.Status.Distinct().ToList();
@@ -136,7 +136,7 @@ namespace Palantir
             reports.ForEach((r) =>
             {
                
-                if ( DateTime.ParseExact(r.Date, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) > DateTime.UtcNow.AddSeconds(-5)) 
+                if ( true || DateTime.ParseExact(r.Date, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) > DateTime.UtcNow.AddSeconds(-10)) 
                 {
                     try
                     {
@@ -150,7 +150,7 @@ namespace Palantir
             playerstatus.ForEach((p) =>
             {
                 
-                if (DateTime.ParseExact(p.Date, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) > DateTime.UtcNow.AddSeconds(-5))
+                if (true || DateTime.ParseExact(p.Date, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) > DateTime.UtcNow.AddSeconds(-10))
                 {
                     try
                     {

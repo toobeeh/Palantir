@@ -38,6 +38,8 @@ namespace Palantir
     {
         [Key]
         public string LobbyID { get; set; }
+        [Key]
+        public string ObserveToken { get; set; }
         public string Report { get; set; }
         public string Date { get; set; }
     }
