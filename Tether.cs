@@ -135,11 +135,12 @@ namespace Palantir
 
             reports.ForEach((r) =>
             {
-                Console.WriteLine("Found report: " + r.LobbyID);
-                if (DateTime.ParseExact(r.Date, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) > DateTime.Now.AddSeconds(-5)) 
+               
+                if (true || DateTime.ParseExact(r.Date, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) > DateTime.Now.AddSeconds(-5)) 
                 {
                     try
                     {
+                        Console.WriteLine("Found report: " + r.LobbyID);
                         Lobbies.Add(JsonConvert.DeserializeObject<Lobby>(r.Report));
                     }
                     catch (Exception e) { Console.WriteLine("Couldnt read lobby entry: " + e); };
@@ -148,11 +149,12 @@ namespace Palantir
 
             playerstatus.ForEach((p) =>
             {
-                Console.WriteLine("Found status: " + p.Status);
-                if (DateTime.ParseExact(p.Date, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) > DateTime.Now.AddSeconds(-5))
+                
+                if (true || DateTime.ParseExact(p.Date, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) > DateTime.Now.AddSeconds(-5))
                 {
                     try
                     {
+                        Console.WriteLine("Found status: " + p.Status);
                         OnlinePlayers.Add(JsonConvert.DeserializeObject<PlayerStatus>(p.Status));
                     }
                     catch (Exception e) { Console.WriteLine("Couldnt read status file: " + e); };
