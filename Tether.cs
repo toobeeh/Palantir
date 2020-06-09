@@ -242,7 +242,7 @@ namespace Palantir
             GuildLobbiesEntity entry = new GuildLobbiesEntity();
             entry.GuildID = PalantirEndpoint.GuildID;
             entry.Lobbies = JsonConvert.SerializeObject(GuildLobbies);
-            Database.GuildLobbies.Attach(entry);
+            Database.GuildLobbies.Update(entry);
             Database.SaveChanges();
 
 
