@@ -135,7 +135,7 @@ namespace Palantir
 
             reports.ForEach((r) =>
             {
-                if (DateTime.ParseExact(r.Date, "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture) > DateTime.Now.AddSeconds(-5)) 
+                if (DateTime.ParseExact(r.Date, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) > DateTime.Now.AddSeconds(-5)) 
                 {
                     try
                     {
@@ -148,7 +148,7 @@ namespace Palantir
 
             playerstatus.ForEach((p) =>
             {
-                if (DateTime.ParseExact(p.Date, "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture) > DateTime.Now.AddSeconds(-5))
+                if (DateTime.ParseExact(p.Date, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) > DateTime.Now.AddSeconds(-5))
                 {
                     try
                     {
