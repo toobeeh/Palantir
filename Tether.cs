@@ -115,7 +115,7 @@ namespace Palantir
                     if(notFound > maxErrorCount)
                     {
                         Console.WriteLine("Target Message couldnt be edited. Error: " + e.ToString());
-                        RemoveTether();
+                        //RemoveTether();
                         return;
                     }
                 }
