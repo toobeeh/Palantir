@@ -16,6 +16,7 @@ namespace Palantir
         public DataManager()
         {
             LoadConnections();
+            UpdateMemberGuilds();
         }
 
         public void LoadConnections()
@@ -46,6 +47,27 @@ namespace Palantir
             PalantirEntity e = new PalantirEntity();
             e.Token = guild.ObserveToken;
             context.Palantiri.Remove(e);
+            context.SaveChanges();
+            context.Dispose();
+            UpdateMemberGuilds();
+        }
+
+        public void UpdateMemberGuilds()
+        {
+            PalantirDbContext context = new PalantirDbContext();
+            foreach(MemberEntity memberEntity in context.Members)
+            {
+                Member member = JsonConvert.DeserializeObject<Member>(memberEntity.Member);
+                List<ObservedGuild> updatedGuilds = new List<ObservedGuild>();
+                member.Guilds.ForEach((g) =>
+                {
+                    if (PalantirTethers.Count(t => t.PalantirEndpoint.ObserveToken == g.ObserveToken && t.PalantirEndpoint.GuildID == g.GuildID) > 0)
+                        updatedGuilds.Add(g);
+                });
+                member.Guilds = updatedGuilds;
+                if (updatedGuilds.Count > 0) memberEntity.Member = JsonConvert.SerializeObject(member);
+                else context.Members.Remove(memberEntity);
+            }
             context.SaveChanges();
             context.Dispose();
         }
@@ -87,6 +109,7 @@ namespace Palantir
                 Database.SaveChanges();
             }
             Database.Dispose();
+            UpdateMemberGuilds();
         }
 
         public void AddMember(Member member)
