@@ -118,7 +118,7 @@ namespace Palantir
                         return;
                     }
                 }
-                Thread.Sleep(3000);
+                Thread.Sleep(2000);
             }
         }
 
@@ -136,7 +136,7 @@ namespace Palantir
             reports.ForEach((r) =>
             {
                
-                if (DateTime.ParseExact(r.Date, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) > DateTime.UtcNow.AddSeconds(-10)) 
+                if (DateTime.ParseExact(r.Date, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) > DateTime.UtcNow.AddSeconds(-5)) 
                 {
                     try
                     {
@@ -150,7 +150,7 @@ namespace Palantir
             playerstatus.ForEach((p) =>
             {
                 
-                if ( DateTime.ParseExact(p.Date, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) > DateTime.UtcNow.AddSeconds(-10))
+                if ( DateTime.ParseExact(p.Date, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) > DateTime.UtcNow.AddSeconds(-5))
                 {
                     try
                     {
