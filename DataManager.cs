@@ -72,6 +72,7 @@ namespace Palantir
                     //rem.Login = member.UserLogin;
                     //context.Members.Remove(rem);
                     //Console.WriteLine("Member " + member.UserName + " was removed.");
+                    memberEntity.Member = JsonConvert.SerializeObject(member);
                     Console.WriteLine("Member " + member.UserName + " has no verified guilds.");
                 }
 
