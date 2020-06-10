@@ -43,7 +43,9 @@ namespace Palantir
 
             // remove palantir from db
             PalantirDbContext context = new PalantirDbContext();
-            context.Palantiri.Remove(context.Palantiri.FirstOrDefault(p=>p.Token == guild.ObserveToken));
+            PalantirEntity e = new PalantirEntity();
+            e.Token = guild.ObserveToken;
+            context.Palantiri.Remove(e);
             context.SaveChanges();
             context.Dispose();
         }
