@@ -88,6 +88,7 @@ namespace Palantir
             PalantirTethers.ForEach((t) => {
                 if (t.PalantirEndpoint.GuildID == guild.GuildID)
                 {
+                    string oldToken = t.PalantirEndpoint.ObserveToken;
                     // update tether
                     t.StopDataflow();
                     t.SetNewPalantirEndpoint(guild);
@@ -95,7 +96,7 @@ namespace Palantir
                     newGuild = false;
 
                     // update db entry
-                    PalantirEntity entity = Database.Palantiri.FirstOrDefault(p => p.Token == t.PalantirEndpoint.ObserveToken);
+                    PalantirEntity entity = Database.Palantiri.FirstOrDefault(p => p.Token == oldToken);
                     entity.Palantir = JsonConvert.SerializeObject(guild);
                     Database.SaveChanges();
                 }
