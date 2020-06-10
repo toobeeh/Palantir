@@ -99,6 +99,7 @@ namespace Palantir
                     // update db entry
                     PalantirEntity entity = Database.Palantiri.FirstOrDefault(p => p.Token == oldToken);
                     entity.Palantir = JsonConvert.SerializeObject(guild);
+                    entity.Token = guild.ObserveToken;
                     Database.SaveChanges();
                 }
             });
