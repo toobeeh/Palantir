@@ -68,10 +68,11 @@ namespace Palantir
                 if (updatedGuilds.Count > 0) memberEntity.Member = JsonConvert.SerializeObject(member);
                 else
                 {
-                    MemberEntity rem = new MemberEntity();
-                    rem.Login = member.UserLogin;
-                    context.Members.Remove(rem);
-                    Console.WriteLine("Member " + member.UserName + " was removed.");
+                    //MemberEntity rem = new MemberEntity();
+                    //rem.Login = member.UserLogin;
+                    //context.Members.Remove(rem);
+                    //Console.WriteLine("Member " + member.UserName + " was removed.");
+                    Console.WriteLine("Member " + member.UserName + " has no verified guilds.");
                 }
 
             }
