@@ -12,16 +12,15 @@ namespace Palantir
     {
         public List<Tether> PalantirTethers;
         public List<Member> PalantirMembers;
-        public PalantirDbContext Database;
 
         public DataManager()
         {
-            Database = new PalantirDbContext();
             LoadConnections();
         }
 
         public void LoadConnections()
         {
+            PalantirDbContext Database = new PalantirDbContext();
             PalantirTethers = new List<Tether>();
             foreach (PalantirEntity palantirEntity in Database.Palantiri)
             {
@@ -34,6 +33,7 @@ namespace Palantir
             {
                 PalantirMembers.Add(JsonConvert.DeserializeObject<Member>(memberEntity.Member));
             }
+            Database.Dispose();
         }
 
         public void RemovePalantiri(ObservedGuild guild)
@@ -42,13 +42,16 @@ namespace Palantir
             PalantirTethers.Remove(PalantirTethers.Find(t => t.PalantirEndpoint.ObserveToken == guild.ObserveToken));
 
             // remove palantir from db
-            Database.Palantiri.Remove(Database.Palantiri.Find(guild.ObserveToken));
-            Database.SaveChanges();
+            PalantirDbContext context = new PalantirDbContext();
+            context.Palantiri.Remove(context.Palantiri.Find(guild.ObserveToken));
+            context.SaveChanges();
+            context.Dispose();
         }
 
         public void SavePalantiri(ObservedGuild guild)
         {
             bool newGuild = true;
+            PalantirDbContext Database = new PalantirDbContext();
 
             // If guild of new palantir has already an active palantir, close tether, replace palantir and reopen tether
             PalantirTethers.ForEach((t) => {
@@ -61,10 +64,8 @@ namespace Palantir
                     newGuild = false;
 
                     // update db entry
-                    PalantirEntity entity = new PalantirEntity();
-                    entity.Token = guild.ObserveToken;
+                    PalantirEntity entity = Database.Palantiri.FirstOrDefault(p => p.Token == t.PalantirEndpoint.ObserveToken);
                     entity.Palantir = JsonConvert.SerializeObject(guild);
-                    Database.Palantiri.Attach(entity);
                     Database.SaveChanges();
                 }
             });
@@ -83,10 +84,12 @@ namespace Palantir
                 Database.Palantiri.Add(entity);
                 Database.SaveChanges();
             }
+            Database.Dispose();
         }
 
         public void AddMember(Member member)
         {
+            PalantirDbContext Database = new PalantirDbContext();
             PalantirMembers.Add(member);
 
             // add to db
@@ -95,6 +98,7 @@ namespace Palantir
             entity.Member = JsonConvert.SerializeObject(member);
             Database.Members.Add(entity);
             Database.SaveChanges();
+            Database.Dispose();
         }
 
         public void ActivatePalantiri()
@@ -111,27 +115,5 @@ namespace Palantir
             });
             return exists;
         }
-
-        //public List<ReportEntity> GetReports()
-        //{
-        //    //List<ReportEntity> reports = new List<ReportEntity>();
-        //    //foreach(ReportEntity reportEntity in Database.Reports)
-        //    //{
-        //    //    reports.Add(reportEntity);
-        //    //}
-        //    //return reports;
-        //    return Database.Reports.Distinct().ToList();
-        //}
-
-        //public List<StatusEntity> GetStatus()
-        //{
-        //    return Database.Status.Distinct().ToList();
-        //}
-
-        //public void SetGuildStatus(GuildLobbiesEntity guildLobbiesEntity)
-        //{
-        //    Database.GuildLobbies.Attach(guildLobbiesEntity);
-        //    Database.SaveChanges();
-        //}
     }
 }

@@ -96,7 +96,7 @@ namespace Palantir
             catch(Exception e)
             {
                 Console.WriteLine("Exception: " + e.ToString() + "at Channel:" + PalantirEndpoint.ChannelID + ", Msg: "+PalantirEndpoint.MessageID + ",Client:" + Program.Client.CurrentUser.Username);
-                //RemoveTether();
+                RemoveTether();
                 return;
             }
 
@@ -135,7 +135,6 @@ namespace Palantir
 
             reports.ForEach((r) =>
             {
-               
                 if (DateTime.ParseExact(r.Date, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) > DateTime.UtcNow.AddSeconds(-5)) 
                 {
                     try
@@ -149,7 +148,6 @@ namespace Palantir
 
             playerstatus.ForEach((p) =>
             {
-                
                 if ( DateTime.ParseExact(p.Date, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) > DateTime.UtcNow.AddSeconds(-5))
                 {
                     try
@@ -200,7 +198,6 @@ namespace Palantir
 
                     if (player.Sender)
                     {
-
                         sender += player.Name;
                         for (int i = player.Name.Length; i < 15; i++) sender += " ";
                         sender += player.Score + " pts";
@@ -220,7 +217,6 @@ namespace Palantir
                 if (players.Length > 0) lobby += players;
 
                 lobby += "\n\n\n";
-                
                 message += lobby;
 
                 //Set lobby id to index (for displaying) and unique id (for searching)
@@ -236,15 +232,7 @@ namespace Palantir
             }
 
             if (searching.Length > 0) message += "<a:onmyway:718807079305084939>   " + searching[0..^2];
-
             if (GuildLobbies.Count == 0 && searching.Length == 0) message += "\n<a:alone:718807079434846238>\nSeems like no-one is playing :( \nAsk some friends to join or go solo!\n\n ";
-            //Console.WriteLine(message);
-
-            // write to db
-            //GuildLobbiesEntity entry = new GuildLobbiesEntity();
-            //entry.GuildID = PalantirEndpoint.GuildID;
-            //entry.Lobbies = JsonConvert.SerializeObject(GuildLobbies);
-            //Database.GuildLobbies.Update(entry);
 
             GuildLobbiesEntity entity = Database.GuildLobbies.FirstOrDefault(g => g.GuildID == PalantirEndpoint.GuildID);
 
