@@ -66,7 +66,14 @@ namespace Palantir
                 });
                 member.Guilds = updatedGuilds;
                 if (updatedGuilds.Count > 0) memberEntity.Member = JsonConvert.SerializeObject(member);
-                else context.Members.Remove(memberEntity);
+                else
+                {
+                    MemberEntity rem = new MemberEntity();
+                    rem.Login = member.UserLogin;
+                    context.Members.Remove(rem);
+                    Console.WriteLine("Member " + member.UserName + " was removed.");
+                }
+
             }
             context.SaveChanges();
             context.Dispose();
