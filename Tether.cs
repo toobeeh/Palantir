@@ -96,7 +96,7 @@ namespace Palantir
             catch(Exception e)
             {
                 Console.WriteLine("Exception: " + e.ToString() + "at Channel:" + PalantirEndpoint.ChannelID + ", Msg: "+PalantirEndpoint.MessageID + ",Client:" + Program.Client.CurrentUser.Username);
-                RemoveTether();
+                //RemoveTether();
                 return;
             }
 
@@ -114,7 +114,7 @@ namespace Palantir
                     if(notFound > maxErrorCount)
                     {
                         Console.WriteLine("Target Message couldnt be edited. Error: " + e.ToString());
-                        //RemoveTether();
+                        RemoveTether();
                         return;
                     }
                 }
