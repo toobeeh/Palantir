@@ -238,7 +238,7 @@ namespace Palantir
             }
 
             if (searching.Length > 0) message += "<a:onmyway:718807079305084939>   " + searching[0..^2];
-            if (searching.Length > 0) message += ":octagonal_sign:   " + searching[0..^2];
+            if (waiting.Length > 0) message += ":octagonal_sign:   " + waiting[0..^2];
             if (GuildLobbies.Count == 0 && searching.Length == 0) message += "\n<a:alone:718807079434846238>\nSeems like no-one is playing :( \nAsk some friends to join or go solo!\n\n ";
 
             GuildLobbiesEntity entity = Database.GuildLobbies.FirstOrDefault(g => g.GuildID == PalantirEndpoint.GuildID);
