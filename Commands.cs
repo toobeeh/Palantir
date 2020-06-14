@@ -8,7 +8,7 @@ using DSharpPlus.Entities;
 
 namespace Palantir
 {
-    class Commands : BaseCommandModule
+    public class Commands : BaseCommandModule
     {
         [Command("observe")]
         public async Task Observe(CommandContext context, string channel, string keep = "")
