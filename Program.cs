@@ -2,6 +2,7 @@
 using DSharpPlus;
 using DSharpPlus.EventArgs;
 using DSharpPlus.Entities;
+using DSharpPlus.CommandsNext;
 using System.Threading.Tasks;
 using System.Linq;
 
@@ -13,6 +14,7 @@ namespace Palantir
         private static DiscordUser Bot;
         public static DataManager Feanor;
         public static DiscordClient Client { get; private set; }
+        public static CommandsNextExtension Commands { get; private set; }
         static async Task Main(string[] args)
         {
             Console.WriteLine("Initializing Palantir...");
@@ -22,6 +24,14 @@ namespace Palantir
                 Token = "NzE1ODc0Mzk3MDI1NDY4NDE3.XtDksg.vbCY4jq50WGZthP2aZrIBIqzS7Q",
                 TokenType = TokenType.Bot
             });
+            Commands = Client.UseCommandsNext(new CommandsNextConfiguration
+            {
+                StringPrefixes = new string[] { ">" },
+                EnableDms = false,
+                DmHelp = false
+            });
+            Commands.RegisterCommands<Commands>();
+
             Client.MessageCreated += OnMessageCreated;
             await Client.ConnectAsync();
             Bot = Client.CurrentUser;
