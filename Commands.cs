@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using DSharpPlus.CommandsNext;
+using DSharpPlus.CommandsNext.Attributes;
 using System.Threading.Tasks;
 using DSharpPlus.Entities;
 
@@ -9,6 +10,7 @@ namespace Palantir
 {
     class Commands : BaseCommandModule
     {
+        [Command("observe")]
         public async Task Observe(CommandContext context, string channel, string keep = "")
         {
            
