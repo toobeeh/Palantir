@@ -5,6 +5,7 @@ using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
 using System.Threading.Tasks;
 using DSharpPlus.Entities;
+using System.Linq;
 
 namespace Palantir
 {
@@ -13,7 +14,8 @@ namespace Palantir
         [Command("observe")]
         public async Task Observe(CommandContext context, string channel)
         {
-           
+            if (context.Channel.IsPrivate) await context.Message.RespondAsync("This command is only available in server channels.");
+
             // Create message in specified channel which later will be the static message to be continuously edited
             DiscordMessage msg = await context.Message.MentionedChannels[0].SendMessageAsync("Initializing...");
             ObservedGuild guild = new ObservedGuild();
@@ -22,18 +24,14 @@ namespace Palantir
             guild.MessageID = msg.Id.ToString();
             guild.GuildName = context.Guild.Name;
 
-            string token = "";
+            string token;
             do
             {
                 token = (new Random()).Next(100000000 - 1).ToString("D8");
                 guild.ObserveToken = token;
             }
             while (Program.Feanor.PalantirTokenExists(token));
-
-
-            string status = "";
-            await context.Message.RespondAsync("Active lobbies will now be observed in " + context.Message.MentionedChannels[0].Mention + ".\nUsers need following token to connect the browser extension: ```fix\n" + token + "\n```Pin this message or save the token!" + status);
-
+            await context.Message.RespondAsync("Active lobbies will now be observed in " + context.Message.MentionedChannels[0].Mention + ".\nUsers need following token to connect the browser extension: ```fix\n" + token + "\n```Pin this message or save the token!");
             // save observed
             Program.Feanor.SavePalantiri(guild);
             
@@ -42,6 +40,7 @@ namespace Palantir
         [Command("observe")]
         public async Task Observe(CommandContext context, string channel, string keep)
         {
+            if (context.Channel.IsPrivate) await context.Message.RespondAsync("This command is only available in server channels.");
 
             // Create message in specified channel which later will be the static message to be continuously edited
             DiscordMessage msg = await context.Message.MentionedChannels[0].SendMessageAsync("Initializing...");
@@ -59,28 +58,55 @@ namespace Palantir
             }
             while (Program.Feanor.PalantirTokenExists(token));
 
-
-            string status = "";
+            bool valid = true;
             if (keep == "keep")
             {
                 string oldToken = "";
-                Program.Feanor.PalantirTethers.ForEach((t) =>
-                {
-                    if (t.PalantirEndpoint.GuildID == guild.GuildID) oldToken = t.PalantirEndpoint.ObserveToken;
-                });
-
-                if (oldToken == "") status = "\nThere was no existing token to keep.";
+                Program.Feanor.PalantirTethers.ForEach((t) => {if (t.PalantirEndpoint.GuildID == guild.GuildID) oldToken = t.PalantirEndpoint.ObserveToken;});
+                if (oldToken == "") valid = false;
                 else token = oldToken;
+
+                if (valid)
+                {
+                    await context.Message.RespondAsync("The channel is now set to  " + context.Message.MentionedChannels[0].Mention + ".\nUsers won't need to re-enter their token." );
+                    // save observed
+                    Program.Feanor.SavePalantiri(guild);
+                }
+                else await context.Message.RespondAsync("There is no existing token.\nCheck >help for help.");
             }
-
-            await context.Message.RespondAsync("Active lobbies will now be observed in " + context.Message.MentionedChannels[0].Mention + ".\nUsers need following token to connect the browser extension: ```fix\n" + token + "\n```Pin this message or save the token!" + status);
-
-            // save observed
-            Program.Feanor.SavePalantiri(guild);
-
+            else await context.Message.RespondAsync("That's no valid command.\nCheck >help for help.");
         }
 
+        [Command("login")]
+        public async Task Login(CommandContext context)
+        {
+            // if DM
+            if (context.Channel.IsPrivate)
+            {
+                DiscordDmChannel channel = (DiscordDmChannel)context.Channel;
+                Member match = new Member { UserID = "0" };
 
+                Program.Feanor.PalantirMembers.ForEach((m) =>
+                {
+                    if (Convert.ToUInt64(m.UserID) == context.Message.Author.Id) match = m;
+                });
 
+                if (match.UserID != "0") await channel.SendMessageAsync("Forgot your login? \nHere it is: `" + match.UserLogin + "`");
+                else
+                {
+                    Member member = new Member();
+                    member.UserID = context.Message.Author.Id.ToString();
+                    member.UserName = context.Message.Author.Username;
+                    member.Guilds = new List<ObservedGuild>();
+                    do member.UserLogin = (new Random()).Next(99999999).ToString();
+                    while (Program.Feanor.PalantirMembers.Where(mem => mem.UserLogin == member.UserLogin).ToList().Count > 0);
+
+                    Program.Feanor.AddMember(member);
+
+                    await channel.SendMessageAsync("Hey " + context.Message.Author.Username + "!\nYou can now login to the bowser extension and use Palantir.\nClick the extension icon in your browser, enter your login and add you discord server's token! \nYour login is: `" + member.UserLogin + "`");
+                }
+            }
+            else await context.Message.RespondAsync("Use this command only in DM!\nRevealing private stuff is always a bad idea.");
+        }
     }
 }
