@@ -227,11 +227,18 @@ namespace Palantir
             
 
             string searching = "";
-            foreach (PlayerStatus p in OnlinePlayers.Where(o => o.Status == "searching" && !GuildLobbies.Any(l => l.Players.Any(p => p.ID == o.PlayerMember.UserID)))){
+            foreach (PlayerStatus p in OnlinePlayers.Where(o => o.Status == "searching" && o.PlayerMember.Guilds.Any(g=>g.GuildID == PalantirEndpoint.GuildID) && !GuildLobbies.Any(l => l.Players.Any(p => p.ID == o.PlayerMember.UserID)))){
                 searching += p.PlayerMember.UserName + ", ";
             }
 
+            string waiting = "";
+            foreach (PlayerStatus p in OnlinePlayers.Where(o => o.Status == "waiting" && o.PlayerMember.Guilds.Any(g => g.GuildID == PalantirEndpoint.GuildID) && !GuildLobbies.Any(l => l.Players.Any(p => p.ID == o.PlayerMember.UserID))))
+            {
+                waiting += p.PlayerMember.UserName + ", ";
+            }
+
             if (searching.Length > 0) message += "<a:onmyway:718807079305084939>   " + searching[0..^2];
+            if (searching.Length > 0) message += ":octagonal_sign:   " + searching[0..^2];
             if (GuildLobbies.Count == 0 && searching.Length == 0) message += "\n<a:alone:718807079434846238>\nSeems like no-one is playing :( \nAsk some friends to join or go solo!\n\n ";
 
             GuildLobbiesEntity entity = Database.GuildLobbies.FirstOrDefault(g => g.GuildID == PalantirEndpoint.GuildID);

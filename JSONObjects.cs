@@ -53,4 +53,17 @@ namespace Palantir
         public string LobbyID { get; set; }
         public string LobbyPlayerID { get; set; }
     }
+
+    public class GuildSettings
+    {
+        public string Header { get; set; }
+        public string Timezone { get; set; }
+        public string IdleMessage { get; set; }
+        public string[] WaitingMessages { get; set; }
+        public bool ShowRefreshed { get; set; }
+        public bool ShowToken { get; set; }
+        public bool ShowAnimatedEmojis { get; set; }
+
+        
+    }
 }
