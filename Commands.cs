@@ -31,7 +31,8 @@ namespace Palantir
             msg += " - Enter the login number in the browser extension popup\n";
             msg += " - Copy the server token (from the bot message or ask your admin)\n";
             msg += " - Enter the server token in the browser extension popup\n\n";
-            msg += " Now all your added servers will display when you're online. ";
+            msg += " Now all your added servers will display when you're online. \n";
+            msg += "https://media.giphy.com/media/UuviRqel88ryGaL8cg/giphy.gif";
 
             await context.RespondAsync(msg);
         }
