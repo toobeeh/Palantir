@@ -207,7 +207,7 @@ namespace Palantir
             });
 
             message += PalantirSettings.Header;
-            if(PalantirSettings.ShowRefreshed) message += "Refreshed: " + DateTime.UtcNow.AddHours(PalantirSettings.Timezone).ToShortTimeString() + " (GMT " + (PalantirSettings.Timezone != 0 ? PalantirSettings.Timezone.ToString("+0;-#") : "") + " )"; 
+            if(PalantirSettings.ShowRefreshed) message += "Refreshed: " + DateTime.UtcNow.AddHours(PalantirSettings.Timezone).ToShortTimeString() + " (UTC " + PalantirSettings.Timezone.ToString("+0;-#") + " )"; 
             if(PalantirSettings.ShowToken) message += "\nServer token: `"+ PalantirEndpoint.ObserveToken + "`\n\n\n";
             
             GuildLobbies.ForEach((l) =>

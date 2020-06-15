@@ -26,7 +26,8 @@ namespace Palantir
             Commands = Client.UseCommandsNext(new CommandsNextConfiguration
             {
                 StringPrefixes = new string[] { ">" },
-                DmHelp = false
+                DmHelp = false,
+                IgnoreExtraArguments = true
             });
             Commands.RegisterCommands<Commands>();
             await Client.ConnectAsync();
