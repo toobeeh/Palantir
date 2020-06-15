@@ -11,6 +11,32 @@ namespace Palantir
 {
     public class Commands : BaseCommandModule
     {
+
+        [Command("manual")]
+        [Description("Show the manual for bot usage")]
+        public async Task Manual(CommandContext context)
+        {
+            string msg = "";
+            msg += "**Bot configuration**\n";
+            msg += " This bot shows current skribbl lobbies in a message which is edited in an intervl of a few seconds.\n";
+            msg += " The channel should be read-only to normal member, so the message always stays on top!\n";
+            msg += "_# Commands:_\n";
+            msg += "Set channel: `>observe #channel`\n";
+            msg += "Change channel: `>observe #channel`\n";
+            msg += "Change channel, keep token: `>observe #channel keep`\n";
+            msg += "The channel has to be mentioned with a #.\n";
+            msg += "If the token isn't kept with *keep*, users need to verify the server again.\n\n\n";
+            msg += "**Connect to the bot***\n";
+            msg += " - Message the bot in **DM** `>login`\n";
+            msg += " - Copy the login number\n";
+            msg += " - Enter the login number in the browser extension popup\n";
+            msg += " - Copy the server token (from the bot message or ask your admin)\n";
+            msg += " - Enter the server token in the browser extension popup\n\n";
+            msg += " Now all your added servers will display when you're online. ";
+
+            await context.RespondAsync(msg);
+        }
+
         [Command("header")]
         [Description("Set the header text of the bot message.")]
         public async Task Header(CommandContext context, [Description("Header text of the message")] params string[] header)

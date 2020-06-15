@@ -66,7 +66,7 @@ namespace Palantir
             PalantirSettings = new GuildSettings
             {
                 Header = "```fix\nCurrently playing skribbl.io or sketchful.io```", 
-                IdleMessage = "\nSeems like no-one is playing :( \nAsk some friends to join or go solo!\n\n ", 
+                IdleMessage = "Seems like no-one is playing :( \nAsk some friends to join or go solo!\n\n ", 
                 Timezone = 0, 
                 ShowAnimatedEmojis = true, 
                 ShowRefreshed = true, 
@@ -273,7 +273,7 @@ namespace Palantir
 
             if (searching.Length > 0) message += "<a:onmyway:718807079305084939>   " + searching[0..^2];
             if (waiting.Length > 0) message += ":octagonal_sign:   " + waiting[0..^2];
-            if (PalantirSettings.ShowAnimatedEmojis) message += "\n < a:alone: 718807079434846238 >\n";
+            if (PalantirSettings.ShowAnimatedEmojis) message += "\n <a:alone:718807079434846238>\n";
             if (GuildLobbies.Count == 0 && searching.Length == 0) message += PalantirSettings.IdleMessage;
 
             GuildLobbiesEntity entity = Database.GuildLobbies.FirstOrDefault(g => g.GuildID == PalantirEndpoint.GuildID);
