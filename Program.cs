@@ -29,6 +29,7 @@ namespace Palantir
                 DmHelp = false,
                 IgnoreExtraArguments = true
             });
+            Client.GuildCreated += onjoin;
             Commands.RegisterCommands<Commands>();
             await Client.ConnectAsync();
             Feanor = new DataManager();
@@ -43,6 +44,11 @@ namespace Palantir
             Console.WriteLine("Palantir activated. Fool of a Took!");
 
             await Task.Delay(-1);
+        }
+
+        private static async Task onjoin(GuildCreateEventArgs e)
+        {
+            await e.Guild.SystemChannel.SendMessageAsync("Hello there!\nMy prefix is `>`.\nCheck out `>manual` or `>help`.\nhttps://gph.is/2s4rv0N");
         }
 
     }
