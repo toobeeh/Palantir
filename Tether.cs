@@ -67,7 +67,7 @@ namespace Palantir
             {
                 Header = "```fix\nCurrently playing skribbl.io or sketchful.io```", 
                 IdleMessage = "\n<a:alone:718807079434846238>\nSeems like no-one is playing :( \nAsk some friends to join or go solo!\n\n ", 
-                Timezone = "GMT", 
+                Timezone = 0, 
                 ShowAnimatedEmojis = true, 
                 ShowRefreshed = true, 
                 ShowToken = true, 
@@ -207,7 +207,7 @@ namespace Palantir
             });
 
             message += PalantirSettings.Header;
-            if(PalantirSettings.ShowRefreshed) message += "Refreshed: " + DateTime.Now.ToShortTimeString() + " (GMT)"; 
+            if(PalantirSettings.ShowRefreshed) message += "Refreshed: " + DateTime.Now.AddHours(PalantirSettings.Timezone).ToShortTimeString() + " (GMT " + (PalantirSettings.Timezone != 0 ? PalantirSettings.Timezone.ToString() : "") + " )"; 
             if(PalantirSettings.ShowToken) message += "\nServer token: `"+ PalantirEndpoint.ObserveToken + "`\n\n\n";
             
             GuildLobbies.ForEach((l) =>

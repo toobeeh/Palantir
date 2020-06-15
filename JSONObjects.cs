@@ -57,7 +57,7 @@ namespace Palantir
     public class GuildSettings
     {
         public string Header { get; set; }
-        public string Timezone { get; set; }
+        public int Timezone { get; set; }
         public string IdleMessage { get; set; }
         public string[] WaitingMessages { get; set; }
         public bool ShowRefreshed { get; set; }

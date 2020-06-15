@@ -24,10 +24,36 @@ namespace Palantir
             Program.Feanor.UpdatePalantirSettings(Program.Feanor.PalantirTethers.FirstOrDefault(t => t.PalantirEndpoint.GuildID == context.Guild.Id.ToString()));
         }
 
+        [Command("idle")]
+        [Description("Set the idle text of the bot message.")]
+        public async Task Idle(CommandContext context, [Description("Idle text of the message")] string idle)
+        {
+            if (!Program.Feanor.PalantirTethers.Any(t => t.PalantirEndpoint.GuildID == context.Guild.Id.ToString()))
+            {
+                await context.Message.RespondAsync("Set a channel befor configuring the settings!");
+                return;
+            }
+            Program.Feanor.PalantirTethers.FirstOrDefault(t => t.PalantirEndpoint.GuildID == context.Guild.Id.ToString()).PalantirSettings.IdleMessage = idle;
+            Program.Feanor.UpdatePalantirSettings(Program.Feanor.PalantirTethers.FirstOrDefault(t => t.PalantirEndpoint.GuildID == context.Guild.Id.ToString()));
+        }
+
+        [Command("timezone")]
+        [Description("Set the timezone UTC offset of the bot message.")]
+        public async Task Timezone(CommandContext context, [Description("Timezone offset (eg -5)")] int offset)
+        {
+            if (!Program.Feanor.PalantirTethers.Any(t => t.PalantirEndpoint.GuildID == context.Guild.Id.ToString()))
+            {
+                await context.Message.RespondAsync("Set a channel befor configuring the settings!");
+                return;
+            }
+            Program.Feanor.PalantirTethers.FirstOrDefault(t => t.PalantirEndpoint.GuildID == context.Guild.Id.ToString()).PalantirSettings.Timezone = offset;
+            Program.Feanor.UpdatePalantirSettings(Program.Feanor.PalantirTethers.FirstOrDefault(t => t.PalantirEndpoint.GuildID == context.Guild.Id.ToString()));
+        }
+
 
         [Command("observe")]
         [Description("Set a channel where lobbies will be observed.")]
-        public async Task Observe(CommandContext context, [Description("Target channel (#channel)")] string channel)
+        public async Task Observe(CommandContext context, [Description("Target channel (eg #channel)")] string channel)
         {
             if (context.Channel.IsPrivate) { await context.Message.RespondAsync("This command is only available in server channels."); return; }
             if (context.Message.MentionedChannels.Count <1) { await context.Message.RespondAsync("Invalid channel!"); return; }
