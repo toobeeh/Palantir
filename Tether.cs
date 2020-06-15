@@ -66,7 +66,7 @@ namespace Palantir
             PalantirEndpoint = guild;
             PalantirSettings = new GuildSettings
             {
-                Header = "```fix\nCurrently playing skribbl.io or sketchful.io```", 
+                Header = "```fix\nCurrently playing skribbl.io```", 
                 IdleMessage = "Seems like no-one is playing :( \nAsk some friends to join or go solo!\n\n ", 
                 Timezone = 0, 
                 ShowAnimatedEmojis = true, 
