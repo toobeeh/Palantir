@@ -16,14 +16,12 @@ namespace Palantir
     public class Tether
     {
         public ObservedGuild PalantirEndpoint { get; private set; }
+        public GuildSettings PalantirSettings { get; private set; }
         private Thread Dataflow;
         private bool abort;
         private DiscordMessage TargetMessage;
         private DiscordChannel TargetChannel;
         private const int maxErrorCount = 5;
-        //private const string directory = @"C:\Users\Tobi\source\repos\toobeeh\Palantir\";
-        //private const string directory = @"/home/pi/JsonShared/";
-
         private List<string> Emojis = (new string[]{
             "<a:l9:718816560915021884>",
             "<a:l8:718816560923410452>",
@@ -65,9 +63,29 @@ namespace Palantir
         {
             abort = false;
             PalantirEndpoint = guild;
+            PalantirSettings = new GuildSettings
+            {
+                Header = "```fix\nCurrently playing skribbl.io or sketchful.io```", 
+                IdleMessage = "\n<a:alone:718807079434846238>\nSeems like no-one is playing :( \nAsk some friends to join or go solo!\n\n ", 
+                Timezone = "GMT", 
+                ShowAnimatedEmojis = true, 
+                ShowRefreshed = true, 
+                ShowToken = true, 
+                WaitingMessages = { }
+            };
             Dataflow = new Thread(new ThreadStart(ObserveLobbies));
             Dataflow.Name = "Dataflow GuildID " + guild.GuildID;
         }
+
+        public Tether(ObservedGuild guild, GuildSettings settings)
+        {
+            abort = false;
+            PalantirEndpoint = guild;
+            PalantirSettings = settings;
+            Dataflow = new Thread(new ThreadStart(ObserveLobbies));
+            Dataflow.Name = "Dataflow GuildID " + guild.GuildID;
+        }
+
 
         public void SetNewPalantirEndpoint(ObservedGuild guild)
         {
@@ -188,13 +206,10 @@ namespace Palantir
                 }
             });
 
-            message += "\n\n";
-            message += "```fix\n";
-            message += "Currently playing skribbl.io or sketchful.io";
-            message += "```";
-            message += "Refreshed: " + DateTime.Now.ToShortTimeString() + " (GMT)\nServer token: `"+ PalantirEndpoint.ObserveToken + "`\n\n\n";
+            message += PalantirSettings.Header;
+            if(PalantirSettings.ShowRefreshed) message += "Refreshed: " + DateTime.Now.ToShortTimeString() + " (GMT)"; 
+            if(PalantirSettings.ShowToken) message += "\nServer token: `"+ PalantirEndpoint.ObserveToken + "`\n\n\n";
             
-
             GuildLobbies.ForEach((l) =>
             {
                 string lobby = "";
@@ -202,7 +217,7 @@ namespace Palantir
 
                 // set id to index
                 l.ID = Convert.ToString(GuildLobbies.IndexOf(l)+1);
-                lobby += "> **#" + l.ID + "**    " + Emojis[(new Random()).Next(Emojis.Count-1)] + "     " + l.Host + "   **|**   Language: " + l.Language + "   **|**   Round " + l.Round + "   **|**   " + (l.Private ? "Private " + "\n> <" + l.Link + ">" : "Public")  + "\n> " + l.Players.Count  + " Players \n";
+                lobby += "> **#" + l.ID + "**    " + (PalantirSettings.ShowAnimatedEmojis ? Emojis[(new Random()).Next(Emojis.Count-1)] : "") + "     " + l.Host + "   **|**  " + l.Language + "   **|**   Round " + l.Round + "   **|**   " + (l.Private ? "Private " + "\n> <" + l.Link + ">" : "Public")  + "\n> " + l.Players.Count  + " Players \n";
 
                 string players = "";
                 string sender = "```fix\n";
@@ -258,7 +273,7 @@ namespace Palantir
 
             if (searching.Length > 0) message += "<a:onmyway:718807079305084939>   " + searching[0..^2];
             if (waiting.Length > 0) message += ":octagonal_sign:   " + waiting[0..^2];
-            if (GuildLobbies.Count == 0 && searching.Length == 0) message += "\n<a:alone:718807079434846238>\nSeems like no-one is playing :( \nAsk some friends to join or go solo!\n\n ";
+            if (GuildLobbies.Count == 0 && searching.Length == 0) message += PalantirSettings.IdleMessage;
 
             GuildLobbiesEntity entity = Database.GuildLobbies.FirstOrDefault(g => g.GuildID == PalantirEndpoint.GuildID);
 

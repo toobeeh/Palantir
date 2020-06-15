@@ -11,6 +11,20 @@ namespace Palantir
 {
     public class Commands : BaseCommandModule
     {
+        [Command("header")]
+        [Description("Set the header text of the bot message.")]
+        public async Task Header(CommandContext context, [Description("Header text of the message")] string header)
+        {
+            if (!Program.Feanor.PalantirTethers.Any(t => t.PalantirEndpoint.GuildID == context.Guild.Id.ToString()))
+            {
+                await context.Message.RespondAsync("Set a channel befor configuring the settings!");
+                return;
+            }
+            Program.Feanor.PalantirTethers.FirstOrDefault(t => t.PalantirEndpoint.GuildID == context.Guild.Id.ToString()).PalantirSettings.Header = header;
+            Program.Feanor.UpdatePalantirSettings(Program.Feanor.PalantirTethers.FirstOrDefault(t => t.PalantirEndpoint.GuildID == context.Guild.Id.ToString()));
+        }
+
+
         [Command("observe")]
         [Description("Set a channel where lobbies will be observed.")]
         public async Task Observe(CommandContext context, [Description("Target channel (#channel)")] string channel)

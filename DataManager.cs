@@ -25,7 +25,11 @@ namespace Palantir
             PalantirTethers = new List<Tether>();
             foreach (PalantirEntity palantirEntity in Database.Palantiri)
             {
-                Tether tether = new Tether(JsonConvert.DeserializeObject<ObservedGuild>(palantirEntity.Palantir));
+                Tether tether;
+                ObservedGuild guild = JsonConvert.DeserializeObject<ObservedGuild>(palantirEntity.Palantir);
+                if(Database.GuildSettings.Any(s => s.GuildID == guild.GuildID)) 
+                    tether = new Tether(guild, JsonConvert.DeserializeObject<GuildSettings>(Database.GuildSettings.FirstOrDefault(s=>s.GuildID == guild.GuildID).Settings));
+                else tether = new Tether(guild);
                 PalantirTethers.Add(tether);
             }
 
@@ -50,6 +54,28 @@ namespace Palantir
             context.SaveChanges();
             context.Dispose();
             UpdateMemberGuilds();
+        }
+
+        public void UpdatePalantirSettings(Tether tether)
+        {
+            PalantirDbContext context = new PalantirDbContext();
+            GuildSettingsEntity entity = context.GuildSettings.FirstOrDefault(s => s.GuildID ==tether.PalantirEndpoint.GuildID);
+
+            if (entity != null)
+            {
+                entity.Settings = JsonConvert.SerializeObject(tether.PalantirSettings);
+                context.SaveChanges();
+            }
+            else
+            {
+                entity = new GuildSettingsEntity();
+                entity.GuildID = tether.PalantirEndpoint.GuildID;
+                entity.Settings = JsonConvert.SerializeObject(tether.PalantirSettings);
+                context.GuildSettings.Add(entity);
+                context.SaveChanges();
+            }
+            context.SaveChanges();
+            context.Dispose();
         }
 
         public void UpdateMemberGuilds()

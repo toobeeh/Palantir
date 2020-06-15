@@ -14,6 +14,7 @@ namespace Palantir
         public DbSet<ReportEntity> Reports { get; set; }
         public DbSet<LobbyEntity> Lobbies { get; set; }
         public DbSet<GuildLobbiesEntity> GuildLobbies { get; set; }
+        public DbSet<GuildSettingsEntity> GuildSettings { get; set; }
         public DbSet<StatusEntity> Status { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
@@ -53,6 +54,12 @@ namespace Palantir
         [Key]
         public string GuildID { get; set; }
         public string Lobbies { get; set; }
+    }
+    public class GuildSettingsEntity
+    {
+        [Key]
+        public string GuildID { get; set; }
+        public string Settings { get; set; }
     }
     public class StatusEntity
     {

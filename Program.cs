@@ -11,7 +11,6 @@ namespace Palantir
 {
     class Program
     {
-        private static DiscordUser Bot;
         public static DataManager Feanor;
         public static DiscordClient Client { get; private set; }
         public static CommandsNextExtension Commands { get; private set; }
@@ -31,7 +30,6 @@ namespace Palantir
             });
             Commands.RegisterCommands<Commands>();
             await Client.ConnectAsync();
-            Bot = Client.CurrentUser;
             Feanor = new DataManager();
 
             Console.WriteLine("Palantir ready. Do not uncover it.");
@@ -39,7 +37,6 @@ namespace Palantir
             Feanor.PalantirTethers.ForEach((t) => { Console.WriteLine("- " + t.PalantirEndpoint.GuildID + " / " + t.PalantirEndpoint.GuildName); });
             Console.WriteLine("Stored members:");
             Feanor.PalantirMembers.ForEach((m) => { Console.WriteLine("- " + m.UserName); });
-
             Feanor.ActivatePalantiri();
 
             Console.WriteLine("Palantir activated. Fool of a Took!");
