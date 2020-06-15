@@ -24,8 +24,8 @@ namespace Palantir
             msg += "Change channel: `>observe #channel`\n";
             msg += "Change channel, keep token: `>observe #channel keep`\n";
             msg += "The channel has to be mentioned with a #.\n";
-            msg += "If the token isn't kept with *keep*, users need to verify the server again.";
-            msg += "For other configurations, see `>help`\n\n\n";
+            msg += "If the token isn't kept with *keep*, users need to verify the server again.\n";
+            msg += "For other configurations, see `>help`.\n\n\n";
             msg += "**Connect to the bot**\n";
             msg += " - Message the bot in DM `>login`\n";
             msg += " - Copy the login number\n";

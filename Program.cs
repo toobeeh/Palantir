@@ -48,7 +48,7 @@ namespace Palantir
 
         private static async Task onjoin(GuildCreateEventArgs e)
         {
-            await e.Guild.SystemChannel.SendMessageAsync("Hello there!\nMy prefix is `>`.\nCheck out `>manual` or `>help`.\nhttps://gph.is/2s4rv0N");
+            await e.Guild.SystemChannel.SendMessageAsync("Hello there! <a:l33:721872925531308032>\nMy prefix is `>`.\nCheck out `>manual` or `>help`.\nhttps://gph.is/2s4rv0N");
         }
 
     }
