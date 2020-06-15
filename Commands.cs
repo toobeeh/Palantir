@@ -18,7 +18,7 @@ namespace Palantir
         {
             string msg = "";
             msg += "**Bot configuration**\n";
-            msg += " This bot shows current skribbl lobbies in a message which is edited in an intervl of a few seconds.\n";
+            msg += " This bot shows current skribbl lobbies in a message which is edited in an interval of a few seconds.\n";
             msg += " The channel should be read-only to normal member, so the message always stays on top!\n\n";
             msg += "Set channel: `>observe #channel`\n";
             msg += "Change channel: `>observe #channel`\n";

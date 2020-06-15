@@ -123,6 +123,7 @@ namespace Palantir
                     t.EstablishDataflow();
                     newGuild = false;
 
+                    Console.WriteLine("Change token from " + oldToken + " to " + guild.ObserveToken);
                     // update db entry
                     PalantirEntity entity = Database.Palantiri.FirstOrDefault(p => p.Token == oldToken);
                     entity.Palantir = JsonConvert.SerializeObject(guild);
