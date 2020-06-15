@@ -30,8 +30,6 @@ namespace Palantir
                 DmHelp = false
             });
             Commands.RegisterCommands<Commands>();
-
-            //Client.MessageCreated += OnMessageCreated;
             await Client.ConnectAsync();
             Bot = Client.CurrentUser;
             Feanor = new DataManager();
@@ -49,9 +47,5 @@ namespace Palantir
             await Task.Delay(-1);
         }
 
-        private static async Task OnMessageCreated(MessageCreateEventArgs e)
-        {
-             
-        }
     }
 }

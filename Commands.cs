@@ -12,9 +12,11 @@ namespace Palantir
     public class Commands : BaseCommandModule
     {
         [Command("observe")]
-        public async Task Observe(CommandContext context, string channel)
+        [Description("Set a channel where lobbies will be observed.")]
+        public async Task Observe(CommandContext context, [Description("Target channel (#channel)")] string channel)
         {
-            if (context.Channel.IsPrivate) await context.Message.RespondAsync("This command is only available in server channels.");
+            if (context.Channel.IsPrivate) { await context.Message.RespondAsync("This command is only available in server channels."); return; }
+            if (context.Message.MentionedChannels.Count <1) { await context.Message.RespondAsync("Invalid channel!"); return; }
 
             // Create message in specified channel which later will be the static message to be continuously edited
             DiscordMessage msg = await context.Message.MentionedChannels[0].SendMessageAsync("Initializing...");
@@ -38,9 +40,10 @@ namespace Palantir
         }
 
         [Command("observe")]
-        public async Task Observe(CommandContext context, string channel, string keep)
+        public async Task Observe(CommandContext context, [Description("Target channel (#channel)")]string channel, [Description("Indicator to keep existing token (keep)")]  string keep)
         {
             if (context.Channel.IsPrivate) await context.Message.RespondAsync("This command is only available in server channels.");
+            if (context.Message.MentionedChannels.Count < 1) { await context.Message.RespondAsync("Invalid channel!"); return; }
 
             // Create message in specified channel which later will be the static message to be continuously edited
             DiscordMessage msg = await context.Message.MentionedChannels[0].SendMessageAsync("Initializing...");
@@ -77,6 +80,7 @@ namespace Palantir
             else await context.Message.RespondAsync("That's no valid command.\nCheck >help for help.");
         }
 
+        [Description("Get your login data to connect the extension.")]
         [Command("login")]
         public async Task Login(CommandContext context)
         {

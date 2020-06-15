@@ -63,7 +63,5 @@ namespace Palantir
         public bool ShowRefreshed { get; set; }
         public bool ShowToken { get; set; }
         public bool ShowAnimatedEmojis { get; set; }
-
-        
     }
 }
