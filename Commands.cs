@@ -13,14 +13,16 @@ namespace Palantir
     {
         [Command("header")]
         [Description("Set the header text of the bot message.")]
-        public async Task Header(CommandContext context, [Description("Header text of the message")] string header)
+        public async Task Header(CommandContext context, [Description("Header text of the message")] params string[] header)
         {
             if (!Program.Feanor.PalantirTethers.Any(t => t.PalantirEndpoint.GuildID == context.Guild.Id.ToString()))
             {
                 await context.Message.RespondAsync("Set a channel befor configuring the settings!");
                 return;
             }
-            Program.Feanor.PalantirTethers.FirstOrDefault(t => t.PalantirEndpoint.GuildID == context.Guild.Id.ToString()).PalantirSettings.Header = header;
+            string text = "";
+            foreach (string s in header) text += s + " ";
+            Program.Feanor.PalantirTethers.FirstOrDefault(t => t.PalantirEndpoint.GuildID == context.Guild.Id.ToString()).PalantirSettings.Header = text;
             Program.Feanor.UpdatePalantirSettings(Program.Feanor.PalantirTethers.FirstOrDefault(t => t.PalantirEndpoint.GuildID == context.Guild.Id.ToString()));
         }
 
@@ -52,31 +54,59 @@ namespace Palantir
             Program.Feanor.UpdatePalantirSettings(Program.Feanor.PalantirTethers.FirstOrDefault(t => t.PalantirEndpoint.GuildID == context.Guild.Id.ToString()));
         }
 
-        //[Command("token")]
-        //[Description("Set the timezone UTC offset of the bot message.")]
-        //public async Task Token(CommandContext context, [Description("Timezone offset (eg -5)")] int offset)
-        //{
-        //    if (!Program.Feanor.PalantirTethers.Any(t => t.PalantirEndpoint.GuildID == context.Guild.Id.ToString()))
-        //    {
-        //        await context.Message.RespondAsync("Set a channel befor configuring the settings!");
-        //        return;
-        //    }
-        //    Program.Feanor.PalantirTethers.FirstOrDefault(t => t.PalantirEndpoint.GuildID == context.Guild.Id.ToString()).PalantirSettings.Timezone = offset;
-        //    Program.Feanor.UpdatePalantirSettings(Program.Feanor.PalantirTethers.FirstOrDefault(t => t.PalantirEndpoint.GuildID == context.Guild.Id.ToString()));
-        //}
+        [Command("token")]
+        [Description("Set whether the token should be displayed or not.")]
+        public async Task Token(CommandContext context, [Description("State (on/off)")] string state)
+        {
+            if (!Program.Feanor.PalantirTethers.Any(t => t.PalantirEndpoint.GuildID == context.Guild.Id.ToString()))
+            {
+                await context.Message.RespondAsync("Set a channel befor configuring the settings!");
+                return;
+            }
+            if (state != "on" && state != "off")
+            {
+                await context.Message.RespondAsync("Invalid state.");
+                return;
+            }
+            Program.Feanor.PalantirTethers.FirstOrDefault(t => t.PalantirEndpoint.GuildID == context.Guild.Id.ToString()).PalantirSettings.ShowToken = state == "on";
+            Program.Feanor.UpdatePalantirSettings(Program.Feanor.PalantirTethers.FirstOrDefault(t => t.PalantirEndpoint.GuildID == context.Guild.Id.ToString()));
+        }
 
-        //[Command("refreshed")]
-        //[Description("Set the timezone UTC offset of the bot message.")]
-        //public async Task Refreshed(CommandContext context, [Description("Timezone offset (eg -5)")] int offset)
-        //{
-        //    if (!Program.Feanor.PalantirTethers.Any(t => t.PalantirEndpoint.GuildID == context.Guild.Id.ToString()))
-        //    {
-        //        await context.Message.RespondAsync("Set a channel befor configuring the settings!");
-        //        return;
-        //    }
-        //    Program.Feanor.PalantirTethers.FirstOrDefault(t => t.PalantirEndpoint.GuildID == context.Guild.Id.ToString()).PalantirSettings.Timezone = offset;
-        //    Program.Feanor.UpdatePalantirSettings(Program.Feanor.PalantirTethers.FirstOrDefault(t => t.PalantirEndpoint.GuildID == context.Guild.Id.ToString()));
-        //}
+        [Command("refreshed")]
+        [Description("Set whether the refreshed time should be displayed or not.")]
+        public async Task Refreshed(CommandContext context, [Description("State (on/off)")] string state)
+        {
+            if (!Program.Feanor.PalantirTethers.Any(t => t.PalantirEndpoint.GuildID == context.Guild.Id.ToString()))
+            {
+                await context.Message.RespondAsync("Set a channel befor configuring the settings!");
+                return;
+            }
+            if (state != "on" && state != "off")
+            {
+                await context.Message.RespondAsync("Invalid state.");
+                return;
+            }
+            Program.Feanor.PalantirTethers.FirstOrDefault(t => t.PalantirEndpoint.GuildID == context.Guild.Id.ToString()).PalantirSettings.ShowRefreshed = state == "on";
+            Program.Feanor.UpdatePalantirSettings(Program.Feanor.PalantirTethers.FirstOrDefault(t => t.PalantirEndpoint.GuildID == context.Guild.Id.ToString()));
+        }
+
+        [Command("animated")]
+        [Description("Set whether the animated emojis should be displayed or not.")]
+        public async Task Animated(CommandContext context, [Description("State (on/off)")] string state)
+        {
+            if (!Program.Feanor.PalantirTethers.Any(t => t.PalantirEndpoint.GuildID == context.Guild.Id.ToString()))
+            {
+                await context.Message.RespondAsync("Set a channel befor configuring the settings!");
+                return;
+            }
+            if (state != "on" && state != "off")
+            {
+                await context.Message.RespondAsync("Invalid state.");
+                return;
+            }
+            Program.Feanor.PalantirTethers.FirstOrDefault(t => t.PalantirEndpoint.GuildID == context.Guild.Id.ToString()).PalantirSettings.ShowAnimatedEmojis = state == "on";
+            Program.Feanor.UpdatePalantirSettings(Program.Feanor.PalantirTethers.FirstOrDefault(t => t.PalantirEndpoint.GuildID == context.Guild.Id.ToString()));
+        }
 
 
         [Command("observe")]
