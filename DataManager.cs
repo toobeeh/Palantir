@@ -123,12 +123,13 @@ namespace Palantir
                     t.EstablishDataflow();
                     newGuild = false;
 
-                    Console.WriteLine("Change token from " + oldToken + " to " + guild.ObserveToken);
+                   // Console.WriteLine("Change token from " + oldToken + " to " + guild.ObserveToken);
                     // update db entry
-                    PalantirEntity entity = Database.Palantiri.FirstOrDefault(p => p.Token == oldToken);
-                    Console.WriteLine(entity.Palantir);
+                    Database.Palantiri.Remove(Database.Palantiri.FirstOrDefault(p => p.Token == oldToken));
+                    PalantirEntity entity = new PalantirEntity();
                     entity.Palantir = JsonConvert.SerializeObject(guild);
                     entity.Token = guild.ObserveToken;
+                    Database.Palantiri.Add(entity);
                     Database.SaveChanges();
                 }
             });
