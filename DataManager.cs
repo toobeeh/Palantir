@@ -165,7 +165,7 @@ namespace Palantir
 
         public void ActivatePalantiri()
         {
-            PalantirTethers.ForEach((t) => { t.EstablishDataflow(); });
+            PalantirTethers.ForEach((t) => { t.EstablishDataflow(); Console.WriteLine("Started " + t.PalantirEndpoint.GuildName); });
         }
 
         public bool PalantirTokenExists(string token)
