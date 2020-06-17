@@ -114,7 +114,7 @@ namespace Palantir
                 Program.Feanor.RemovePalantiri(PalantirEndpoint);
                 StopDataflow();
                 Console.WriteLine("Removed guild " + PalantirEndpoint.GuildID);
-                await guild.GetDefaultChannel().SendMessageAsync("The observed message couldn't be found. \nSet a channel using `@>observe #channel`!");
+                await guild.GetDefaultChannel().SendMessageAsync("The observed message couldn't be found. \nSet a channel using `>observe #channel`!");
             }
             catch
             {
