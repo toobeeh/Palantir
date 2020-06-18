@@ -40,7 +40,7 @@ namespace Palantir
 
         [Command("header")]
         [Description("Set the header text of the bot message.")]
-        [RequirePermissions(DSharpPlus.Permissions.Administrator)]
+        [RequireUserPermissions(DSharpPlus.Permissions.Administrator)]
         [RequireGuild()]
         public async Task Header(CommandContext context, [Description("Header text of the message")] params string[] header)
         {
@@ -57,7 +57,7 @@ namespace Palantir
 
         [Command("idle")]
         [Description("Set the idle text of the bot message.")]
-        [RequirePermissions(DSharpPlus.Permissions.Administrator)]
+        [RequireUserPermissions(DSharpPlus.Permissions.Administrator)]
         [RequireGuild()]
         public async Task Idle(CommandContext context, [Description("Idle text of the message")] params string[] idle)
         {
@@ -74,7 +74,7 @@ namespace Palantir
 
         [Command("timezone")]
         [Description("Set the timezone UTC offset of the bot message.")]
-        [RequirePermissions(DSharpPlus.Permissions.Administrator)]
+        [RequireUserPermissions(DSharpPlus.Permissions.Administrator)]
         [RequireGuild()]
         public async Task Timezone(CommandContext context, [Description("Timezone offset (eg -5)")] int offset)
         {
@@ -89,7 +89,7 @@ namespace Palantir
 
         [Command("token")]
         [Description("Set whether the token should be displayed or not.")]
-        [RequirePermissions(DSharpPlus.Permissions.Administrator)]
+        [RequireUserPermissions(DSharpPlus.Permissions.Administrator)]
         [RequireGuild()]
         public async Task Token(CommandContext context, [Description("State (on/off)")] string state)
         {
@@ -110,7 +110,7 @@ namespace Palantir
         [Command("refreshed")]
         [Description("Set whether the refreshed time should be displayed or not.")]
         [RequireGuild()]
-        [RequirePermissions(DSharpPlus.Permissions.Administrator)]
+        [RequireUserPermissions(DSharpPlus.Permissions.Administrator)]
         public async Task Refreshed(CommandContext context, [Description("State (on/off)")] string state)
         {
             if (!Program.Feanor.PalantirTethers.Any(t => t.PalantirEndpoint.GuildID == context.Guild.Id.ToString()))
@@ -129,7 +129,7 @@ namespace Palantir
 
         [Command("animated")]
         [Description("Set whether the animated emojis should be displayed or not.")]
-        [RequireOwner()]
+        [RequireUserPermissions(DSharpPlus.Permissions.Administrator)]
         [RequireGuild()]
         public async Task Animated(CommandContext context, [Description("State (on/off)")] string state)
         {
