@@ -208,8 +208,8 @@ namespace Palantir
             });
 
             message += PalantirSettings.Header + "\n";
-            if(PalantirSettings.ShowRefreshed) message += "Refreshed: " + DateTime.UtcNow.AddHours(PalantirSettings.Timezone).ToShortTimeString() + " (UTC " + PalantirSettings.Timezone.ToString("+0;-#") + ")"; 
-            if(PalantirSettings.ShowToken) message += "\nServer token: `"+ PalantirEndpoint.ObserveToken + "`\n\n\n";
+            if(PalantirSettings.ShowRefreshed) message += "Refreshed: " + DateTime.UtcNow.AddHours(PalantirSettings.Timezone).ToShortTimeString() + " (UTC " + PalantirSettings.Timezone.ToString("+0;-#") + ")\n"; 
+            if(PalantirSettings.ShowToken) message += "Server token: `"+ PalantirEndpoint.ObserveToken + "`\n";
             
             GuildLobbies.ForEach((l) =>
             {
@@ -257,9 +257,6 @@ namespace Palantir
                 //Set lobby id to index (for displaying) and unique id (for searching)
                 l.ID = l. ID + ":" + lobbyUniqueID;
             });
-
-            
-            
 
             string searching = "";
             foreach (PlayerStatus p in OnlinePlayers.Where(o => o.Status == "searching" && o.PlayerMember.Guilds.Any(g=>g.GuildID == PalantirEndpoint.GuildID) && !GuildLobbies.Any(l => l.Players.Any(p => p.ID == o.PlayerMember.UserID)))){
