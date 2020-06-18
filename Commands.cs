@@ -151,7 +151,7 @@ namespace Palantir
         [Command("observe")]
         [Description("Set a channel where lobbies will be observed.")]
         [RequirePermissions(DSharpPlus.Permissions.Administrator)]
-        [RequireGuild()]
+        //[RequireGuild()]
         public async Task Observe(CommandContext context, [Description("Target channel (eg #channel)")] string channel)
         {
             if (context.Message.MentionedChannels.Count <1) { await context.Message.RespondAsync("Invalid channel!"); return; }
