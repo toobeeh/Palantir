@@ -150,7 +150,7 @@ namespace Palantir
 
         [Command("observe")]
         [Description("Set a channel where lobbies will be observed.")]
-        [RequirePermissions(DSharpPlus.Permissions.Administrator)]
+        [RequireUserPermissions(DSharpPlus.Permissions.Administrator)]
         [RequireGuild()]
         public async Task Observe(CommandContext context, [Description("Target channel (eg #channel)")] string channel)
         {
@@ -179,7 +179,7 @@ namespace Palantir
 
         [Command("observe")]
         [Description("Set a channel where lobbies will be observed.")]
-        //[RequirePermissions(DSharpPlus.Permissions.Administrator)]
+        [RequireUserPermissions(DSharpPlus.Permissions.Administrator)]
         [RequireGuild()]
         public async Task Observe(CommandContext context, [Description("Target channel (#channel)")]string channel, [Description("Indicator to keep existing token (keep)")]  string keep)
         {
