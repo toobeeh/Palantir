@@ -129,8 +129,8 @@ namespace Palantir
 
         [Command("animated")]
         [Description("Set whether the animated emojis should be displayed or not.")]
-        //[RequirePermissions(DSharpPlus.Permissions.Administrator)]
-        //[RequireGuild()]
+        [RequireOwner()]
+        [RequireGuild()]
         public async Task Animated(CommandContext context, [Description("State (on/off)")] string state)
         {
             if (!Program.Feanor.PalantirTethers.Any(t => t.PalantirEndpoint.GuildID == context.Guild.Id.ToString()))
@@ -150,7 +150,7 @@ namespace Palantir
 
         [Command("observe")]
         [Description("Set a channel where lobbies will be observed.")]
-        //[RequirePermissions(DSharpPlus.Permissions.Administrator)]
+        [RequirePermissions(DSharpPlus.Permissions.Administrator)]
         [RequireGuild()]
         public async Task Observe(CommandContext context, [Description("Target channel (eg #channel)")] string channel)
         {
