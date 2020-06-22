@@ -235,14 +235,14 @@ namespace Palantir
 
                     if (player.Sender)
                     {
-                        sender += player.Name;
+                        sender += Formatter.Sanitize(player.Name);
                         for (int i = player.Name.Length; i < 15; i++) sender += " ";
                         sender += player.Score + " pts";
                         sender += player.Drawing ? " 🖍 \n" : "\n";
                     }
                     else 
                     {
-                        players += player.Name ;
+                        players += Formatter.Sanitize(player.Name) ;
                         players += (player.Drawing ? " 🖍, " : ", ");
                     }
                 }
@@ -262,13 +262,13 @@ namespace Palantir
 
             string searching = "";
             foreach (PlayerStatus p in OnlinePlayers.Where(o => o.Status == "searching" && o.PlayerMember.Guilds.Any(g=>g.GuildID == PalantirEndpoint.GuildID) && !GuildLobbies.Any(l => l.Players.Any(p => p.ID == o.PlayerMember.UserID)))){
-                searching += p.PlayerMember.UserName + ", ";
+                searching += Formatter.Sanitize(p.PlayerMember.UserName) + ", ";
             }
 
             string waiting = "";
             foreach (PlayerStatus p in OnlinePlayers.Where(o => o.Status == "waiting" && o.PlayerMember.Guilds.Any(g => g.GuildID == PalantirEndpoint.GuildID) && !GuildLobbies.Any(l => l.Players.Any(p => p.ID == o.PlayerMember.UserID))))
             {
-                waiting += p.PlayerMember.UserName + ", ";
+                waiting += Formatter.Sanitize(p.PlayerMember.UserName) + ", ";
             }
 
             if (searching.Length > 0) message += "<a:onmyway:718807079305084939>   " + searching[0..^2];
