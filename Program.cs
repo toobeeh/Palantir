@@ -5,7 +5,7 @@ using DSharpPlus.Entities;
 using DSharpPlus.CommandsNext;
 using System.Threading.Tasks;
 using System.Linq;
-
+using System.IO;
 
 namespace Palantir
 {
@@ -20,7 +20,7 @@ namespace Palantir
 
             Client = new DiscordClient(new DiscordConfiguration
             {
-                Token = "NzE1ODc0Mzk3MDI1NDY4NDE3.XtDksg.vbCY4jq50WGZthP2aZrIBIqzS7Q",
+                Token = File.ReadAllText("/home/pi/palantirToken.txt"),
                 TokenType = TokenType.Bot
             });
             Commands = Client.UseCommandsNext(new CommandsNextConfiguration
