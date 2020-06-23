@@ -173,7 +173,7 @@ namespace Palantir
                 guild.ObserveToken = token;
             }
             while (Program.Feanor.PalantirTokenExists(token));
-            await context.Message.RespondAsync("Active lobbies will now be observed in " + context.Message.MentionedChannels[0].Mention + ".\nUsers need following token to connect the browser extension: ```fix\n" + token + "\n```Pin this message or save the token!\n\n For further instructions, users can viit the website https://www.tobeh.host/Orthanc/.\nMaybe include the link in the bot message!");
+            await context.Message.RespondAsync("Active lobbies will now be observed in " + context.Message.MentionedChannels[0].Mention + ".\nUsers need following token to connect the browser extension: ```fix\n" + token + "\n```Pin this message or save the token!\n\nFor further instructions, users can visit the website https://www.tobeh.host/Orthanc/.\nMaybe include the link in the bot message!");
             // save observed
             Program.Feanor.SavePalantiri(guild);
             
