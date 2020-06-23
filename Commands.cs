@@ -17,15 +17,17 @@ namespace Palantir
         public async Task Manual(CommandContext context)
         {
             string msg = "";
-            msg += "**Bot configuration**\n";
-            msg += " This bot shows current skribbl lobbies in a message which is edited in an interval of a few seconds.\n";
-            msg += " The channel should be read-only to normal members, so the message always stays on top.\n\n";
-            msg += "Set channel: `>observe #channel`\n";
-            msg += "Change channel: `>observe #channel`\n";
-            msg += "Change channel, keep token: `>observe #channel keep`\n";
-            msg += "The channel has to be mentioned with a #.\n";
-            msg += "If the token isn't kept with *keep*, users need to verify the server again.\n";
-            msg += "For other configurations, see `>help`.\n\n\n";
+            //msg += "**Bot configuration**\n";
+            //msg += " This bot shows current skribbl lobbies in a message which is edited in an interval of a few seconds.\n";
+            //msg += " The channel should be read-only to normal members, so the message always stays on top.\n\n";
+            //msg += "Set channel: `>observe #channel`\n";
+            //msg += "Change channel: `>observe #channel`\n";
+            //msg += "Change channel, keep token: `>observe #channel keep`\n";
+            //msg += "The channel has to be mentioned with a #.\n";
+            //msg += "If the token isn't kept with *keep*, users need to verify the server again.\n";
+            //msg += "For other configurations, see `>help`.\n\n\n";
+            msg += "**Visit the website:**\n";
+            msg += "https://www.tobeh.host/Orthanc/\n";
             msg += "**Connect to the bot**\n";
             msg += " - Message the bot in DM `>login`\n";
             msg += " - Copy the login number\n";
@@ -171,7 +173,7 @@ namespace Palantir
                 guild.ObserveToken = token;
             }
             while (Program.Feanor.PalantirTokenExists(token));
-            await context.Message.RespondAsync("Active lobbies will now be observed in " + context.Message.MentionedChannels[0].Mention + ".\nUsers need following token to connect the browser extension: ```fix\n" + token + "\n```Pin this message or save the token!");
+            await context.Message.RespondAsync("Active lobbies will now be observed in " + context.Message.MentionedChannels[0].Mention + ".\nUsers need following token to connect the browser extension: ```fix\n" + token + "\n```Pin this message or save the token!\n\n For further instructions, users can viit the website https://www.tobeh.host/Orthanc/.\nMaybe include the link in the bot message!");
             // save observed
             Program.Feanor.SavePalantiri(guild);
             
