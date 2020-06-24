@@ -110,11 +110,10 @@ namespace Palantir
         {
             try
             {
-                DiscordGuild guild = await Program.Client.GetGuildAsync(Convert.ToUInt64(PalantirEndpoint.GuildID));
+                await (await Program.Client.GetChannelAsync(Convert.ToUInt16(PalantirEndpoint.ChannelID))).SendMessageAsync("The observed message couldn't be found. \nSet a channel using `>observe #channel`!");
                 Program.Feanor.RemovePalantiri(PalantirEndpoint);
                 StopDataflow();
                 Console.WriteLine("Removed guild " + PalantirEndpoint.GuildID);
-                await (await Program.Client.GetChannelAsync(Convert.ToUInt16(PalantirEndpoint.ChannelID))).SendMessageAsync("The observed message couldn't be found. \nSet a channel using `>observe #channel`!");
             }
             catch
             {
@@ -133,6 +132,7 @@ namespace Palantir
             }
             catch(Exception e)
             {
+                // usual error when sd card was too slow for some reason, seems not to appear on faster sdcards
                 Console.WriteLine("Exception: " + e.ToString() + "at Channel:" + PalantirEndpoint.ChannelID + ", Msg: "+PalantirEndpoint.MessageID + ",Client:" + Program.Client.CurrentUser.Username);
                 //RemoveTether();
                 return;
