@@ -270,13 +270,13 @@ namespace Palantir
 
             string searching = "";
             foreach (PlayerStatus p in OnlinePlayers.Where(o => o.Status == "searching" && o.PlayerMember.Guilds.Any(g=>g.GuildID == PalantirEndpoint.GuildID) && !GuildLobbies.Any(l => l.Players.Any(p => p.ID == o.PlayerMember.UserID)))){
-                searching += Formatter.Sanitize(p.PlayerMember.UserName) + ", ";
+                try { searching += Formatter.Sanitize(p.PlayerMember.UserName) + ", "; } catch {}
             }
 
             string waiting = "";
             foreach (PlayerStatus p in OnlinePlayers.Where(o => o.Status == "waiting" && o.PlayerMember.Guilds.Any(g => g.GuildID == PalantirEndpoint.GuildID) && !GuildLobbies.Any(l => l.Players.Any(p => p.ID == o.PlayerMember.UserID))))
             {
-                waiting += Formatter.Sanitize(p.PlayerMember.UserName) + ", ";
+                try { waiting += Formatter.Sanitize(p.PlayerMember.UserName) + ", "; } catch {}
             }
 
             if (searching.Length > 0) message += "<a:onmyway:718807079305084939>   " + searching[0..^2];
