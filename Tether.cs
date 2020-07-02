@@ -228,6 +228,7 @@ namespace Palantir
 
                 List<short> scores = new List<short>();
                 foreach(Player p in l.Players) { if (!scores.Contains(p.Score)) scores.Add(p.Score); }
+                scores.Sort((a, b) => b.CompareTo(a));
 
                 // set id to index
                 l.ID = Convert.ToString(GuildLobbies.IndexOf(l)+1);
