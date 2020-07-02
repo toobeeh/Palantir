@@ -249,16 +249,22 @@ namespace Palantir
                         sender += Formatter.Sanitize(player.Name);
                         for (int i = player.Name.Length; i < 17; i++) sender += " ";
                         sender += player.Score + " pts";
-                        if (scores.IndexOf(player.Score) == 0) sender += " 🏆 ";
-                        if (scores.IndexOf(player.Score) == 1) sender += " 🥈 ";
-                        if (scores.IndexOf(player.Score) == 2) sender += " 🥉 ";
+                        if (player.Score != 0)
+                        {
+                            if (scores.IndexOf(player.Score) == 0) sender += " 🏆 ";
+                            if (scores.IndexOf(player.Score) == 1) sender += " 🥈 ";
+                            if (scores.IndexOf(player.Score) == 2) sender += " 🥉 ";
+                        }
                         sender += player.Drawing ? " 🖍 \n" : "\n";
                     }
                     else 
                     {
-                        if (scores.IndexOf(player.Score) == 0) players += " 🏆 ";
-                        if (scores.IndexOf(player.Score) == 1) players += " 🥈 ";
-                        if (scores.IndexOf(player.Score) == 2) players += " 🥉 ";
+                        if(player.Score != 0)
+                        {
+                            if (scores.IndexOf(player.Score) == 0) players += " `🏆` ";
+                            if (scores.IndexOf(player.Score) == 1) players += " `🥈` ";
+                            if (scores.IndexOf(player.Score) == 2) players += " `🥉` ";
+                        }
                         players += Formatter.Sanitize(player.Name);
                         players += (player.Drawing ? " 🖍, " : ", ");
                     }
