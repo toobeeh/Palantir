@@ -226,6 +226,9 @@ namespace Palantir
                 string lobby = "";
                 string lobbyUniqueID = l.ID;
 
+                List<short> scores = new List<short>();
+                foreach(Player p in l.Players) { if (!scores.Contains(p.Score)) scores.Add(p.Score); }
+
                 // set id to index
                 l.ID = Convert.ToString(GuildLobbies.IndexOf(l)+1);
                 lobby += "> **#" + l.ID + "**    " + (PalantirSettings.ShowAnimatedEmojis ? Emojis[(new Random()).Next(Emojis.Count-1)] : "") + "     " + l.Host + "   **|**  " + l.Language + "   **|**   Round " + l.Round + "   **|**   " + (l.Private ? "Private " + "\n> <" + l.Link + ">" : "Public")  + "\n> " + l.Players.Count  + " Players \n";
@@ -244,13 +247,19 @@ namespace Palantir
                     if (player.Sender)
                     {
                         sender += Formatter.Sanitize(player.Name);
-                        for (int i = player.Name.Length; i < 15; i++) sender += " ";
+                        for (int i = player.Name.Length; i < 17; i++) sender += " ";
                         sender += player.Score + " pts";
+                        if (scores.IndexOf(player.Score) == 0) sender += " 🏆 ";
+                        if (scores.IndexOf(player.Score) == 1) sender += " 🥈 ";
+                        if (scores.IndexOf(player.Score) == 2) sender += " 🥉 ";
                         sender += player.Drawing ? " 🖍 \n" : "\n";
                     }
                     else 
                     {
-                        players += Formatter.Sanitize(player.Name) ;
+                        if (scores.IndexOf(player.Score) == 0) players += " 🏆 ";
+                        if (scores.IndexOf(player.Score) == 1) players += " 🥈 ";
+                        if (scores.IndexOf(player.Score) == 2) players += " 🥉 ";
+                        players += Formatter.Sanitize(player.Name);
                         players += (player.Drawing ? " 🖍, " : ", ");
                     }
                 }
