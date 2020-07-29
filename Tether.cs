@@ -155,13 +155,21 @@ namespace Palantir
                     TargetMessage = await TargetMessage.ModifyAsync(BuildLobbyContent());
                     notFound = 0;
                 }
-                catch(Exception e) { 
-                    notFound++;
-                    if(notFound > maxErrorCount)
+                catch(Exception e) {
+                    if (e.InnerException is DSharpPlus.Exceptions.NotFoundException)
                     {
-                        Console.WriteLine("Target Message couldnt be edited. Error: " + e.ToString());
-                        RemoveTether();
-                        return;
+                        notFound++;
+                        if (notFound > maxErrorCount)
+                        {
+                            Console.WriteLine("Target Message couldnt be edited. Error: " + e.ToString());
+                            RemoveTether();
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("Target Message couldnt be edited. No removal of tether, just 1min timeout. Error: " + e.ToString());
+                        Thread.Sleep(60000);
                     }
                 }
                 Thread.Sleep(2000);
@@ -181,11 +189,11 @@ namespace Palantir
 
             reports.ForEach((r) =>
             {
-                if (DateTime.ParseExact(r.Date, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) > DateTime.UtcNow.AddSeconds(-5)) 
+                if (DateTime.ParseExact(r.Date, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) > DateTime.UtcNow.AddSeconds(-7)) 
                 {
                     try
                     {
-                        Console.WriteLine("Found report: " + r.LobbyID);
+                        //Console.WriteLine("Found report: " + r.LobbyID);
                         Lobbies.Add(JsonConvert.DeserializeObject<Lobby>(r.Report));
                     }
                     catch (Exception e) { Console.WriteLine("Couldnt read lobby entry: " + e); };
@@ -194,11 +202,11 @@ namespace Palantir
 
             playerstatus.ForEach((p) =>
             {
-                if ( DateTime.ParseExact(p.Date, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) > DateTime.UtcNow.AddSeconds(-5))
+                if ( DateTime.ParseExact(p.Date, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) > DateTime.UtcNow.AddSeconds(-7))
                 {
                     try
                     {
-                        Console.WriteLine("Found status: " + p.Status);
+                        //Console.WriteLine("Found status: " + p.Status);
                         OnlinePlayers.Add(JsonConvert.DeserializeObject<PlayerStatus>(p.Status));
                     }
                     catch (Exception e) { Console.WriteLine("Couldnt read status file: " + e); };
@@ -211,7 +219,7 @@ namespace Palantir
                 if (l.GuildID.ToString() == PalantirEndpoint.GuildID && l.ObserveToken == PalantirEndpoint.ObserveToken)
                 {
                     GuildLobbies.Add(l);
-                    Console.WriteLine("Lobby for guild " + PalantirEndpoint.GuildName + " was found: " + l.ID);
+                    //Console.WriteLine("Lobby for guild " + PalantirEndpoint.GuildName + " was found: " + l.ID);
                 }
             });
 
