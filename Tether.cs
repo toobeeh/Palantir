@@ -241,6 +241,7 @@ namespace Palantir
                 // set id to index
                 l.ID = Convert.ToString(GuildLobbies.IndexOf(l)+1);
                 lobby += "> **#" + l.ID + "**    " + (PalantirSettings.ShowAnimatedEmojis ? Emojis[(new Random()).Next(Emojis.Count-1)] : "") + "     " + l.Host + "   **|**  " + l.Language + "   **|**   Round " + l.Round + "   **|**   " + (l.Private ? "Private " + "\n> <" + l.Link + ">" : "Public")  + "\n> " + l.Players.Count  + " Players \n";
+                if (l.Description != "") lobby += "> " + l.Description;
 
                 string players = "";
                 string sender = "```fix\n";

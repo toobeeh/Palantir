@@ -13,6 +13,7 @@ namespace Palantir
         public string Host { get; set; }
         public string Language { get; set; }
         public string Link { get; set; }
+        public string Description { get; set; }
         public string GuildID { get; set; }
         public string ObserveToken { get; set; }
         public IList<Player> Players { get; set; }
