@@ -244,8 +244,10 @@ namespace Palantir
                 // get description if private
                 if (l.Private)
                 {
-                    string d = JsonConvert.DeserializeObject<ProvidedLobby>(Database.Lobbies.FirstOrDefault(lobby => lobby.LobbyID == l.ID).Lobby).Description;
-                    if (d != "") lobby += "> " + DSharpPlus.Formatter.Sanitize(d) + "\n";
+                    string jsonlobby = Database.Lobbies.FirstOrDefault(lobbyEntity => lobbyEntity.LobbyID == l.ID).Lobby;
+                    ProvidedLobby p = JsonConvert.DeserializeObject<ProvidedLobby>(jsonlobby);
+
+                    if (p.Description != "") lobby += "> " + DSharpPlus.Formatter.Sanitize(p.Description) + "\n";
                 }
 
                 string players = "";
