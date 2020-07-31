@@ -238,19 +238,21 @@ namespace Palantir
                 foreach(Player p in l.Players) { if (!scores.Contains(p.Score)) scores.Add(p.Score); }
                 scores.Sort((a, b) => b.CompareTo(a));
 
+
+                // get description if private
+                string lobbyDescription = "";
+                if (l.Private)
+                {
+                    string d = JsonConvert.DeserializeObject<ProvidedLobby>(Database.Lobbies.FirstOrDefault(lobbyEntity => lobbyEntity.LobbyID == l.ID).Lobby).Description;
+
+                    lobbyDescription = "> " + DSharpPlus.Formatter.Sanitize(d) + "\n";
+                }
+
                 // set id to index
                 l.ID = Convert.ToString(GuildLobbies.IndexOf(l)+1);
                 lobby += "> **#" + l.ID + "**    " + (PalantirSettings.ShowAnimatedEmojis ? Emojis[(new Random()).Next(Emojis.Count-1)] : "") + "     " + l.Host + "   **|**  " + l.Language + "   **|**   Round " + l.Round + "   **|**   " + (l.Private ? "Private " + "\n> <" + l.Link + ">" : "Public")  + "\n> " + l.Players.Count  + " Players \n";
-                // get description if private
-                if (l.Private)
-                {
-                    string jsonlobby = Database.Lobbies.FirstOrDefault(lobbyEntity => lobbyEntity.LobbyID == l.ID).Lobby;
-                    Console.WriteLine(jsonlobby);
-                    ProvidedLobby p = JsonConvert.DeserializeObject<ProvidedLobby>(jsonlobby);
-                    Console.WriteLine(p.Description);
-
-                    if (p.Description != "") lobby += "> " + DSharpPlus.Formatter.Sanitize(p.Description) + "\n";
-                }
+                
+                if (lobbyDescription != "") lobby += lobbyDescription;
 
                 string players = "";
                 string sender = "```fix\n";
