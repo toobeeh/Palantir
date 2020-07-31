@@ -245,7 +245,9 @@ namespace Palantir
                 if (l.Private)
                 {
                     string jsonlobby = Database.Lobbies.FirstOrDefault(lobbyEntity => lobbyEntity.LobbyID == l.ID).Lobby;
+                    Console.WriteLine(jsonlobby);
                     ProvidedLobby p = JsonConvert.DeserializeObject<ProvidedLobby>(jsonlobby);
+                    Console.WriteLine(p.Description);
 
                     if (p.Description != "") lobby += "> " + DSharpPlus.Formatter.Sanitize(p.Description) + "\n";
                 }
