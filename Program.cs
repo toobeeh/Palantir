@@ -32,7 +32,7 @@ namespace Palantir
             });
             Client.GuildCreated += onjoin;
             Commands.RegisterCommands<Commands>();
-            await Client.ConnectAsync();
+            await Client.ConnectAsync(new DiscordActivity(" u on skribbl.io",ActivityType.Watching));
             Feanor = new DataManager();
 
             Console.WriteLine("Palantir ready. Do not uncover it.");

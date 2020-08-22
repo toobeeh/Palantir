@@ -315,7 +315,7 @@ namespace Palantir
             }
 
             if (searching.Length > 0) message += "<a:onmyway:718807079305084939>   " + searching[0..^2];
-            if (waiting.Length > 0) message += "\n\n:octagonal_sign:   " + waiting[0..^2];
+            if (waiting.Length > 0 && GuildLobbies.Count > 0) message += "\n\n:octagonal_sign:   " + waiting[0..^2];
             if (PalantirSettings.ShowAnimatedEmojis && GuildLobbies.Count == 0 && searching.Length == 0) message += "\n <a:alone:718807079434846238>\n";
             if (GuildLobbies.Count == 0 && searching.Length == 0) message += PalantirSettings.IdleMessage;
 
