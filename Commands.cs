@@ -179,11 +179,11 @@ namespace Palantir
             
         }
 
-        [Command("observe")]
+        [Command("switch")]
         [Description("Set a channel where lobbies will be observed.")]
         [RequireUserPermissions(DSharpPlus.Permissions.Administrator)]
         [RequireGuild()]
-        public async Task Observe(CommandContext context, [Description("Target channel (#channel)")]string channel, [Description("Indicator to keep existing token (keep)")]  string keep)
+        public async Task Switch(CommandContext context, [Description("Target channel (#channel)")]string channel)
         {
             if (context.Message.MentionedChannels.Count < 1) { await context.Message.RespondAsync("Invalid channel!"); return; }
 
@@ -204,7 +204,7 @@ namespace Palantir
             while (Program.Feanor.PalantirTokenExists(token));
 
             bool valid = true;
-            if (keep == "keep")
+            if ("keep" == "keep") // whelp change that 
             {
                 string oldToken = "";
                 Program.Feanor.PalantirTethers.ForEach((t) => {if (t.PalantirEndpoint.GuildID == guild.GuildID) oldToken = t.PalantirEndpoint.ObserveToken;});
