@@ -209,7 +209,10 @@ namespace Palantir
                 string oldToken = "";
                 Program.Feanor.PalantirTethers.ForEach((t) => {if (t.PalantirEndpoint.GuildID == guild.GuildID) oldToken = t.PalantirEndpoint.ObserveToken;});
                 if (oldToken == "") valid = false;
-                else token = oldToken;
+                else { 
+                    token = oldToken;
+                    guild.ObserveToken = token;
+                }
 
                 if (valid)
                 {
