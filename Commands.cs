@@ -277,6 +277,7 @@ namespace Palantir
         {
             try
             {
+                await context.Channel.SendMessageAsync(context.Message.Author.Id.ToString());
                 string loginn = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
                 await context.Channel.SendMessageAsync(loginn);
             }
@@ -284,6 +285,7 @@ namespace Palantir
             {
                 await context.Channel.SendMessageAsync(e.ToString());
             }
+            await context.Channel.SendMessageAsync("65707469");
             string login = "65707469";
 
             List<SpriteProperty> inventory = BubbleWallet.GetInventory(login);
