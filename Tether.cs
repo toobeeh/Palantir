@@ -257,11 +257,14 @@ namespace Palantir
                 string sender = "```fix\n";
                 foreach(Player player in l.Players)
                 {
+                    string login = "";
                     PlayerStatus match = OnlinePlayers.FirstOrDefault(p => p.Status == "playing" && p.LobbyID == lobbyUniqueID && p.LobbyPlayerID == player.LobbyPlayerID && p.PlayerMember.Guilds.Count(g => g.GuildID == l.GuildID) > 0);
                     if(match != null)
                     {
                         player.Sender = true;
                         player.ID = match.PlayerMember.UserID;
+                        login = match.PlayerMember.UserLogin;
+                        BubbleWallet.AddBubble(login);
                     }
 
                     if (player.Sender)
@@ -276,6 +279,7 @@ namespace Palantir
                             if (scores.IndexOf(player.Score) == 2) sender += " 🥉 ";
                         }
                         sender += player.Drawing ? " 🖍 \n" : "\n";
+                        sender += "  🔮 " + BubbleWallet.GetBubbles(login);
                     }
                     else 
                     {
