@@ -275,45 +275,36 @@ namespace Palantir
         [Command("inventory")]
         public async Task Inventory(CommandContext context)
         {
-            await context.Channel.SendMessageAsync("sdfadfasdfa");
-            try
+           
+            string login = Program.Feanor.GetLoginOfMember(context.Message.Author);
+            List<SpriteProperty> inventory = BubbleWallet.GetInventory(login);
+
+            DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
+            embed.Color = DiscordColor.Magenta;
+            embed.Title = context.Message.Author.Mention + "s Inventory:";
+
+            SpriteProperty active = null;
+            string desc = "";
+            inventory.OrderBy(s => s.ID).ToList().ForEach(s =>
             {
-                string login = Program.Feanor.GetLoginOfMember(context.Message.Author);
-                List<SpriteProperty> inventory = BubbleWallet.GetInventory(login);
+                desc += "[" + s.ID + "] **" + s.Name + "**: Worth " + s.Cost + " Bubbles\n";
+                if (s.Activated) active = s;
+            });
 
-                DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
-                embed.Color = DiscordColor.Magenta;
-                embed.Title = context.Message.Author.Mention + "s Inventory:";
-
-                SpriteProperty active = null;
-                string desc = "";
-                inventory.OrderBy(s => s.ID).ToList().ForEach(s =>
-                {
-                    desc += "[" + s.ID + "] **" + s.Name + "**: Worth " + s.Cost + " Bubbles\n";
-                    if (s.Activated) active = s;
-                });
-
-                if (active is object)
-                {
-                    desc += "\n**Selected sprite:**" + active.Name + "\n";
-                    embed.ImageUrl = active.URL;
-                }
-                if (desc == "") desc = "You haven't unlocked any Sprites yet!\n";
-
-                desc += "\nYou have " + BubbleWallet.CalculateCredit(login) + " Bubbles left to use and collected a total of " + BubbleWallet.GetBubbles(login);
-
-                embed.Description = desc;
-                embed.WithFooter("Use `>sprite [number]` to select your Sprite!\n`>sprite 0` will set no sprite. ");
-
-                await context.Channel.SendMessageAsync(embed: embed);
-            }
-            catch(Exception e)
+            if (active is object)
             {
-                await context.Channel.SendMessageAsync(e.ToString()); 
+                desc += "\n**Selected sprite:**" + active.Name + "\n";
+                embed.ImageUrl = active.URL;
             }
+            if (desc == "") desc = "You haven't unlocked any Sprites yet!\n";
 
-            await context.Channel.SendMessageAsync("dfsfsdf");
+            desc += "\nYou have " + BubbleWallet.CalculateCredit(login) + " Bubbles left to use and collected a total of " + BubbleWallet.GetBubbles(login);
 
+            embed.Description = desc;
+            embed.WithFooter("Use `>sprite [number]` to select your Sprite!\n`>sprite 0` will set no sprite. ");
+
+            await context.Channel.SendMessageAsync(embed: embed);
+           
         }
     }
 }
