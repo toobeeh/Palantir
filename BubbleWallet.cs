@@ -59,7 +59,15 @@ namespace Palantir
                 try { sprite = availableSprites.FirstOrDefault(s => s.ID == sprites[i]);
                     spriteInventory.Add(new SpriteProperty(sprite.Name, sprite.URL, sprite.Cost, sprite.ID, own));
                 }
-                catch(Exception e) { Console.WriteLine(sprites[i] + " : " + i + ": " +e.ToString()); }
+                catch(Exception e) {
+                    Console.WriteLine(sprites[i] + " : " + i + ": " + e.ToString());
+                    try
+                    {
+                        sprite = new Sprite("hi", "hi", 1, 1);
+                        spriteInventory.Add(new SpriteProperty(sprite.Name, sprite.URL, sprite.Cost, sprite.ID, own));
+                    }
+                    catch (Exception f) { Console.WriteLine(sprites[i] + " :f " + i + ": " + f.ToString() + spriteInventory.ToString()); }
+                }
             }
             return spriteInventory;
         }
