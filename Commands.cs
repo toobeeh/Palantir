@@ -295,7 +295,7 @@ namespace Palantir
                 desc += "\n**Selected sprite:** " + active.Name + "\n";
                 embed.ImageUrl = active.URL;
             }
-            if (desc == "") desc = "You haven't unlocked any Sprites yet!\n";
+            if (desc == "") desc = "You haven't unlocked any sprites yet!\n";
             desc += "\nYou have " + BubbleWallet.CalculateCredit(login) + " Bubbles left to use and collected a total of " + BubbleWallet.GetBubbles(login);
 
             embed.Description = desc;

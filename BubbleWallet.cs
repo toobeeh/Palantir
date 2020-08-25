@@ -59,7 +59,7 @@ namespace Palantir
                 try { sprite = availableSprites.FirstOrDefault(s => s.ID == sprites[i]);
                     spriteInventory.Add(new SpriteProperty(sprite.Name, sprite.URL, sprite.Cost, sprite.ID, own));
                 }
-                catch {}
+                catch(Exception e) { Console.WriteLine(sprites[i] + " : " + i + ": " +e.ToString()); }
             }
             return spriteInventory;
         }
