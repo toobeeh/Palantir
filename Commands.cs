@@ -275,6 +275,7 @@ namespace Palantir
         [Command("inventory")]
         public async Task Inventory(CommandContext context)
         {
+            await context.Channel.SendMessageAsync("sdfadfasdfa");
             try
             {
                 string login = Program.Feanor.GetLoginOfMember(context.Message.Author);
@@ -310,7 +311,9 @@ namespace Palantir
             {
                 await context.Channel.SendMessageAsync(e.ToString()); 
             }
-           
+
+            await context.Channel.SendMessageAsync("dfsfsdf");
+
         }
     }
 }
