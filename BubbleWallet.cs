@@ -55,7 +55,7 @@ namespace Palantir
             {
                 bool own = false;
                 if(sprites[i] == '.') { own = true; i++; }
-                Sprite sprite = new Sprite(availableSprites.ToString(),availableSprites.Count.ToString(),1,1);
+                Sprite sprite = new Sprite(string.Join(',',availableSprites),availableSprites.Count.ToString(),1,1);
                 //availableSprites.ForEach(s =>
                 //{
                 //    if (s.ID == sprites[i]) sprite = s;
