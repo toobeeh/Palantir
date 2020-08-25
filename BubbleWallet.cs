@@ -55,7 +55,7 @@ namespace Palantir
             {
                 bool own = false;
                 if(sprites[i] == '.') { own = true; i++; }
-                Sprite sprite = availableSprites[0];//.FirstOrDefault(s => s.ID == sprites[i]);
+                Sprite sprite = availableSprites.FirstOrDefault(s => s.ID == sprites[i]);
                 spriteInventory.Add(new SpriteProperty(sprite.Name, sprite.URL, sprite.Cost, sprite.ID, own));
             }
             return spriteInventory;
@@ -84,7 +84,7 @@ namespace Palantir
         public static List<SpriteProperty> GetInventory(string login)
         {
             PalantirDbContext context = new PalantirDbContext();
-            string inventoryString = "1.2";//context.Members.FirstOrDefault(m => m.Login == login).Sprites;
+            string inventoryString = context.Members.FirstOrDefault(m => m.Login == login).Sprites;
             context.SaveChanges();
             context.Dispose();
             return ParseSpriteInventory(inventoryString);

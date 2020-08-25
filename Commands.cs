@@ -275,17 +275,6 @@ namespace Palantir
         [Command("inventory")]
         public async Task Inventory(CommandContext context)
         {
-            //try
-            //{
-            //    await context.Channel.SendMessageAsync(context.Message.Author.Id.ToString());
-            //    string loginn = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
-            //    await context.Channel.SendMessageAsync(loginn);
-            //}
-            //catch(Exception e)
-            //{
-            //    await context.Channel.SendMessageAsync(e.ToString());
-            //}
-            //await context.Channel.SendMessageAsync("65707469");
             string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
 
             List<SpriteProperty> inventory = BubbleWallet.GetInventory(login);
