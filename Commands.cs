@@ -275,7 +275,7 @@ namespace Palantir
         [Command("inventory")]
         public async Task Inventory(CommandContext context)
         {
-            string login = Program.Feanor.GetLoginOfMember(context.Message.Author);
+            string login = "65707469";// Program.Feanor.GetLoginOfMember(context.Message.Author);
             List<SpriteProperty> inventory = BubbleWallet.GetInventory(login);
 
             DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
