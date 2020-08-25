@@ -93,7 +93,7 @@ namespace Palantir
         public static string GetLoginOfMember(string id)
         {
             PalantirDbContext context = new PalantirDbContext();
-            string login = context.Members.FirstOrDefault(m => JsonConvert.DeserializeObject<Member>(m.Member).UserID == id).Login;
+            string login = context.Members.Where(m => JsonConvert.DeserializeObject<Member>(m.Member).UserID == id).ToList().Count.ToString();
             context.SaveChanges();
             context.Dispose();
             return login;
