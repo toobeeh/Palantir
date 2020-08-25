@@ -54,7 +54,7 @@ namespace Palantir
             {
                 bool own = false;
                 if(sprites[i] == '.') { own = true; i++; }
-                Sprite sprite = availableSprites.FirstOrDefault(s => s.ID == sprites[i]);
+                Sprite sprite = availableSprites[0];//.FirstOrDefault(s => s.ID == sprites[i]);
                 spriteInventory.Add(new SpriteProperty(sprite.Name, sprite.URL, sprite.Cost, sprite.ID, own));
             }
             return spriteInventory;
