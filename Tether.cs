@@ -269,18 +269,20 @@ namespace Palantir
 
                     if (player.Sender)
                     {
-                        sender += Formatter.Sanitize(player.Name);
-                        for (int i = player.Name.Length; i < 17; i++) sender += " ";
-                        sender += player.Score + " pts";
+                        string line = "";
+                        line += Formatter.Sanitize(player.Name);
+                        line += new string(' ', 18 - player.Name.Length);
+                        line += player.Score + " pts";
                         if (player.Score != 0)
                         {
                             if (scores.IndexOf(player.Score) == 0) sender += " 🏆 ";
                             if (scores.IndexOf(player.Score) == 1) sender += " 🥈 ";
                             if (scores.IndexOf(player.Score) == 2) sender += " 🥉 ";
                         }
-
-                        sender += "  🔮 " + BubbleWallet.GetBubbles(login) + " Bubbles";
-                        sender += player.Drawing ? " 🖍 \n" : "\n";
+                        line += new string(' ', 30 - line.Length);
+                        line += "  🔮 " + BubbleWallet.GetBubbles(login) + " Bubbles";
+                        line += player.Drawing ? " 🖍 \n" : "\n";
+                        sender += line;
                     }
                     else 
                     {
