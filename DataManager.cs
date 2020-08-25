@@ -167,15 +167,6 @@ namespace Palantir
             Database.Dispose();
         }
 
-        public string GetLoginOfMember(ulong id)
-        {
-            PalantirDbContext context = new PalantirDbContext();
-            string login = context.Members.FirstOrDefault(m => JsonConvert.DeserializeObject<Member>(m.Member).UserID == id.ToString()).Login;
-            context.SaveChanges();
-            context.Dispose();
-            return login;
-        }
-
         public void ActivatePalantiri()
         {
             PalantirTethers.ForEach((t) => { t.EstablishDataflow(); Console.WriteLine("Started " + t.PalantirEndpoint.GuildName); });

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 using System.Globalization;
+using Newtonsoft.Json;
 
 namespace Palantir
 {
@@ -87,6 +88,15 @@ namespace Palantir
             context.SaveChanges();
             context.Dispose();
             return ParseSpriteInventory(inventoryString);
+        }
+
+        public static string GetLoginOfMember(string id)
+        {
+            PalantirDbContext context = new PalantirDbContext();
+            string login = context.Members.FirstOrDefault(m => JsonConvert.DeserializeObject<Member>(m.Member).UserID == id).Login;
+            context.SaveChanges();
+            context.Dispose();
+            return login;
         }
     }
 

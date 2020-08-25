@@ -277,7 +277,8 @@ namespace Palantir
         {
             try
             {
-                string loginn = Program.Feanor.GetLoginOfMember(context.Message.Author.Id);
+                string loginn = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
+                await context.Channel.SendMessageAsync(loginn); ;
             }
             catch(Exception e)
             {
