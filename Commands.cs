@@ -277,31 +277,31 @@ namespace Palantir
         {
            
             string login = Program.Feanor.GetLoginOfMember(context.Message.Author);
-            //List<SpriteProperty> inventory = BubbleWallet.GetInventory(login);
+            List<SpriteProperty> inventory = BubbleWallet.GetInventory(login);
 
-            //DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
-            //embed.Color = DiscordColor.Magenta;
-            //embed.Title = context.Message.Author.Mention + "s Inventory:";
+            DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
+            embed.Color = DiscordColor.Magenta;
+            embed.Title = context.Message.Author.Mention + "s Inventory:";
 
-            //SpriteProperty active = null;
-            //string desc = "";
-            //inventory.OrderBy(s => s.ID).ToList().ForEach(s =>
-            //{
-            //    desc += "[" + s.ID + "] **" + s.Name + "**: Worth " + s.Cost + " Bubbles\n";
-            //    if (s.Activated) active = s;
-            //});
-            //if (active is object)
-            //{
-            //    desc += "\n**Selected sprite:**" + active.Name + "\n";
-            //    embed.ImageUrl = active.URL;
-            //}
-            //if (desc == "") desc = "You haven't unlocked any Sprites yet!\n";
-            //desc += "\nYou have " + BubbleWallet.CalculateCredit(login) + " Bubbles left to use and collected a total of " + BubbleWallet.GetBubbles(login);
+            SpriteProperty active = null;
+            string desc = "";
+            inventory.OrderBy(s => s.ID).ToList().ForEach(s =>
+            {
+                desc += "[" + s.ID + "] **" + s.Name + "**: Worth " + s.Cost + " Bubbles\n";
+                if (s.Activated) active = s;
+            });
+            if (active is object)
+            {
+                desc += "\n**Selected sprite:**" + active.Name + "\n";
+                embed.ImageUrl = active.URL;
+            }
+            if (desc == "") desc = "You haven't unlocked any Sprites yet!\n";
+            desc += "\nYou have " + BubbleWallet.CalculateCredit(login) + " Bubbles left to use and collected a total of " + BubbleWallet.GetBubbles(login);
 
-            //embed.Description = "";//desc;
-            //embed.WithFooter("Use `>sprite [number]` to select your Sprite!\n`>sprite 0` will set no sprite. ");
+            embed.Description = "";//desc;
+            embed.WithFooter("Use `>sprite [number]` to select your Sprite!\n`>sprite 0` will set no sprite. ");
 
-            await context.Channel.SendMessageAsync(login);
+            await context.Channel.SendMessageAsync(embed:embed);
            
         }
     }
