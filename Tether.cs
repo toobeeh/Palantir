@@ -278,8 +278,9 @@ namespace Palantir
                             if (scores.IndexOf(player.Score) == 1) sender += " 🥈 ";
                             if (scores.IndexOf(player.Score) == 2) sender += " 🥉 ";
                         }
+
+                        sender += "  🔮 " + BubbleWallet.GetBubbles(login) + " Bubbles";
                         sender += player.Drawing ? " 🖍 \n" : "\n";
-                        sender += "  🔮 " + BubbleWallet.GetBubbles(login);
                     }
                     else 
                     {

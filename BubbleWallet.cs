@@ -12,7 +12,7 @@ namespace Palantir
         public static void AddBubble(string login)
         {
             // Remove all ticks that passed the max tick interval
-            Ticks.Where(tick => (tick.Value > DateTime.UtcNow.AddSeconds(-10))).ToList().ForEach(tick => Ticks.Remove(tick.Key));
+            Ticks.Where(tick => (tick.Value < DateTime.UtcNow.AddSeconds(-10))).ToList().ForEach(tick => Ticks.Remove(tick.Key));
 
             if (Ticks.ContainsKey(login)) return;
 
