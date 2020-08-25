@@ -275,9 +275,9 @@ namespace Palantir
                         line += player.Score + " pts";
                         if (player.Score != 0)
                         {
-                            if (scores.IndexOf(player.Score) == 0) sender += " 🏆 ";
-                            if (scores.IndexOf(player.Score) == 1) sender += " 🥈 ";
-                            if (scores.IndexOf(player.Score) == 2) sender += " 🥉 ";
+                            if (scores.IndexOf(player.Score) == 0) line += " 🏆 ";
+                            if (scores.IndexOf(player.Score) == 1) line += " 🥈 ";
+                            if (scores.IndexOf(player.Score) == 2) line += " 🥉 ";
                         }
                         line += new string(' ', 30 - line.Length);
                         line += "  🔮 " + BubbleWallet.GetBubbles(login) + " Bubbles";
