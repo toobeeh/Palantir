@@ -169,10 +169,10 @@ namespace Palantir
 
         public string GetLoginOfMember(DiscordUser member)
         {
-            PalantirDbContext Database = new PalantirDbContext();
-            string login = Database.Members.FirstOrDefault(m => JsonConvert.DeserializeObject<Member>(m.Member).UserID == member.Id.ToString()).Login;
-            Database.SaveChanges();
-            Database.Dispose();
+            PalantirDbContext context = new PalantirDbContext();
+            string login = "65707469";//context.Members.FirstOrDefault(m => JsonConvert.DeserializeObject<Member>(m.Member).UserID == member.Id.ToString()).Login;
+            context.SaveChanges();
+            context.Dispose();
             return login;
         }
 
