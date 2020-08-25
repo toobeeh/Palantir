@@ -275,12 +275,12 @@ namespace Palantir
         [Command("inventory")]
         public async Task Inventory(CommandContext context)
         {
-            //string login = Program.Feanor.GetLoginOfMember(context.Message.Author);
-            List<SpriteProperty> inventory = BubbleWallet.GetInventory("65707469");
+            string login = Program.Feanor.GetLoginOfMember(context.Message.Author);
+            List<SpriteProperty> inventory = BubbleWallet.GetInventory(login);
 
             DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
             embed.Color = DiscordColor.Magenta;
-            embed.Title = context.Message.Author.Mention + "s Inventory:";
+            embed.Title = context.Message.Author.Username + "s Inventory";
 
             SpriteProperty active = null;
             string desc = "";
@@ -291,11 +291,11 @@ namespace Palantir
             });
             if (active is object)
             {
-                desc += "\n**Selected sprite:**" + active.Name + "\n";
+                desc += "\n**Selected sprite:** " + active.Name + "\n";
                 embed.ImageUrl = active.URL;
             }
             if (desc == "") desc = "You haven't unlocked any Sprites yet!\n";
-            desc += "\nYou have " + BubbleWallet.CalculateCredit("65707469") + " Bubbles left to use and collected a total of " + BubbleWallet.GetBubbles("65707469");
+            desc += "\nYou have " + BubbleWallet.CalculateCredit(login) + " Bubbles left to use and collected a total of " + BubbleWallet.GetBubbles(login);
 
             embed.Description = desc;
             embed.WithFooter("Use `>sprite [number]` to select your Sprite!\n`>sprite 0` will set no sprite. ");
