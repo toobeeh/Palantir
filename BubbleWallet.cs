@@ -6,7 +6,7 @@ using System.Globalization;
 
 namespace Palantir
 {
-    class BubbleWallet
+    public class BubbleWallet
     {
         public static Dictionary<string, DateTime> Ticks = new Dictionary<string, DateTime>();
         public static void AddBubble(string login)
@@ -44,6 +44,54 @@ namespace Palantir
             context.Dispose();
 
             return bubbles;
+        }
+
+        public static List<SpriteProperty> ParseSpriteInventory(string sprites)
+        {
+            List<Sprite> availableSprites = GetAvailableSprites();
+            List<SpriteProperty> spriteInventory = new List<SpriteProperty>();
+            for(int i=0; i<sprites.Length; i++)
+            {
+                bool own = false;
+                if(sprites[i] == '.') { own = true; i++; }
+                Sprite sprite = availableSprites.FirstOrDefault(s => s.ID == sprites[i]);
+                spriteInventory.Add(new SpriteProperty(sprite.Name, sprite.URL, sprite.Cost, sprite.ID, own));
+            }
+            return spriteInventory;
+        }
+
+        public static List<Sprite> GetAvailableSprites()
+        {
+            List<Sprite> sprites = new List<Sprite>();
+            PalantirDbContext context = new PalantirDbContext();
+            context.Sprites.ToList().ForEach(s => sprites.Add(new Sprite(s.Name, s.URL, s.Cost, s.ID)));
+            context.SaveChanges();
+            context.Dispose();
+            return sprites;
+        }
+    }
+
+    public class Sprite
+    {
+        public int ID;
+        public string Name;
+        public string URL;
+        public int Cost;
+        public Sprite(string name, string url, int cost, int id)
+        {
+            Name = name;
+            URL = url;
+            Cost = cost;
+            ID = id;
+        }
+    }
+
+    public class SpriteProperty : Sprite
+    {
+        public bool Activated;
+        public SpriteProperty(string name, string url, int cost, int id, bool activated) : base(name,url,cost,id)
+        {
+            Activated = activated;
         }
     }
 }

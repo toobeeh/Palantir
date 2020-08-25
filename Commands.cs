@@ -253,5 +253,22 @@ namespace Palantir
                 await channel.SendMessageAsync("Hey " + context.Message.Author.Username + "!\nYou can now login to the bowser extension and use Palantir.\nClick the extension icon in your browser, enter your login and add you discord server's token! \nYour login is: `" + member.UserLogin + "`");
             }
         }
+
+        [Description("Get a list of all sprites in the store.")]
+        [Command("sprites")]
+        public async Task Sprites(CommandContext context)
+        {
+            List<Sprite> sprites = BubbleWallet.GetAvailableSprites();
+
+            sprites.ForEach(async s =>
+            {
+                DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
+                embed.Color = DiscordColor.Blurple;
+                embed.Title = s.Name;
+                embed.ImageUrl = s.URL;
+                embed.Description = "**Costs:** " + s.Cost + " Bubbles";
+                await context.Channel.SendMessageAsync(embed: embed);
+            });
+        }
     }
 }

@@ -17,6 +17,7 @@ namespace Palantir
         public DbSet<GuildSettingsEntity> GuildSettings { get; set; }
         public DbSet<StatusEntity> Status { get; set; }
         public DbSet<OnlineSpritesEntity> OnlineSprites { get; set; }
+        public DbSet<SpritesEntity> Sprites { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
             => options.UseSqlite("Data Source=/home/pi/Database/palantir.db");
@@ -44,6 +45,7 @@ namespace Palantir
         public int ID { get; set; }
         public string Name { get; set; }
         public string URL { get; set; }
+        public int Cost { get; set; }
     }
     public class ReportEntity
     {

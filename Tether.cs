@@ -279,7 +279,7 @@ namespace Palantir
                             if (scores.IndexOf(player.Score) == 1) line += " 🥈 ";
                             if (scores.IndexOf(player.Score) == 2) line += " 🥉 ";
                         }
-                        line += new string(' ', 30 - line.Length);
+                        line += new string(' ', 40 - line.Length);
                         line += "  🔮 " + BubbleWallet.GetBubbles(login) + " Bubbles";
                         line += player.Drawing ? " 🖍 \n" : "\n";
                         sender += line;
