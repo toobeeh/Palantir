@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.IO;
+using DSharpPlus.Entities;
 
 namespace Palantir
 {
@@ -164,6 +165,15 @@ namespace Palantir
             Database.Members.Add(entity);
             Database.SaveChanges();
             Database.Dispose();
+        }
+
+        public string GetLoginOfMember(DiscordUser member)
+        {
+            PalantirDbContext Database = new PalantirDbContext();
+            string login = Database.Members.FirstOrDefault(m => JsonConvert.DeserializeObject<Member>(m.Member).UserID == member.Id.ToString()).Login;
+            Database.SaveChanges();
+            Database.Dispose();
+            return login;
         }
 
         public void ActivatePalantiri()

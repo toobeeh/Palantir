@@ -69,6 +69,25 @@ namespace Palantir
             context.Dispose();
             return sprites;
         }
+
+        public static int CalculateCredit(string login)
+        {
+            int total = GetBubbles(login);
+            GetInventory(login).ForEach(s =>
+            {
+                total -= s.Cost;
+            });
+            return total;
+        }
+
+        public static List<SpriteProperty> GetInventory(string login)
+        {
+            PalantirDbContext context = new PalantirDbContext();
+            string inventoryString = context.Members.FirstOrDefault(m => m.Login == login).Sprites;
+            context.SaveChanges();
+            context.Dispose();
+            return ParseSpriteInventory(inventoryString);
+        }
     }
 
     public class Sprite
