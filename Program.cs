@@ -21,7 +21,7 @@ namespace Palantir
 
             Client = new DiscordClient(new DiscordConfiguration
             {
-                Token = File.ReadAllText(" / home/pi/palantirToken.txt"),
+                Token = File.ReadAllText("/home/pi/palantirToken.txt"),
                 TokenType = TokenType.Bot
             });
             Commands = Client.UseCommandsNext(new CommandsNextConfiguration
