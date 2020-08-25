@@ -167,10 +167,10 @@ namespace Palantir
             Database.Dispose();
         }
 
-        public string GetLoginOfMember(DiscordUser member)
+        public string GetLoginOfMember(ulong id)
         {
             PalantirDbContext context = new PalantirDbContext();
-            string login = context.Members.FirstOrDefault(m => JsonConvert.DeserializeObject<Member>(m.Member).UserID == member.Id.ToString()).Login;
+            string login = context.Members.FirstOrDefault(m => JsonConvert.DeserializeObject<Member>(m.Member).UserID == id.ToString()).Login;
             context.SaveChanges();
             context.Dispose();
             return login;
