@@ -300,8 +300,8 @@ namespace Palantir
             if (inventory.Count <= 0) desc = "You haven't unlocked any sprites yet!";
             desc += "\n" + BubbleWallet.CalculateCredit(login) + " Bubbles left to use. \n"+ BubbleWallet.GetBubbles(login) + " total collected Bubbles";
 
-            embed.AddField("\n ", desc);
-            embed.AddField("\n ", "Use `>sprite [number]` to select your Sprite!\n`>sprite 0` will set no sprite.\nBuy a sprite with `>buy [number]`. ");
+            embed.AddField("\u200b ", desc);
+            embed.AddField("\u200b ", "Use `>sprite [number]` to select your Sprite!\n`>sprite 0` will set no sprite.\nBuy a sprite with `>buy [number]`. ");
 
             await context.Channel.SendMessageAsync(embed:embed);
            
