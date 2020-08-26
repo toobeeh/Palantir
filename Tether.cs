@@ -272,9 +272,9 @@ namespace Palantir
                         if (onlinesprite is null)
                         {
                             onlinesprite = new OnlineSpritesEntity();
-                            onlinesprite.Date = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss");
                             onlinesprite.LobbyKey = l.Key;
                             onlinesprite.LobbyPlayerID = player.LobbyPlayerID;
+                            Database.OnlineSprites.Add(onlinesprite);
                         }
                         onlinesprite.Sprite = playersprite is object ? playersprite.ID.ToString() : "0";
                         onlinesprite.Date = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss");
