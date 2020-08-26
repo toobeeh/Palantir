@@ -294,17 +294,25 @@ namespace Palantir
             string desc = "";
             if (active is object)
             {
-                desc += "\n**Selected sprite:** " + active.Name + "\n";
+                desc += "\n**Selected sprite:** " + active.Name;
                 embed.ImageUrl = active.URL;
             }
             if (desc == "") desc = "You haven't unlocked any sprites yet!\n";
             desc += "\nYou have " + BubbleWallet.CalculateCredit(login) + " Bubbles left to use and collected a total of " + BubbleWallet.GetBubbles(login);
 
-            embed.AddField("🔮", desc);
-            embed.AddField("🔮", "Use `>sprite [number]` to select your Sprite!\n`>sprite 0` will set no sprite. ");
+            embed.AddField("\n🔮", desc);
+            embed.AddField("\n🔮", "Use `>sprite [number]` to select your Sprite!\n`>sprite 0` will set no sprite. ");
 
             await context.Channel.SendMessageAsync(embed:embed);
            
+        }
+
+        [Description("Choose your sprite.")]
+        [Command("sprite")]
+        public async Task Sprite(CommandContext context, int sprite)
+        {
+           
+
         }
     }
 }
