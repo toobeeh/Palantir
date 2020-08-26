@@ -55,13 +55,14 @@ namespace Palantir
             {
                 bool own = false;
                 if(sprites[i] == '.') { own = true; i++; }
-                Sprite sprite = new Sprite(string.Join(',',availableSprites),availableSprites.Count.ToString(),1,1);
-                //availableSprites.ForEach(s =>
-                //{
-                //    if (s.ID == sprites[i]) sprite = s;
-                //});
-
-                if(sprite is object) spriteInventory.Add(new SpriteProperty(sprite.Name, sprite.URL, sprite.Cost, sprite.ID, false));
+                Sprite sprite;// = new Sprite(string.Join(',',availableSprites),availableSprites.Count.ToString(),1,1);
+                availableSprites.ForEach(s =>
+                {
+                    if (s.ID == sprites[i])
+                    {
+                        spriteInventory.Add(new SpriteProperty(s.Name, s.URL, s.Cost, s.ID, false));
+                    }
+                });
             }
             return spriteInventory;
         }
