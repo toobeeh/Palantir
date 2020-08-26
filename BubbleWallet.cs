@@ -57,10 +57,10 @@ namespace Palantir
                 if(sprites[i] == '.') { own = true; i++; }
                 availableSprites.ForEach(s =>
                 {
-                    if (s.ID == Convert.ToInt32(sprites[i]))
-                    {
+                    //if (s.ID == Convert.ToInt32(sprites[i]))
+                    //{
                         spriteInventory.Add(new SpriteProperty(s.Name, s.URL, s.Cost, s.ID, own));
-                    }
+                    //}
                 });
             }
             return spriteInventory;
