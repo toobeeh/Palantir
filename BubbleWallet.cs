@@ -58,7 +58,14 @@ namespace Palantir
                 if (i.StartsWith(".")) { own = true; i = i.Replace(".", ""); }
                 availableSprites.ForEach(s =>
                 {
-                    if (s.ID == Convert.ToInt32(i)) spriteInventory.Add(new SpriteProperty(s.Name, s.URL, s.Cost, s.ID, own));
+                    try
+                    {
+                        if (s.ID == Convert.ToInt32(i)) spriteInventory.Add(new SpriteProperty(s.Name, s.URL, s.Cost, s.ID, own));
+                    }
+                    catch(Exception e)
+                    {
+                        Console.WriteLine("Error parsing " + i + " from " + sprites + " : " + e.ToString());
+                    }
                 });
             });
             return spriteInventory;
