@@ -67,9 +67,10 @@ namespace Palantir
         public static string SetInventory(List<SpriteProperty> sprites, string login)
         {
             string inv = "";
+            List<Sprite> available = GetAvailableSprites();
             sprites.ForEach(s =>
             {
-                inv += (s.Activated ? "." : "") + s.ID + ",";
+                if(available.Any(a=>a.ID == s.ID)) inv += (s.Activated ? "." : "") + s.ID + ",";
             });
             inv = inv.Remove(inv.Length - 1);
             PalantirDbContext context = new PalantirDbContext();
