@@ -277,8 +277,16 @@ namespace Palantir
         public async Task Inventory(CommandContext context)
         {
             string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
-
-            List<SpriteProperty> inventory = BubbleWallet.GetInventory(login);
+            List<SpriteProperty> inventory;
+            try
+            {
+                inventory = BubbleWallet.GetInventory(login);
+            }
+            catch(Exception e)
+            {
+                await Program.SendEmbed(context.Channel, "Error executing command", e.ToString());
+                return;
+            }
 
             DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
             embed.Color = DiscordColor.Magenta;
@@ -313,15 +321,20 @@ namespace Palantir
         public async Task Sprite(CommandContext context, int sprite)
         {
             string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
-            List<SpriteProperty> inventory = BubbleWallet.GetInventory(login);
-
-            if(sprite !=0 && !inventory.Any(s=>s.ID == sprite))
+            List<SpriteProperty> inventory;
+            try
             {
-                DiscordEmbedBuilder embedErr = new DiscordEmbedBuilder();
-                embedErr.Title = "Hold on!";
-                embedErr.Description = "You dont own that. \nGet it first with `>buy " + sprite + "`";
-                embedErr.Color = DiscordColor.Magenta;
-                await context.Channel.SendMessageAsync(embed: embedErr);
+                inventory = BubbleWallet.GetInventory(login);
+            }
+            catch (Exception e)
+            {
+                await Program.SendEmbed(context.Channel, "Error executing command", e.ToString());
+                return;
+            }
+
+            if (sprite !=0 && !inventory.Any(s=>s.ID == sprite))
+            {
+                await Program.SendEmbed(context.Channel, "Hold on!", "You dont own that. \nGet it first with `>buy " + sprite + "`");
                 return;
             }
 
@@ -340,26 +353,27 @@ namespace Palantir
         public async Task Buy(CommandContext context, int sprite)
         {
             string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
-            List<SpriteProperty> inventory = BubbleWallet.GetInventory(login);
+            List<SpriteProperty> inventory;
+            try
+            {
+                inventory = BubbleWallet.GetInventory(login);
+            }
+            catch (Exception e)
+            {
+                await Program.SendEmbed(context.Channel, "Error executing command", e.ToString());
+                return;
+            }
             List<Sprite> available = BubbleWallet.GetAvailableSprites();
 
             if (inventory.Any(s => s.ID == sprite))
             {
-                DiscordEmbedBuilder embedErr = new DiscordEmbedBuilder();
-                embedErr.Title = "Woah!!";
-                embedErr.Description = "Bubbles are precious. \nDon't pay for something you already own!";
-                embedErr.Color = DiscordColor.Magenta;
-                await context.Channel.SendMessageAsync(embed: embedErr);
+                await Program.SendEmbed(context.Channel, "Woah!!", "Bubbles are precious. \nDon't pay for something you already own!");
                 return;
             }
 
             if (!available.Any(s => s.ID == sprite))
             {
-                DiscordEmbedBuilder embedErr = new DiscordEmbedBuilder();
-                embedErr.Title = "Eh...?";
-                embedErr.Description = "Can't find that sprite. \nChoose another one or keep your bubbles.";
-                embedErr.Color = DiscordColor.Magenta;
-                await context.Channel.SendMessageAsync(embed: embedErr);
+                await Program.SendEmbed(context.Channel, "Eh...?", "Can't find that sprite. \nChoose another one or keep your bubbles.");
                 return;
             }
 
@@ -367,11 +381,7 @@ namespace Palantir
             int credit = BubbleWallet.CalculateCredit(login);
             if (credit < target.Cost)
             {
-                DiscordEmbedBuilder embedErr = new DiscordEmbedBuilder();
-                embedErr.Title = "Haha, nice try -.-";
-                embedErr.Description = "That stuff is too expensive for you. \nSpend few more hours on skribbl.";
-                embedErr.Color = DiscordColor.Magenta;
-                await context.Channel.SendMessageAsync(embed: embedErr);
+                await Program.SendEmbed(context.Channel, "Haha, nice try -.-", "That stuff is too expensive for you. \nSpend few more hours on skribbl.");
                 return;
             }
 

@@ -66,6 +66,7 @@ namespace Palantir
                     catch(Exception e)
                     {
                         Console.WriteLine("Error parsing " + i + " from " + sprites + " : " + e.ToString());
+                        throw new InvalidCastException("Could not parse inventory string " + sprites + " at " + i + "\n" + e.ToString());
                     }
                 });
             });
@@ -131,6 +132,11 @@ namespace Palantir
             PalantirDbContext context = new PalantirDbContext();
 
             context.OnlineSprites.RemoveRange(context.OnlineSprites.Where(o => o.LobbyKey == lobbyKey && lobbyPlayerID == o.LobbyPlayerID));
+            try
+            {
+                context.SaveChanges();
+            }
+            catch (Exception e) { Console.WriteLine("Error deleting sprite:\n" + e); }
 
             OnlineSpritesEntity newsprite = new OnlineSpritesEntity();
             newsprite.LobbyKey = lobbyKey;
@@ -138,7 +144,6 @@ namespace Palantir
             newsprite.Date = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss");
             newsprite.Sprite = playersprite is object ? playersprite.ID.ToString() : "0";
             context.OnlineSprites.Add(newsprite);
-           
            
             try
             {
