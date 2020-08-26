@@ -117,6 +117,34 @@ namespace Palantir
             context.Dispose();
             return login;
         }
+
+        public static void SetOnlineSprite(string login, string lobbyKey, string lobbyPlayerID){
+            Sprite playersprite = GetInventory(login).FirstOrDefault(i => i.Activated);
+            PalantirDbContext context = new PalantirDbContext();
+            OnlineSpritesEntity onlinesprite = context.OnlineSprites.FirstOrDefault(o => o.LobbyKey == lobbyKey && lobbyPlayerID == o.LobbyPlayerID);
+
+            if (onlinesprite is null)
+            {
+                OnlineSpritesEntity newsprite = new OnlineSpritesEntity();
+                newsprite.LobbyKey = lobbyKey;
+                newsprite.LobbyPlayerID = lobbyPlayerID;
+                newsprite.Date = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss");
+                newsprite.Sprite = playersprite is object ? playersprite.ID.ToString() : "0";
+                context.OnlineSprites.Add(onlinesprite);
+            }
+            else
+            {
+                onlinesprite.Sprite = playersprite is object ? playersprite.ID.ToString() : "0";
+                onlinesprite.Date = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss");
+            }
+           
+            try
+            {
+                context.SaveChanges();
+            }
+            catch (Exception e) { Console.WriteLine(e); }
+        }
+
     }
 
     public class Sprite
