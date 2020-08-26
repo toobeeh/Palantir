@@ -51,18 +51,29 @@ namespace Palantir
         {
             List<Sprite> availableSprites = GetAvailableSprites();
             List<SpriteProperty> spriteInventory = new List<SpriteProperty>();
-            for(int i=0; i<sprites.Length; i++)
+            List<string> spriteIds = sprites.Split(',').ToList();
+            //for(int i=0; i<sprites.Length; i++)
+            //{
+            //    bool own = false;
+            //    if(sprites[i] == '.') { own = true; i++; }
+            //    availableSprites.ForEach(s =>
+            //    {
+            //        if (s.ID == Convert.ToInt32(sprites[i]))
+            //        {
+            //        spriteInventory.Add(new SpriteProperty(s.Name, s.URL, s.Cost, s.ID, own));
+            //        }
+            //    });
+            //}
+            spriteIds.ForEach(i =>
             {
                 bool own = false;
-                if(sprites[i] == '.') { own = true; i++; }
+                if (i.StartsWith(".")) { own = true; i = i.Remove(0); }
                 availableSprites.ForEach(s =>
                 {
-                    //if (s.ID == Convert.ToInt32(sprites[i]))
-                    //{
+                    if (s.ID == Convert.ToInt32(i))
                         spriteInventory.Add(new SpriteProperty(s.Name, s.URL, s.Cost, s.ID, own));
-                    //}
                 });
-            }
+            });
             return spriteInventory;
         }
 
