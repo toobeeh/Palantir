@@ -278,8 +278,11 @@ namespace Palantir
                         }
                         onlinesprite.Sprite = playersprite is object ? playersprite.ID.ToString() : "0";
                         onlinesprite.Date = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss");
-
-                        Database.SaveChanges();
+                        try
+                        {
+                            Database.SaveChanges();
+                        }
+                        catch(Exception e) { Console.WriteLine(e); }
                     }
 
                     if (player.Sender)
