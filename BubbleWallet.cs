@@ -123,24 +123,24 @@ namespace Palantir
             PalantirDbContext context = new PalantirDbContext();
             OnlineSpritesEntity onlinesprite = context.OnlineSprites.FirstOrDefault(o => o.LobbyKey == lobbyKey && lobbyPlayerID == o.LobbyPlayerID);
 
-            if (onlinesprite is null)
+            if (onlinesprite is object) context.OnlineSprites.Remove(onlinesprite);
+
+            try
             {
-                OnlineSpritesEntity newsprite = new OnlineSpritesEntity();
-                newsprite.LobbyKey = lobbyKey;
-                newsprite.LobbyPlayerID = lobbyPlayerID;
-                newsprite.Date = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss");
-                newsprite.Sprite = playersprite is object ? playersprite.ID.ToString() : "0";
-                context.OnlineSprites.Add(onlinesprite);
+                context.SaveChanges();
             }
-            else
-            {
-                onlinesprite.Sprite = playersprite is object ? playersprite.ID.ToString() : "0";
-                onlinesprite.Date = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss");
-            }
+            catch (Exception e) { Console.WriteLine("Error writing sprite:\n" + e); }
+
+            OnlineSpritesEntity newsprite = new OnlineSpritesEntity();
+            newsprite.LobbyKey = lobbyKey;
+            newsprite.LobbyPlayerID = lobbyPlayerID;
+            newsprite.Date = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss");
+            newsprite.Sprite = playersprite is object ? playersprite.ID.ToString() : "0";
+            context.OnlineSprites.Add(onlinesprite);
+           
            
             try
             {
-                context.OnlineSprites.Update(onlinesprite);
                 context.SaveChanges();
             }
             catch (Exception e) { Console.WriteLine("Error writing sprite:\n" + e); }
