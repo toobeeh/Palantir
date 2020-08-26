@@ -297,11 +297,11 @@ namespace Palantir
                 desc += "\n**Selected sprite:** " + active.Name;
                 embed.ImageUrl = active.URL;
             }
-            if (desc == "") desc = "You haven't unlocked any sprites yet!\n";
+            if (desc == "") desc = "You haven't unlocked any sprites yet!";
             desc += "\nYou have " + BubbleWallet.CalculateCredit(login) + " Bubbles left to use and collected a total of " + BubbleWallet.GetBubbles(login);
 
-            embed.AddField("\n🔮", desc);
-            embed.AddField("\n🔮", "Use `>sprite [number]` to select your Sprite!\n`>sprite 0` will set no sprite. ");
+            embed.AddField("🔮", desc);
+            embed.AddField("🔮", "Use `>sprite [number]` to select your Sprite!\n`>sprite 0` will set no sprite. ");
 
             await context.Channel.SendMessageAsync(embed:embed);
            
@@ -311,7 +311,26 @@ namespace Palantir
         [Command("sprite")]
         public async Task Sprite(CommandContext context, int sprite)
         {
-           
+            string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
+            List<SpriteProperty> inventory = BubbleWallet.GetInventory(login);
+
+            if(sprite !=0 && !inventory.Any(s=>s.ID == sprite))
+            {
+                DiscordEmbedBuilder embedErr = new DiscordEmbedBuilder();
+                embedErr.Title = "Hold on!";
+                embedErr.Description = "You dont own that. \nGet it first with `pay " + sprite + "`";
+                embedErr.Color = DiscordColor.Magenta;
+                await context.Channel.SendMessageAsync(embed: embedErr);
+                return;
+            }
+
+            inventory.ForEach(i => i.Activated = i.ID == sprite);
+            BubbleWallet.SetInventory(inventory, login);
+
+            DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
+            embed.Title = "Sprite was updated to #" + sprite;
+            embed.Color = DiscordColor.Magenta;
+            await context.Channel.SendMessageAsync(embed: embed);
 
         }
     }

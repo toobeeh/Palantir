@@ -64,6 +64,21 @@ namespace Palantir
             return spriteInventory;
         }
 
+        public static string SetInventory(List<SpriteProperty> sprites, string login)
+        {
+            string inv = "";
+            sprites.ForEach(s =>
+            {
+                inv += (s.Activated ? "." : "") + s.ID + ",";
+            });
+            inv = inv.Remove(inv.Length - 1);
+            PalantirDbContext context = new PalantirDbContext();
+            context.Members.FirstOrDefault(m => m.Login == login).Sprites = inv;
+            context.SaveChanges();
+            context.Dispose();
+            return inv;
+        }
+
         public static List<Sprite> GetAvailableSprites()
         {
             List<Sprite> sprites = new List<Sprite>();
