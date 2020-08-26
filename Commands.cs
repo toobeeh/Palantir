@@ -284,12 +284,14 @@ namespace Palantir
             embed.Title = context.Message.Author.Username + "s Inventory";
 
             SpriteProperty active = null;
-            string desc = "";
+            
             inventory.OrderBy(s => s.ID).ToList().ForEach(s =>
             {
-                embed.AddField("**" + s.Name + "**", "#" + s.ID + " 🔮  Worth " + s.Cost + " Bubbles\n");
+                embed.AddField("**" + s.Name + "**", "#" + s.ID + " |  Worth " + s.Cost + " Bubbles\n");
                 if (s.Activated) active = s;
             });
+
+            string desc = "";
             if (active is object)
             {
                 desc += "\n**Selected sprite:** " + active.Name + "\n";
@@ -298,8 +300,8 @@ namespace Palantir
             if (desc == "") desc = "You haven't unlocked any sprites yet!\n";
             desc += "\nYou have " + BubbleWallet.CalculateCredit(login) + " Bubbles left to use and collected a total of " + BubbleWallet.GetBubbles(login);
 
-            embed.AddField("\n", desc);
-            embed.AddField("\n","Use `>sprite [number]` to select your Sprite!\n`>sprite 0` will set no sprite. ");
+            embed.AddField("🔮", desc);
+            embed.AddField("🔮", "Use `>sprite [number]` to select your Sprite!\n`>sprite 0` will set no sprite. ");
 
             await context.Channel.SendMessageAsync(embed:embed);
            
