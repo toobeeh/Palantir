@@ -140,6 +140,7 @@ namespace Palantir
            
             try
             {
+                context.OnlineSprites.Update(onlinesprite);
                 context.SaveChanges();
             }
             catch (Exception e) { Console.WriteLine("Error writing sprite:\n" + e); }
