@@ -121,22 +121,15 @@ namespace Palantir
         public static void SetOnlineSprite(string login, string lobbyKey, string lobbyPlayerID){
             Sprite playersprite = GetInventory(login).FirstOrDefault(i => i.Activated);
             PalantirDbContext context = new PalantirDbContext();
-            OnlineSpritesEntity onlinesprite = context.OnlineSprites.FirstOrDefault(o => o.LobbyKey == lobbyKey && lobbyPlayerID == o.LobbyPlayerID);
 
-            if (onlinesprite is object) context.OnlineSprites.Remove(onlinesprite);
-
-            try
-            {
-                context.SaveChanges();
-            }
-            catch (Exception e) { Console.WriteLine("Error writing sprite:\n" + e); }
+            context.OnlineSprites.RemoveRange(context.OnlineSprites.Where(o => o.LobbyKey == lobbyKey && lobbyPlayerID == o.LobbyPlayerID));
 
             OnlineSpritesEntity newsprite = new OnlineSpritesEntity();
             newsprite.LobbyKey = lobbyKey;
             newsprite.LobbyPlayerID = lobbyPlayerID;
             newsprite.Date = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss");
             newsprite.Sprite = playersprite is object ? playersprite.ID.ToString() : "0";
-            context.OnlineSprites.Add(onlinesprite);
+            context.OnlineSprites.Add(newsprite);
            
            
             try
