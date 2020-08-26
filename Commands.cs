@@ -297,11 +297,11 @@ namespace Palantir
                 desc += "\n**Selected sprite:** " + active.Name;
                 embed.ImageUrl = active.URL;
             }
-            if (desc == "") desc = "You haven't unlocked any sprites yet!";
+            if (inventory.Count <= 0) desc = "You haven't unlocked any sprites yet!";
             desc += "\nYou have " + BubbleWallet.CalculateCredit(login) + " Bubbles left to use and collected a total of " + BubbleWallet.GetBubbles(login);
 
             embed.AddField("🔮", desc);
-            embed.AddField("🔮", "Use `>sprite [number]` to select your Sprite!\n`>sprite 0` will set no sprite. ");
+            embed.AddField("🔮", "Use `>sprite [number]` to select your Sprite!\n`>sprite 0` will set no sprite.\nBuy a sprite with `>buy [number]`. ");
 
             await context.Channel.SendMessageAsync(embed:embed);
            
@@ -318,7 +318,7 @@ namespace Palantir
             {
                 DiscordEmbedBuilder embedErr = new DiscordEmbedBuilder();
                 embedErr.Title = "Hold on!";
-                embedErr.Description = "You dont own that. \nGet it first with `pay " + sprite + "`";
+                embedErr.Description = "You dont own that. \nGet it first with `buy " + sprite + "`";
                 embedErr.Color = DiscordColor.Magenta;
                 await context.Channel.SendMessageAsync(embed: embedErr);
                 return;
@@ -328,10 +328,62 @@ namespace Palantir
             BubbleWallet.SetInventory(inventory, login);
 
             DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
-            embed.Title = "Sprite was updated to #" + sprite;
+            embed.Title = ">Your fancy sprite was set to #" + sprite;
             embed.Color = DiscordColor.Magenta;
             await context.Channel.SendMessageAsync(embed: embed);
 
+        }
+
+        [Description("Buy a sprite.")]
+        [Command("buy")]
+        public async Task Buy(CommandContext context, int sprite)
+        {
+            string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
+            List<SpriteProperty> inventory = BubbleWallet.GetInventory(login);
+            List<Sprite> available = BubbleWallet.GetAvailableSprites();
+
+            if (inventory.Any(s => s.ID == sprite))
+            {
+                DiscordEmbedBuilder embedErr = new DiscordEmbedBuilder();
+                embedErr.Title = "Woah!!";
+                embedErr.Description = "Bubbles are precious. \nDon't pay for something you already own!";
+                embedErr.Color = DiscordColor.Magenta;
+                await context.Channel.SendMessageAsync(embed: embedErr);
+                return;
+            }
+
+            if (!available.Any(s => s.ID == sprite))
+            {
+                DiscordEmbedBuilder embedErr = new DiscordEmbedBuilder();
+                embedErr.Title = "Eh...?";
+                embedErr.Description = "Can't find that sprite. \nChoose another one or keep your bubbles.";
+                embedErr.Color = DiscordColor.Magenta;
+                await context.Channel.SendMessageAsync(embed: embedErr);
+                return;
+            }
+
+            Sprite target = available.FirstOrDefault(s => s.ID == sprite);
+            int credit = BubbleWallet.CalculateCredit(login);
+            if (credit < target.Cost)
+            {
+                DiscordEmbedBuilder embedErr = new DiscordEmbedBuilder();
+                embedErr.Title = "Haha, nice try -.-";
+                embedErr.Description = "That stuff is too expensive for you. \nSpend few more hours on skribbl.";
+                embedErr.Color = DiscordColor.Magenta;
+                await context.Channel.SendMessageAsync(embed: embedErr);
+                return;
+            }
+
+            inventory.Add(new SpriteProperty(target.Name, target.URL, target.Cost, target.ID, false));
+            BubbleWallet.SetInventory(inventory, login);
+
+            DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
+            embed.Title = "Whee!";
+            embed.Description = "You unlocked **" + target.Name + "**!\nActivate it with `>sprite " + target.ID + "`" ;
+            embed.Color = DiscordColor.Magenta;
+            embed.ImageUrl = target.URL;
+            await context.Channel.SendMessageAsync(embed: embed);
+            return;
         }
     }
 }
