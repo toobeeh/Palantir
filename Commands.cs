@@ -318,7 +318,7 @@ namespace Palantir
             {
                 DiscordEmbedBuilder embedErr = new DiscordEmbedBuilder();
                 embedErr.Title = "Hold on!";
-                embedErr.Description = "You dont own that. \nGet it first with `buy " + sprite + "`";
+                embedErr.Description = "You dont own that. \nGet it first with `>buy " + sprite + "`";
                 embedErr.Color = DiscordColor.Magenta;
                 await context.Channel.SendMessageAsync(embed: embedErr);
                 return;
@@ -328,7 +328,7 @@ namespace Palantir
             BubbleWallet.SetInventory(inventory, login);
 
             DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
-            embed.Title = ">Your fancy sprite was set to #" + sprite;
+            embed.Title = "Your fancy sprite was set to #" + sprite;
             embed.Color = DiscordColor.Magenta;
             await context.Channel.SendMessageAsync(embed: embed);
 
