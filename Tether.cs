@@ -265,6 +265,21 @@ namespace Palantir
                         player.ID = match.PlayerMember.UserID;
                         login = match.PlayerMember.UserLogin;
                         BubbleWallet.AddBubble(login);
+
+                        Sprite playersprite = BubbleWallet.GetInventory(login).FirstOrDefault(i => i.Activated);
+                        OnlineSpritesEntity onlinesprite = Database.OnlineSprites.FirstOrDefault(o => o.LobbyKey == l.Key && player.LobbyPlayerID == o.LobbyPlayerID);
+                        
+                        if (onlinesprite is null)
+                        {
+                            onlinesprite = new OnlineSpritesEntity();
+                            onlinesprite.Date = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss");
+                            onlinesprite.LobbyKey = l.Key;
+                            onlinesprite.LobbyPlayerID = player.LobbyPlayerID;
+                        }
+                        onlinesprite.Sprite = playersprite is object ? playersprite.ID.ToString() : "0";
+                        onlinesprite.Date = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss");
+
+                        Database.SaveChanges();
                     }
 
                     if (player.Sender)

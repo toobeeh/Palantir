@@ -298,10 +298,10 @@ namespace Palantir
                 embed.ImageUrl = active.URL;
             }
             if (inventory.Count <= 0) desc = "You haven't unlocked any sprites yet!";
-            desc += "\nYou have " + BubbleWallet.CalculateCredit(login) + " Bubbles left to use and collected a total of " + BubbleWallet.GetBubbles(login);
+            desc += "\n" + BubbleWallet.CalculateCredit(login) + " Bubbles left to use. \n"+ BubbleWallet.GetBubbles(login) + " total collected Bubbles";
 
-            embed.AddField("🔮", desc);
-            embed.AddField("🔮", "Use `>sprite [number]` to select your Sprite!\n`>sprite 0` will set no sprite.\nBuy a sprite with `>buy [number]`. ");
+            embed.AddField("**|**", desc);
+            embed.AddField("**|**", "Use `>sprite [number]` to select your Sprite!\n`>sprite 0` will set no sprite.\nBuy a sprite with `>buy [number]`. ");
 
             await context.Channel.SendMessageAsync(embed:embed);
            
