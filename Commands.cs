@@ -6,6 +6,7 @@ using DSharpPlus.CommandsNext.Attributes;
 using System.Threading.Tasks;
 using DSharpPlus.Entities;
 using System.Linq;
+using Newtonsoft.Json;
 
 namespace Palantir
 {
@@ -281,7 +282,7 @@ namespace Palantir
 
             DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
             embed.Color = DiscordColor.Magenta;
-            embed.Title = context.Message.Author.Username + "s Inventory";
+            embed.Title = "🔮  " + context.Message.Author.Username + "s Inventory";
 
             SpriteProperty active = null;
             
@@ -384,6 +385,25 @@ namespace Palantir
             embed.ImageUrl = target.URL;
             await context.Channel.SendMessageAsync(embed: embed);
             return;
+        }
+
+        [Description("See who's got the most bubbles.")]
+        [Command("Leaderboard")]
+        public async Task Leaderboard(CommandContext context)
+        {
+            List<MemberEntity> members = Program.Feanor.GetGuildMembers(context.Guild.Id.ToString());
+            
+            DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
+            embed.Title = "Leaderboard of " + context.Guild.Name;
+            embed.Color = DiscordColor.Magenta;
+
+            members.ForEach(async m =>
+            {
+                string name = (await context.Guild.GetMemberAsync(Convert.ToUInt64(JsonConvert.DeserializeObject<Member>(m.Member).UserID))).Username;
+                embed.AddField("**#" + (members.IndexOf(m) + 1).ToString() + " - " + name + "**", BubbleWallet.GetBubbles(m.Login).ToString() + " Bubbles\n\u200b");
+            });
+
+            await context.Channel.SendMessageAsync(embed: embed);
         }
     }
 }

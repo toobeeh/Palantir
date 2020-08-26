@@ -167,6 +167,14 @@ namespace Palantir
             Database.Dispose();
         }
 
+        public List<MemberEntity> GetGuildMembers(string guildID)
+        {
+            PalantirDbContext context = new PalantirDbContext();
+            List<MemberEntity> members = context.Members.Where(m => m.Member.Contains(guildID)).ToList();
+            context.Dispose();
+            return members;
+        }
+
         public void ActivatePalantiri()
         {
             PalantirTethers.ForEach((t) => { t.EstablishDataflow(); Console.WriteLine("Started " + t.PalantirEndpoint.GuildName); });

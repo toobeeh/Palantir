@@ -223,7 +223,7 @@ namespace Palantir
                 }
             });
 
-            message += "```css\nUpdate info: Collect bubbles to unlock new sprites!\n Try out the bot commands >inventory and >sprites!```\n\n";
+            message += "```css\nUpdate info: Collect bubbles to unlock new sprites!\nTry out the bot commands '>inventory' and '>sprites'!```\n\n";
 
             message += PalantirSettings.Header + "\n";
             if(PalantirSettings.ShowRefreshed) message += "Refreshed: " + DateTime.UtcNow.AddHours(PalantirSettings.Timezone).ToShortTimeString() + " (UTC " + PalantirSettings.Timezone.ToString("+0;-#") + ")\n"; 
@@ -282,7 +282,7 @@ namespace Palantir
                             if (scores.IndexOf(player.Score) == 1) line += " 🥈 ";
                             if (scores.IndexOf(player.Score) == 2) line += " 🥉 ";
                         }
-                        line += new string(' ', 40 - line.Length);
+                        line += new string(' ', 35 - line.Length);
                         line += "  🔮 " + BubbleWallet.GetBubbles(login) + " Bubbles";
                         line += player.Drawing ? " 🖍 \n" : "\n";
                         sender += line;
