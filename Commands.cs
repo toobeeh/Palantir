@@ -287,7 +287,7 @@ namespace Palantir
             string desc = "";
             inventory.OrderBy(s => s.ID).ToList().ForEach(s =>
             {
-                desc += "[" + s.ID + "] **" + s.Name + "**: Worth " + s.Cost + " Bubbles\n";
+                embed.AddField("**" + s.Name + "**", "#" + s.ID + " 🔮  Worth " + s.Cost + " Bubbles\n");
                 if (s.Activated) active = s;
             });
             if (active is object)
