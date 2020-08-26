@@ -60,7 +60,8 @@ namespace Palantir
                 {
                     try
                     {
-                        if (s.ID == Convert.ToInt32(i)) spriteInventory.Add(new SpriteProperty(s.Name, s.URL, s.Cost, s.ID, own));
+                        int id;
+                        if (int.TryParse(i,out id) && id == s.ID) spriteInventory.Add(new SpriteProperty(s.Name, s.URL, s.Cost, s.ID, own));
                     }
                     catch(Exception e)
                     {
