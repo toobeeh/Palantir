@@ -391,7 +391,7 @@ namespace Palantir
         [Command("Leaderboard")]
         public async Task Leaderboard(CommandContext context)
         {
-            List<MemberEntity> members = Program.Feanor.GetGuildMembers(context.Guild.Id.ToString()).OrderBy(m=>m.Bubbles).Where(m=>m.Bubbles > 0).ToList();
+            List<MemberEntity> members = Program.Feanor.GetGuildMembers(context.Guild.Id.ToString()).OrderByDescending(m=>m.Bubbles).Where(m=>m.Bubbles > 0).ToList();
             
             DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
             embed.Title = "Leaderboard of " + context.Guild.Name;
