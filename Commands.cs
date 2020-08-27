@@ -334,7 +334,7 @@ namespace Palantir
 
             if (sprite !=0 && !inventory.Any(s=>s.ID == sprite))
             {
-                await Program.SendEmbed(context.Channel, "Hold on!", "You dont own that. \nGet it first with `>buy " + sprite + "`.");
+                await Program.SendEmbed(context.Channel, "Hold on!", "You don't own that. \nGet it first with `>buy " + sprite + "`.");
                 return;
             }
 

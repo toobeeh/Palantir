@@ -86,6 +86,7 @@ namespace Palantir
             context.Members.FirstOrDefault(m => m.Login == login).Sprites = inv;
             context.SaveChanges();
             context.Dispose();
+            if (inv[0] == '0') inv = inv.Substring(1);
             return inv;
         }
 
