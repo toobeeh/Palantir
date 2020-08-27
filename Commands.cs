@@ -359,7 +359,8 @@ namespace Palantir
             }
 
             inventory.ForEach(i => i.Activated = i.ID == sprite);
-            BubbleWallet.SetInventory(inventory, login);
+
+            await Program.SendEmbed(context.Channel,"Debug", "inv=" + BubbleWallet.SetInventory(inventory, login));
 
             DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
             embed.Title = "Your fancy sprite was set to **" + BubbleWallet.GetSpriteByID(sprite).Name + "**";
@@ -407,7 +408,7 @@ namespace Palantir
             }
 
             inventory.Add(new SpriteProperty(target.Name, target.URL, target.Cost, target.ID, target.Special, false));
-            BubbleWallet.SetInventory(inventory, login);
+            await Program.SendEmbed(context.Channel, "Debug", "inv=" + BubbleWallet.SetInventory(inventory, login));
 
             DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
             embed.Title = "Whee!";
