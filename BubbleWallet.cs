@@ -84,8 +84,8 @@ namespace Palantir
             inv = inv.Remove(inv.Length - 1);
             if (inv[0] == '0') inv = inv.Substring(1);
             PalantirDbContext context = new PalantirDbContext();
+            context.Members.FirstOrDefault(m => m.Login == login).Sprites = "";
             context.Members.FirstOrDefault(m => m.Login == login).Sprites = inv;
-            context.Members.FirstOrDefault(m => m.Login == login).Sprites = "FUCK U";
             context.SaveChanges();
             context.Dispose();
             return inv;
