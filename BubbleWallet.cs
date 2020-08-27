@@ -61,7 +61,7 @@ namespace Palantir
                     try
                     {
                         int id;
-                        if (int.TryParse(i,out id) && id == s.ID) spriteInventory.Add(new SpriteProperty(s.Name, s.URL, s.Cost, s.ID, own));
+                        if (int.TryParse(i,out id) && id == s.ID) spriteInventory.Add(new SpriteProperty(s.Name, s.URL, s.Cost, s.ID, s.Special, own));
                     }
                     catch(Exception e)
                     {
@@ -93,7 +93,7 @@ namespace Palantir
         {
             List<Sprite> sprites = new List<Sprite>();
             PalantirDbContext context = new PalantirDbContext();
-            context.Sprites.ToList().ForEach(s => sprites.Add(new Sprite(s.Name, s.URL, s.Cost, s.ID)));
+            context.Sprites.ToList().ForEach(s => sprites.Add(new Sprite(s.Name, s.URL, s.Cost, s.ID, s.Special)));
             context.SaveChanges();
             context.Dispose();
             return sprites;
@@ -161,19 +161,21 @@ namespace Palantir
         public string Name;
         public string URL;
         public int Cost;
-        public Sprite(string name, string url, int cost, int id)
+        public bool Special;
+        public Sprite(string name, string url, int cost, int id, bool special)
         {
             Name = name;
             URL = url;
             Cost = cost;
             ID = id;
+            Special = special;
         }
     }
 
     public class SpriteProperty : Sprite
     {
         public bool Activated;
-        public SpriteProperty(string name, string url, int cost, int id, bool activated) : base(name,url,cost,id)
+        public SpriteProperty(string name, string url, int cost, int id, bool special, bool activated) : base(name,url,cost,id, special)
         {
             Activated = activated;
         }

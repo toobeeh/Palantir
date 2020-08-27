@@ -162,6 +162,8 @@ namespace Palantir
             MemberEntity entity = new MemberEntity();
             entity.Login = member.UserLogin;
             entity.Member = JsonConvert.SerializeObject(member);
+            entity.Bubbles = 0;
+            entity.Sprites = "";
             Database.Members.Add(entity);
             Database.SaveChanges();
             Database.Dispose();

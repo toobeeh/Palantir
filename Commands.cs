@@ -267,7 +267,7 @@ namespace Palantir
                 embed.Color = DiscordColor.Magenta;
                 embed.Title = s.Name;
                 embed.ImageUrl = s.URL;
-                embed.Description = "**Costs:** " + s.Cost + " Bubbles\n\n**ID**: " + s.ID;
+                embed.Description = "**Costs:** " + s.Cost + " Bubbles\n\n**ID**: " + s.ID + (s.Special ? " :sparkles: " : "");
                 await context.Channel.SendMessageAsync(embed: embed);
             };
         }
@@ -296,7 +296,7 @@ namespace Palantir
             
             inventory.OrderBy(s => s.ID).ToList().ForEach(s =>
             {
-                embed.AddField("**" + s.Name + "**", "#" + s.ID + " |  Worth " + s.Cost + " Bubbles\n");
+                embed.AddField("**" + s.Name + "**  #" + s.ID + " |  Worth " + s.Cost + " Bubbles\n" + (s.Special ? " :sparkles: " : "") , "\u200b");
                 if (s.Activated) active = s;
             });
 
@@ -307,10 +307,10 @@ namespace Palantir
                 embed.ImageUrl = active.URL;
             }
             if (inventory.Count <= 0) desc = "You haven't unlocked any sprites yet!";
-            desc += "\n" + BubbleWallet.CalculateCredit(login) + " Bubbles left to use. \n"+ BubbleWallet.GetBubbles(login) + " total collected Bubbles";
+            desc += "\n\n" + BubbleWallet.CalculateCredit(login) + " Bubbles left to use. \n"+ BubbleWallet.GetBubbles(login) + " total collected Bubbles";
 
             embed.AddField("\u200b ", desc);
-            embed.AddField("\u200b ", "Use `>sprite [number]` to select your Sprite!\n`>sprite 0` will set no sprite.\nBuy a sprite with `>buy [number]`. ");
+            embed.AddField("\u200b ", "Use `>sprite [number]` to select your Sprite!\n`>sprite 0` will set no sprite.\nBuy a sprite with `>buy [number]`.\nSpecial Sprites are marked with sparkles and replace your whole avatar. ");
 
             await context.Channel.SendMessageAsync(embed:embed);
            
@@ -334,7 +334,15 @@ namespace Palantir
 
             if (sprite !=0 && !inventory.Any(s=>s.ID == sprite))
             {
-                await Program.SendEmbed(context.Channel, "Hold on!", "You dont own that. \nGet it first with `>buy " + sprite + "`");
+                await Program.SendEmbed(context.Channel, "Hold on!", "You dont own that. \nGet it first with `>buy " + sprite + "`.");
+                return;
+            }
+
+            if (sprite == 0)
+            {
+                await Program.SendEmbed(context.Channel, "Minimalist, huh? You sprite was disabled.", "");
+                inventory.ForEach(i => i.Activated =false);
+                BubbleWallet.SetInventory(inventory, login);
                 return;
             }
 
@@ -385,7 +393,7 @@ namespace Palantir
                 return;
             }
 
-            inventory.Add(new SpriteProperty(target.Name, target.URL, target.Cost, target.ID, false));
+            inventory.Add(new SpriteProperty(target.Name, target.URL, target.Cost, target.ID, target.Special, false));
             BubbleWallet.SetInventory(inventory, login);
 
             DiscordEmbedBuilder embed = new DiscordEmbedBuilder();

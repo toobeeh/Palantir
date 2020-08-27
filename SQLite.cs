@@ -46,6 +46,7 @@ namespace Palantir
         public string Name { get; set; }
         public string URL { get; set; }
         public int Cost { get; set; }
+        public bool Special { get; set; }
     }
     public class ReportEntity
     {
