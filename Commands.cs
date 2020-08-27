@@ -361,12 +361,6 @@ namespace Palantir
             inventory.ForEach(i => i.Activated = i.ID == sprite);
             BubbleWallet.SetInventory(inventory, login);
 
-            PalantirDbContext c = new PalantirDbContext();
-            string inventoryString = c.Members.FirstOrDefault(m => m.Login == login).Sprites;
-            c.SaveChanges();
-            c.Dispose();
-            await Program.SendEmbed(context.Channel, "Debug", "inv=" + inventoryString);
-
             DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
             embed.Title = "Your fancy sprite was set to **" + BubbleWallet.GetSpriteByID(sprite).Name + "**";
             embed.ImageUrl = BubbleWallet.GetSpriteByID(sprite).URL;
