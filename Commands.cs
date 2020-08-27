@@ -270,6 +270,7 @@ namespace Palantir
                 embed.ImageUrl = s.URL;
                 embed.Description = "**Costs:** " + s.Cost + " Bubbles\n\n**ID**: " + s.ID + (s.Special ? " :sparkles: " : "");
                 await context.Channel.SendMessageAsync(embed: embed);
+                return;
             }
 
             foreach(Sprite s in sprites)
@@ -443,8 +444,8 @@ namespace Palantir
             DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
             embed.Title = "🔮  How to Bubble ";
             embed.Color = DiscordColor.Magenta;
-            embed.AddField("What are Bubbles?", "Bubbles are a fictional currency of the Palantir Bot.\nWhen you're connected to the Bot, you will reward 1 Bubble every 10 seconds.\nBubbles are used to buy Sprites which other users of the Skribbl-Typo extension can see.");
-            embed.AddField("Commands", "➜ `>inventory` Lists your Sprites and Bubble statistics.\n➜ `>sprites` Show all buyable Sprites.\n➜ `>buy [id]` Buy a Sprite,\n➜ `>sprite [id]` Select a sprite.");
+            embed.AddField("What are Bubbles?", "Bubbles are a fictional currency of the Palantir Bot.\nWhen you're connected to the Bot, you will be rewarded 1 Bubble every 10 seconds.\nBubbles are used to buy Sprites which other users of the Skribbl-Typo extension can see.");
+            embed.AddField("Commands", "➜ `>inventory` List your Sprites and Bubble statistics.\n➜ `>sprites` Show all buyable Sprites.\n➜ `>sprites [id]` Show a specific Sprite.\n➜ `>buy [id]` Buy a Sprite.\n➜ `>sprite [id]` Select a sprite.\n➜ `>leaderboard` Show your server's leaderboard.");
 
             await context.Channel.SendMessageAsync(embed: embed);
         }
