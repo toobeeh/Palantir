@@ -82,11 +82,11 @@ namespace Palantir
                 if(available.Any(a=>a.ID == s.ID)) inv += (s.Activated ? "." : "") + s.ID + ",";
             });
             inv = inv.Remove(inv.Length - 1);
+            if (inv[0] == '0') inv = inv.Substring(1);
             PalantirDbContext context = new PalantirDbContext();
             context.Members.FirstOrDefault(m => m.Login == login).Sprites = inv;
             context.SaveChanges();
             context.Dispose();
-            if (inv[0] == '0') inv = inv.Substring(1);
             return inv;
         }
 
