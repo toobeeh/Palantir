@@ -359,14 +359,25 @@ namespace Palantir
             }
 
             inventory.ForEach(i => i.Activated = i.ID == sprite);
+            BubbleWallet.SetInventory(inventory, login);
 
-            await Program.SendEmbed(context.Channel,"Debug", "inv=" + BubbleWallet.SetInventory(inventory, login));
+            PalantirDbContext c = new PalantirDbContext();
+            string inventoryString = c.Members.FirstOrDefault(m => m.Login == login).Sprites;
+            c.SaveChanges();
+            c.Dispose();
+            await Program.SendEmbed(context.Channel, "Debug", "inv=" + inventoryString);
 
             DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
             embed.Title = "Your fancy sprite was set to **" + BubbleWallet.GetSpriteByID(sprite).Name + "**";
             embed.ImageUrl = BubbleWallet.GetSpriteByID(sprite).URL;
             embed.Color = DiscordColor.Magenta;
             await context.Channel.SendMessageAsync(embed: embed);
+
+            PalantirDbContext d = new PalantirDbContext();
+            string ist = d.Members.FirstOrDefault(m => m.Login == login).Sprites;
+            d.SaveChanges();
+            d.Dispose();
+            await Program.SendEmbed(context.Channel, "Debug", "inv=" + ist);
 
         }
 
@@ -410,24 +421,12 @@ namespace Palantir
             inventory.Add(new SpriteProperty(target.Name, target.URL, target.Cost, target.ID, target.Special, false));
             BubbleWallet.SetInventory(inventory, login);
 
-            PalantirDbContext c = new PalantirDbContext();
-            string inventoryString = c.Members.FirstOrDefault(m => m.Login == login).Sprites;
-            c.SaveChanges();
-            c.Dispose();
-            await Program.SendEmbed(context.Channel, "Debug", "inv=" + inventoryString);
-
             DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
             embed.Title = "Whee!";
             embed.Description = "You unlocked **" + target.Name + "**!\nActivate it with `>sprite " + target.ID + "`" ;
             embed.Color = DiscordColor.Magenta;
             embed.ImageUrl = target.URL;
             await context.Channel.SendMessageAsync(embed: embed);
-
-            PalantirDbContext d = new PalantirDbContext();
-            string ist = d.Members.FirstOrDefault(m => m.Login == login).Sprites;
-            d.SaveChanges();
-            d.Dispose();
-            await Program.SendEmbed(context.Channel, "Debug", "inv=" + ist);
 
             return;
         }
