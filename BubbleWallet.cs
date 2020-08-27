@@ -99,6 +99,10 @@ namespace Palantir
             context.Dispose();
             return sprites;
         }
+        public static Sprite GetSpriteByID(int id)
+        {
+            return GetAvailableSprites().FirstOrDefault(s => s.ID == id);
+        }
 
         public static int CalculateCredit(string login)
         {

@@ -350,7 +350,8 @@ namespace Palantir
             BubbleWallet.SetInventory(inventory, login);
 
             DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
-            embed.Title = "Your fancy sprite was set to #" + sprite;
+            embed.Title = "Your fancy sprite was set to **" + BubbleWallet.GetSpriteByID(sprite).Name + "**";
+            embed.ImageUrl = BubbleWallet.GetSpriteByID(sprite).URL;
             embed.Color = DiscordColor.Magenta;
             await context.Channel.SendMessageAsync(embed: embed);
 
