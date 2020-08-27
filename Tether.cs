@@ -266,8 +266,15 @@ namespace Palantir
                         player.Sender = true;
                         player.ID = match.PlayerMember.UserID;
                         login = match.PlayerMember.UserLogin;
-                        BubbleWallet.AddBubble(login);
-                        BubbleWallet.SetOnlineSprite(login, l.Key, player.LobbyPlayerID);
+                        try
+                        {
+                            BubbleWallet.AddBubble(login);
+                            BubbleWallet.SetOnlineSprite(login, l.Key, player.LobbyPlayerID);
+                        }
+                        catch(Exception e)
+                        {
+                            Console.WriteLine("Error adding Bubble/Writing sprite for login " + login + " : \n" + e.ToString());
+                        }
                     }
 
                     if (player.Sender)

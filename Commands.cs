@@ -296,7 +296,7 @@ namespace Palantir
             
             inventory.OrderBy(s => s.ID).ToList().ForEach(s =>
             {
-                embed.AddField("**" + s.Name + "**  #" + s.ID + " |  Worth " + s.Cost + " Bubbles\n" + (s.Special ? " :sparkles: " : "") , "\u200b");
+                embed.AddField("**" + s.Name + "** " ,  "#" + s.ID + " |  Worth " + s.Cost + " Bubbles" + (s.Special ? " :sparkles: " : ""));
                 if (s.Activated) active = s;
             });
 
