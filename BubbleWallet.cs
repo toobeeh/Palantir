@@ -86,9 +86,8 @@ namespace Palantir
             PalantirDbContext context = new PalantirDbContext();
             context.Members.FirstOrDefault(m => m.Login == login).Sprites = inv;
             context.SaveChanges();
-            string res = context.Members.FirstOrDefault(m => m.Login == login).Sprites;
             context.Dispose();
-            return res;
+            return inv;
         }
 
         public static List<Sprite> GetAvailableSprites()

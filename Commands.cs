@@ -408,7 +408,13 @@ namespace Palantir
             }
 
             inventory.Add(new SpriteProperty(target.Name, target.URL, target.Cost, target.ID, target.Special, false));
-            await Program.SendEmbed(context.Channel, "Debug", "inv=" + BubbleWallet.SetInventory(inventory, login));
+            BubbleWallet.SetInventory(inventory, login);
+
+            PalantirDbContext c = new PalantirDbContext();
+            string inventoryString = c.Members.FirstOrDefault(m => m.Login == login).Sprites;
+            c.SaveChanges();
+            c.Dispose();
+            await Program.SendEmbed(context.Channel, "Debug", "inv=" + inventoryString);
 
             DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
             embed.Title = "Whee!";
@@ -416,6 +422,13 @@ namespace Palantir
             embed.Color = DiscordColor.Magenta;
             embed.ImageUrl = target.URL;
             await context.Channel.SendMessageAsync(embed: embed);
+
+            PalantirDbContext d = new PalantirDbContext();
+            string ist = d.Members.FirstOrDefault(m => m.Login == login).Sprites;
+            d.SaveChanges();
+            d.Dispose();
+            await Program.SendEmbed(context.Channel, "Debug", "inv=" + ist);
+
             return;
         }
 
