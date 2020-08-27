@@ -359,6 +359,13 @@ namespace Palantir
             }
 
             inventory.ForEach(i => i.Activated = i.ID == sprite);
+
+            PalantirDbContext d = new PalantirDbContext();
+            string ist = d.Members.FirstOrDefault(m => m.Login == login).Sprites;
+            d.SaveChanges();
+            d.Dispose();
+            await Program.SendEmbed(context.Channel, "Debug", "inv=" + ist);
+
             BubbleWallet.SetInventory(inventory, login);
 
             PalantirDbContext c = new PalantirDbContext();
@@ -372,13 +379,6 @@ namespace Palantir
             embed.ImageUrl = BubbleWallet.GetSpriteByID(sprite).URL;
             embed.Color = DiscordColor.Magenta;
             await context.Channel.SendMessageAsync(embed: embed);
-
-            PalantirDbContext d = new PalantirDbContext();
-            string ist = d.Members.FirstOrDefault(m => m.Login == login).Sprites;
-            d.SaveChanges();
-            d.Dispose();
-            await Program.SendEmbed(context.Channel, "Debug", "inv=" + ist);
-
         }
 
         [Description("Buy a sprite.")]
