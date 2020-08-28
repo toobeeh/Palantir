@@ -457,5 +457,35 @@ namespace Palantir
 
             await context.Channel.SendMessageAsync(embed: embed);
         }
+
+        [Description("Fancy calculation stuff")]
+        [Command("cals")]
+        public async Task Calc(CommandContext context, string mode, int target)
+        {
+            int hours = 0;
+
+            string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
+            switch (mode)
+            {
+                case "sprite":
+                    List<Sprite> available = BubbleWallet.GetAvailableSprites();
+                    Sprite sprite = available.FirstOrDefault(s => s.ID == target);
+                    hours = (sprite.Cost - BubbleWallet.GetBubbles(login)) / 360;
+                    await Program.SendEmbed(context.Channel, "Time to get " + sprite.Name + ":", hours + " on skribbl.io left");
+                    break;
+                case "bubbles":
+                    hours = target / 360;
+                    await Program.SendEmbed(context.Channel, "Time to get " + target + " more Bubbles:", hours + " on skribbl.io left");
+                    break;
+                case "rank":
+                    List<MemberEntity> members = Program.Feanor.GetGuildMembers(context.Guild.Id.ToString()).OrderByDescending(m => m.Bubbles).Where(m => m.Bubbles > 0).ToList();
+                    hours = (members[target - 1].Bubbles - BubbleWallet.GetBubbles(login)) / 360;
+                    await Program.SendEmbed(context.Channel, "Time catch up #" + target + ":", hours + " on skribbl.io left");
+                    break;
+                default:
+                    break;
+            }
+
+        }
     }
 }
