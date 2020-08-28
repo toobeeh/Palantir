@@ -269,11 +269,18 @@ namespace Palantir
                         try
                         {
                             BubbleWallet.AddBubble(login);
-                            BubbleWallet.SetOnlineSprite(login, l.Key, player.LobbyPlayerID);
                         }
                         catch(Exception e)
                         {
-                            Console.WriteLine("Error adding Bubble/Writing sprite for login " + login + " : \n" + e.ToString());
+                            Console.WriteLine("Error adding Bubble for login " + login + " : \n" + e.ToString());
+                        }
+                        try
+                        {
+                            BubbleWallet.SetOnlineSprite(login, l.Key, player.LobbyPlayerID);
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine("Error writing sprite for login " + login + " : \n" + e.ToString());
                         }
                     }
 
