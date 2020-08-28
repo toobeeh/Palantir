@@ -453,14 +453,14 @@ namespace Palantir
             embed.Title = "🔮  How to Bubble ";
             embed.Color = DiscordColor.Magenta;
             embed.AddField("What are Bubbles?", "Bubbles are a fictional currency of the Palantir Bot.\nWhen you're connected to the Bot, you will be rewarded 1 Bubble every 10 seconds.\nBubbles are used to buy Sprites which other users of the Skribbl-Typo extension can see.");
-            embed.AddField("Commands", "➜ `>inventory` List your Sprites and Bubble statistics.\n➜ `>sprites` Show all buyable Sprites.\n➜ `>sprites [id]` Show a specific Sprite.\n➜ `>buy [id]` Buy a Sprite.\n➜ `>use [id]` Select one of your Sprites.\n➜ `>leaderboard` Show your server's leaderboard.");
+            embed.AddField("Commands", "➜ `>inventory` List your Sprites and Bubble statistics.\n➜ `>sprites` Show all buyable Sprites.\n➜ `>sprites [id]` Show a specific Sprite.\n➜ `>buy [id]` Buy a Sprite.\n➜ `>use [id]` Select one of your Sprites.\n➜ `>leaderboard` Show your server's leaderboard.\n➜ `>calc` Calculate various things.");
 
             await context.Channel.SendMessageAsync(embed: embed);
         }
 
         [Description("Fancy calculation stuff")]
-        [Command("cals")]
-        public async Task Calc(CommandContext context, string mode, int target)
+        [Command("calc")]
+        public async Task Calc(CommandContext context, string mode="", int target=0)
         {
             int hours = 0;
 
@@ -470,19 +470,20 @@ namespace Palantir
                 case "sprite":
                     List<Sprite> available = BubbleWallet.GetAvailableSprites();
                     Sprite sprite = available.FirstOrDefault(s => s.ID == target);
-                    hours = (sprite.Cost - BubbleWallet.GetBubbles(login)) / 360;
-                    await Program.SendEmbed(context.Channel, "Time to get " + sprite.Name + ":", hours + " on skribbl.io left");
+                    hours = (sprite.Cost - BubbleWallet.CalculateCredit(login)) / 360;
+                    await Program.SendEmbed(context.Channel, "🔮  Time to get " + sprite.Name + ":", hours + " hours on skribbl.io left.");
                     break;
                 case "bubbles":
                     hours = target / 360;
-                    await Program.SendEmbed(context.Channel, "Time to get " + target + " more Bubbles:", hours + " on skribbl.io left");
+                    await Program.SendEmbed(context.Channel, "🔮  Time to get " + target + " more Bubbles:", hours + " hours on skribbl.io left.");
                     break;
                 case "rank":
                     List<MemberEntity> members = Program.Feanor.GetGuildMembers(context.Guild.Id.ToString()).OrderByDescending(m => m.Bubbles).Where(m => m.Bubbles > 0).ToList();
                     hours = (members[target - 1].Bubbles - BubbleWallet.GetBubbles(login)) / 360;
-                    await Program.SendEmbed(context.Channel, "Time catch up #" + target + ":", hours + " on skribbl.io left");
+                    await Program.SendEmbed(context.Channel, "🔮  Time catch up #" + target + ":", hours + " hours on skribbl.io left.");
                     break;
                 default:
+                    await Program.SendEmbed(context.Channel, "🔮  Calculate following things:", "➜ `>calc sprite 1` Calculate remaining hours to get Sprite 1 depending on your actual Bubbles left.\n➜ `>calc bubbles 1000` Calculate remaining hours to get 1000 more bubbles.\n➜ `>calc rank 4` Calculate remaining hours to catch up the 4rd ranked member.");
                     break;
             }
 
