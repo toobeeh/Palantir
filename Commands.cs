@@ -273,15 +273,16 @@ namespace Palantir
                 return;
             }
 
-            foreach(Sprite s in sprites)
+            DiscordEmbedBuilder list = new DiscordEmbedBuilder();
+            list.Color = DiscordColor.Magenta;
+            list.Title = "🔮 Sprite Listing";
+            list.Description = "Show one of the available Sprites with `>sprites [id]`";
+
+            foreach (Sprite s in sprites)
             {
-                DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
-                embed.Color = DiscordColor.Magenta;
-                embed.Title = s.Name;
-                embed.ImageUrl = s.URL;
-                embed.Description = "**Costs:** " + s.Cost + " Bubbles\n\n**ID**: " + s.ID + (s.Special ? " :sparkles: " : "");
-                await context.Channel.SendMessageAsync(embed: embed);
+                list.AddField("**" + s.Name + "** ", "Costs: " + s.Cost + " Bubbles\nID: " + s.ID + (s.Special ? " :sparkles: " : ""),true);
             };
+            await context.Channel.SendMessageAsync(embed: list);
         }
 
         [Description("Get a overview of your inventory.")]
