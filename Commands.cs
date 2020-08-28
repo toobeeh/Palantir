@@ -261,7 +261,7 @@ namespace Palantir
         {
             List<Sprite> sprites = BubbleWallet.GetAvailableSprites();
 
-            if(sprite != 0 && sprites.Count <= sprite)
+            if (sprites.Any(s => s.ID == sprite))
             {
                 Sprite s = BubbleWallet.GetSpriteByID(sprite);
                 DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
@@ -332,6 +332,13 @@ namespace Palantir
         [Description("Choose your sprite.")]
         [Command("sprite")]
         public async Task Sprite(CommandContext context, int sprite)
+        {
+            await Program.SendEmbed(context.Channel, "You did nothing wrong,", "but to avoid confusion with `>sprites` the command was renamed to `>use`.\nType `>use " + sprite + "` to select you sprite!");
+        }
+
+        [Description("Choose your sprite.")]
+        [Command("use")]
+        public async Task Use(CommandContext context, int sprite)
         {
             string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
             List<SpriteProperty> inventory;
