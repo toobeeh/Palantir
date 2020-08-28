@@ -323,7 +323,7 @@ namespace Palantir
             desc += "\n\n" + BubbleWallet.CalculateCredit(login) + " Bubbles left to use. \n"+ BubbleWallet.GetBubbles(login) + " total collected Bubbles";
 
             embed.AddField("\u200b ", desc);
-            embed.AddField("\u200b ", "Use `>sprite [id]` to select your Sprite!\n`>sprite 0` will set no sprite.\nBuy a sprite with `>buy [id]`.\nSpecial Sprites :sparkles: replace your whole avatar! ");
+            embed.AddField("\u200b ", "Use `>use [id]` to select your Sprite!\n`>use 0` will set no Sprite.\nBuy a Sprite with `>buy [id]`.\nSpecial Sprites :sparkles: replace your whole avatar! ");
 
             await context.Channel.SendMessageAsync(embed:embed);
            
@@ -333,7 +333,7 @@ namespace Palantir
         [Command("sprite")]
         public async Task Sprite(CommandContext context, int sprite)
         {
-            await Program.SendEmbed(context.Channel, "You did nothing wrong,", "but to avoid confusion with `>sprites` the command was renamed to `>use`.\nType `>use " + sprite + "` to select you sprite!");
+            await Program.SendEmbed(context.Channel, "You did nothing wrong,", "but to avoid confusion with `>sprites` the command was renamed to `>use`.\nType `>use " + sprite + "` to activate your Sprite!");
         }
 
         [Description("Choose your sprite.")]
@@ -439,7 +439,7 @@ namespace Palantir
             members.ForEach(async m =>
             {
                 string name = (await context.Guild.GetMemberAsync(Convert.ToUInt64(JsonConvert.DeserializeObject<Member>(m.Member).UserID))).Username;
-                embed.AddField("**#" + (members.IndexOf(m) + 1).ToString() + " - " + name + "**", BubbleWallet.GetBubbles(m.Login).ToString() + " Bubbles\n\u200b");
+                embed.AddField("**#" + (members.IndexOf(m) + 1).ToString() + " - " + name + "**", BubbleWallet.GetBubbles(m.Login).ToString() + " Bubbles\n\u200b", true);
             });
 
             await context.Channel.SendMessageAsync(embed: embed);
@@ -453,7 +453,7 @@ namespace Palantir
             embed.Title = "🔮  How to Bubble ";
             embed.Color = DiscordColor.Magenta;
             embed.AddField("What are Bubbles?", "Bubbles are a fictional currency of the Palantir Bot.\nWhen you're connected to the Bot, you will be rewarded 1 Bubble every 10 seconds.\nBubbles are used to buy Sprites which other users of the Skribbl-Typo extension can see.");
-            embed.AddField("Commands", "➜ `>inventory` List your Sprites and Bubble statistics.\n➜ `>sprites` Show all buyable Sprites.\n➜ `>sprites [id]` Show a specific Sprite.\n➜ `>buy [id]` Buy a Sprite.\n➜ `>sprite [id]` Select a sprite.\n➜ `>leaderboard` Show your server's leaderboard.");
+            embed.AddField("Commands", "➜ `>inventory` List your Sprites and Bubble statistics.\n➜ `>sprites` Show all buyable Sprites.\n➜ `>sprites [id]` Show a specific Sprite.\n➜ `>buy [id]` Buy a Sprite.\n➜ `>use [id]` Select one of your Sprites.\n➜ `>leaderboard` Show your server's leaderboard.");
 
             await context.Channel.SendMessageAsync(embed: embed);
         }
