@@ -470,16 +470,16 @@ namespace Palantir
                 case "sprite":
                     List<Sprite> available = BubbleWallet.GetAvailableSprites();
                     Sprite sprite = available.FirstOrDefault(s => s.ID == target);
-                    hours = (sprite.Cost - BubbleWallet.CalculateCredit(login)) / 360;
+                    hours = ((double)sprite.Cost - BubbleWallet.CalculateCredit(login)) / 360;
                     await Program.SendEmbed(context.Channel, "🔮  Time to get " + sprite.Name + ":", TimeSpan.FromHours(hours).ToString() + " hours on skribbl.io left.") ;
                     break;
                 case "bubbles":
-                    hours = target / 360;
+                    hours = (double)target / 360;
                     await Program.SendEmbed(context.Channel, "🔮  Time to get " + target + " more Bubbles:", TimeSpan.FromHours(hours).ToString() + " hours on skribbl.io left.");
                     break;
                 case "rank":
                     List<MemberEntity> members = Program.Feanor.GetGuildMembers(context.Guild.Id.ToString()).OrderByDescending(m => m.Bubbles).Where(m => m.Bubbles > 0).ToList();
-                    hours = (members[target - 1].Bubbles - BubbleWallet.GetBubbles(login)) / 360;
+                    hours = ((double)members[target - 1].Bubbles - BubbleWallet.GetBubbles(login)) / 360;
                     await Program.SendEmbed(context.Channel, "🔮  Time catch up #" + target + ":", TimeSpan.FromHours(hours).ToString() + " hours on skribbl.io left.");
                     break;
                 default:
