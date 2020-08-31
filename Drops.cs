@@ -36,10 +36,10 @@ namespace Palantir
                 drop.CaughtLobbyPlayerID = "";
                 drop.DropID = (new Random()).Next(1, 99999999).ToString();
                 drop.ValidFrom = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss");
-                context.Drops.Add(drop);
 
                 try
                 {
+                    context.Drops.Add(drop);
                     context.SaveChanges();
                 }
                 catch (Exception e)
