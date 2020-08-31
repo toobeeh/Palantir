@@ -18,6 +18,7 @@ namespace Palantir
         public DbSet<StatusEntity> Status { get; set; }
         public DbSet<OnlineSpritesEntity> OnlineSprites { get; set; }
         public DbSet<SpritesEntity> Sprites { get; set; }
+        public DbSet<DropEntity> Drops { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
             => options.UseSqlite("Data Source=/home/pi/Database/palantir.db");
@@ -32,6 +33,7 @@ namespace Palantir
         public string Member { get; set; }
         public string Sprites { get; set; }
         public int Bubbles { get; set; }
+        public int Drops { get; set; }
     }
     public class PalantirEntity
     {
@@ -89,6 +91,15 @@ namespace Palantir
         public string LobbyPlayerID { get; set; }
         public string Sprite { get; set; }
         public string Date { get; set; }
+    }
+
+    public class DropEntity
+    {
+        [Key]
+        public string DropID { get; set; }
+        public string CaughtLobbyPlayerID { get; set; }
+        public string CaughtLobbyKey { get; set; }
+        public string ValidFrom { get; set; }
     }
 
 }

@@ -168,8 +168,8 @@ namespace Palantir
                     }
                     else
                     {
-                        Console.WriteLine("Target Message couldnt be edited. No removal of tether, just 1min timeout. Error: " + e.ToString());
-                        Thread.Sleep(60000);
+                        Console.WriteLine("Target Message couldnt be edited. No removal of tether, just 15s timeout. Error: " + e.ToString());
+                        Thread.Sleep(15000);
                     }
                 }
                 Thread.Sleep(2000);
