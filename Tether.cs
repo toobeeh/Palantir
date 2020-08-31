@@ -223,7 +223,7 @@ namespace Palantir
                 }
             });
 
-            message += "```arm\nUpdate info: Collect bubbles and catch Drop to unlock new sprites!\nTry out the bot command '>bubbles'!```\n\n";
+            message += "```arm\nUpdate info: Collect Bubbles & catch Drops to unlock new Sprites! More info with '>bubbles'.```\n\n";
 
             message += PalantirSettings.Header + "\n";
             if(PalantirSettings.ShowRefreshed) message += "Refreshed: " + DateTime.UtcNow.AddHours(PalantirSettings.Timezone).ToShortTimeString() + " (UTC " + PalantirSettings.Timezone.ToString("+0;-#") + ")\n"; 
