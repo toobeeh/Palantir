@@ -12,7 +12,12 @@ namespace Palantir
         private static Thread Dropper = null;
         public static void StartDropping()
         {
-            if(Dropper is null) Dropper = new Thread(new ThreadStart(Drop));
+            if (Dropper is null)
+            {
+                Dropper = new Thread(new ThreadStart(Drop));
+                Dropper.Start();
+            }
+
         }
 
         private static void Drop()
@@ -22,7 +27,7 @@ namespace Palantir
 
                 try
                 {
-                    //context.Drops.RemoveRange(context.Drops);
+                    context.Drops.RemoveRange(context.Drops);
                     context.SaveChanges();
                 }
                 catch (Exception e)
