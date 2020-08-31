@@ -22,7 +22,7 @@ namespace Palantir
 
                 try
                 {
-                    context.Drops.RemoveRange(context.Drops);
+                    //context.Drops.RemoveRange(context.Drops);
                     context.SaveChanges();
                 }
                 catch (Exception e)
