@@ -70,7 +70,7 @@ namespace Palantir
             int min = 600 / count;
             if (min < 60) min = 60;
 
-            return (new Random()).Next(min, 10 * min);
+            return 60;//debug(new Random()).Next(min, 10 * min);
         }
 
 
