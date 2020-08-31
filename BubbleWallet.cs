@@ -126,6 +126,7 @@ namespace Palantir
             {
                 total -= s.Cost;
             });
+            total += GetDrops(login) * 50;
             return total;
         }
 
