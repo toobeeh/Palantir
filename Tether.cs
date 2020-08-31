@@ -272,7 +272,7 @@ namespace Palantir
                         }
                         catch(Exception e)
                         {
-                            Console.WriteLine("Error adding Bubble for login " + login + " : \n" + e.ToString());
+                            //Console.WriteLine("Error adding Bubble for login " + login + " : \n" + e.ToString());
                         }
                         try
                         {
@@ -280,7 +280,7 @@ namespace Palantir
                         }
                         catch (Exception e)
                         {
-                            Console.WriteLine("Error writing sprite for login " + login + " : \n" + e.ToString());
+                            //Console.WriteLine("Error writing sprite for login " + login + " : \n" + e.ToString());
                         }
                     }
 

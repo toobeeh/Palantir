@@ -156,7 +156,8 @@ namespace Palantir
             {
                 context.SaveChanges();
             }
-            catch (Exception e) { Console.WriteLine("Error deleting sprite:\n" + e); }
+            catch (Exception e) { //Console.WriteLine("Error deleting sprite:\n" + e); 
+            }
 
             OnlineSpritesEntity newsprite = new OnlineSpritesEntity();
             newsprite.LobbyKey = lobbyKey;

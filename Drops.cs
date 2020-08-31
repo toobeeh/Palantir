@@ -54,7 +54,9 @@ namespace Palantir
                 }
 
                 context.Dispose();
-                Thread.Sleep(CalculateDropTimeoutSeconds() * 1000 + 20000);
+                int sleep = CalculateDropTimeoutSeconds() * 1000 + 20000;
+                Console.WriteLine("Next drop in " + sleep + " ms");
+                Thread.Sleep(sleep);
             }
         }
 
