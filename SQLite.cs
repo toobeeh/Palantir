@@ -4,6 +4,7 @@ using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Data.Sqlite;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Palantir
 {
@@ -104,7 +105,11 @@ namespace Palantir
 
     public class BubbleTraceEntity
     {
+        [Key]
+        [Column(Order =1)]
         public string Date { get; set; }
+        [Key]
+        [Column(Order = 1)]
         public string Login { get; set; }
         public int Bubbles { get; set; }
     }
