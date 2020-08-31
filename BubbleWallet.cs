@@ -47,6 +47,22 @@ namespace Palantir
             return bubbles;
         }
 
+        public static int GetDrops(string login)
+        {
+            PalantirDbContext context = new PalantirDbContext();
+            MemberEntity entity = context.Members.FirstOrDefault(s => s.Login == login);
+            int drops = 0;
+
+            if (entity != null)
+            {
+                drops = entity.Drops;
+            }
+            context.SaveChanges();
+            context.Dispose();
+
+            return drops;
+        }
+
         public static List<SpriteProperty> ParseSpriteInventory(string sprites)
         {
             List<Sprite> availableSprites = GetAvailableSprites();

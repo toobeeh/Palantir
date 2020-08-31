@@ -320,7 +320,8 @@ namespace Palantir
                 embed.ImageUrl = active.URL;
             }
             if (inventory.Count <= 0) desc = "You haven't unlocked any sprites yet!";
-            desc += "\n\n" + BubbleWallet.CalculateCredit(login) + " Bubbles left to use. \n"+ BubbleWallet.GetBubbles(login) + " total collected Bubbles";
+            desc += "\n\n🔮 " + BubbleWallet.CalculateCredit(login) + " / "+ BubbleWallet.GetBubbles(login) + " total Bubbles available.";
+            desc += "\n💧 " + BubbleWallet.GetDrops(login) + " Drops collected.";
 
             embed.AddField("\u200b ", desc);
             embed.AddField("\u200b ", "Use `>use [id]` to select your Sprite!\n`>use 0` will set no Sprite.\nBuy a Sprite with `>buy [id]`.\nSpecial Sprites :sparkles: replace your whole avatar! ");

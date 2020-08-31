@@ -40,7 +40,7 @@ namespace Palantir
                 drop.CaughtLobbyKey = "";
                 drop.CaughtLobbyPlayerID = "";
                 drop.DropID = (new Random()).Next(1, 99999999).ToString();
-                drop.ValidFrom = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss");
+                drop.ValidFrom = DateTime.UtcNow.AddSeconds(20).ToString("yyyy-MM-dd HH:mm:ss");
 
                 try
                 {
@@ -54,7 +54,7 @@ namespace Palantir
                 }
 
                 context.Dispose();
-                Thread.Sleep(CalculateDropTimeoutSeconds() * 1000);
+                Thread.Sleep(CalculateDropTimeoutSeconds() * 1000 + 20000);
             }
         }
 
@@ -63,13 +63,14 @@ namespace Palantir
             PalantirDbContext context = new PalantirDbContext();
 
             int count = context.Status.ToList().Count;
+            if (count <= 0) count = 1;
 
             context.SaveChanges();
             context.Dispose();
             int min = 600 / count;
             if (min < 60) min = 60;
 
-            return 30;//debug(new Random()).Next(min, 10 * min);
+            return (new Random()).Next(min, 10 * min);
         }
 
 
