@@ -17,7 +17,6 @@ namespace Palantir
                 Dropper = new Thread(new ThreadStart(Drop));
                 Dropper.Start();
             }
-
         }
 
         private static void Drop()

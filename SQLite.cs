@@ -106,10 +106,8 @@ namespace Palantir
     public class BubbleTraceEntity
     {
         [Key]
-        [Column(Order =1)]
+        public int ID { get; set; }
         public string Date { get; set; }
-        [Key]
-        [Column(Order = 1)]
         public string Login { get; set; }
         public int Bubbles { get; set; }
     }
