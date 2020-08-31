@@ -44,6 +44,9 @@ namespace Palantir
 
             Console.WriteLine("Palantir activated. Fool of a Took!");
 
+            Drops.StartDropping();
+            Console.WriteLine("Started dropping cool stuff!");
+
             await Task.Delay(-1);
         }
 

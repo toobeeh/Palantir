@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 namespace Palantir
 {
-    public class BubbleWallet
+    public static class BubbleWallet
     {
         public static Dictionary<string, DateTime> Ticks = new Dictionary<string, DateTime>();
         public static void AddBubble(string login)
