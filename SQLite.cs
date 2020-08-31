@@ -19,7 +19,7 @@ namespace Palantir
         public DbSet<OnlineSpritesEntity> OnlineSprites { get; set; }
         public DbSet<SpritesEntity> Sprites { get; set; }
         public DbSet<DropEntity> Drop { get; set; }
-
+        public DbSet<BubbleTraceEntity> BubbleTraces { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder options)
             => options.UseSqlite("Data Source=/home/pi/Database/palantir.db");
 
@@ -100,6 +100,14 @@ namespace Palantir
         public string CaughtLobbyPlayerID { get; set; }
         public string CaughtLobbyKey { get; set; }
         public string ValidFrom { get; set; }
+    }
+
+    public class BubbleTraceEntity
+    {
+        [Key]
+        public string Date { get; set; }
+        public string Login { get; set; }
+        public int Bubbles { get; set; }
     }
 
 }
