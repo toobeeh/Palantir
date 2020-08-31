@@ -27,7 +27,7 @@ namespace Palantir
 
                 try
                 {
-                    context.Drops.RemoveRange(context.Drops);
+                    context.Drop.RemoveRange(context.Drop);
                     context.SaveChanges();
                 }
                 catch (Exception e)
@@ -44,7 +44,7 @@ namespace Palantir
 
                 try
                 {
-                    context.Drops.Add(drop);
+                    context.Drop.Add(drop);
                     context.SaveChanges();
                 }
                 catch (Exception e)

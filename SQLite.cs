@@ -18,7 +18,7 @@ namespace Palantir
         public DbSet<StatusEntity> Status { get; set; }
         public DbSet<OnlineSpritesEntity> OnlineSprites { get; set; }
         public DbSet<SpritesEntity> Sprites { get; set; }
-        public DbSet<DropEntity> Drops { get; set; }
+        public DbSet<DropEntity> Drop { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
             => options.UseSqlite("Data Source=/home/pi/Database/palantir.db");
