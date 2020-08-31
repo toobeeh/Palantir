@@ -223,7 +223,7 @@ namespace Palantir
                 }
             });
 
-            message += "```css\nUpdate info: Collect bubbles to unlock new sprites!\nTry out the bot commands '>inventory' and '>bubbles'!```\n\n";
+            message += "```css\nUpdate info: Collect bubbles to unlock new sprites!\nTry out the bot commands '>inventory' and '>bubbles'!```\nBe the first to catch a drop and get extra Bubbles!\n\n";
 
             message += PalantirSettings.Header + "\n";
             if(PalantirSettings.ShowRefreshed) message += "Refreshed: " + DateTime.UtcNow.AddHours(PalantirSettings.Timezone).ToShortTimeString() + " (UTC " + PalantirSettings.Timezone.ToString("+0;-#") + ")\n"; 
