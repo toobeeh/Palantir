@@ -104,7 +104,6 @@ namespace Palantir
 
     public class BubbleTraceEntity
     {
-        [Key]
         public string Date { get; set; }
         public string Login { get; set; }
         public int Bubbles { get; set; }
