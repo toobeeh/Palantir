@@ -270,7 +270,7 @@ namespace Palantir
                 embed.Title = s.Name;
                 embed.ImageUrl = s.URL;
                 embed.Description = "**Costs:** " + s.Cost + " Bubbles\n\n**ID**: " + s.ID + (s.Special ? " :sparkles: " : "");
-                embed.WithFooter("[View all Sprites here](https://tobeh.host/Orthanc/sprites/gif/)");
+                embed.AddField("[View all Sprites here](https://tobeh.host/Orthanc/sprites/gif/)", "\u200b");
                 await context.Channel.SendMessageAsync(embed: embed);
                 return;
             }
@@ -279,7 +279,7 @@ namespace Palantir
             list.Color = DiscordColor.Magenta;
             list.Title = "🔮 Sprite Listing";
             list.Description = "Show one of the available Sprites with `>sprites [id]`";
-            list.WithFooter("[View all Sprites here](https://tobeh.host/Orthanc/sprites/gif/)");
+            list.AddField("[View all Sprites here](https://tobeh.host/Orthanc/sprites/gif/)", "\u200b");
 
             foreach (Sprite s in sprites)
             {
@@ -330,7 +330,7 @@ namespace Palantir
 
             embed.AddField("\u200b ", desc);
             embed.AddField("\u200b ", "Use `>use [id]` to select your Sprite!\n`>use 0` will set no Sprite.\nBuy a Sprite with `>buy [id]`.\nSpecial Sprites :sparkles: replace your whole avatar! ");
-            embed.WithFooter("[View all Sprites here](https://tobeh.host/Orthanc/sprites/gif/)");
+            embed.AddField("[View all Sprites here](https://tobeh.host/Orthanc/sprites/gif/)", "\u200b");
             await context.Channel.SendMessageAsync(embed:embed);
            
         }
