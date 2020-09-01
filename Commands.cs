@@ -257,6 +257,7 @@ namespace Palantir
 
         [Description("Get a list of all sprites in the store.")]
         [Command("sprites")]
+        [Aliases("spt")]
         public async Task Sprites(CommandContext context, int sprite = 0)
         {
             List<Sprite> sprites = BubbleWallet.GetAvailableSprites();
@@ -287,6 +288,8 @@ namespace Palantir
 
         [Description("Get a overview of your inventory.")]
         [Command("inventory")]
+        [Aliases("inv")]
+
         public async Task Inventory(CommandContext context)
         {
             string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
@@ -429,6 +432,7 @@ namespace Palantir
 
         [Description("See who's got the most bubbles.")]
         [Command("Leaderboard")]
+        [Aliases("lbd")]
         public async Task Leaderboard(CommandContext context)
         {
             List<MemberEntity> members = Program.Feanor.GetGuildMembers(context.Guild.Id.ToString()).OrderByDescending(m=>m.Bubbles).Where(m=>m.Bubbles > 0).ToList();
@@ -461,7 +465,7 @@ namespace Palantir
 
         [Description("Fancy calculation stuff")]
         [Command("calc")]
-        public async Task Calc(CommandContext context, [Description("Calc mode: bubbles, rank or sprite")]string mode="", [Description("Whatever fits your mode.")] ulong target=0)
+        public async Task Calc(CommandContext context, [Description("Calc mode: bubbles, rank or sprite")]string mode="", [Description("Whatever fits your mode.")] double target=0)
         {
             double hours = 0;
 
@@ -487,7 +491,6 @@ namespace Palantir
                     await Program.SendEmbed(context.Channel, "🔮  Calculate following things:", "➜ `>calc sprite 1` Calculate remaining hours to get Sprite 1 depending on your actual Bubbles left.\n➜ `>calc bubbles 1000` Calculate remaining hours to get 1000 more bubbles.\n➜ `>calc rank 4` Calculate remaining hours to catch up the 4rd ranked member.");
                     break;
             }
-
         }
     }
 }
