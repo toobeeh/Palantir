@@ -20,7 +20,7 @@ namespace Palantir
         static async Task Main(string[] args)
         {
             Console.WriteLine("Huh, it's " + DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " - lemme sleep!!\n");
-            Console.WriteLine("Initializing Palantir...\n");
+            Console.WriteLine("Initializing Palantir\n...");
 
             Client = new DiscordClient(new DiscordConfiguration
             {
@@ -44,14 +44,10 @@ namespace Palantir
             Console.WriteLine("Stored members:");
             Feanor.PalantirMembers.ForEach((m) => { Console.WriteLine("- " + m.UserName); });
             Feanor.ActivatePalantiri();
-
-            Console.WriteLine("Palantir activated. Fool of a Took!\n");
-
-            Drops.StartDropping();
-            Console.WriteLine("Started dropping cool stuff!\n");
+            Console.WriteLine("Palantir activated. Fool of a Took!");
 
             // Initialize bubble tracer job
-            Console.WriteLine("Initializing bubbletracer job...");
+            Console.WriteLine("Initializing bubbletracer job\n...");
             ISchedulerFactory schedFact = new StdSchedulerFactory();
             IScheduler scheduler = await schedFact.GetScheduler();
             await scheduler.Start();
@@ -68,10 +64,14 @@ namespace Palantir
                 .Build();
 
             //Start bubble tracer job
-            Console.WriteLine("Starting bubbletracer job...\n");
+            Console.WriteLine("Starting bubbletracer job\n...");
             await scheduler.ScheduleJob(tracer, tracerTrigger);
 
-            Console.WriteLine("All done!\n");
+
+            Drops.StartDropping();
+            Console.WriteLine("Started dropping cool stuff!");
+
+            Console.WriteLine("All done!");
             await Task.Delay(-1);
         }
 

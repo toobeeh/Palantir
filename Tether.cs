@@ -152,29 +152,33 @@ namespace Palantir
             {
                 try
                 {
+                    // try to build lobby message
                     TargetMessage = await TargetMessage.ModifyAsync(BuildLobbyContent());
                     notFound = 0;
                 }
-                catch(Exception e) {
-                    if (e.InnerException is DSharpPlus.Exceptions.NotFoundException)
-                    {
-                        notFound++;
-                        if (notFound > maxErrorCount)
-                        {
-                            Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > Target Message couldnt be edited. Error: " + e.ToString());
-                            RemoveTether();
-                            return;
-                        }
-                    }
-                    else if(e is Microsoft.Data.Sqlite.SqliteException && ((Microsoft.Data.Sqlite.SqliteException)e).ErrorCode == 8)
-                    {
-                        Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > Locked DB. Skipped writing writing for this cycle.\n" + e.ToString());
-                    }
+                catch (Microsoft.Data.Sqlite.SqliteException e) // catch sql exceptions
+                {
+                    if(e.ErrorCode == 8)
+                        Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > Locked DB. Skipped writing lobby data for this cycle.\n");
                     else
+                        Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > DB Error. Skipped writing lobby data for this cycle.\n" + e.ToString());
+                }
+                catch(DSharpPlus.Exceptions.NotFoundException e) // catch Discord api axceptions
+                {
+                    notFound++;
+                    if (notFound > maxErrorCount)
                     {
-                        Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > Target Message couldnt be edited. No removal of tether, just 15s timeout. Error: " + e.ToString());
-                        Thread.Sleep(15000);
+                        Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") 
+                            + " > Target Message couldnt be edited. Not found incremented to " + notFound + " / " + maxErrorCount
+                            + " Error: " + e.ToString());
+                        RemoveTether();
+                        return;
                     }
+                }
+                catch (Exception e) // catch other exceptions
+                {
+                    Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > Unhandled exception - Target message couldnt be edited. No removal of tether, just 15s timeout. Error: " + e.ToString());
+                    Thread.Sleep(15000);
                 }
                 Thread.Sleep(2000);
             }

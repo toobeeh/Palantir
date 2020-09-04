@@ -54,7 +54,8 @@ namespace Palantir
 
                 context.Dispose();
                 int sleep = CalculateDropTimeoutSeconds() * 1000 + 20000;
-                Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > Next drop in " + sleep + " ms");
+                Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > Next drop in " + sleep 
+                    + " ms at " + DateTime.Now.AddMilliseconds(sleep).ToString("HH:mm:ss"));
                 Thread.Sleep(sleep);
             }
         }
