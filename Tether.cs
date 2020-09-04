@@ -158,10 +158,10 @@ namespace Palantir
                 }
                 catch (Microsoft.Data.Sqlite.SqliteException e) // catch sql exceptions
                 {
-                    if(e.ErrorCode == 8)
+                    if(e.SqliteErrorCode == 8)
                         Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > Locked DB. Skipped writing lobby data for this cycle.\n");
                     else
-                        Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > DB Error. Skipped writing lobby data for this cycle.\n" + e.ToString());
+                        Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > DB Error: " + e.SqliteErrorCode + ". Skipped writing lobby data for this cycle.\n" + e.ToString());
                 }
                 catch(DSharpPlus.Exceptions.NotFoundException e) // catch Discord api axceptions
                 {

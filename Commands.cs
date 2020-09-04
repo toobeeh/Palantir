@@ -312,7 +312,7 @@ namespace Palantir
                 embed.ImageUrl = active.URL;
             }
             if (inventory.Count <= 0) desc = "You haven't unlocked any sprites yet!";
-            desc += "\n\n🔮 **" + BubbleWallet.CalculateCredit(login) + "** / "+ BubbleWallet.GetBubbles(login) + " total Bubbles available.";
+            desc += "\n\n🔮 **" + BubbleWallet.CalculateCredit(login) + "** of "+ BubbleWallet.GetBubbles(login) + " collected Bubbles available.";
             desc += "\n\n💧 **" + BubbleWallet.GetDrops(login) + "** Drops collected.";
 
             embed.AddField("\u200b ", desc);
