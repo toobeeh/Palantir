@@ -459,22 +459,22 @@ namespace Palantir
                     Sprite sprite = available.FirstOrDefault(s => (ulong)s.ID == target);
                     hours = ((double)sprite.Cost - BubbleWallet.CalculateCredit(login)) / 360;
                     await Program.SendEmbed(context.Channel, "🔮  Time to get " + sprite.Name + ":", 
-                        TimeSpan.FromHours(hours).Hours.ToString() + "h " 
+                        (TimeSpan.FromHours(hours).Days * 24 + TimeSpan.FromHours(hours).Hours).ToString() + "h " 
                         + TimeSpan.FromHours(hours).Minutes.ToString() + "min "
                         + TimeSpan.FromHours(hours).Seconds.ToString() + "s on skribbl.io left.") ;
                     break;
                 case "bubbles":
                     hours = (double)target / 360;
-                    await Program.SendEmbed(context.Channel, "🔮  Time to get " + target + " more Bubbles:", 
-                        TimeSpan.FromHours(hours).Hours.ToString() + "h "
+                    await Program.SendEmbed(context.Channel, "🔮  Time to get " + target + " more Bubbles:",
+                        (TimeSpan.FromHours(hours).Days * 24 + TimeSpan.FromHours(hours).Hours).ToString() + "h "
                         + TimeSpan.FromHours(hours).Minutes.ToString() + "min "
                         + TimeSpan.FromHours(hours).Seconds.ToString() + "s on skribbl.io left.");
                     break;
                 case "rank":
                     List<MemberEntity> members = Program.Feanor.GetGuildMembers(context.Guild.Id.ToString()).OrderByDescending(m => m.Bubbles).Where(m => m.Bubbles > 0).ToList();
                     hours = ((double)members[Convert.ToInt32(target) - 1].Bubbles - BubbleWallet.GetBubbles(login)) / 360;
-                    await Program.SendEmbed(context.Channel, "🔮  Time catch up #" + target + ":", 
-                        TimeSpan.FromHours(hours).Hours.ToString() + "h "
+                    await Program.SendEmbed(context.Channel, "🔮  Time catch up #" + target + ":",
+                        (TimeSpan.FromHours(hours).Days * 24 + TimeSpan.FromHours(hours).Hours).ToString() + "h "
                         + TimeSpan.FromHours(hours).Minutes.ToString() + "min "
                         + TimeSpan.FromHours(hours).Seconds.ToString() + "s on skribbl.io left.");
                     break;
