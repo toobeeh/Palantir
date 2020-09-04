@@ -166,6 +166,10 @@ namespace Palantir
                             return;
                         }
                     }
+                    else if(e is Microsoft.Data.Sqlite.SqliteException && ((Microsoft.Data.Sqlite.SqliteException)e).ErrorCode == 8)
+                    {
+                        Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > Locked DB. Skipped writing writing for this cycle.\n" + e.ToString());
+                    }
                     else
                     {
                         Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > Target Message couldnt be edited. No removal of tether, just 15s timeout. Error: " + e.ToString());

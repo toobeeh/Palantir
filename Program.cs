@@ -19,8 +19,8 @@ namespace Palantir
         public static CommandsNextExtension Commands { get; private set; }
         static async Task Main(string[] args)
         {
-            Console.WriteLine("Huh, it's" + DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " - lemme sleep!!\n");
-            Console.WriteLine("Initializing Palantir...");
+            Console.WriteLine("Huh, it's " + DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " - lemme sleep!!\n");
+            Console.WriteLine("Initializing Palantir...\n");
 
             Client = new DiscordClient(new DiscordConfiguration
             {
@@ -45,10 +45,10 @@ namespace Palantir
             Feanor.PalantirMembers.ForEach((m) => { Console.WriteLine("- " + m.UserName); });
             Feanor.ActivatePalantiri();
 
-            Console.WriteLine("Palantir activated. Fool of a Took!");
+            Console.WriteLine("Palantir activated. Fool of a Took!\n");
 
             Drops.StartDropping();
-            Console.WriteLine("Started dropping cool stuff!");
+            Console.WriteLine("Started dropping cool stuff!\n");
 
             // Initialize bubble tracer job
             Console.WriteLine("Initializing bubbletracer job...");
@@ -68,10 +68,10 @@ namespace Palantir
                 .Build();
 
             //Start bubble tracer job
-            Console.WriteLine("Starting bubbletracer job...");
+            Console.WriteLine("Starting bubbletracer job...\n");
             await scheduler.ScheduleJob(tracer, tracerTrigger);
 
-            Console.WriteLine("All done!");
+            Console.WriteLine("All done!\n");
             await Task.Delay(-1);
         }
 
