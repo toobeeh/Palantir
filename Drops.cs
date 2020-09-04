@@ -31,7 +31,7 @@ namespace Palantir
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine("Error clearing table: " + e.ToString());
+                    Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > Error clearing table: " + e.ToString());
                     continue;
                 }
 
@@ -48,13 +48,13 @@ namespace Palantir
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine("Error adding drop: " + e.ToString());
+                    Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > Error adding drop: " + e.ToString());
                     continue;
                 }
 
                 context.Dispose();
                 int sleep = CalculateDropTimeoutSeconds() * 1000 + 20000;
-                Console.WriteLine("Next drop in " + sleep + " ms");
+                Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > Next drop in " + sleep + " ms");
                 Thread.Sleep(sleep);
             }
         }

@@ -19,6 +19,7 @@ namespace Palantir
         public static CommandsNextExtension Commands { get; private set; }
         static async Task Main(string[] args)
         {
+            Console.WriteLine("Huh, it's" + DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " - lemme sleep!!\n");
             Console.WriteLine("Initializing Palantir...");
 
             Client = new DiscordClient(new DiscordConfiguration
@@ -62,7 +63,7 @@ namespace Palantir
                 .WithDailyTimeIntervalSchedule
                 (t => t
                     .WithIntervalInHours(24)
-                    .StartingDailyAt(TimeOfDay.HourAndMinuteOfDay(19, 0))
+                    .StartingDailyAt(TimeOfDay.HourAndMinuteOfDay(23, 59))
                 )
                 .Build();
 

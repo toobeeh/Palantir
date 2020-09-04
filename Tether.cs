@@ -114,20 +114,20 @@ namespace Palantir
             }
             catch(Exception e)
             {
-                Console.WriteLine("Error sending status:" + e);
+                Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > Error sending status:" + e);
             }
             
             try
             {
                 Program.Feanor.RemovePalantiri(PalantirEndpoint);
                 StopDataflow();
-                Console.WriteLine("Removed guild " + PalantirEndpoint.GuildID);
+                Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > Removed guild " + PalantirEndpoint.GuildID);
             }
             catch
             {
                 Program.Feanor.RemovePalantiri(PalantirEndpoint);
                 StopDataflow();
-                Console.WriteLine("Removed guild " + PalantirEndpoint.GuildID);
+                Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > Removed guild " + PalantirEndpoint.GuildID);
             }
         }
 
@@ -141,7 +141,7 @@ namespace Palantir
             catch(Exception e)
             {
                 // usual error when sd card was too slow for some reason, seems not to appear on faster sdcards
-                Console.WriteLine("Exception: " + e.ToString() + "at Channel:" + PalantirEndpoint.ChannelID + ", Msg: "+PalantirEndpoint.MessageID + ",Client:" + Program.Client.CurrentUser.Username);
+                Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > Exception: " + e.ToString() + "at Channel:" + PalantirEndpoint.ChannelID + ", Msg: "+PalantirEndpoint.MessageID + ",Client:" + Program.Client.CurrentUser.Username);
                 //RemoveTether();
                 return;
             }
@@ -161,14 +161,14 @@ namespace Palantir
                         notFound++;
                         if (notFound > maxErrorCount)
                         {
-                            Console.WriteLine("Target Message couldnt be edited. Error: " + e.ToString());
+                            Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > Target Message couldnt be edited. Error: " + e.ToString());
                             RemoveTether();
                             return;
                         }
                     }
                     else
                     {
-                        Console.WriteLine("Target Message couldnt be edited. No removal of tether, just 15s timeout. Error: " + e.ToString());
+                        Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > Target Message couldnt be edited. No removal of tether, just 15s timeout. Error: " + e.ToString());
                         Thread.Sleep(15000);
                     }
                 }
@@ -196,7 +196,7 @@ namespace Palantir
                         //Console.WriteLine("Found report: " + r.LobbyID);
                         Lobbies.Add(JsonConvert.DeserializeObject<Lobby>(r.Report));
                     }
-                    catch (Exception e) { Console.WriteLine("Couldnt read lobby entry: " + e); };
+                    catch (Exception e) { Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > Couldnt read lobby entry: " + e); };
                 }
             });
 
@@ -209,7 +209,7 @@ namespace Palantir
                         //Console.WriteLine("Found status: " + p.Status);
                         OnlinePlayers.Add(JsonConvert.DeserializeObject<PlayerStatus>(p.Status));
                     }
-                    catch (Exception e) { Console.WriteLine("Couldnt read status file: " + e); };
+                    catch (Exception e) { Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > Couldnt read status file: " + e); };
                 }
             });
 

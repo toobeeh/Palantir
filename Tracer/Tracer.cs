@@ -11,7 +11,7 @@ namespace Palantir.Tracer
     {
         public async Task Execute(IJobExecutionContext context)
         {
-            Console.WriteLine("Tracer for Bubbles is loading values from DB...");
+            Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > Tracer for Bubbles is loading values from DB...");
             PalantirDbContext dbcontext = new PalantirDbContext();
             List<MemberEntity> members = dbcontext.Members.ToList();
             List<BubbleTraceEntity> dailyMemberTraces = new List<BubbleTraceEntity>();
