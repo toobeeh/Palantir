@@ -5,8 +5,6 @@ VisualStudioVersion = 16.0.29609.76
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Palantir", "Palantir.csproj", "{FC6B29D9-383C-48FB-B4BA-DE495DDB17F4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BubbleTracer", "..\BubbleTracer\BubbleTracer.csproj", "{7BCEEF37-986C-49C5-8323-AA5979002CC1}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -17,10 +15,6 @@ Global
 		{FC6B29D9-383C-48FB-B4BA-DE495DDB17F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FC6B29D9-383C-48FB-B4BA-DE495DDB17F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FC6B29D9-383C-48FB-B4BA-DE495DDB17F4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7BCEEF37-986C-49C5-8323-AA5979002CC1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7BCEEF37-986C-49C5-8323-AA5979002CC1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7BCEEF37-986C-49C5-8323-AA5979002CC1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7BCEEF37-986C-49C5-8323-AA5979002CC1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

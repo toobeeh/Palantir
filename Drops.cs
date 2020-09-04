@@ -64,10 +64,9 @@ namespace Palantir
             PalantirDbContext context = new PalantirDbContext();
 
             int count = context.Status.ToList().Count;
-            if (count <= 0) count = 1;
-
-            context.SaveChanges();
             context.Dispose();
+
+            if (count <= 0) count = 1;
             int min = 600 / count;
             if (min < 60) min = 60;
 

@@ -366,7 +366,7 @@ namespace Palantir
 
             if (sprite == 0)
             {
-                await Program.SendEmbed(context.Channel, "Minimalist, huh? You sprite was disabled.", "");
+                await Program.SendEmbed(context.Channel, "Minimalist, huh? Your sprite was disabled.", "");
                 inventory.ForEach(i => i.Activated =false);
                 BubbleWallet.SetInventory(inventory, login);
                 return;
@@ -424,7 +424,7 @@ namespace Palantir
 
             DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
             embed.Title = "Whee!";
-            embed.Description = "You unlocked **" + target.Name + "**!\nActivate it with `>sprite " + target.ID + "`" ;
+            embed.Description = "You unlocked **" + target.Name + "**!\nActivate it with `>use " + target.ID + "`" ;
             embed.Color = DiscordColor.Magenta;
             embed.ImageUrl = target.URL;
             await context.Channel.SendMessageAsync(embed: embed);
@@ -441,12 +441,12 @@ namespace Palantir
             
             DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
             embed.Title = "🔮  Leaderboard of " + context.Guild.Name;
-            embed.Color = DiscordColor.Magenta;
+            embed.Color = DiscordColor.Magenta; 
 
             members.ForEach(async m =>
             {
                 string name = (await context.Guild.GetMemberAsync(Convert.ToUInt64(JsonConvert.DeserializeObject<Member>(m.Member).UserID))).Username;
-                embed.AddField("**#" + (members.IndexOf(m) + 1).ToString() + " - " + name + "**", BubbleWallet.GetBubbles(m.Login).ToString() + " Bubbles - " + BubbleWallet.GetDrops(m.Login).ToString() + " Drops\n\u200b", true);
+                embed.AddField("**#" + (members.IndexOf(m) + 1).ToString() + " - " + name + "**", BubbleWallet.GetBubbles(m.Login).ToString() + " Bubbles\n" + BubbleWallet.GetDrops(m.Login).ToString() + " Drops\n\u200b", true);
             });
 
             await context.Channel.SendMessageAsync(embed: embed);

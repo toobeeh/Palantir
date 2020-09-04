@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using System.Linq;
 using System.IO;
 using System.Collections.Generic;
+using Quartz;
+using Quartz.Impl;
 
 namespace Palantir
 {
@@ -47,6 +49,28 @@ namespace Palantir
             Drops.StartDropping();
             Console.WriteLine("Started dropping cool stuff!");
 
+            // Initialize bubble tracer job
+            Console.WriteLine("Initializing bubbletracer job...");
+            ISchedulerFactory schedFact = new StdSchedulerFactory();
+            IScheduler scheduler = await schedFact.GetScheduler();
+            await scheduler.Start();
+            IJobDetail tracer = JobBuilder.Create<Tracer.TracerJob>()
+                .WithIdentity("Bubble Tracer")
+                .Build();
+            ITrigger tracerTrigger = TriggerBuilder.Create()
+                .StartNow()
+                .WithDailyTimeIntervalSchedule
+                (t => t
+                    .WithIntervalInHours(24)
+                    .StartingDailyAt(TimeOfDay.HourAndMinuteOfDay(19, 0))
+                )
+                .Build();
+
+            //Start bubble tracer job
+            Console.WriteLine("Starting bubbletracer job...");
+            await scheduler.ScheduleJob(tracer, tracerTrigger);
+
+            Console.WriteLine("All done!");
             await Task.Delay(-1);
         }
 
