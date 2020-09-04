@@ -18,15 +18,6 @@ namespace Palantir
         public async Task Manual(CommandContext context)
         {
             string msg = "";
-            //msg += "**Bot configuration**\n";
-            //msg += " This bot shows current skribbl lobbies in a message which is edited in an interval of a few seconds.\n";
-            //msg += " The channel should be read-only to normal members, so the message always stays on top.\n\n";
-            //msg += "Set channel: `>observe #channel`\n";
-            //msg += "Change channel: `>observe #channel`\n";
-            //msg += "Change channel, keep token: `>observe #channel keep`\n";
-            //msg += "The channel has to be mentioned with a #.\n";
-            //msg += "If the token isn't kept with *keep*, users need to verify the server again.\n";
-            //msg += "For other configurations, see `>help`.\n\n\n";
             msg += "**Visit the website:**\n";
             msg += "https://www.tobeh.host/Orthanc/\n";
             msg += "**Connect to the bot**\n";
@@ -177,7 +168,6 @@ namespace Palantir
             await context.Message.RespondAsync("Active lobbies will now be observed in " + context.Message.MentionedChannels[0].Mention + ".\nUsers need following token to connect the browser extension: ```fix\n" + token + "\n```Pin this message or save the token!\n\nFor further instructions, users can visit the website https://www.tobeh.host/Orthanc/.\nMaybe include the link in the bot message!");
             // save observed
             Program.Feanor.SavePalantiri(guild);
-            
         }
 
         [Command("switch")]
@@ -205,25 +195,23 @@ namespace Palantir
             while (Program.Feanor.PalantirTokenExists(token));
 
             bool valid = true;
-            if ("keep" == "keep") // whelp change that 
-            {
-                string oldToken = "";
-                Program.Feanor.PalantirTethers.ForEach((t) => {if (t.PalantirEndpoint.GuildID == guild.GuildID) oldToken = t.PalantirEndpoint.ObserveToken;});
-                if (oldToken == "") valid = false;
-                else { 
-                    token = oldToken;
-                    guild.ObserveToken = token;
-                }
+            string oldToken = "";
 
-                if (valid)
-                {
-                    await context.Message.RespondAsync("The channel is now set to  " + context.Message.MentionedChannels[0].Mention + ".\nUsers won't need to re-enter their token." );
-                    // save observed
-                    Program.Feanor.SavePalantiri(guild);
-                }
-                else await context.Message.RespondAsync("There is no existing token.\nCheck >help for help.");
+            Program.Feanor.PalantirTethers.ForEach((t) => {if (t.PalantirEndpoint.GuildID == guild.GuildID) oldToken = t.PalantirEndpoint.ObserveToken;});
+            if (oldToken == "") valid = false;
+            else { 
+                token = oldToken;
+                guild.ObserveToken = token;
             }
-            else await context.Message.RespondAsync("That's no valid command.\nCheck >help for help.");
+
+            if (valid)
+            {
+                await context.Message.RespondAsync("The channel is now set to  " + context.Message.MentionedChannels[0].Mention + ".\nUsers won't need to re-enter their token." );
+                // save observed
+                Program.Feanor.SavePalantiri(guild);
+            }
+            else await context.Message.RespondAsync("There is no existing token.\nCheck >help for help.");
+            
         }
 
         [Description("Get your login data to connect the extension.")]
@@ -257,7 +245,7 @@ namespace Palantir
 
         [Description("Get a list of all sprites in the store.")]
         [Command("sprites")]
-        [Aliases("spt")]
+        [Aliases("spt","sprite")]
         public async Task Sprites(CommandContext context, int sprite = 0)
         {
             List<Sprite> sprites = BubbleWallet.GetAvailableSprites();
@@ -279,12 +267,11 @@ namespace Palantir
             list.Color = DiscordColor.Magenta;
             list.Title = "🔮 Sprite Listing";
             list.Description = "Show one of the available Sprites with `>sprites [id]`";
-            list.AddField("\u200b", "[View all Sprites here](https://tobeh.host/Orthanc/sprites/gif/)");
-
             foreach (Sprite s in sprites)
             {
                 list.AddField("**" + s.Name + "** ", "Costs: " + s.Cost + " Bubbles\nID: " + s.ID + (s.Special ? " :sparkles: " : ""),true);
             };
+            list.AddField("\u200b", "[View all Sprites here](https://tobeh.host/Orthanc/sprites/gif/)");
             await context.Channel.SendMessageAsync(embed: list);
         }
 
@@ -314,7 +301,7 @@ namespace Palantir
             
             inventory.OrderBy(s => s.ID).ToList().ForEach(s =>
             {
-                embed.AddField("**" + s.Name + "** " ,  "#" + s.ID + " |  Worth " + s.Cost + " Bubbles" + (s.Special ? " :sparkles: " : ""));
+                embed.AddField("**" + s.Name + "** " ,  "#" + s.ID + " |  Worth " + s.Cost + " Bubbles" + (s.Special ? " :sparkles: " : ""),true);
                 if (s.Activated) active = s;
             });
 
@@ -333,13 +320,6 @@ namespace Palantir
             embed.AddField("\u200b", "[View all Sprites here](https://tobeh.host/Orthanc/sprites/gif/)");
             await context.Channel.SendMessageAsync(embed:embed);
            
-        }
-
-        [Description("Choose your sprite.")]
-        [Command("sprite")]
-        public async Task Sprite(CommandContext context, int sprite)
-        {
-            await Program.SendEmbed(context.Channel, "You did nothing wrong,", "but to avoid confusion with `>sprites` the command was renamed to `>use`.\nType `>use " + sprite + "` to activate your Sprite!");
         }
 
         [Description("Choose your sprite.")]
@@ -478,16 +458,25 @@ namespace Palantir
                     List<Sprite> available = BubbleWallet.GetAvailableSprites();
                     Sprite sprite = available.FirstOrDefault(s => (ulong)s.ID == target);
                     hours = ((double)sprite.Cost - BubbleWallet.CalculateCredit(login)) / 360;
-                    await Program.SendEmbed(context.Channel, "🔮  Time to get " + sprite.Name + ":", TimeSpan.FromHours(hours).ToString() + " hours on skribbl.io left.") ;
+                    await Program.SendEmbed(context.Channel, "🔮  Time to get " + sprite.Name + ":", 
+                        TimeSpan.FromHours(hours).Hours.ToString() + "h " 
+                        + TimeSpan.FromHours(hours).Minutes.ToString() + "min "
+                        + TimeSpan.FromHours(hours).Seconds.ToString() + "s on skribbl.io left.") ;
                     break;
                 case "bubbles":
                     hours = (double)target / 360;
-                    await Program.SendEmbed(context.Channel, "🔮  Time to get " + target + " more Bubbles:", TimeSpan.FromHours(hours).ToString() + " hours on skribbl.io left.");
+                    await Program.SendEmbed(context.Channel, "🔮  Time to get " + target + " more Bubbles:", 
+                        TimeSpan.FromHours(hours).Hours.ToString() + "h "
+                        + TimeSpan.FromHours(hours).Minutes.ToString() + "min "
+                        + TimeSpan.FromHours(hours).Seconds.ToString() + "s on skribbl.io left.");
                     break;
                 case "rank":
                     List<MemberEntity> members = Program.Feanor.GetGuildMembers(context.Guild.Id.ToString()).OrderByDescending(m => m.Bubbles).Where(m => m.Bubbles > 0).ToList();
                     hours = ((double)members[Convert.ToInt32(target) - 1].Bubbles - BubbleWallet.GetBubbles(login)) / 360;
-                    await Program.SendEmbed(context.Channel, "🔮  Time catch up #" + target + ":", TimeSpan.FromHours(hours).ToString() + " hours on skribbl.io left.");
+                    await Program.SendEmbed(context.Channel, "🔮  Time catch up #" + target + ":", 
+                        TimeSpan.FromHours(hours).Hours.ToString() + "h "
+                        + TimeSpan.FromHours(hours).Minutes.ToString() + "min "
+                        + TimeSpan.FromHours(hours).Seconds.ToString() + "s on skribbl.io left.");
                     break;
                 default:
                     await Program.SendEmbed(context.Channel, "🔮  Calculate following things:", "➜ `>calc sprite 1` Calculate remaining hours to get Sprite 1 depending on your actual Bubbles left.\n➜ `>calc bubbles 1000` Calculate remaining hours to get 1000 more bubbles.\n➜ `>calc rank 4` Calculate remaining hours to catch up the 4rd ranked member.");
