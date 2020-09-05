@@ -29,9 +29,22 @@ namespace Palantir
                     context.Drop.RemoveRange(context.Drop);
                     context.SaveChanges();
                 }
+                catch (Microsoft.Data.Sqlite.SqliteException e)
+                {
+                    if (e.SqliteErrorCode == 8)
+                    {
+                        Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > Error clearing table: Database locked. Waiting 100ms then retry.");
+                        Thread.Sleep(100);
+                    }
+                    else
+                    {
+                        Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > Unhandled SQL error clearing table, immediately trying again: " + e.ToString());
+                    }
+                    continue;
+                }
                 catch (Exception e)
                 {
-                    Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > Error clearing table: " + e.ToString());
+                    Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > Unhandled error clearing table, immediately trying again: " + e.ToString());
                     continue;
                 }
 
@@ -46,9 +59,22 @@ namespace Palantir
                     context.Drop.Add(drop);
                     context.SaveChanges();
                 }
+                catch (Microsoft.Data.Sqlite.SqliteException e )
+                {
+                    if (e.SqliteErrorCode == 8)
+                    {
+                        Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > Error adding drop: Database locked. Waiting 100ms then retry..");
+                        Thread.Sleep(100);
+                    }
+                    else
+                    {
+                        Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > Unhandled SQL error adding drop, immediately trying again: " + e.ToString());
+                    }
+                    continue;
+                }
                 catch (Exception e)
                 {
-                    Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > Error adding drop: " + e.ToString());
+                    Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > Unhandled error adding drop, immediately trying again: " + e.ToString());
                     continue;
                 }
 
