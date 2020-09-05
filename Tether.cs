@@ -296,7 +296,7 @@ namespace Palantir
                     {
                         string line = "";
                         line += Formatter.Sanitize(player.Name);
-                        line += new string(' ', 18 - player.Name.Length);
+                        line += new string(' ', (20 - player.Name.Length) < 0 ? 0 : (20 - player.Name.Length));
                         line += player.Score + " pts";
                         if (player.Score != 0)
                         {
@@ -304,7 +304,7 @@ namespace Palantir
                             if (scores.IndexOf(player.Score) == 1) line += " 🥈 ";
                             if (scores.IndexOf(player.Score) == 2) line += " 🥉 ";
                         }
-                        line += new string(' ', 30 - line.Length);
+                        line += new string(' ', (32 - line.Length) < 0 ? 0 : (32 - line.Length));
                         line += "  🔮 " + BubbleWallet.GetBubbles(login) + " Bubbles";
                         line += player.Drawing ? " 🖍 \n" : "\n";
                         sender += line;
