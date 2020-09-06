@@ -175,6 +175,10 @@ namespace Palantir
                         return;
                     }
                 }
+                catch (Newtonsoft.Json.JsonReaderException e) // catch JSON reader exceptions
+                {
+                    Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > Error parsing JSON string: " + e.Message);
+                }
                 catch (Exception e) // catch other exceptions
                 {
                     Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > Unhandled exception - Target message couldnt be edited. No removal of tether, just 15s timeout. Error: " + e.ToString());
@@ -253,7 +257,17 @@ namespace Palantir
                 string lobbyDescription = "";
                 if (l.Private)
                 {
-                    string d = JsonConvert.DeserializeObject<ProvidedLobby>(Database.Lobbies.FirstOrDefault(lobbyEntity => lobbyEntity.LobbyID == l.ID).Lobby).Description;
+                    string d;
+                    string json = Database.Lobbies.FirstOrDefault(lobbyEntity => lobbyEntity.LobbyID == l.ID).Lobby;
+                    try
+                    {
+                       d = JsonConvert.DeserializeObject<ProvidedLobby>(json).Description;
+                    }
+                    catch
+                    {
+                        throw new JsonReaderException(message: json);
+                    }
+                    
                     if(d != "") lobbyDescription = "> `" + DSharpPlus.Formatter.Sanitize(d) + "`\n";
                 }
 
@@ -278,17 +292,31 @@ namespace Palantir
                         {
                             BubbleWallet.AddBubble(login);
                         }
-                        catch(Exception e)
+                        catch (Microsoft.Data.Sqlite.SqliteException e) // catch sql exceptions
                         {
-                            //Console.WriteLine("Error adding Bubble for login " + login + " : \n" + e.ToString());
+                            if (e.SqliteErrorCode == 8)
+                                Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > Locked DB. Skipped adding bubble for " + login);
+                            else
+                                Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > DB Error: " + e.SqliteErrorCode + ". Skipped adding bubble for " + login);
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine("Unhandled error adding Bubble for login " + login + " : \n" + e.ToString());
                         }
                         try
                         {
                             BubbleWallet.SetOnlineSprite(login, l.Key, player.LobbyPlayerID);
                         }
+                        catch (Microsoft.Data.Sqlite.SqliteException e) // catch sql exceptions
+                        {
+                            if (e.SqliteErrorCode == 8)
+                                Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > Locked DB. Skipped setting sprite for " + login);
+                            else
+                                Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > DB Error: " + e.SqliteErrorCode + ". Skipped setting sprite for " + login);
+                        }
                         catch (Exception e)
                         {
-                            //Console.WriteLine("Error writing sprite for login " + login + " : \n" + e.ToString());
+                            Console.WriteLine("Unhandled error setting Sprite for login " + login + " : \n" + e.ToString());
                         }
                     }
 
