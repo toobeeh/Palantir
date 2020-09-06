@@ -248,31 +248,39 @@ namespace Palantir
         [Aliases("spt","sprite")]
         public async Task Sprites(CommandContext context, int sprite = 0)
         {
-            List<Sprite> sprites = BubbleWallet.GetAvailableSprites();
-
-            if (sprites.Any(s => s.ID == sprite))
+            try
             {
-                Sprite s = BubbleWallet.GetSpriteByID(sprite);
-                DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
-                embed.Color = DiscordColor.Magenta;
-                embed.Title = s.Name;
-                embed.ImageUrl = s.URL;
-                embed.Description = "**Costs:** " + s.Cost + " Bubbles\n\n**ID**: " + s.ID + (s.Special ? " :sparkles: " : "");
-                embed.AddField("\u200b","[View all Sprites here](https://tobeh.host/Orthanc/sprites/gif/)");
-                await context.Channel.SendMessageAsync(embed: embed);
-                return;
+                List<Sprite> sprites = BubbleWallet.GetAvailableSprites();
+
+                if (sprites.Any(s => s.ID == sprite))
+                {
+                    Sprite s = BubbleWallet.GetSpriteByID(sprite);
+                    DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
+                    embed.Color = DiscordColor.Magenta;
+                    embed.Title = s.Name;
+                    embed.ImageUrl = s.URL;
+                    embed.Description = "**Costs:** " + s.Cost + " Bubbles\n\n**ID**: " + s.ID + (s.Special ? " :sparkles: " : "");
+                    embed.AddField("\u200b", "[View all Sprites here](https://tobeh.host/Orthanc/sprites/gif/)");
+                    await context.Channel.SendMessageAsync(embed: embed);
+                    return;
+                }
+
+                DiscordEmbedBuilder list = new DiscordEmbedBuilder();
+                list.Color = DiscordColor.Magenta;
+                list.Title = "🔮 Sprite Listing";
+                list.Description = "Show one of the available Sprites with `>sprites [id]`";
+                foreach (Sprite s in sprites)
+                {
+                    list.AddField("**" + s.Name + "** ", "Costs: " + s.Cost + " Bubbles\nID: " + s.ID + (s.Special ? " :sparkles: " : ""), true);
+                };
+                list.AddField("\u200b", "[View all Sprites here](https://tobeh.host/Orthanc/sprites/gif/)");
+                await context.Channel.SendMessageAsync(embed: list);
             }
-
-            DiscordEmbedBuilder list = new DiscordEmbedBuilder();
-            list.Color = DiscordColor.Magenta;
-            list.Title = "🔮 Sprite Listing";
-            list.Description = "Show one of the available Sprites with `>sprites [id]`";
-            foreach (Sprite s in sprites)
+            catch(Exception e)
             {
-                list.AddField("**" + s.Name + "** ", "Costs: " + s.Cost + " Bubbles\nID: " + s.ID + (s.Special ? " :sparkles: " : ""),true);
-            };
-            list.AddField("\u200b", "[View all Sprites here](https://tobeh.host/Orthanc/sprites/gif/)");
-            await context.Channel.SendMessageAsync(embed: list);
+                await Program.SendEmbed(context.Channel,"Err", e.ToString());
+            }
+            
         }
 
         [Description("Get a overview of your inventory.")]
