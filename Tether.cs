@@ -175,10 +175,6 @@ namespace Palantir
                         return;
                     }
                 }
-                catch (Newtonsoft.Json.JsonReaderException e) // catch JSON reader exceptions
-                {
-                    Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > Error parsing JSON string: " + e.Message);
-                }
                 catch (Exception e) // catch other exceptions
                 {
                     Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > Unhandled exception - Target message couldnt be edited. No removal of tether, just 15s timeout. Error: " + e.ToString());
@@ -263,12 +259,12 @@ namespace Palantir
                     {
                        d = JsonConvert.DeserializeObject<ProvidedLobby>(json).Description;
                     }
-                    catch
-                    {
-                        throw new JsonReaderException(message: json);
-                    }
-                    
-                    if(d != "") lobbyDescription = "> `" + DSharpPlus.Formatter.Sanitize(d) + "`\n";
+                    catch (Exception e) { 
+                        Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > Cant parse description: " + json);
+                        d = "";
+                    };
+
+                    if (d != "") lobbyDescription = "> `" + DSharpPlus.Formatter.Sanitize(d) + "`\n";
                 }
 
                 // set id to index
