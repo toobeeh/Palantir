@@ -427,8 +427,8 @@ namespace Palantir
             var interactivity = context.Client.GetInteractivity();
             List<MemberEntity> members = Program.Feanor.GetGuildMembers(context.Guild.Id.ToString()).OrderByDescending(m=>m.Bubbles).Where(m=>m.Bubbles > 0).ToList();
             List<Page> embedPages = new List<Page>();
-            var memberBatches = members.Batch(5);
-            foreach(var memberBatch in memberBatches)
+            IEnumerable<IEnumerable<MemberEntity>> memberBatches = members.Batch(5);
+            foreach(IEnumerable<MemberEntity> memberBatch in memberBatches)
             {
                 DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
                 embed.Title = "🔮  Leaderboard of " + context.Guild.Name;
@@ -436,7 +436,9 @@ namespace Palantir
 
                 foreach(MemberEntity member in memberBatch)
                 {
-                    string name = (await context.Guild.GetMemberAsync(Convert.ToUInt64(JsonConvert.DeserializeObject<Member>(member.Member).UserID))).Username;
+                    string name = member.Bubbles.ToString();
+                    try { name=(await context.Guild.GetMemberAsync(Convert.ToUInt64(JsonConvert.DeserializeObject<Member>(member.Member).UserID))).Username; }
+                    catch { };
                     
                     embed.AddField("**#" + (members.IndexOf(member) + 1).ToString() + " - " + name + "**", BubbleWallet.GetBubbles(member.Login).ToString() + " Bubbles\n" + BubbleWallet.GetDrops(member.Login).ToString() + " Drops\n\u200b", true);
                 }
