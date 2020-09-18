@@ -437,12 +437,13 @@ namespace Palantir
                 foreach(MemberEntity member in memberBatch)
                 {
                     string name = (await context.Guild.GetMemberAsync(Convert.ToUInt64(JsonConvert.DeserializeObject<Member>(member.Member).UserID))).Username;
+                    
                     embed.AddField("**#" + (members.IndexOf(member) + 1).ToString() + " - " + name + "**", BubbleWallet.GetBubbles(member.Login).ToString() + " Bubbles\n" + BubbleWallet.GetDrops(member.Login).ToString() + " Drops\n\u200b", true);
                 }
                 embedPages.Add(new Page(embed: embed));
             }
             PaginationEmojis em = new PaginationEmojis();
-            em.Right = DiscordEmoji.FromName(Program.Client, "arrow_right");
+            em.Right = DiscordEmoji.FromName(Program.Client, ":arrow_right:");
 
             await interactivity.SendPaginatedMessageAsync(context.Channel, context.User, embedPages, em);
         }

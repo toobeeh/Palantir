@@ -101,6 +101,7 @@ namespace Palantir
 
         private static async Task onCommandErrored(CommandErrorEventArgs e)
         {
+            if (e.Exception is DSharpPlus.CommandsNext.Exceptions.CommandNotFoundException) return;
             DiscordEmbedBuilder embedErr = new DiscordEmbedBuilder();
             embedErr.Title = "Error Executing " + e.Command;
             embedErr.Description = e.Exception.ToString();
