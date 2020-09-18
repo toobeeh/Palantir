@@ -10,9 +10,12 @@
         "dependencies": {
           "DSharpPlus": "4.0.0-nightly-00705",
           "DSharpPlus.CommandsNext": "4.0.0-nightly-00705",
+          "DSharpPlus.Interactivity": "4.0.0-nightly-00705",
           "Microsoft.EntityFrameworkCore.Sqlite": "3.1.4",
+          "MoreLinq.Source.MoreEnumerable.Batch": "1.0.2",
           "Newtonsoft.Json": "12.0.3",
-          "Quartz": "3.1.0"
+          "Quartz": "3.1.0",
+          "morelinq": "3.3.2"
         },
         "runtime": {
           "Palantir.dll": {}
@@ -41,6 +44,17 @@
         },
         "runtime": {
           "lib/netstandard2.0/DSharpPlus.CommandsNext.dll": {
+            "assemblyVersion": "4.0.0.705",
+            "fileVersion": "4.0.0.705"
+          }
+        }
+      },
+      "DSharpPlus.Interactivity/4.0.0-nightly-00705": {
+        "dependencies": {
+          "DSharpPlus": "4.0.0-nightly-00705"
+        },
+        "runtime": {
+          "lib/netstandard2.0/DSharpPlus.Interactivity.dll": {
             "assemblyVersion": "4.0.0.705",
             "fileVersion": "4.0.0.705"
           }
@@ -461,6 +475,15 @@
           }
         }
       },
+      "morelinq/3.3.2": {
+        "runtime": {
+          "lib/netstandard2.0/MoreLinq.dll": {
+            "assemblyVersion": "3.3.2.0",
+            "fileVersion": "3.3.2.0"
+          }
+        }
+      },
+      "MoreLinq.Source.MoreEnumerable.Batch/1.0.2": {},
       "Newtonsoft.Json/12.0.3": {
         "runtime": {
           "lib/netstandard2.0/Newtonsoft.Json.dll": {
@@ -1538,6 +1561,13 @@
       "path": "dsharpplus.commandsnext/4.0.0-nightly-00705",
       "hashPath": "dsharpplus.commandsnext.4.0.0-nightly-00705.nupkg.sha512"
     },
+    "DSharpPlus.Interactivity/4.0.0-nightly-00705": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-UdcyWu30TuS42ukGqdh298p3Lz9xEJ77NBlc2ySOvdHy4Aevll3Ytx632CQ7tSX5lkOuqCys/e7+ZsLsnZ76JA==",
+      "path": "dsharpplus.interactivity/4.0.0-nightly-00705",
+      "hashPath": "dsharpplus.interactivity.4.0.0-nightly-00705.nupkg.sha512"
+    },
     "Microsoft.Bcl.AsyncInterfaces/1.1.1": {
       "type": "package",
       "serviceable": true,
@@ -1789,6 +1819,20 @@
       "sha512": "sha512-mtVirZr++rq+XCDITMUdnETD59XoeMxSpLRIII7JRI6Yj0LEDiO1pPn0ktlnIj12Ix8bfvQqQDMMIF9wC98oCA==",
       "path": "microsoft.win32.systemevents/4.7.0",
       "hashPath": "microsoft.win32.systemevents.4.7.0.nupkg.sha512"
+    },
+    "morelinq/3.3.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-MQc8GppZJLmjvcpEdf3EkC6ovsp7gRWt2e5mC7dcIOrgwSc+yjFd3JQ0iRqr3XrUT6rb/phv0IkEmBtbfVA7AQ==",
+      "path": "morelinq/3.3.2",
+      "hashPath": "morelinq.3.3.2.nupkg.sha512"
+    },
+    "MoreLinq.Source.MoreEnumerable.Batch/1.0.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-AxVPEPQ8YXlAiCdn/5jLmO3Fk+7WiTWu0P1OIOA6AdtRqKDwgNnYQOcDy8UVeJ4U0Shnbd/ox73Zp2UeRjWnyg==",
+      "path": "morelinq.source.moreenumerable.batch/1.0.2",
+      "hashPath": "morelinq.source.moreenumerable.batch.1.0.2.nupkg.sha512"
     },
     "Newtonsoft.Json/12.0.3": {
       "type": "package",

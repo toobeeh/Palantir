@@ -3,6 +3,7 @@ using DSharpPlus;
 using DSharpPlus.EventArgs;
 using DSharpPlus.Entities;
 using DSharpPlus.CommandsNext;
+using DSharpPlus.Interactivity;
 using System.Threading.Tasks;
 using System.Linq;
 using System.IO;
@@ -17,6 +18,7 @@ namespace Palantir
         public static DataManager Feanor;
         public static DiscordClient Client { get; private set; }
         public static CommandsNextExtension Commands { get; private set; }
+        static InteractivityExtension Interactivity;
         static async Task Main(string[] args)
         {
             Console.WriteLine("Huh, it's " + DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " - lemme sleep!!\n");
@@ -32,6 +34,8 @@ namespace Palantir
                 StringPrefixes = new string[] { ">" },
                 DmHelp = false,
                 IgnoreExtraArguments = true
+            });
+            Interactivity = Client.UseInteractivity(new InteractivityConfiguration { 
             });
             Client.GuildCreated += onjoin;
             Commands.RegisterCommands<Commands>();

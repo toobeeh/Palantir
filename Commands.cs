@@ -6,13 +6,15 @@ using DSharpPlus.CommandsNext.Attributes;
 using System.Threading.Tasks;
 using DSharpPlus.Entities;
 using System.Linq;
+using MoreLinq.Extensions;
 using Newtonsoft.Json;
+using DSharpPlus.Interactivity;
 
 namespace Palantir
 {
     public class Commands : BaseCommandModule
     {
-
+        
         [Command("manual")]
         [Description("Show the manual for bot usage")]
         public async Task Manual(CommandContext context)
@@ -422,19 +424,26 @@ namespace Palantir
         [Aliases("lbd")]
         public async Task Leaderboard(CommandContext context)
         {
+            var interactivity = context.Client.GetInteractivity();
             List<MemberEntity> members = Program.Feanor.GetGuildMembers(context.Guild.Id.ToString()).OrderByDescending(m=>m.Bubbles).Where(m=>m.Bubbles > 0).ToList();
-            
-            DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
-            embed.Title = "🔮  Leaderboard of " + context.Guild.Name;
-            embed.Color = DiscordColor.Magenta; 
-
-            members.ForEach(async m =>
+            List<Page> embedPages = new List<Page>();
+            foreach(List<MemberEntity> memberBatch in members.Batch(5))
             {
-                string name = (await context.Guild.GetMemberAsync(Convert.ToUInt64(JsonConvert.DeserializeObject<Member>(m.Member).UserID))).Username;
-                embed.AddField("**#" + (members.IndexOf(m) + 1).ToString() + " - " + name + "**", BubbleWallet.GetBubbles(m.Login).ToString() + " Bubbles\n" + BubbleWallet.GetDrops(m.Login).ToString() + " Drops\n\u200b", true);
-            });
+                DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
+                embed.Title = "🔮  Leaderboard of " + context.Guild.Name;
+                embed.Color = DiscordColor.Magenta;
 
-            await context.Channel.SendMessageAsync(embed: embed);
+                foreach(MemberEntity member in memberBatch)
+                {
+                    string name = (await context.Guild.GetMemberAsync(Convert.ToUInt64(JsonConvert.DeserializeObject<Member>(member.Member).UserID))).Username;
+                    embed.AddField("**#" + (members.IndexOf(member) + 1).ToString() + " - " + name + "**", BubbleWallet.GetBubbles(member.Login).ToString() + " Bubbles\n" + BubbleWallet.GetDrops(member.Login).ToString() + " Drops\n\u200b", true);
+                }
+                embedPages.Add(new Page(embed: embed));
+            }
+            PaginationEmojis em = new PaginationEmojis();
+            em.Right = DiscordEmoji.FromName(Program.Client, "arrow_right");
+
+            await interactivity.SendPaginatedMessageAsync(context.Channel, context.User, embedPages, em);
         }
 
         [Description("Manual on how to use Bubbles")]
@@ -444,7 +453,7 @@ namespace Palantir
             DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
             embed.Title = "🔮  How to Bubble ";
             embed.Color = DiscordColor.Magenta;
-            embed.AddField("What are Bubbles?", "Bubbles are a fictional currency of the Palantir Bot.\nWhen you're connected to the Bot, you will be rewarded 1 Bubble every 10 seconds.\nBubbles are used to buy Sprites which other users of the Skribbl-Typo extension can see.\nOnce in a while, on the skribbl canvas will apear a drop icon - the player who clicks it first is rewarded a Drop to their inventory.\nA Drop is worth 50 Bubbles and adds up to your Bubble credit.");
+            embed.AddField("What are Bubbles?", "Bubbles are a fictional currency of the Palantir Bot.\nWhen you're connected to the Bot, you will be rewarded 1 Bubble every 10 seconds.\nBubbles are used to buy Sprites which other users of the Skribbl-Typo extension can see in your Skribbl avatar.\nOnce in a while, on the skribbl canvas will apear a drop icon - the player who clicks it first is rewarded a Drop to their inventory.\nA Drop is worth 50 Bubbles and adds up to your Bubble credit.");
             embed.AddField("Commands", "➜ `>inventory` List your Sprites and Bubble statistics.\n➜ `>sprites` Show all buyable Sprites.\n➜ `>sprites [id]` Show a specific Sprite.\n➜ `>buy [id]` Buy a Sprite.\n➜ `>use [id]` Select one of your Sprites.\n➜ `>leaderboard` Show your server's leaderboard.\n➜ `>calc` Calculate various things.");
 
             await context.Channel.SendMessageAsync(embed: embed);
