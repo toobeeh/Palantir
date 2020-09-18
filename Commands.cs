@@ -441,7 +441,7 @@ namespace Palantir
                     catch { };
                     embed.AddField("**#" + (members.IndexOf(member) + 1).ToString() + " - " + name + "**", BubbleWallet.GetBubbles(member.Login).ToString() + " Bubbles\n" + BubbleWallet.GetDrops(member.Login).ToString() + " Drops\n\u200b");
                 }
-                embed.WithFooter(context.Member.DisplayName +  " can react within 1 min to show the next page.");
+                embed.WithFooter(context.Member.DisplayName +  " can react within 2 mins to show the next page.");
                 embedPages.Add(embed);
             }
 
@@ -450,7 +450,7 @@ namespace Palantir
             await leaderboard.CreateReactionAsync(next);
             int page = 0;
 
-            while (!(await interactivity.WaitForReactionAsync(reaction => reaction.Emoji == next, context.User, TimeSpan.FromMinutes(1))).TimedOut)
+            while (!(await interactivity.WaitForReactionAsync(reaction => reaction.Emoji == next, context.User, TimeSpan.FromMinutes(2))).TimedOut)
             {
                 await leaderboard.DeleteAllReactionsAsync();
                 await leaderboard.CreateReactionAsync(next);
@@ -458,6 +458,9 @@ namespace Palantir
                 if (page >= embedPages.Count) page = 0;
                 await leaderboard.ModifyAsync(embed: embedPages[page].Build());
             }
+
+            await leaderboard.DeleteAllReactionsAsync();
+            await leaderboard.CreateReactionAsync(DiscordEmoji.FromName(Program.Client, ":no_entry_sign:"));
         }
 
         [Description("Manual on how to use Bubbles")]
