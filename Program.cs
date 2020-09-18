@@ -38,6 +38,7 @@ namespace Palantir
             Interactivity = Client.UseInteractivity(new InteractivityConfiguration { 
             });
             Client.GuildCreated += onjoin;
+            Commands.CommandErrored += onCommandErrored;
             Commands.RegisterCommands<Commands>();
             await Client.ConnectAsync(new DiscordActivity(" u on skribbl.io",ActivityType.Watching));
             Feanor = new DataManager();
@@ -96,6 +97,17 @@ namespace Palantir
                     catch { }
                 }
             }
+        }
+
+        private static async Task onCommandErrored(CommandErrorEventArgs e)
+        {
+            DiscordEmbedBuilder embedErr = new DiscordEmbedBuilder();
+            embedErr.Title = "Error executing command " + e.Command;
+            embedErr.Description = e.Exception.ToString();
+            embedErr.Color = DiscordColor.Red;
+            embedErr.WithFooter("If this error is persistant, message @tobeh#7437.");
+            await e.Context.Channel.SendMessageAsync(embed: embedErr);
+            return;
         }
 
         public static async Task SendEmbed(DiscordChannel channel, string title, string description, string footer="")
