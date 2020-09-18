@@ -439,13 +439,16 @@ namespace Palantir
                     string name = member.Bubbles.ToString();
                     try { name=(await context.Guild.GetMemberAsync(Convert.ToUInt64(JsonConvert.DeserializeObject<Member>(member.Member).UserID))).Username; }
                     catch { };
-                    
-                    embed.AddField("**#" + (members.IndexOf(member) + 1).ToString() + " - " + name + "**", BubbleWallet.GetBubbles(member.Login).ToString() + " Bubbles\n" + BubbleWallet.GetDrops(member.Login).ToString() + " Drops\n\u200b", true);
+                    embed.AddField("**#" + (members.IndexOf(member) + 1).ToString() + " - " + name + "**", BubbleWallet.GetBubbles(member.Login).ToString() + " Bubbles\n" + BubbleWallet.GetDrops(member.Login).ToString() + " Drops\n\u200b");
                 }
+                embed.WithFooter("React to show the next page.");
                 embedPages.Add(new Page(embed: embed));
             }
             PaginationEmojis em = new PaginationEmojis();
-            em.Right = DiscordEmoji.FromName(Program.Client, ":arrow_right:");
+            em.Left = null;
+            em.SkipLeft = null;
+            em.SkipRight = null;
+            em.Stop = null;
 
             await interactivity.SendPaginatedMessageAsync(context.Channel, context.User, embedPages, em);
         }
