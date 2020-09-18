@@ -452,14 +452,19 @@ namespace Palantir
 
             while (!(await interactivity.WaitForReactionAsync(reaction => reaction.Emoji == next, context.User, TimeSpan.FromMinutes(2))).TimedOut)
             {
-                await leaderboard.DeleteAllReactionsAsync();
-                await leaderboard.CreateReactionAsync(next);
+                try 
+                { 
+                    await leaderboard.DeleteAllReactionsAsync();
+                    await leaderboard.CreateReactionAsync(next);
+                }
+                catch { }
                 page++;
                 if (page >= embedPages.Count) page = 0;
                 await leaderboard.ModifyAsync(embed: embedPages[page].Build());
             }
 
-            await leaderboard.DeleteAllReactionsAsync();
+            try { await leaderboard.DeleteAllReactionsAsync(); }
+            catch { }
             await leaderboard.CreateReactionAsync(DiscordEmoji.FromName(Program.Client, ":no_entry_sign:"));
         }
 
