@@ -445,9 +445,10 @@ namespace Palantir
                 embedPages.Add(embed);
             }
 
-            DiscordMessage leaderboard = await context.RespondAsync(embed: embedPages[0]);
-            int page = 0;
             DiscordEmoji next = DiscordEmoji.FromName(Program.Client, ":arrow_right:");
+            DiscordMessage leaderboard = await context.RespondAsync(embed: embedPages[0]);
+            await leaderboard.CreateReactionAsync(next);
+            int page = 0;
 
             while (!(await interactivity.WaitForReactionAsync(reaction => reaction.Emoji == next, context.User, TimeSpan.FromMinutes(1))).TimedOut)
             {
