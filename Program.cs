@@ -102,10 +102,10 @@ namespace Palantir
         private static async Task onCommandErrored(CommandErrorEventArgs e)
         {
             DiscordEmbedBuilder embedErr = new DiscordEmbedBuilder();
-            embedErr.Title = "Error executing command " + e.Command;
+            embedErr.Title = "Error Executing " + e.Command;
             embedErr.Description = e.Exception.ToString();
             embedErr.Color = DiscordColor.Red;
-            embedErr.WithFooter("If this error is persistant, message @tobeh#7437.");
+            embedErr.WithFooter("If this error is persistent, message @tobeh#7437.");
             await e.Context.Channel.SendMessageAsync(embed: embedErr);
             return;
         }

@@ -427,7 +427,7 @@ namespace Palantir
             var interactivity = context.Client.GetInteractivity();
             List<MemberEntity> members = Program.Feanor.GetGuildMembers(context.Guild.Id.ToString()).OrderByDescending(m=>m.Bubbles).Where(m=>m.Bubbles > 0).ToList();
             List<Page> embedPages = new List<Page>();
-            foreach(List<MemberEntity> memberBatch in members.Batch(5))
+            foreach(List<MemberEntity> memberBatch in members.Batch(5).ToList())
             {
                 DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
                 embed.Title = "🔮  Leaderboard of " + context.Guild.Name;
