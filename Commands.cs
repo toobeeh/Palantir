@@ -426,7 +426,7 @@ namespace Palantir
         {
             var interactivity = context.Client.GetInteractivity();
             List<MemberEntity> members = Program.Feanor.GetGuildMembers(context.Guild.Id.ToString()).OrderByDescending(m=>m.Bubbles).Where(m=>m.Bubbles > 0).ToList();
-            List<Page> embedPages = new List<Page>();
+            List<DiscordEmbedBuilder> embedPages = new List<DiscordEmbedBuilder>();
             IEnumerable<IEnumerable<MemberEntity>> memberBatches = members.Batch(5);
             foreach(IEnumerable<MemberEntity> memberBatch in memberBatches)
             {
@@ -441,16 +441,30 @@ namespace Palantir
                     catch { };
                     embed.AddField("**#" + (members.IndexOf(member) + 1).ToString() + " - " + name + "**", BubbleWallet.GetBubbles(member.Login).ToString() + " Bubbles\n" + BubbleWallet.GetDrops(member.Login).ToString() + " Drops\n\u200b");
                 }
-                embed.WithFooter("React to show the next page.");
-                embedPages.Add(new Page(embed: embed));
+                embed.WithFooter(context.Member.Nickname +  " can react to show the next page.");
+                embedPages.Add(embed);
             }
-            PaginationEmojis em = new PaginationEmojis();
-            em.Left = null;
-            em.SkipLeft = null;
-            em.SkipRight = null;
-            em.Stop = null;
 
-            await interactivity.SendPaginatedMessageAsync(context.Channel, context.User, embedPages, em);
+            DiscordMessage leaderboard = await context.RespondAsync(embed: embedPages[0]);
+            int page = 0;
+            DiscordEmoji next = DiscordEmoji.FromName(Program.Client, ":arrow_right:");
+            do
+            {
+                await leaderboard.DeleteAllReactionsAsync();
+                await leaderboard.CreateReactionAsync(next);
+                page++;
+                if (page >= embedPages.Count) page = 0;
+                await leaderboard.ModifyAsync(embed: embedPages[page].Build());
+            }
+            while (!(await interactivity.WaitForReactionAsync(reaction => reaction.Emoji == next, context.User, TimeSpan.FromMinutes(1))).TimedOut);
+
+            //PaginationEmojis em = new PaginationEmojis();
+            //em.Left = null;
+            //em.SkipLeft = null;
+            //em.SkipRight = null;
+            //em.Stop = null;
+
+            //await interactivity.SendPaginatedMessageAsync(context.Channel, context.User, embedPages, em);
         }
 
         [Description("Manual on how to use Bubbles")]
