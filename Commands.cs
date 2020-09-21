@@ -492,7 +492,7 @@ namespace Palantir
                 embed.Color = DiscordColor.Magenta;
 
                 string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
-                Tracer.BubbleTrace trace = new Tracer.BubbleTrace(login, 10);
+                Tracer.BubbleTrace trace = new Tracer.BubbleTrace(login, 30);
                 trace.History.ForEach(t =>
                 {
                     embed.AddField(t.Key.ToString(), t.Value.ToString());
