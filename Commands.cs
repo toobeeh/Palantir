@@ -510,12 +510,12 @@ namespace Palantir
 
             msg += "\n";
             int diff = trace.History.Values.Max() - trace.History.Values.Min();
-            msg += "> Total gained: " + diff + "\n";
+            msg += ">➜ Total gained: `" + diff + " Bubbles* \n";
             double hours  = (double)diff / 360;
-            msg += "> Equals " + (TimeSpan.FromHours(hours).Days * 24 + TimeSpan.FromHours(hours).Hours).ToString() + "h "
+            msg += ">➜ Equals `" + (TimeSpan.FromHours(hours).Days * 24 + TimeSpan.FromHours(hours).Hours).ToString() + "h "
                 + TimeSpan.FromHours(hours).Minutes.ToString() + "min "
-                + TimeSpan.FromHours(hours).Seconds.ToString() + "s on skribbl.io\n";
-            msg += "> Average " + (diff / 20) + " Bubbles per day";
+                + TimeSpan.FromHours(hours).Seconds.ToString() + "s` on skribbl.io\n";
+            msg += ">➜ Average `" + (diff / 20) + " Bubbles` per day";
 
             await context.Channel.SendMessageAsync(msg);
            
