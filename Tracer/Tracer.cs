@@ -61,7 +61,7 @@ namespace Palantir.Tracer
                 DateTime historyPoint = DateTime.Now.AddDays(-1 * daysAgo);
                 int lastEarlier = 0;
                 while (lastEarlier+1 < traces.Count && Convert.ToDateTime(traces[lastEarlier].Date) < historyPoint ) lastEarlier++;
-                if (!History.ContainsKey(historyPoint)) History.Add(historyPoint.AddDays(-1), traces[lastEarlier].Bubbles);
+                if (!History.ContainsKey(historyPoint)) History.Add(historyPoint.AddDays(1), traces[lastEarlier].Bubbles);
             }
 
             context.Dispose();
