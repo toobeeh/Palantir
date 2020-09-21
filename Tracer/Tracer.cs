@@ -53,7 +53,7 @@ namespace Palantir.Tracer
             History = new Dictionary<DateTime, int>();
             PalantirDbContext context = new PalantirDbContext();
             DateTime compDate = DateTime.UtcNow.AddDays(dayLimit * -1);
-            List<BubbleTraceEntity> traces = context.BubbleTraces.ToList().Where(t => t.Login == login && Convert.ToDateTime(t.Date) <= compDate).ToList();
+            List<BubbleTraceEntity> traces = context.BubbleTraces.Where(t => t.Login == login).ToList();
             Dictionary<DateTime, int> combined = new Dictionary<DateTime, int>();
             traces.OrderBy(k => k.Bubbles);
             for (int daysAgo = dayLimit; daysAgo >= 0; daysAgo--)
@@ -62,6 +62,8 @@ namespace Palantir.Tracer
                 int lastEarlier = 0;
                 while (lastEarlier+1 < traces.Count && Convert.ToDateTime(traces[lastEarlier].Date) < historyPoint ) lastEarlier++;
                 if(!History.ContainsKey(Convert.ToDateTime(traces[lastEarlier].Date))) History.Add(Convert.ToDateTime(traces[lastEarlier].Date), traces.First().Bubbles);
+
+                Console.WriteLine(traces[lastEarlier].Date);
             }
             context.Dispose();
         }
