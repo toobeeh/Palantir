@@ -483,11 +483,11 @@ namespace Palantir
 
         [Description("Show bubble gain statistics")]
         [Command("stat")]
-        public async Task Statistic(CommandContext context)
+        public async Task Stat(CommandContext context)
         {
-            string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
             try
             {
+                string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
                 Tracer.BubbleTrace trace = new Tracer.BubbleTrace(login, 10);
             }
             catch(Exception e)
