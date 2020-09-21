@@ -501,9 +501,10 @@ namespace Palantir
 
                 trace.History.ForEach(t =>
                 {
-                    msg += Convert.ToDateTime(t.Key).ToShortDateString() +  
+                    msg += Convert.ToDateTime(t.Key).ToString("d", iv) + " " +  
                     new string('█', (int)Math.Round((t.Value-offs) / res, 0)) + 
-                    (t.Value - prev > 0 ? " +" + (t.Value - prev) : "") + 
+                    (t.Value - prev > 0 ? "    +" + (t.Value - prev) : "") + 
+                    ( trace.History.Keys.ToList().IndexOf(t.Key) == 0 || trace.History.Keys.ToList().IndexOf(t.Key) == trace.History.Count - 1 ? "    @ " + t.Value : "") +
                     "\n";
                     prev = t.Value;
                 });
