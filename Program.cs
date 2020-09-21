@@ -115,7 +115,7 @@ namespace Palantir
         {
             DiscordEmbedBuilder embedErr = new DiscordEmbedBuilder();
             embedErr.Title = title;
-            embedErr.Description = description.Substring(0,2040);
+            embedErr.Description = description.Length > 2040 ? description.Substring(0,2040) : description;
             embedErr.Color = DiscordColor.Magenta;
             if (footer != "") embedErr.WithFooter(footer);
             await channel.SendMessageAsync(embed: embedErr);
