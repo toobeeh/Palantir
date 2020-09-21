@@ -66,7 +66,7 @@ namespace Palantir.Tracer
                     else if ((secondD - historyPoint).Days == 0 || (secondD - historyPoint).Days < 0 && secondD < firstD) return 1;
                     else return -1;
                 });
-                History.Add(Convert.ToDateTime(traces.First().Date), traces.First().Bubbles);
+                if(!History.ContainsKey(Convert.ToDateTime(traces.First().Date))) History.Add(Convert.ToDateTime(traces.First().Date), traces.First().Bubbles);
             }
             context.Dispose();
         }

@@ -487,8 +487,17 @@ namespace Palantir
         {
             try
             {
+                DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
+                embed.Title = "🔮  How to Bubble ";
+                embed.Color = DiscordColor.Magenta;
+
                 string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
                 Tracer.BubbleTrace trace = new Tracer.BubbleTrace(login, 10);
+                trace.History.ForEach(t =>
+                {
+                    embed.AddField(t.Key.ToString(), t.Value.ToString());
+                });
+                await context.Channel.SendMessageAsync(embed: embed);
             }
             catch(Exception e)
             {
