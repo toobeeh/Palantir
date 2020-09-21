@@ -60,7 +60,7 @@ namespace Palantir.Tracer
             {
                 DateTime historyPoint = DateTime.Now.AddDays(-1 * daysAgo);
                 int lastEarlier = 0;
-                while (lastEarlier < traces.Count && Convert.ToDateTime(traces[lastEarlier].Date) < historyPoint ) lastEarlier++;
+                while (lastEarlier+1 < traces.Count && Convert.ToDateTime(traces[lastEarlier].Date) < historyPoint ) lastEarlier++;
                 if(!History.ContainsKey(Convert.ToDateTime(traces[lastEarlier].Date))) History.Add(Convert.ToDateTime(traces[lastEarlier].Date), traces.First().Bubbles);
             }
             context.Dispose();
