@@ -9,6 +9,7 @@ using System.Linq;
 using MoreLinq.Extensions;
 using Newtonsoft.Json;
 using DSharpPlus.Interactivity;
+using System.Globalization;
 
 namespace Palantir
 {
@@ -487,14 +488,24 @@ namespace Palantir
         {
             try
             {
+
+                CultureInfo iv = CultureInfo.InvariantCulture;
                 string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
                 Tracer.BubbleTrace trace = new Tracer.BubbleTrace(login, 20);
 
-                string msg = "```\n";
-                double res = trace.History.Values.Max() / 30;
+                string msg = "```css\n";
+                msg += " Bubble-Gain from " + Convert.ToDateTime(trace.History.Keys.Min()).ToString("M", iv) + " to " + Convert.ToDateTime(trace.History.Keys.Max()).ToString("M", iv) + "\n\n";
+                double offs = trace.History.Values.Min() * 0.8;
+                double res = (trace.History.Values.Max()-offs) / 30;
+                int prev = trace.History.Values.Min();
+
                 trace.History.ForEach(t =>
                 {
-                    msg += new string('█', (int)Math.Round(t.Value / res, 0)) + "\n";
+                    msg += Convert.ToDateTime(t.Key).ToShortDateString() +  
+                    new string('█', (int)Math.Round((t.Value-offs) / res, 0)) + 
+                    (t.Value - prev > 0 ? " +" + (t.Value - prev) : "") + 
+                    "\n";
+                    prev = t.Value;
                 });
                 msg += "```";
                 await context.Channel.SendMessageAsync(msg);
