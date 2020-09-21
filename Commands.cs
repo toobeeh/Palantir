@@ -494,7 +494,7 @@ namespace Palantir
             string msg = "```css\n";
             msg += " Bubble-Gain from " + Convert.ToDateTime(trace.History.Keys.Min()).ToString("M", iv) + " to " + Convert.ToDateTime(trace.History.Keys.Max()).ToString("M", iv) + "\n\n";
             double offs = trace.History.Values.Min() * 0.8;
-            double res = (trace.History.Values.Max()-offs) / 30;
+            double res = (trace.History.Values.Max()-offs) / 45;
             int prev = trace.History.Values.Min();
 
             trace.History.ForEach(t =>
