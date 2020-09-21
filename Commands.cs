@@ -486,14 +486,14 @@ namespace Palantir
         public async Task Statistic(CommandContext context)
         {
             string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
-            Tracer.BubbleTrace trace = new Tracer.BubbleTrace(login, 10);
-            DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
-            embed.Title = "🔮  How to Bubble ";
-            embed.Color = DiscordColor.Magenta;
-            embed.AddField("What are Bubbles?", "Bubbles are a fictional currency of the Palantir Bot.\nWhen you're connected to the Bot, you will be rewarded 1 Bubble every 10 seconds.\nBubbles are used to buy Sprites which other users of the Skribbl-Typo extension can see in your Skribbl avatar.\nOnce in a while, on the skribbl canvas will apear a drop icon - the player who clicks it first is rewarded a Drop to their inventory.\nA Drop is worth 50 Bubbles and adds up to your Bubble credit.");
-            embed.AddField("Commands", "➜ `>inventory` List your Sprites and Bubble statistics.\n➜ `>sprites` Show all buyable Sprites.\n➜ `>sprites [id]` Show a specific Sprite.\n➜ `>buy [id]` Buy a Sprite.\n➜ `>use [id]` Select one of your Sprites.\n➜ `>leaderboard` Show your server's leaderboard.\n➜ `>calc` Calculate various things.");
-
-            await context.Channel.SendMessageAsync(embed: embed);
+            try
+            {
+                Tracer.BubbleTrace trace = new Tracer.BubbleTrace(login, 10);
+            }
+            catch(Exception e)
+            {
+                await Program.SendEmbed(context.Channel, "fu", e.ToString());
+            }
         }
 
         [Description("Fancy calculation stuff")]
