@@ -55,18 +55,13 @@ namespace Palantir.Tracer
             DateTime compDate = DateTime.UtcNow.AddDays(dayLimit * -1);
             List<BubbleTraceEntity> traces = context.BubbleTraces.ToList().Where(t => t.Login == login && Convert.ToDateTime(t.Date) <= compDate).ToList();
             Dictionary<DateTime, int> combined = new Dictionary<DateTime, int>();
-            for(int daysAgo = dayLimit; daysAgo >= 0; daysAgo--)
+            traces.OrderBy(k => k.Bubbles);
+            for (int daysAgo = dayLimit; daysAgo >= 0; daysAgo--)
             {
                 DateTime historyPoint = DateTime.Now.AddDays(-1 * daysAgo);
-                traces.Sort((first, second) =>
-                {
-                    DateTime firstD = Convert.ToDateTime(first.Date);
-                    DateTime secondD = Convert.ToDateTime(second.Date);
-                    if ((firstD - historyPoint).Days == 0 || (firstD - historyPoint).Days < 0 && firstD < secondD) return -1;
-                    else if ((secondD - historyPoint).Days == 0 || (secondD - historyPoint).Days < 0 && secondD < firstD) return 1;
-                    else return -1;
-                });
-                if(!History.ContainsKey(Convert.ToDateTime(traces.First().Date))) History.Add(Convert.ToDateTime(traces.First().Date), traces.First().Bubbles);
+                int lastEarlier = 0;
+                while (Convert.ToDateTime(traces[lastEarlier].Date) < historyPoint && lastEarlier < traces.Count) lastEarlier++;
+                if(!History.ContainsKey(Convert.ToDateTime(traces[lastEarlier].Date))) History.Add(Convert.ToDateTime(traces[lastEarlier].Date), traces.First().Bubbles);
             }
             context.Dispose();
         }
