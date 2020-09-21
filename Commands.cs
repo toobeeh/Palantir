@@ -486,35 +486,39 @@ namespace Palantir
         [Command("stat")]
         public async Task Stat(CommandContext context)
         {
-            try
+            
+            CultureInfo iv = CultureInfo.InvariantCulture;
+            string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
+            Tracer.BubbleTrace trace = new Tracer.BubbleTrace(login, 20);
+
+            string msg = "```css\n";
+            msg += " Bubble-Gain from " + Convert.ToDateTime(trace.History.Keys.Min()).ToString("M", iv) + " to " + Convert.ToDateTime(trace.History.Keys.Max()).ToString("M", iv) + "\n\n";
+            double offs = trace.History.Values.Min() * 0.8;
+            double res = (trace.History.Values.Max()-offs) / 30;
+            int prev = trace.History.Values.Min();
+
+            trace.History.ForEach(t =>
             {
+                msg += (Convert.ToDateTime(t.Key)).ToString("dd") + " " +  
+                new string('█', (int)Math.Round((t.Value-offs) / res, 0)) + 
+                (t.Value - prev > 0 ? "    +" + (t.Value - prev) : "") + 
+                ( trace.History.Keys.ToList().IndexOf(t.Key) == 0 || trace.History.Keys.ToList().IndexOf(t.Key) == trace.History.Count - 1 ? "    @" + t.Value : "") +
+                "\n";
+                prev = t.Value;
+            });
+            msg += "```";
 
-                CultureInfo iv = CultureInfo.InvariantCulture;
-                string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
-                Tracer.BubbleTrace trace = new Tracer.BubbleTrace(login, 20);
+            msg += "\n";
+            int diff = trace.History.Values.Max() - trace.History.Values.Min();
+            msg += "> Total gained: " + diff + "\n";
+            double hours  = (double)diff / 360;
+            msg += "> Equals " + (TimeSpan.FromHours(hours).Days * 24 + TimeSpan.FromHours(hours).Hours).ToString() + "h "
+                + TimeSpan.FromHours(hours).Minutes.ToString() + "min "
+                + TimeSpan.FromHours(hours).Seconds.ToString() + "s on skribbl.io\n";
+            msg += "> Average " + (diff / 20) + " Bubbles per day";
 
-                string msg = "```css\n";
-                msg += " Bubble-Gain from " + Convert.ToDateTime(trace.History.Keys.Min()).ToString("M", iv) + " to " + Convert.ToDateTime(trace.History.Keys.Max()).ToString("M", iv) + "\n\n";
-                double offs = trace.History.Values.Min() * 0.8;
-                double res = (trace.History.Values.Max()-offs) / 30;
-                int prev = trace.History.Values.Min();
-
-                trace.History.ForEach(t =>
-                {
-                    msg += (Convert.ToDateTime(t.Key)).ToString("dd") + " " +  
-                    new string('█', (int)Math.Round((t.Value-offs) / res, 0)) + 
-                    (t.Value - prev > 0 ? "    +" + (t.Value - prev) : "") + 
-                    ( trace.History.Keys.ToList().IndexOf(t.Key) == 0 || trace.History.Keys.ToList().IndexOf(t.Key) == trace.History.Count - 1 ? "    @" + t.Value : "") +
-                    "\n";
-                    prev = t.Value;
-                });
-                msg += "```";
-                await context.Channel.SendMessageAsync(msg);
-            }
-            catch(Exception e)
-            {
-                await Program.SendEmbed(context.Channel, "fu", e.ToString());
-            }
+            await context.Channel.SendMessageAsync(msg);
+           
         }
 
         [Description("Fancy calculation stuff")]
