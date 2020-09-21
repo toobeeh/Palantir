@@ -52,7 +52,8 @@ namespace Palantir.Tracer
         {
             History = new Dictionary<DateTime, int>();
             PalantirDbContext context = new PalantirDbContext();
-            List<BubbleTraceEntity> traces = context.BubbleTraces.Where(t => t.Login == login && Convert.ToDateTime(t.Date) <= DateTime.UtcNow.AddDays(dayLimit * -1)).ToList();
+            DateTime compDate = DateTime.UtcNow.AddDays(dayLimit * -1);
+            List<BubbleTraceEntity> traces = context.BubbleTraces.Where(t => t.Login == login && Convert.ToDateTime(t.Date) <= compDate).ToList();
             Dictionary<DateTime, int> combined = new Dictionary<DateTime, int>();
             for(int daysAgo = dayLimit; daysAgo >= 0; daysAgo--)
             {
