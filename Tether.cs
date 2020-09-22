@@ -256,10 +256,11 @@ namespace Palantir
                 if (l.Private)
                 {
                     string d;
-                    string json = Database.Lobbies.FirstOrDefault(lobbyEntity => lobbyEntity.LobbyID == l.ID).Lobby;
+                    string json = "";
                     try
                     {
-                       d = JsonConvert.DeserializeObject<ProvidedLobby>(json).Description;
+                        json = Database.Lobbies.FirstOrDefault(lobbyEntity => lobbyEntity.LobbyID == l.ID).Lobby;
+                        d = JsonConvert.DeserializeObject<ProvidedLobby>(json).Description;
                     }
                     catch (Exception e) { 
                         Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > Cant parse description: " + json);
