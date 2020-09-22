@@ -10,6 +10,7 @@ using System.IO;
 using Newtonsoft.Json;
 using System.Linq;
 using System.Globalization;
+using System.Diagnostics;
 
 namespace Palantir
 {
@@ -177,7 +178,8 @@ namespace Palantir
                 }
                 catch (Exception e) // catch other exceptions
                 {
-                    Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > Unhandled exception - Target message couldnt be edited. No removal of tether, just 15s timeout. Error: " + e.ToString());
+                    int line = new StackTrace(e, true).GetFrame(0).GetFileLineNumber();
+                    Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > Unhandled exception on line " + line + " - Target message couldnt be edited. No removal of tether, just 15s timeout. Error: " + e.ToString());
                     Thread.Sleep(15000);
                 }
                 Thread.Sleep(2000);
