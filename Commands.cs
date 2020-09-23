@@ -558,5 +558,33 @@ namespace Palantir
                     break;
             }
         }
+
+        [Description("Create a new seasonal event")]
+        [Command("newevent")]
+        public async Task CreateEvent(CommandContext context, string name, int duration, string[] description)
+        {
+            if (context.Message.Author.Id != 334048043638849536) return;
+
+            PalantirDbContext dbcontext = new PalantirDbContext();
+
+            EventEntity newEvent = new EventEntity();
+            newEvent.EventName = name;
+            newEvent.DayLength = duration;
+            newEvent.Description = description.ToDelimitedString(" ");
+            if (dbcontext.Events.Count() <= 0) newEvent.EventID = 0;
+            else newEvent.EventID = dbcontext.Events.Max(e => e.EventID) + 1;
+
+            dbcontext.Events.Add(newEvent);
+            dbcontext.SaveChanges();
+            dbcontext.Dispose();
+
+            DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
+            embed.Title = ":champagne:  Event created: **" + newEvent.EventName + "**";
+            embed.Color = DiscordColor.Magenta;
+            embed.WithDescription("The event lasts until  " + DateTime.Now.AddDays(duration).ToShortDateString());
+            embed.AddField("Make the event fancy!", "➜ `>eventdrop " + newEvent.EventID + "` Send this command with an attached gif to add a event drop.");
+
+            await context.Channel.SendMessageAsync(embed: embed);
+        }
     }
 }
