@@ -583,8 +583,47 @@ namespace Palantir
             embed.Title = ":champagne:  Event created: **" + newEvent.EventName + "**";
             embed.Color = DiscordColor.Magenta;
             embed.WithDescription("The event lasts until  " + DateTime.Now.AddDays(duration).ToShortDateString());
-            embed.AddField("Make the event fancy!", "➜ `>eventdrop " + newEvent.EventID + "` Send this command with an attached gif to add a event drop.");
+            embed.AddField("Make the event fancy!", "➜ `>eventdrop " + newEvent.EventID + " coolname` Send this command with an attached gif to add a event drop.");
 
+            await context.Channel.SendMessageAsync(embed: embed);
+        }
+
+        [Description("Add a seasonal drop to an event")]
+        [Command("eventdrop")]
+        public async Task CreateEventDrop(CommandContext context, int eventID, string name)
+        {
+            if (context.Message.Author.Id != 334048043638849536) return;
+
+            PalantirDbContext dbcontext = new PalantirDbContext();
+
+            if(!dbcontext.Events.Any(e=>e.EventID == eventID))
+            {
+                await Program.SendEmbed(context.Channel, "Hmm...", "There's no event with that id.\nCheck '>event'");
+                return;
+            }
+            if (context.Message.Attachments.Count <= 0 || !context.Message.Attachments[0].FileName.EndsWith(".gif"))
+            {
+                await Program.SendEmbed(context.Channel, "Hmm...", "There's no valid gif attached.");
+                return;
+            }
+
+            EventDropEntity newDrop = new EventDropEntity();
+            newDrop.EventID = eventID;
+            newDrop.Name = name;
+            newDrop.URL = context.Message.Attachments[0].Url;
+            if (dbcontext.EventDrops.Count() <= 0) newDrop.EventDropID = 0;
+            else newDrop.EventDropID = dbcontext.EventDrops.Max(e => e.EventDropID) + 1;
+
+            dbcontext.EventDrops.Add(newDrop);
+            dbcontext.SaveChanges();
+
+            DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
+            embed.Title = ":champagne:  Drop added to " + dbcontext.Events.FirstOrDefault(e=>e.EventID == eventID).EventName + ": **" + newDrop.Name + "**";
+            embed.Color = DiscordColor.Magenta;
+            embed.WithThumbnail(newDrop.URL);
+            embed.WithDescription("The ID of the drop is  " + newDrop.EventDropID + ".\nAdd a seasonal Sprite hich can be bought with the event drops.");
+
+            dbcontext.Dispose();
             await context.Channel.SendMessageAsync(embed: embed);
         }
     }
