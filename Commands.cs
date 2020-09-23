@@ -577,7 +577,7 @@ namespace Palantir
 
             if (dbcontext.Events.ToList().Any(otherEvent =>
                     !((Convert.ToDateTime(newEvent.ValidFrom) > Convert.ToDateTime(otherEvent.ValidFrom).AddDays(otherEvent.DayLength)) || // begin after end
-                    (Convert.ToDateTime(otherEvent.ValidFrom) < Convert.ToDateTime(newEvent.ValidFrom).AddDays(newEvent.DayLength)))      // end before begin
+                    (Convert.ToDateTime(otherEvent.ValidFrom) > Convert.ToDateTime(newEvent.ValidFrom).AddDays(newEvent.DayLength)))      // end before begin
                 )
              )
             {
