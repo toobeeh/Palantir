@@ -561,19 +561,29 @@ namespace Palantir
 
         [Description("Create a new seasonal event")]
         [Command("newevent")]
-        public async Task CreateEvent(CommandContext context, string name, int duration, params string[] description)
+        public async Task CreateEvent(CommandContext context, string name, int duration, int validInDays, params string[] description)
         {
             if (context.Message.Author.Id != 334048043638849536) return;
 
-            PalantirDbContext dbcontext = new PalantirDbContext();
+            PalantirDbContext dbcontext = new PalantirDbContext(); 
 
             EventEntity newEvent = new EventEntity();
             newEvent.EventName = name;
             newEvent.DayLength = duration;
-            newEvent.ValidFrom = DateTime.Now.ToShortDateString();
+            newEvent.ValidFrom = DateTime.Now.AddDays(validInDays).ToShortDateString();
             newEvent.Description = description.ToDelimitedString(" ");
             if (dbcontext.Events.Count() <= 0) newEvent.EventID = 0;
             else newEvent.EventID = dbcontext.Events.Max(e => e.EventID) + 1;
+
+            if (dbcontext.Events.ToList().Any(otherEvent =>
+                    !((Convert.ToDateTime(newEvent.ValidFrom) > Convert.ToDateTime(otherEvent.ValidFrom).AddDays(otherEvent.DayLength)) || // begin after end
+                    (Convert.ToDateTime(otherEvent.ValidFrom) < Convert.ToDateTime(newEvent.ValidFrom).AddDays(newEvent.DayLength)))      // end before begin
+                )
+             )
+            {
+                await Program.SendEmbed(context.Channel, "Hmm...", "There's already an event running in that timespan.\nCheck '>event'");
+                return;
+            }
 
             dbcontext.Events.Add(newEvent);
             dbcontext.SaveChanges();
@@ -621,7 +631,7 @@ namespace Palantir
             embed.Title = ":champagne:  Drop added to " + dbcontext.Events.FirstOrDefault(e=>e.EventID == eventID).EventName + ": **" + newDrop.Name + "**";
             embed.Color = DiscordColor.Magenta;
             embed.WithThumbnail(newDrop.URL);
-            embed.WithDescription("The ID of the drop is  " + newDrop.EventDropID + ".\nAdd a seasonal Sprite hich can be bought with the event drops.");
+            embed.WithDescription("The ID of the Drop is  " + newDrop.EventDropID + ".\nAdd a seasonal Sprite which can be bought with the event drops to make your event complete.");
 
             dbcontext.Dispose();
             await context.Channel.SendMessageAsync(embed: embed);
