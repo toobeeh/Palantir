@@ -138,6 +138,7 @@ namespace Palantir
 
     public class EventCreditEntity
     {
+        [Key]
         public string Login { get; set; }
         public int EventDropID { get; set; }
         public int Credit { get; set; }
