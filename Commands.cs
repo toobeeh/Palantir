@@ -561,7 +561,7 @@ namespace Palantir
 
         [Description("Create a new seasonal event")]
         [Command("newevent")]
-        public async Task CreateEvent(CommandContext context, string name, int duration, string[] description)
+        public async Task CreateEvent(CommandContext context, string name, int duration, params string[] description)
         {
             if (context.Message.Author.Id != 334048043638849536) return;
 
