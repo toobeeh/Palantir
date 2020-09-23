@@ -77,7 +77,7 @@ namespace Palantir
                     try
                     {
                         int id;
-                        if (int.TryParse(i,out id) && id == s.ID) spriteInventory.Add(new SpriteProperty(s.Name, s.URL, s.Cost, s.ID, s.Special, own));
+                        if (int.TryParse(i,out id) && id == s.ID) spriteInventory.Add(new SpriteProperty(s.Name, s.URL, s.Cost, s.ID, s.Special, s.EventDropID, own));
                     }
                     catch(Exception e)
                     {
@@ -109,7 +109,7 @@ namespace Palantir
         {
             List<Sprite> sprites = new List<Sprite>();
             PalantirDbContext context = new PalantirDbContext();
-            context.Sprites.ToList().ForEach(s => sprites.Add(new Sprite(s.Name, s.URL, s.Cost, s.ID, s.Special)));
+            context.Sprites.ToList().ForEach(s => sprites.Add(new Sprite(s.Name, s.URL, s.Cost, s.ID, s.Special, s.EventDropID)));
             context.SaveChanges();
             context.Dispose();
             return sprites;
@@ -124,7 +124,7 @@ namespace Palantir
             int total = GetBubbles(login);
             GetInventory(login).ForEach(s =>
             {
-                total -= s.Cost;
+                if(s.EventDropID > 0) total -= s.Cost;
             });
             total += GetDrops(login) * 50;
             return total;
@@ -185,20 +185,22 @@ namespace Palantir
         public string URL;
         public int Cost;
         public bool Special;
-        public Sprite(string name, string url, int cost, int id, bool special)
+        public int EventDropID;
+        public Sprite(string name, string url, int cost, int id, bool special, int eventID)
         {
             Name = name;
             URL = url;
             Cost = cost;
             ID = id;
             Special = special;
+            EventDropID = eventID;
         }
     }
 
     public class SpriteProperty : Sprite
     {
         public bool Activated;
-        public SpriteProperty(string name, string url, int cost, int id, bool special, bool activated) : base(name,url,cost,id, special)
+        public SpriteProperty(string name, string url, int cost, int id, bool special, int eventID, bool activated) : base(name,url,cost,id, special, eventID)
         {
             Activated = activated;
         }

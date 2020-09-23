@@ -21,6 +21,9 @@ namespace Palantir
         public DbSet<SpritesEntity> Sprites { get; set; }
         public DbSet<DropEntity> Drop { get; set; }
         public DbSet<BubbleTraceEntity> BubbleTraces { get; set; }
+        public DbSet<EventEntity> Events { get; set; }
+        public DbSet<EventDropEntity> EventDrops { get; set; }
+        public DbSet<EventCreditEntity> EventCredits { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder options)
             => options.UseSqlite("Data Source=/home/pi/Database/palantir.db");
 
@@ -50,6 +53,7 @@ namespace Palantir
         public string URL { get; set; }
         public int Cost { get; set; }
         public bool Special { get; set; }
+        public int EventDropID { get; set; }
     }
     public class ReportEntity
     {
@@ -101,6 +105,7 @@ namespace Palantir
         public string CaughtLobbyPlayerID { get; set; }
         public string CaughtLobbyKey { get; set; }
         public string ValidFrom { get; set; }
+        public int EventDropID { get; set; }
     }
 
     public class BubbleTraceEntity
@@ -112,4 +117,29 @@ namespace Palantir
         public int Bubbles { get; set; }
     }
 
+    public class EventEntity
+    {
+        [Key]
+        public int EventID { get; set; }
+        public string EventName { get; set; }
+        public int DayLength { get; set; }
+        public string ValidFrom { get; set; }
+        public string Description { get; set; }
+    }
+
+    public class EventDropEntity
+    {
+        [Key]
+        public int EventDropID { get; set; }
+        public int EventID { get; set; }
+        public string URL { get; set; }
+        public string Name { get; set; }
+    }
+
+    public class EventCreditEntity
+    {
+        public string Login { get; set; }
+        public int EventDropID { get; set; }
+        public int Credit { get; set; }
+    }
 }

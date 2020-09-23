@@ -407,7 +407,7 @@ namespace Palantir
                 return;
             }
 
-            inventory.Add(new SpriteProperty(target.Name, target.URL, target.Cost, target.ID, target.Special, false));
+            inventory.Add(new SpriteProperty(target.Name, target.URL, target.Cost, target.ID, target.Special, target.EventDropID, false));
             BubbleWallet.SetInventory(inventory, login);
 
             DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
@@ -486,7 +486,6 @@ namespace Palantir
         [Command("stat")]
         public async Task Stat(CommandContext context)
         {
-            
             CultureInfo iv = CultureInfo.InvariantCulture;
             string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
             Tracer.BubbleTrace trace = new Tracer.BubbleTrace(login, 20);
