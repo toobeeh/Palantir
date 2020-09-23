@@ -570,6 +570,7 @@ namespace Palantir
             EventEntity newEvent = new EventEntity();
             newEvent.EventName = name;
             newEvent.DayLength = duration;
+            newEvent.ValidFrom = DateTime.Now.ToShortDateString();
             newEvent.Description = description.ToDelimitedString(" ");
             if (dbcontext.Events.Count() <= 0) newEvent.EventID = 0;
             else newEvent.EventID = dbcontext.Events.Max(e => e.EventID) + 1;
