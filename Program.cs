@@ -41,7 +41,11 @@ namespace Palantir
             Commands.CommandErrored += onCommandErrored;
             Commands.RegisterCommands<Commands>();
             await Client.ConnectAsync(new DiscordActivity(" u on skribbl.io",ActivityType.Watching));
-            Feanor = new DataManager();
+            try
+            {
+                Feanor = new DataManager();
+            }
+            catch(Exception e) { Console.WriteLine(e.ToString()); return; }
 
             Console.WriteLine("Palantir ready. Do not uncover it.");
             Console.WriteLine("Stored guilds:");
