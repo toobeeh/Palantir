@@ -592,7 +592,7 @@ namespace Palantir
             DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
             embed.Title = ":champagne:  Event created: **" + newEvent.EventName + "**";
             embed.Color = DiscordColor.Magenta;
-            embed.WithDescription("The event lasts until  " + DateTime.Now.AddDays(duration).ToShortDateString());
+            embed.WithDescription("The event lasts from  " + newEvent.ValidFrom + " to " + Convert.ToDateTime(newEvent.ValidFrom).AddDays(newEvent.DayLength).ToShortDateString());
             embed.AddField("Make the event fancy!", "➜ `>eventdrop " + newEvent.EventID + " coolname` Send this command with an attached gif to add a event drop.");
 
             await context.Channel.SendMessageAsync(embed: embed);
