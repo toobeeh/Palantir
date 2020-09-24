@@ -12,12 +12,10 @@ namespace Palantir
         public static Dictionary<string, DateTime> Ticks = new Dictionary<string, DateTime>();
         public static void AddBubble(string login)
         {
-            // remove ticks with null key
-            Ticks.Remove(null);
             // Remove all ticks that passed the max tick interval
             Ticks.Where(tick => (tick.Value < DateTime.Now.AddSeconds(-10))).ToList().ForEach(tick => Ticks.Remove(tick.Key));
 
-            if (Ticks.ContainsKey(login)) return;
+            if (Ticks.ContainsKey(login) ||  login is null) return;
 
             Ticks.Add(login, DateTime.Now);
 
