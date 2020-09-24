@@ -638,14 +638,15 @@ namespace Palantir
         }
 
         [Description("Show upcoming events")]
-        [Command("upevent")]
+        [Command("upcoming")]
         public async Task UpcomingEvents(CommandContext context)
         {
-            List<EventEntity> events = Events.GetEvents(true);
+            List<EventEntity> events = Events.GetEvents(false);
             string eventsList = "";
             events.ForEach(e =>
             {
                 eventsList += "➜ **" + e.EventName + "**: " + e.ValidFrom + " to " + Convert.ToDateTime(e.ValidFrom).AddDays(e.DayLength).ToShortDateString() + "\n";
+                eventsList += e.Description + "\n\n";
             });
 
             DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
