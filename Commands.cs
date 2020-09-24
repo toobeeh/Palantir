@@ -667,7 +667,7 @@ namespace Palantir
         }
 
         [Description("Show event info")]
-        [Command("upcoming")]
+        [Command("event")]
         public async Task ShowEvent(CommandContext context)
         {
             List<EventEntity> events = Events.GetEvents(true);
