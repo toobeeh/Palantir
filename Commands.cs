@@ -689,11 +689,11 @@ namespace Palantir
             {
                 embed.Title = ":champagne: " + events[0].EventName;
                 embed.Color = DiscordColor.Magenta;
-                embed.WithDescription(events[0].Description + "\n" + events[0].ValidFrom + " to " + Convert.ToDateTime(events[0].ValidFrom).AddDays(events[0].DayLength).ToShortDateString());
+                embed.WithDescription(events[0].Description + "\nLasts from " + events[0].ValidFrom + " to " + Convert.ToDateTime(events[0].ValidFrom).AddDays(events[0].DayLength).ToShortDateString() + "\n\n**Event Sprites:**");
                 Events.GetEventDrops(events.GetRange(0, 1)).ForEach(e =>
                 {
                     SpritesEntity sprite = Events.GetEventSprite(e.EventDropID);
-                    embed.AddField(sprite.Name, "Sprite #" + sprite.ID + ": Collect " + sprite.Cost + " " + e.Name + "\nYou own " + BubbleWallet.GetEventCredit(login,e.EventDropID) + " " + e.Name);
+                    embed.AddField(sprite.Name + " (#" + sprite.ID + ")", BubbleWallet.GetEventCredit(login, e.EventDropID) + " / " + sprite.Cost + " " + e.Name + " collected");
                 });
                 embed.WithFooter("Use >sprite [id] to see the event drop and the sprite!");
             }
