@@ -259,9 +259,10 @@ namespace Palantir
                 Sprite s = BubbleWallet.GetSpriteByID(sprite);
                 DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
                 embed.Color = DiscordColor.Magenta;
-                embed.Title = s.Name;
+                embed.Title = s.Name + (s.EventDropID > 0 ? " (Event Sprite)" : "") ;
                 embed.ImageUrl = s.URL;
-                embed.Description = "**Costs:** " + s.Cost + " Bubbles\n\n**ID**: " + s.ID + (s.Special ? " :sparkles: " : "");
+                if(s.EventDropID <= 0) embed.Description = "**Costs:** " + s.Cost + " Bubbles\n\n**ID**: " + s.ID + (s.Special ? " :sparkles: " : "");
+                else embed.Description = "Event Drop Price:** " + s.Cost + " " + Events.GetEventDrops().FirstOrDefault(d=>d.EventDropID == s.EventDropID).Name + "\n\n**ID**: " + s.ID + (s.Special ? " :sparkles: " : "");
                 embed.AddField("\u200b","[View all Sprites here](https://tobeh.host/Orthanc/sprites/gif/)");
                 await context.Channel.SendMessageAsync(embed: embed);
                 return;
@@ -532,6 +533,7 @@ namespace Palantir
                 case "sprite":
                     List<Sprite> available = BubbleWallet.GetAvailableSprites();
                     Sprite sprite = available.FirstOrDefault(s => (ulong)s.ID == target);
+                    if(sprite.EventDropID > 0) { await Program.SendEmbed(context.Channel, "This is an event sprite!", "It can only be bought with event drops."); return; }
                     hours = ((double)sprite.Cost - BubbleWallet.CalculateCredit(login)) / 360;
                     await Program.SendEmbed(context.Channel, "🔮  Time to get " + sprite.Name + ":", 
                         (TimeSpan.FromHours(hours).Days * 24 + TimeSpan.FromHours(hours).Hours).ToString() + "h " 
@@ -631,7 +633,8 @@ namespace Palantir
             embed.Title = ":champagne:  Drop added to " + dbcontext.Events.FirstOrDefault(e=>e.EventID == eventID).EventName + ": **" + newDrop.Name + "**";
             embed.Color = DiscordColor.Magenta;
             embed.WithThumbnail(newDrop.URL);
-            embed.WithDescription("The ID of the Drop is  " + newDrop.EventDropID + ".\nAdd a seasonal Sprite which can be bought with the event drops to make your event complete.");
+            embed.WithDescription("The ID of the Drop is  " + newDrop.EventDropID + ".\nAdd a seasonal Sprite which can be bought with the event drops to make your event complete:" +
+                "➜ `>eventsprite " + newDrop.EventDropID + " [name] [price]` with the sprite-gif attached.");
 
             dbcontext.Dispose();
             await context.Channel.SendMessageAsync(embed: embed);
@@ -653,6 +656,51 @@ namespace Palantir
             embed.Title = ":champagne:  Upcoming Events:";
             embed.Color = DiscordColor.Magenta;
             embed.WithDescription(eventsList);
+            await context.Channel.SendMessageAsync(embed: embed);
+        }
+
+        [Description("Add a seasonal sprite to an event")]
+        [Command("eventsprite")]
+        public async Task CreateEventSprite(CommandContext context, int eventDropID, string name,  int price, string special = "")
+        {
+            if (context.Message.Author.Id != 334048043638849536) return;
+
+            PalantirDbContext dbcontext = new PalantirDbContext();
+
+            if (!dbcontext.EventDrops.Any(e => e.EventDropID == eventDropID))
+            {
+                await Program.SendEmbed(context.Channel, "Hmm...", "There's no event drop with that id.\nCheck `>upevent`");
+                return;
+            }
+            if (context.Message.Attachments.Count <= 0 || !context.Message.Attachments[0].FileName.EndsWith(".gif"))
+            {
+                await Program.SendEmbed(context.Channel, "Hmm...", "There's no valid gif attached.");
+                return;
+            }
+            if (price < 20)
+            {
+                await Program.SendEmbed(context.Channel, "Hmm...", "We don't gift sprites. The price is too low.");
+                return;
+            }
+            if (String.IsNullOrWhiteSpace(name))
+            {
+                await Program.SendEmbed(context.Channel, "Hmm...", "Something went wrong with the name.");
+                return;
+            }
+
+            // download sprite
+            System.Net.WebClient client = new System.Net.WebClient();
+            client.DownloadFile(context.Message.Attachments[0].Url, "/home/pi/Webroot/eventsprites/evd" + eventDropID + name + ".gif");
+
+            Sprite eventsprite = new Sprite(name, "https://tobeh.host/eventsprites/evd" + eventDropID + name + ".gif", price, dbcontext.Sprites.Max(s => s.ID) + 1, special != "", eventDropID);
+            BubbleWallet.AddSprite(eventsprite);
+
+            DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
+            embed.Title = ":champagne:  Sprite added to " + dbcontext.EventDrops.FirstOrDefault(e => e.EventDropID == eventDropID).Name + ": **" + eventsprite.Name + "**";
+            embed.Color = DiscordColor.Magenta;
+            embed.WithThumbnail(eventsprite.URL);
+
+            dbcontext.Dispose();
             await context.Channel.SendMessageAsync(embed: embed);
         }
     }

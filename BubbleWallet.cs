@@ -119,6 +119,21 @@ namespace Palantir
             return GetAvailableSprites().FirstOrDefault(s => s.ID == id);
         }
 
+        public static void AddSprite(Sprite sprite)
+        {
+            PalantirDbContext context = new PalantirDbContext();
+            SpritesEntity s = new SpritesEntity();
+            s.ID = sprite.ID;
+            s.Name = sprite.Name;
+            s.Special = sprite.Special;
+            s.URL = sprite.URL;
+            s.EventDropID = sprite.EventDropID;
+            s.Cost = sprite.Cost;
+            context.Sprites.Add(s);
+            context.SaveChanges();
+            context.Dispose();
+        }
+
         public static int CalculateCredit(string login)
         {
             int total = GetBubbles(login);
@@ -186,14 +201,14 @@ namespace Palantir
         public int Cost;
         public bool Special;
         public int EventDropID;
-        public Sprite(string name, string url, int cost, int id, bool special, int eventID)
+        public Sprite(string name, string url, int cost, int id, bool special, int eventDropID)
         {
             Name = name;
             URL = url;
             Cost = cost;
             ID = id;
             Special = special;
-            EventDropID = eventID;
+            EventDropID = eventDropID;
         }
     }
 
