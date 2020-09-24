@@ -251,7 +251,6 @@ namespace Palantir
         [Aliases("spt","sprite")]
         public async Task Sprites(CommandContext context, int sprite = 0)
         {
-
             List<Sprite> sprites = BubbleWallet.GetAvailableSprites();
 
             if (sprites.Any(s => s.ID == sprite))
@@ -262,7 +261,7 @@ namespace Palantir
                 embed.Title = s.Name + (s.EventDropID > 0 ? " (Event Sprite)" : "") ;
                 embed.ImageUrl = s.URL;
                 if(s.EventDropID <= 0) embed.Description = "**Costs:** " + s.Cost + " Bubbles\n\n**ID**: " + s.ID + (s.Special ? " :sparkles: " : "");
-                else embed.Description = "Event Drop Price:** " + s.Cost + " " + Events.GetEventDrops().FirstOrDefault(d=>d.EventDropID == s.EventDropID).Name + "\n\n**ID**: " + s.ID + (s.Special ? " :sparkles: " : "");
+                else embed.Description = "**Event Drop Price:** " + s.Cost + " " + Events.GetEventDrops().FirstOrDefault(d=>d.EventDropID == s.EventDropID).Name + "\n\n**ID**: " + s.ID + (s.Special ? " :sparkles: " : "");
                 embed.AddField("\u200b","[View all Sprites here](https://tobeh.host/Orthanc/sprites/gif/)");
                 await context.Channel.SendMessageAsync(embed: embed);
                 return;
@@ -402,11 +401,19 @@ namespace Palantir
 
             Sprite target = available.FirstOrDefault(s => s.ID == sprite);
             int credit = BubbleWallet.CalculateCredit(login);
-            if (credit < target.Cost)
+            if(target.EventDropID <= 0)
             {
-                await Program.SendEmbed(context.Channel, "Haha, nice try -.-", "That stuff is too expensive for you. \nSpend few more hours on skribbl.");
-                return;
+                if (credit < target.Cost)
+                {
+                    await Program.SendEmbed(context.Channel, "Haha, nice try -.-", "That stuff is too expensive for you. \nSpend few more hours on skribbl.");
+                    return;
+                }
             }
+            else
+            {
+
+            }
+            
 
             inventory.Add(new SpriteProperty(target.Name, target.URL, target.Cost, target.ID, target.Special, target.EventDropID, false));
             BubbleWallet.SetInventory(inventory, login);
@@ -633,7 +640,7 @@ namespace Palantir
             embed.Title = ":champagne:  Drop added to " + dbcontext.Events.FirstOrDefault(e=>e.EventID == eventID).EventName + ": **" + newDrop.Name + "**";
             embed.Color = DiscordColor.Magenta;
             embed.WithThumbnail(newDrop.URL);
-            embed.WithDescription("The ID of the Drop is  " + newDrop.EventDropID + ".\nAdd a seasonal Sprite which can be bought with the event drops to make your event complete:" +
+            embed.WithDescription("The ID of the Drop is  " + newDrop.EventDropID + ".\nAdd a seasonal Sprite which can be bought with the event drops to make your event complete:\n" +
                 "➜ `>eventsprite " + newDrop.EventDropID + " [name] [price]` with the sprite-gif attached.");
 
             dbcontext.Dispose();
@@ -657,6 +664,34 @@ namespace Palantir
             embed.Color = DiscordColor.Magenta;
             embed.WithDescription(eventsList);
             await context.Channel.SendMessageAsync(embed: embed);
+        }
+
+        [Description("Show event info")]
+        [Command("upcoming")]
+        public async Task ShowEvent(CommandContext context)
+        {
+            List<EventEntity> events = Events.GetEvents(true);
+            DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
+            if (events.Count > 0)
+            {
+                embed.Title = ":champagne: " + events[0].EventName;
+                embed.Color = DiscordColor.Magenta;
+                embed.WithDescription(events[0].Description + "\n" + events[0].ValidFrom + " to " + Convert.ToDateTime(events[0].ValidFrom).AddDays(events[0].DayLength).ToShortDateString());
+                Events.GetEventDrops(events.GetRange(0, 1)).ForEach(e =>
+                {
+                    SpritesEntity sprite = Events.GetEventSprite(e.EventDropID);
+                    embed.AddField(sprite.Name, "Sprite #" + sprite.ID + ": Collect " + sprite.Cost + " " + e.Name);
+                });
+            }
+            else
+            {
+                embed.Title = ":champagne: No Event active :(";
+                embed.Color = DiscordColor.Magenta;
+                embed.WithDescription("Check all events with `>upcoming`");
+            }
+
+            await context.Channel.SendMessageAsync(embed: embed);
+
         }
 
         [Description("Add a seasonal sprite to an event")]
@@ -698,6 +733,7 @@ namespace Palantir
             DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
             embed.Title = ":champagne:  Sprite added to " + dbcontext.EventDrops.FirstOrDefault(e => e.EventDropID == eventDropID).Name + ": **" + eventsprite.Name + "**";
             embed.Color = DiscordColor.Magenta;
+            embed.WithDescription("ID: " + eventsprite.ID + "\nYou can buy and view the sprite with the usual comands.");
             embed.WithThumbnail(eventsprite.URL);
 
             dbcontext.Dispose();

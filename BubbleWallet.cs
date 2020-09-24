@@ -145,6 +145,19 @@ namespace Palantir
             return total;
         }
 
+        public static int GetEventCredit(string login, int eventDropID)
+        {
+            PalantirDbContext context = new PalantirDbContext();
+            int credit = 0;
+            if (context.EventCredits.Any(c => c.EventDropID == eventDropID && c.Login == login))
+            {
+                credit = context.EventCredits.FirstOrDefault(c => c.EventDropID == eventDropID && c.Login == login).Credit;
+            }
+            
+            context.Dispose();
+            return credit;
+        }
+
         public static List<SpriteProperty> GetInventory(string login)
         {
             PalantirDbContext context = new PalantirDbContext();

@@ -34,7 +34,13 @@ namespace Palantir
             int randInd = (new Random()).Next(0, drops.Count);
             return drops[randInd].EventDropID;
         }
-
+        public static SpritesEntity GetEventSprite(int eventDropID)
+        {
+            PalantirDbContext context = new PalantirDbContext();
+            SpritesEntity sprite = context.Sprites.FirstOrDefault(s => s.EventDropID == eventDropID);
+            context.Dispose();
+            return sprite;
+        }
 
 
     }
