@@ -608,7 +608,7 @@ namespace Palantir
 
             if(!dbcontext.Events.Any(e=>e.EventID == eventID))
             {
-                await Program.SendEmbed(context.Channel, "Hmm...", "There's no event with that id.\nCheck '>event'");
+                await Program.SendEmbed(context.Channel, "Hmm...", "There's no event with that id.\nCheck `>upevent`");
                 return;
             }
             if (context.Message.Attachments.Count <= 0 || !context.Message.Attachments[0].FileName.EndsWith(".gif"))
@@ -634,6 +634,24 @@ namespace Palantir
             embed.WithDescription("The ID of the Drop is  " + newDrop.EventDropID + ".\nAdd a seasonal Sprite which can be bought with the event drops to make your event complete.");
 
             dbcontext.Dispose();
+            await context.Channel.SendMessageAsync(embed: embed);
+        }
+
+        [Description("Show upcoming events")]
+        [Command("upevent")]
+        public async Task UpcomingEvents(CommandContext context)
+        {
+            List<EventEntity> events = Events.GetEvents(true);
+            string eventsList = "";
+            events.ForEach(e =>
+            {
+                eventsList += "➜ **" + e.EventName + "**: " + e.ValidFrom + " to " + Convert.ToDateTime(e.ValidFrom).AddDays(e.DayLength).ToShortDateString() + "\n";
+            });
+
+            DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
+            embed.Title = ":champagne:  Upcoming Events:";
+            embed.Color = DiscordColor.Magenta;
+            embed.WithDescription(eventsList);
             await context.Channel.SendMessageAsync(embed: embed);
         }
     }

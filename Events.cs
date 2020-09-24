@@ -7,18 +7,20 @@ namespace Palantir
 {
     public static class Events
     {
-        public static List<EventEntity> GetEvents()
+        public static List<EventEntity> GetEvents(bool active = true)
         {
             PalantirDbContext context = new PalantirDbContext();
             List<EventEntity> events = context.Events.ToList();
+            if (active) events = events.Where(e => Convert.ToDateTime(e.ValidFrom) <= DateTime.Now && Convert.ToDateTime(e.ValidFrom).AddDays(e.DayLength) >= DateTime.Now).ToList();
             context.Dispose();
             return events;
         }
 
-        public static List<EventDropEntity> GetEventDrops()
+        public static List<EventDropEntity> GetEventDrops(List<EventEntity> fromEvents = null)
         {
             PalantirDbContext context = new PalantirDbContext();
             List<EventDropEntity> drops = context.EventDrops.ToList();
+            if (fromEvents is object) drops = drops.Where(d => fromEvents.Any(e => e.EventID == d.EventID)).ToList();
             context.Dispose();
             return drops;
         }
@@ -26,8 +28,9 @@ namespace Palantir
 
         public static int GetRandomEventDropID()
         {
-            if (GetEvents().Count <= 0) return 0;
-            List<EventDropEntity> drops = GetEventDrops();
+            List<EventEntity> events = GetEvents(true);
+            if (events.Count <= 0) return 0;
+            List<EventDropEntity> drops = GetEventDrops(events);
             int randInd = (new Random()).Next(0, drops.Count);
             return drops[randInd].EventDropID;
         }
