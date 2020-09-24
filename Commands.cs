@@ -260,8 +260,16 @@ namespace Palantir
                 embed.Color = DiscordColor.Magenta;
                 embed.Title = s.Name + (s.EventDropID > 0 ? " (Event Sprite)" : "") ;
                 embed.ImageUrl = s.URL;
-                if(s.EventDropID <= 0) embed.Description = "**Costs:** " + s.Cost + " Bubbles\n\n**ID**: " + s.ID + (s.Special ? " :sparkles: " : "");
-                else embed.Description = "**Event Drop Price:** " + s.Cost + " " + Events.GetEventDrops().FirstOrDefault(d=>d.EventDropID == s.EventDropID).Name + "\n\n**ID**: " + s.ID + (s.Special ? " :sparkles: " : "");
+                if (s.EventDropID <= 0)
+                {
+                    embed.Description = "**Costs:** " + s.Cost + " Bubbles\n\n**ID**: " + s.ID + (s.Special ? " :sparkles: " : "");
+                }
+                else
+                {
+                    EventDropEntity drop = Events.GetEventDrops().FirstOrDefault(d => d.EventDropID == s.EventDropID);
+                    embed.Description = "**Event Drop Price:** " + s.Cost + " " + drop.Name + "\n\n**ID**: " + s.ID + (s.Special ? " :sparkles: " : "");
+                    embed.WithThumbnail(drop.URL);
+                }
                 embed.AddField("\u200b","[View all Sprites here](https://tobeh.host/Orthanc/sprites/gif/)");
                 await context.Channel.SendMessageAsync(embed: embed);
                 return;
@@ -411,7 +419,11 @@ namespace Palantir
             }
             else
             {
-
+                if (BubbleWallet.GetEventCredit(login, target.EventDropID) < target.Cost)
+                {
+                    await Program.SendEmbed(context.Channel, "Haha, nice try -.-", "That stuff is too expensive for you. \nSpend few more hours on skribbl.");
+                    return;
+                }
             }
             
 
@@ -672,6 +684,7 @@ namespace Palantir
         {
             List<EventEntity> events = Events.GetEvents(true);
             DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
+            string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
             if (events.Count > 0)
             {
                 embed.Title = ":champagne: " + events[0].EventName;
@@ -680,8 +693,9 @@ namespace Palantir
                 Events.GetEventDrops(events.GetRange(0, 1)).ForEach(e =>
                 {
                     SpritesEntity sprite = Events.GetEventSprite(e.EventDropID);
-                    embed.AddField(sprite.Name, "Sprite #" + sprite.ID + ": Collect " + sprite.Cost + " " + e.Name);
+                    embed.AddField(sprite.Name, "Sprite #" + sprite.ID + ": Collect " + sprite.Cost + " " + e.Name + "\nYou own " + BubbleWallet.GetEventCredit(login,e.EventDropID) + " " + e.Name);
                 });
+                embed.WithFooter("Use >sprite [id] to see the event drop and the sprite!");
             }
             else
             {
