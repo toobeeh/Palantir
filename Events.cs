@@ -25,7 +25,6 @@ namespace Palantir
             return drops;
         }
 
-
         public static int GetRandomEventDropID()
         {
             List<EventEntity> events = GetEvents(true);
