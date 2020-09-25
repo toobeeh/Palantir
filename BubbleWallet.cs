@@ -22,9 +22,8 @@ namespace Palantir
 
             if (entity != null)
             {
-                entity.Bubbles++;
+                if(Ticks.TryAdd(login, DateTime.Now)) entity.Bubbles++;
                 context.SaveChanges();
-                Ticks.Add(login, DateTime.Now);
             }
             context.Dispose();
         }
