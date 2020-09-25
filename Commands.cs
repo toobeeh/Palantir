@@ -665,11 +665,13 @@ namespace Palantir
         {
             List<EventEntity> events = Events.GetEvents(false);
             string eventsList = "";
-            events.Where(e=>Convert.ToDateTime(e.ValidFrom)>= DateTime.Now).ForEach(e =>
+            events = events.Where(e => Convert.ToDateTime(e.ValidFrom) >= DateTime.Now).OrderByDescending(e => Convert.ToDateTime(e.ValidFrom)).ToList();
+            events.ForEach(e =>
             {
                 eventsList += "➜ **" + e.EventName + "**: " + e.ValidFrom + " to " + Convert.ToDateTime(e.ValidFrom).AddDays(e.DayLength).ToShortDateString() + "\n";
                 eventsList += e.Description + "\n\n";
             });
+            if (eventsList == "") eventsList = "There are no upcoming events :( \nAsk a responsible person to create one!";
 
             DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
             embed.Title = ":champagne:  Upcoming Events:";
