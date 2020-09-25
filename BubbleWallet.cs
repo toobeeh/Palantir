@@ -17,8 +17,6 @@ namespace Palantir
 
             if (Ticks.ContainsKey(login) ||  login is null) return;
 
-            Ticks.Add(login, DateTime.Now);
-
             PalantirDbContext context = new PalantirDbContext();
             MemberEntity entity = context.Members.FirstOrDefault(s => s.Login == login);
 
@@ -26,8 +24,8 @@ namespace Palantir
             {
                 entity.Bubbles++;
                 context.SaveChanges();
+                Ticks.Add(login, DateTime.Now);
             }
-            context.SaveChanges();
             context.Dispose();
         }
 

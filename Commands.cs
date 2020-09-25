@@ -665,7 +665,7 @@ namespace Palantir
         {
             List<EventEntity> events = Events.GetEvents(false);
             string eventsList = "";
-            events.ForEach(e =>
+            events.Where(e=>Convert.ToDateTime(e.ValidFrom)>= DateTime.Now).ForEach(e =>
             {
                 eventsList += "➜ **" + e.EventName + "**: " + e.ValidFrom + " to " + Convert.ToDateTime(e.ValidFrom).AddDays(e.DayLength).ToShortDateString() + "\n";
                 eventsList += e.Description + "\n\n";
@@ -689,13 +689,16 @@ namespace Palantir
             {
                 embed.Title = ":champagne: " + events[0].EventName;
                 embed.Color = DiscordColor.Magenta;
-                embed.WithDescription(events[0].Description + "\nLasts from " + events[0].ValidFrom + " to " + Convert.ToDateTime(events[0].ValidFrom).AddDays(events[0].DayLength).ToShortDateString() + "\n\n**Event Sprites:**");
+                embed.WithDescription(events[0].Description + "\nLasts until " + Convert.ToDateTime(events[0].ValidFrom).AddDays(events[0].DayLength).ToString("MMMM dd") + "\n");
+
+                string dropList = "";
                 Events.GetEventDrops(events.GetRange(0, 1)).ForEach(e =>
                 {
                     SpritesEntity sprite = Events.GetEventSprite(e.EventDropID);
-                    embed.AddField(sprite.Name + " (#" + sprite.ID + ")", BubbleWallet.GetEventCredit(login, e.EventDropID) + " / " + sprite.Cost + " " + e.Name + " collected");
+                    dropList += "➜ **" + sprite.Name + "** (#" + sprite.ID + ")\n" + BubbleWallet.GetEventCredit(login, e.EventDropID) + " / " + sprite.Cost + " " + e.Name + " collected \n\n";
                 });
-                embed.WithFooter("Use >sprite [id] to see the event drop and the sprite!");
+                embed.AddField("Event Sprites", dropList);
+                embed.AddField("\u200b ","Use `>sprite [id]` to see the event drop and sprite!");
             }
             else
             {
