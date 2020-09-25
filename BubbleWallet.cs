@@ -14,18 +14,18 @@ namespace Palantir
         {
             // Remove all ticks that passed the max tick interval
             Ticks.Where(tick => (tick.Value < DateTime.Now.AddSeconds(-10))).ToList().ForEach(tick => { if (tick.Key != null) Ticks.Remove(tick.Key); });
-
-            if (Ticks.ContainsKey(login) ||  login is null) return;
-
-            PalantirDbContext context = new PalantirDbContext();
-            MemberEntity entity = context.Members.FirstOrDefault(s => s.Login == login);
-
-            if (entity != null)
+            if (Ticks.TryAdd(login, DateTime.Now))
             {
-                if(Ticks.TryAdd(login, DateTime.Now)) entity.Bubbles++;
-                context.SaveChanges();
-            }
-            context.Dispose();
+                PalantirDbContext context = new PalantirDbContext();
+                MemberEntity entity = context.Members.FirstOrDefault(s => s.Login == login);
+
+                if (entity != null)
+                {
+                    entity.Bubbles++;
+                    context.SaveChanges();
+                }
+                context.Dispose();
+            } 
         }
 
         public static int GetBubbles(string login)
