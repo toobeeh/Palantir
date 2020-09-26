@@ -274,9 +274,9 @@ namespace Palantir
 
                 // set id to index
                 l.ID = Convert.ToString(GuildLobbies.IndexOf(l)+1);
-                lobby += "> **#" + l.ID + "**    " + (PalantirSettings.ShowAnimatedEmojis ? Emojis[(new Random()).Next(Emojis.Count-1)] : "") + "     " + l.Host + "   **|**  " + l.Language + "   **|**   Round " + l.Round + "   **|**   " + (l.Private ? "Private " + "\n> <" + l.Link + ">" : "Public")  + "\n> " + l.Players.Count  + " Players \n";
+                lobby += "> **#" + l.ID + "**    " + (PalantirSettings.ShowAnimatedEmojis ? Emojis[(new Random()).Next(Emojis.Count-1)] : "") + "     " + l.Host + "   **|**  " + l.Language + "   **|**   Round " + l.Round + "   **|**   " + (l.Private && l.Host == "skribbl.io" ? "Private " + "\n> <" + l.Link + ">" : "Public")  + "\n> " + l.Players.Count  + " Players \n";
                 
-                if (lobbyDescription != "") lobby += lobbyDescription;
+                if (lobbyDescription != "") lobby += lobbyDescription.Replace("\\", "");
 
                 string players = "";
                 string sender = "```fix\n";
@@ -289,42 +289,46 @@ namespace Palantir
                         player.Sender = true;
                         player.ID = match.PlayerMember.UserID;
                         login = match.PlayerMember.UserLogin;
-                        try
+                        if (l.Host == "skribbl.io")
                         {
-                            BubbleWallet.AddBubble(login);
+                            try
+                            {
+                                BubbleWallet.AddBubble(login);
+                            }
+                            catch (Microsoft.Data.Sqlite.SqliteException e) // catch sql exceptions
+                            {
+                                if (e.SqliteErrorCode == 8)
+                                    Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > Locked DB. Skipped adding bubble for " + login);
+                                else
+                                    Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > DB Error: " + e.SqliteErrorCode + ". Skipped adding bubble for " + login);
+                            }
+                            catch (Exception e)
+                            {
+                                Console.WriteLine("Unhandled error adding Bubble for login " + login + " : \n" + e.ToString());
+                            }
+                            try
+                            {
+                                BubbleWallet.SetOnlineSprite(login, l.Key, player.LobbyPlayerID);
+                            }
+                            catch (Microsoft.Data.Sqlite.SqliteException e) // catch sql exceptions
+                            {
+                                if (e.SqliteErrorCode == 8)
+                                    Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > Locked DB. Skipped setting sprite for " + login);
+                                else
+                                    Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > DB Error: " + e.SqliteErrorCode + ". Skipped setting sprite for " + login);
+                            }
+                            catch (Exception e)
+                            {
+                                Console.WriteLine("Unhandled error setting Sprite for login " + login + " : \n" + e.ToString());
+                            }
                         }
-                        catch (Microsoft.Data.Sqlite.SqliteException e) // catch sql exceptions
-                        {
-                            if (e.SqliteErrorCode == 8)
-                                Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > Locked DB. Skipped adding bubble for " + login);
-                            else
-                                Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > DB Error: " + e.SqliteErrorCode + ". Skipped adding bubble for " + login);
-                        }
-                        catch (Exception e)
-                        {
-                            Console.WriteLine("Unhandled error adding Bubble for login " + login + " : \n" + e.ToString());
-                        }
-                        try
-                        {
-                            BubbleWallet.SetOnlineSprite(login, l.Key, player.LobbyPlayerID);
-                        }
-                        catch (Microsoft.Data.Sqlite.SqliteException e) // catch sql exceptions
-                        {
-                            if (e.SqliteErrorCode == 8)
-                                Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > Locked DB. Skipped setting sprite for " + login);
-                            else
-                                Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > DB Error: " + e.SqliteErrorCode + ". Skipped setting sprite for " + login);
-                        }
-                        catch (Exception e)
-                        {
-                            Console.WriteLine("Unhandled error setting Sprite for login " + login + " : \n" + e.ToString());
-                        }
+                            
                     }
 
                     if (player.Sender)
                     {
                         string line = "";
-                        line += Formatter.Sanitize(player.Name);
+                        line += Formatter.Sanitize(player.Name).Replace("\\","");
                         line += new string(' ', (20 - player.Name.Length) < 0 ? 0 : (20 - player.Name.Length));
                         line += player.Score + " pts";
                         if (player.Score != 0)
@@ -334,7 +338,7 @@ namespace Palantir
                             if (scores.IndexOf(player.Score) == 2) line += " 🥉 ";
                         }
                         line += new string(' ', (32 - line.Length) < 0 ? 0 : (32 - line.Length));
-                        line += "  🔮 " + BubbleWallet.GetBubbles(login) + " Bubbles";
+                        if(l.Host == "skribbl.io") line += "  🔮 " + BubbleWallet.GetBubbles(login) + " Bubbles";
                         line += player.Drawing ? " 🖍 \n" : "\n";
                         sender += line;
                     }

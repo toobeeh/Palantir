@@ -30,7 +30,7 @@ namespace Palantir
             List<EventEntity> events = GetEvents(true);
             if (events.Count <= 0) return 0;
             List<EventDropEntity> drops = GetEventDrops(events);
-            drops.Add(new EventDropEntity { EventDropID = 0 });
+            drops.AddRange(Enumerable.Repeat(new EventDropEntity { EventDropID = 0 },drops.Count * 2));
             int randInd = (new Random()).Next(0, drops.Count);
             return drops[randInd].EventDropID;
         }
