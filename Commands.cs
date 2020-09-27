@@ -700,7 +700,7 @@ namespace Palantir
                     dropList += "➜ **" + sprite.Name + "** (#" + sprite.ID + ")\n" + BubbleWallet.GetEventCredit(login, e.EventDropID) + " / " + sprite.Cost + " " + e.Name + " collected \n\n";
                 });
                 embed.AddField("Event Sprites", dropList);
-                embed.AddField("\u200b ","Use `>sprite [id]` to see the event drop and sprite!");
+                embed.AddField("\u200b","Use `>sprite [id]` to see the event drop and sprite!");
             }
             else
             {
