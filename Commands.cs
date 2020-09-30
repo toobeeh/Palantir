@@ -747,6 +747,7 @@ namespace Palantir
             DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
             embed.Title = ":champagne: Awww!";
             embed.WithDescription("You gifted " + target.DisplayName + " " + amount + " " + name + "!\nHowever, " + lost + " of them got lost in my pocket :(");
+            await context.Channel.SendMessageAsync(embed: embed);
         }
 
         [Description("Add a seasonal sprite to an event")]
