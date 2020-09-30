@@ -201,6 +201,36 @@ namespace Palantir
             context.Dispose();
         }
 
+        public static int GetRemainingEventDrops(string login, int eventDropID)
+        {
+            List<SpriteProperty> inv = GetInventory(login);
+            int total = GetEventCredit(login, eventDropID);
+            inv.ForEach(s =>
+            {
+                if (s.EventDropID == eventDropID) total -= s.Cost;
+            });
+            return total;
+        }
+
+        public static bool ChangeEventDropCredit(string login, int eventDropID, int difference)
+        {
+            PalantirDbContext context = new PalantirDbContext();
+            EventCreditEntity credit = context.EventCredits.FirstOrDefault(c => c.Login == login && c.EventDropID == eventDropID);
+            if (credit is null) return false;
+            try
+            {
+                credit.Credit += difference;
+                context.SaveChanges();
+                context.Dispose();
+            }
+            catch
+            {
+                context.Dispose();
+                return false;
+            }
+            return true;
+        }
+
     }
 
     public class Sprite

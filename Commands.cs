@@ -713,6 +713,42 @@ namespace Palantir
 
         }
 
+        [Description("Gift event drops")]
+        [Command("gift")]
+        public async Task Gift(CommandContext context, DiscordMember target, int amount, int eventSpriteID)
+        {
+            if (amount < 1)
+            {
+                await Program.SendEmbed(context.Channel, "LOL!", "Your'e tryna steal some stuff, huh?");
+                return;
+            }
+            List<Sprite> sprites = BubbleWallet.GetAvailableSprites();
+            if(!sprites.Any(s=>s.ID == eventSpriteID && s.EventDropID != 0))
+            {
+                await Program.SendEmbed(context.Channel, "Hmmm...", "That sprite doesn't exist or is no event sprite.");
+                return;
+            }
+            int eventDropID = sprites.FirstOrDefault(s => s.ID == eventSpriteID).EventDropID;
+            string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
+            int credit = BubbleWallet.GetEventCredit(login, eventDropID);
+            List<EventDropEntity> drops = Events.GetEventDrops();
+            string name = drops.FirstOrDefault(d => d.EventDropID == eventDropID).Name;
+            if (credit - amount < 0)
+            {
+                await Program.SendEmbed(context.Channel, "You can't trick me!", "Your event credit is too few. You have only " + credit + " " + name + " left.");
+                return;
+            }
+            int lost = (new Random()).Next(1, amount / 2 + 1);
+            string targetLogin = BubbleWallet.GetLoginOfMember(target.Id.ToString());
+
+            BubbleWallet.ChangeEventDropCredit(targetLogin, eventDropID, amount - lost);
+            BubbleWallet.ChangeEventDropCredit(login, eventDropID, -amount);
+
+            DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
+            embed.Title = ":champagne: Awww!";
+            embed.WithDescription("You gifted " + target.DisplayName + " " + amount + " " + name + "!\nHowever, " + lost + " of them got lost in my pocket :(");
+        }
+
         [Description("Add a seasonal sprite to an event")]
         [Command("eventsprite")]
         public async Task CreateEventSprite(CommandContext context, int eventDropID, string name,  int price, string special = "")
