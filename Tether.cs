@@ -263,9 +263,10 @@ namespace Palantir
                     {
                         json = Database.Lobbies.FirstOrDefault(lobbyEntity => lobbyEntity.LobbyID == l.ID).Lobby;
                         d = JsonConvert.DeserializeObject<ProvidedLobby>(json).Description;
+                        if (d.Length > 50) d = d.Substring(0, 50);
                     }
                     catch (Exception e) { 
-                        Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > Cant parse description: " + json);
+                        //Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > Cant parse description: " + json);
                         d = "";
                     };
 
