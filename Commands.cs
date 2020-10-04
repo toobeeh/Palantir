@@ -315,7 +315,17 @@ namespace Palantir
 
             SpriteProperty active = null;
             
-            inventory.OrderBy(s => s.ID).ToList().ForEach(s =>
+            if(inventory.Count > 20)
+            {
+                string invList = ""; 
+                inventory.OrderBy(s => s.ID).ToList().ForEach(s =>
+                {
+                    invList += "**#" + s.ID + "** - " + s.Name + "\n";
+                    if (s.Activated) active = s;
+                });
+                embed.AddField("All Sprites:", invList);
+            }
+            else inventory.OrderBy(s => s.ID).ToList().ForEach(s =>
             {
                 embed.AddField("**" + s.Name + "** " ,  "#" + s.ID + " |  Worth " + s.Cost + " Bubbles" + (s.Special ? " :sparkles: " : ""),true);
                 if (s.Activated) active = s;
