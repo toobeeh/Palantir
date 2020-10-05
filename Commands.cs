@@ -327,7 +327,7 @@ namespace Palantir
             }
             else inventory.OrderBy(s => s.ID).ToList().ForEach(s =>
             {
-                embed.AddField("**" + s.Name + "** " ,  "#" + s.ID + " |  Worth " + s.Cost + " Bubbles" + (s.Special ? " :sparkles: " : ""),true);
+                embed.AddField("**" + s.Name + "** " ,  "#" + s.ID + " |  Worth " + s.Cost + (s.EventDropID > 0 ? " Event Drops" : " Bubbles") + (s.Special ? " :sparkles: " : ""),true);
                 if (s.Activated) active = s;
             });
 
@@ -707,7 +707,7 @@ namespace Palantir
                 Events.GetEventDrops(events.GetRange(0, 1)).ForEach(e =>
                 {
                     SpritesEntity sprite = Events.GetEventSprite(e.EventDropID);
-                    dropList += "➜ **" + sprite.Name + "** (#" + sprite.ID + ")\n" + BubbleWallet.GetEventCredit(login, e.EventDropID) + " / " + sprite.Cost + " " + e.Name + " collected \n\n";
+                    dropList += "➜ **" + sprite.Name + "** (#" + sprite.ID + ")\n" + BubbleWallet.GetEventCredit(login, e.EventDropID) + " / " + sprite.Cost + " " + e.Name + " Drops collected \n\n";
                 });
                 embed.AddField("Event Sprites", dropList == "" ? "No drops added yet." : dropList);
                 embed.AddField("\u200b","Use `>sprite [id]` to see the event drop and sprite!");
@@ -716,7 +716,7 @@ namespace Palantir
             {
                 embed.Title = ":champagne: No Event active :(";
                 embed.Color = DiscordColor.Magenta;
-                embed.WithDescription("Check all events with `>upcoming`.\nGift event drops with `>gift [@person] [amount of drops] [id of the sprite].\nBtw - I keep up to 50% of the gift for myself! ;)");
+                embed.WithDescription("Check all events with `>upcoming`.\nGift event drops with `>gift [@person] [amount of drops] [id of the sprite]`.\nBtw - I keep up to 50% of the gift for myself! ;)");
             }
 
             await context.Channel.SendMessageAsync(embed: embed);
