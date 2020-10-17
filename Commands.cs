@@ -732,6 +732,11 @@ namespace Palantir
                 await Program.SendEmbed(context.Channel, "LOL!", "Your'e tryna steal some stuff, huh?");
                 return;
             }
+            if (amount < 3)
+            {
+                await Program.SendEmbed(context.Channel, "That's all you got?", "The minimal gift amount is 3 event drops.");
+                return;
+            }
             List<Sprite> sprites = BubbleWallet.GetAvailableSprites();
             if(!sprites.Any(s=>s.ID == eventSpriteID && s.EventDropID != 0))
             {
@@ -748,7 +753,7 @@ namespace Palantir
                 await Program.SendEmbed(context.Channel, "You can't trick me!", "Your event credit is too few. You have only " + credit + " " + name + " left.");
                 return;
             }
-            int lost = (new Random()).Next(1, amount / 2 + 1);
+            int lost = (new Random()).Next(0, amount / 2 + 1);
             string targetLogin = BubbleWallet.GetLoginOfMember(target.Id.ToString());
 
             BubbleWallet.ChangeEventDropCredit(targetLogin, eventDropID, amount - lost);
