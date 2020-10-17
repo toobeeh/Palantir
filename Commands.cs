@@ -753,7 +753,7 @@ namespace Palantir
                 await Program.SendEmbed(context.Channel, "You can't trick me!", "Your event credit is too few. You have only " + credit + " " + name + " left.");
                 return;
             }
-            int lost = (new Random()).Next(0, amount / 2 + 1);
+            int lost = (new Random()).Next(0, amount / 3 + 1);
             string targetLogin = BubbleWallet.GetLoginOfMember(target.Id.ToString());
 
             BubbleWallet.ChangeEventDropCredit(targetLogin, eventDropID, amount - lost);
