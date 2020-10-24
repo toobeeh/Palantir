@@ -732,7 +732,7 @@ namespace Palantir
             string totalres = "";
             if(total > amount)
             {
-                int times = total / amount;
+                int times = total / amount + (total % amount > 0 ? 1 : 0);
                 totalres = "\nTo gift a total of " + total + " Drops " + times + " gifts of each " + amount + " Drops are required, which equals a loss of " + Math.Round((sum * times) / 100.0, 2) + " Drops.";
             }
             await Program.SendEmbed(context.Channel, "Such a nerd...", "With 100 random tries, an average of " + Math.Round(sum / 100.0, 2) + " Drops of " + amount + " gifted Drops is lost." + totalres);
