@@ -220,7 +220,7 @@ namespace Palantir
             {
                 try
                 {
-                    credit.Credit += difference;
+                    context.EventCredits.FirstOrDefault(c => c.EventDropID == eventDropID && c.Login == login).Credit += difference;
                     context.SaveChanges();
                     context.Dispose();
                 }
