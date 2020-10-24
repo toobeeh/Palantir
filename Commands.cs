@@ -725,11 +725,17 @@ namespace Palantir
 
         [Description("Calulate random loss average")]
         [Command("loss")]
-        public async Task Loss(CommandContext context, int amount)
+        public async Task Loss(CommandContext context, [Description("The amount of a single gift")] int amount, [Description("The total drop amount with repeated gifts of before specified amount")] int total = 0)
         {
             int sum = 0;
             for(int i = 0; i<100; i++) sum += (new Random()).Next(0, amount / 3 + 1);
-            await Program.SendEmbed(context.Channel, "Such a nerd...", "With 100 random tries, an average of " + Math.Round(sum / 100.0, 2) + " Drops of " + amount + " gifted Drops is lost.");
+            string totalres = "";
+            if(total > amount)
+            {
+                int times = total / amount;
+                totalres = "\nTo gift a total of " + total + " Drops " + times + " gifts of each " + amount + " Drops are required, which equals a loss of " + Math.Round((sum * times) / 100.0, 2) + " Drops.";
+            }
+            await Program.SendEmbed(context.Channel, "Such a nerd...", "With 100 random tries, an average of " + Math.Round(sum / 100.0, 2) + " Drops of " + amount + " gifted Drops is lost." + totalres);
         }
 
         [Description("Gift event drops")]
