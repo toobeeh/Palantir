@@ -729,7 +729,7 @@ namespace Palantir
         {
             int sum = 0;
             for(int i = 0; i<100; i++) sum += (new Random()).Next(0, amount / 3 + 1);
-            await Program.SendEmbed(context.Channel, "Such a nerd...", "With 100 random tries, an average of " + Math.Round(sum / 100.0, 2) + " Drops of " + amount + "gifted Drops is lost.");
+            await Program.SendEmbed(context.Channel, "Such a nerd...", "With 100 random tries, an average of " + Math.Round(sum / 100.0, 2) + " Drops of " + amount + " gifted Drops is lost.");
         }
 
         [Description("Gift event drops")]
