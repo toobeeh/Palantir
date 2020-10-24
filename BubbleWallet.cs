@@ -222,11 +222,7 @@ namespace Palantir
             {
                 try
                 {
-                    //context.EventCredits.FromSqlRaw("UPDATE EventCredits SET Credit = " + (credit.Credit + difference) + 
-                    //    " WHERE Login = " +  login + 
-                    //    " AND EventDropID = " + eventDropID);
-
-                    context.EventCredits.FirstOrDefault(c => c.EventDropID == eventDropID && c.Login == login).Credit += difference;
+                    credit.Credit += difference;
                     context.SaveChanges();
                     context.Dispose();
                 }

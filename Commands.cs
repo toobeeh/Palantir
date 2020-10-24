@@ -756,8 +756,8 @@ namespace Palantir
             int lost = (new Random()).Next(0, amount / 3 + 1);
             string targetLogin = BubbleWallet.GetLoginOfMember(target.Id.ToString());
 
-            BubbleWallet.ChangeEventDropCredit(targetLogin, eventDropID, amount - lost);
-            BubbleWallet.ChangeEventDropCredit(login, eventDropID, -amount);
+            if(BubbleWallet.ChangeEventDropCredit(targetLogin, eventDropID, amount - lost))
+                BubbleWallet.ChangeEventDropCredit(login, eventDropID, -amount);
 
             DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
             embed.Title = ":champagne: Awww!";
