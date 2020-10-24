@@ -26,6 +26,12 @@ namespace Palantir
         public DbSet<EventCreditEntity> EventCredits { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder options)
             => options.UseSqlite("Data Source=/home/pi/Database/palantir.db");
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<EventCreditEntity>()
+                .HasKey(e => new { e.Login, e.EventDropID });
+        }
 
     }
 
@@ -138,7 +144,6 @@ namespace Palantir
 
     public class EventCreditEntity
     {
-        [Key]
         public string Login { get; set; }
         public int EventDropID { get; set; }
         public int Credit { get; set; }
