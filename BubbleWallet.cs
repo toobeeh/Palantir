@@ -223,9 +223,10 @@ namespace Palantir
                 context.SaveChanges();
                 context.Dispose();
             }
-            catch
+            catch(Exception e)
             {
                 context.Dispose();
+                Console.WriteLine("Error changing credits:\n" + e);
                 return false;
             }
             return true;
