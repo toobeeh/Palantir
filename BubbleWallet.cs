@@ -224,7 +224,7 @@ namespace Palantir
             catch(Exception e)
             {
                 context.Dispose();
-                Console.WriteLine("Error changing credits:\n" + e);
+                Console.WriteLine("Error changing credits for " + login + ":\n" + e);
                 return false;
             }
             return true;
