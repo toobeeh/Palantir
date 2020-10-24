@@ -222,7 +222,7 @@ namespace Palantir
             {
                 try
                 {
-                    context.EventCredits.FromSqlRaw("UPDATE EventCredits SET Credit = @credit WHERE Login = @login AND EventDropID = @id",
+                    context.Database.ExecuteSqlCommand("UPDATE EventCredits SET Credit = @credit WHERE Login = @login AND EventDropID = @id",
                         new SqlParameter("credit", credit.Credit + difference),
                         new SqlParameter("login", login),
                         new SqlParameter("id", eventDropID));
