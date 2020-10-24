@@ -215,7 +215,7 @@ namespace Palantir
         public static bool ChangeEventDropCredit(string login, int eventDropID, int difference)
         {
             PalantirDbContext context = new PalantirDbContext();
-            EventCreditEntity credit = context.EventCredits.First(c => c.EventDropID == eventDropID && c.Login == login);
+            EventCreditEntity credit = context.EventCredits.FirstOrDefault(c => c.EventDropID == eventDropID && c.Login == login);
             if(credit is object)
             {
                 try
