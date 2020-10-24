@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using System.Globalization;
 using Newtonsoft.Json;
 
@@ -220,7 +222,12 @@ namespace Palantir
             {
                 try
                 {
-                    context.EventCredits.FirstOrDefault(c => c.EventDropID == eventDropID && c.Login == login).Credit += difference;
+                    context.EventCredits.FromSqlRaw("UPDATE EventCredits SET Credit = @credit WHERE Login = @login AND EventDropID = @id",
+                        new SqlParameter("credit", credit.Credit + difference),
+                        new SqlParameter("login", login),
+                        new SqlParameter("id", eventDropID));
+
+                    //context.EventCredits.FirstOrDefault(c => c.EventDropID == eventDropID && c.Login == login).Credit += difference;
                     context.SaveChanges();
                     context.Dispose();
                 }
