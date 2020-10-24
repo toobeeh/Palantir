@@ -215,18 +215,42 @@ namespace Palantir
         public static bool ChangeEventDropCredit(string login, int eventDropID, int difference)
         {
             PalantirDbContext context = new PalantirDbContext();
-            try
+            EventCreditEntity credit = context.EventCredits.First(c => c.EventDropID == eventDropID && c.Login == login);
+            if(credit is object)
             {
-                context.EventCredits.FirstOrDefault(c => c.Login == login && c.EventDropID == eventDropID).Credit += difference;
-                context.SaveChanges();
-                context.Dispose();
+                try
+                {
+                    credit.Credit += difference;
+                    context.SaveChanges();
+                    context.Dispose();
+                }
+                catch (Exception e)
+                {
+                    context.Dispose();
+                    Console.WriteLine("Error changing credits for " + login + ":\n" + e);
+                    return false;
+                }
             }
-            catch(Exception e)
+            else if (difference > 0)
             {
-                context.Dispose();
-                Console.WriteLine("Error changing credits for " + login + ":\n" + e);
-                return false;
+                EventCreditEntity newCredit = new EventCreditEntity();
+                newCredit.Login = login;
+                newCredit.EventDropID = eventDropID;
+                newCredit.Credit = difference;
+                try
+                {
+                    context.EventCredits.Add(newCredit);
+                    context.SaveChanges();
+                    context.Dispose();
+                }
+                catch (Exception e)
+                {
+                    context.Dispose();
+                    Console.WriteLine("Error changing credits for " + login + ":\n" + e);
+                    return false;
+                }
             }
+            
             return true;
         }
 
