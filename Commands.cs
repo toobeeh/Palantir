@@ -697,6 +697,7 @@ namespace Palantir
             List<EventEntity> events = Events.GetEvents(true);
             DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
             string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
+            List<SpriteProperty> inv = BubbleWallet.GetInventory(login);
             if (events.Count > 0)
             {
                 embed.Title = ":champagne: " + events[0].EventName;
@@ -707,7 +708,7 @@ namespace Palantir
                 Events.GetEventDrops(events.GetRange(0, 1)).ForEach(e =>
                 {
                     SpritesEntity sprite = Events.GetEventSprite(e.EventDropID);
-                    dropList += "➜ **" + sprite.Name + "** (#" + sprite.ID + ")\n" + BubbleWallet.GetEventCredit(login, e.EventDropID) + " / " + sprite.Cost + " " + e.Name + " Drops collected \n\n";
+                    dropList += "➜ **" + sprite.Name + "** (#" + sprite.ID + ")\n" + BubbleWallet.GetEventCredit(login, e.EventDropID) + " / " + sprite.Cost + " " + e.Name + " Drops collected " + (inv.Any(s=>s.ID == sprite.ID) ? ":package:" : "") + "\n\n";
                 });
                 embed.AddField("Event Sprites", dropList == "" ? "No drops added yet." : dropList);
                 embed.AddField("\u200b","Use `>sprite [id]` to see the event drop and sprite!");
@@ -761,6 +762,9 @@ namespace Palantir
             int eventDropID = sprites.FirstOrDefault(s => s.ID == eventSpriteID).EventDropID;
             string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
             int credit = BubbleWallet.GetEventCredit(login, eventDropID);
+            List<SpriteProperty> inv = BubbleWallet.GetInventory(login);
+            if(inv.Any(s => s.ID == eventSpriteID)) credit -= inv.FirstOrDefault(s => s.ID == eventSpriteID).Cost;
+
             List<EventDropEntity> drops = Events.GetEventDrops();
             string name = drops.FirstOrDefault(d => d.EventDropID == eventDropID).Name;
             if (credit - amount < 0)
