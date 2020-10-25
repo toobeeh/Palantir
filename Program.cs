@@ -115,12 +115,12 @@ namespace Palantir
             return;
         }
 
-        public static async Task SendEmbed(DiscordChannel channel, string title, string description, string footer="")
+        public static async Task SendEmbed(DiscordChannel channel, string title, string description, string footer="", int color = -1)
         {
             DiscordEmbedBuilder embedErr = new DiscordEmbedBuilder();
             embedErr.Title = title;
             embedErr.Description = description.Length > 2040 ? description.Substring(0,2040) : description;
-            embedErr.Color = DiscordColor.Magenta;
+            embedErr.Color = color >= 0 ? new DiscordColor(color) : DiscordColor.Magenta;
             if (footer != "") embedErr.WithFooter(footer);
             await channel.SendMessageAsync(embed: embedErr);
             return;

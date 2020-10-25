@@ -270,8 +270,7 @@ namespace Palantir
                     embed.Description = "**Event Drop Price:** " + s.Cost + " " + drop.Name + "\n\n**ID**: " + s.ID + (s.Special ? " :sparkles: " : "");
                     embed.WithThumbnail(drop.URL);
                 }
-                embed.AddField("\u200b","[View all Sprites here](https://tobeh.host/Orthanc/sprites/gif/)");
-                embed.AddField("\u200b", "[Try out the sprite here](https://tobeh.host/Orthanc/sprites/cabin/?sprite=" + sprite + ")");
+                embed.AddField("\u200b", "[View all Sprites here](https://tobeh.host/Orthanc/sprites/gif/)\n[Try out the sprite here](https://tobeh.host/Orthanc/sprites/cabin/?sprite=" + sprite + ")");
                 await context.Channel.SendMessageAsync(embed: embed);
                 return;
             }
@@ -351,8 +350,13 @@ namespace Palantir
 
         [Description("Choose your sprite.")]
         [Command("use")]
-        public async Task Use(CommandContext context, int sprite)
+        public async Task Use(CommandContext context, int sprite, int timeoutSeconds = 0)
         {
+            if(timeoutSeconds > 0)
+            {
+                await Program.SendEmbed(context.Channel, "Tick tock...", "The command will be executed in " + timeoutSeconds + "s.", "", DiscordColor.Green.Value);
+                await Task.Delay(timeoutSeconds * 1000);
+            }
             string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
             List<SpriteProperty> inventory;
             try
