@@ -271,6 +271,7 @@ namespace Palantir
                     embed.WithThumbnail(drop.URL);
                 }
                 embed.AddField("\u200b","[View all Sprites here](https://tobeh.host/Orthanc/sprites/gif/)");
+                embed.AddField("\u200b", "[Try out the sprite here](https://tobeh.host/Orthanc/sprites/cabin/?sprite=" + sprite + ")");
                 await context.Channel.SendMessageAsync(embed: embed);
                 return;
             }
@@ -288,7 +289,6 @@ namespace Palantir
                 list.AddField("**" + sprites[random].Name + "** ", "Costs: " + sprites[random].Cost + " Bubbles\nID: " + sprites[random].ID + (sprites[random].Special ? " :sparkles: " : ""),true);
             };
             list.AddField("\u200b", "[View all Sprites here](https://tobeh.host/Orthanc/sprites/gif/)");
-            list.AddField("\u200b", "[Try out the sprite here](https://tobeh.host/Orthanc/sprites/cabin/?sprite=" + sprite +")");
             await context.Channel.SendMessageAsync(embed: list);
         }
 
