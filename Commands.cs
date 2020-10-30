@@ -82,6 +82,7 @@ namespace Palantir
             }
 
             ObservedGuild guild = Program.Feanor.PalantirTethers.FirstOrDefault(t => t.PalantirEndpoint.GuildID == context.Guild.Id.ToString()).PalantirEndpoint;
+            if (guild.Webhooks is null) guild.Webhooks = new List<Webhook>();
             guild.Webhooks.Add(new Webhook
             {
                 Guild = guild.GuildName,
