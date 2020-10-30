@@ -91,7 +91,7 @@ namespace Palantir
                 Name = name
             });
 
-            Program.Feanor.UpdatePalantirSettings(target);
+            Program.Feanor.SavePalantiri(target.PalantirEndpoint);
         }
 
 
