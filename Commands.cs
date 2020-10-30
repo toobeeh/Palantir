@@ -81,16 +81,17 @@ namespace Palantir
                 return;
             }
 
-            ObservedGuild guild = Program.Feanor.PalantirTethers.FirstOrDefault(t => t.PalantirEndpoint.GuildID == context.Guild.Id.ToString()).PalantirEndpoint;
-            if (guild.Webhooks is null) guild.Webhooks = new List<Webhook>();
-            guild.Webhooks.Add(new Webhook
+
+            Tether target = Program.Feanor.PalantirTethers.FirstOrDefault(t => t.PalantirEndpoint.GuildID == context.Guild.Id.ToString());
+            if (target.PalantirEndpoint.Webhooks is null)target.PalantirEndpoint.Webhooks = new List<Webhook>();
+            target.PalantirEndpoint.Webhooks.Add(new Webhook
             {
-                Guild = guild.GuildName,
+                Guild = target.PalantirEndpoint.GuildName,
                 URL = url,
                 Name = name
             });
 
-            Program.Feanor.UpdatePalantirSettings(Program.Feanor.PalantirTethers.FirstOrDefault(t => t.PalantirEndpoint.GuildID == context.Guild.Id.ToString()));
+            Program.Feanor.UpdatePalantirSettings(target);
         }
 
 
