@@ -89,7 +89,9 @@ namespace Palantir
                 member.Guilds.ForEach((g) =>
                 {
                     if (PalantirTethers.Count(t => t.PalantirEndpoint.ObserveToken == g.ObserveToken && t.PalantirEndpoint.GuildID == g.GuildID) > 0)
-                        updatedGuilds.Add(g);
+                        updatedGuilds.Add(
+                            PalantirTethers.FirstOrDefault(t => t.PalantirEndpoint.ObserveToken == g.ObserveToken && t.PalantirEndpoint.GuildID == g.GuildID)
+                            .PalantirEndpoint);
                 });
                 member.Guilds = updatedGuilds;
                 if (updatedGuilds.Count > 0) memberEntity.Member = JsonConvert.SerializeObject(member);
