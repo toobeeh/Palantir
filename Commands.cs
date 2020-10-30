@@ -92,6 +92,7 @@ namespace Palantir
             });
 
             Program.Feanor.SavePalantiri(target.PalantirEndpoint);
+            Program.Feanor.UpdateMemberGuilds();
         }
 
 
