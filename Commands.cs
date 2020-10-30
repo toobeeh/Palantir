@@ -50,6 +50,7 @@ namespace Palantir
             foreach (string s in header) text += s + " ";
             Program.Feanor.PalantirTethers.FirstOrDefault(t => t.PalantirEndpoint.GuildID == context.Guild.Id.ToString()).PalantirSettings.Header = text;
             Program.Feanor.UpdatePalantirSettings(Program.Feanor.PalantirTethers.FirstOrDefault(t => t.PalantirEndpoint.GuildID == context.Guild.Id.ToString()));
+            await context.RespondAsync("Updated header setting.");
         }
 
         [Command("idle")]
@@ -67,6 +68,7 @@ namespace Palantir
             foreach (string s in idle) text += s + " ";
             Program.Feanor.PalantirTethers.FirstOrDefault(t => t.PalantirEndpoint.GuildID == context.Guild.Id.ToString()).PalantirSettings.IdleMessage = text;
             Program.Feanor.UpdatePalantirSettings(Program.Feanor.PalantirTethers.FirstOrDefault(t => t.PalantirEndpoint.GuildID == context.Guild.Id.ToString()));
+            await context.RespondAsync("Updated idle setting.");
         }
 
         [Command("addwebhook")]
@@ -93,6 +95,40 @@ namespace Palantir
 
             Program.Feanor.SavePalantiri(target.PalantirEndpoint);
             Program.Feanor.UpdateMemberGuilds();
+            await context.RespondAsync("Webhook added.");
+        }
+
+
+
+        [Command("webhooks")]
+        [Description("Show all webhooks for this server")]
+        [RequireUserPermissions(DSharpPlus.Permissions.Administrator)]
+        [RequireGuild()]
+        public async Task Webhooks(CommandContext context, [Description("True if all webhooks should be removed.")] bool clearAll = false)
+        {
+            if (!Program.Feanor.PalantirTethers.Any(t => t.PalantirEndpoint.GuildID == context.Guild.Id.ToString()))
+            {
+                await context.Message.RespondAsync("Set a channel before configuring the settings!");
+                return;
+            }
+
+
+            Tether target = Program.Feanor.PalantirTethers.FirstOrDefault(t => t.PalantirEndpoint.GuildID == context.Guild.Id.ToString());
+            string hooks = "";
+            if (target.PalantirEndpoint.Webhooks is null || target.PalantirEndpoint.Webhooks.Count < 1) hooks = "No webhooks added.";
+            else target.PalantirEndpoint.Webhooks.ForEach(h =>
+            {
+                hooks += "- " + h.Name + ": " + h.URL + "\n";
+            });
+            await context.RespondAsync(hooks);
+
+            if (clearAll)
+            {
+                target.PalantirEndpoint.Webhooks = null;
+                Program.Feanor.SavePalantiri(target.PalantirEndpoint);
+                Program.Feanor.UpdateMemberGuilds();
+                await context.RespondAsync("Those webhooks were removed.");
+            }
         }
 
 
@@ -109,6 +145,7 @@ namespace Palantir
             }
             Program.Feanor.PalantirTethers.FirstOrDefault(t => t.PalantirEndpoint.GuildID == context.Guild.Id.ToString()).PalantirSettings.Timezone = offset;
             Program.Feanor.UpdatePalantirSettings(Program.Feanor.PalantirTethers.FirstOrDefault(t => t.PalantirEndpoint.GuildID == context.Guild.Id.ToString()));
+            await context.RespondAsync("Updated timezone setting.");
         }
 
         [Command("token")]
@@ -129,6 +166,7 @@ namespace Palantir
             }
             Program.Feanor.PalantirTethers.FirstOrDefault(t => t.PalantirEndpoint.GuildID == context.Guild.Id.ToString()).PalantirSettings.ShowToken = state == "on";
             Program.Feanor.UpdatePalantirSettings(Program.Feanor.PalantirTethers.FirstOrDefault(t => t.PalantirEndpoint.GuildID == context.Guild.Id.ToString()));
+            await context.RespondAsync("Updated token visibility setting.");
         }
 
         [Command("refreshed")]
@@ -149,6 +187,7 @@ namespace Palantir
             }
             Program.Feanor.PalantirTethers.FirstOrDefault(t => t.PalantirEndpoint.GuildID == context.Guild.Id.ToString()).PalantirSettings.ShowRefreshed = state == "on";
             Program.Feanor.UpdatePalantirSettings(Program.Feanor.PalantirTethers.FirstOrDefault(t => t.PalantirEndpoint.GuildID == context.Guild.Id.ToString()));
+            await context.RespondAsync("Updated refreshed visibility setting.");
         }
 
         [Command("animated")]
@@ -169,6 +208,7 @@ namespace Palantir
             }
             Program.Feanor.PalantirTethers.FirstOrDefault(t => t.PalantirEndpoint.GuildID == context.Guild.Id.ToString()).PalantirSettings.ShowAnimatedEmojis = state == "on";
             Program.Feanor.UpdatePalantirSettings(Program.Feanor.PalantirTethers.FirstOrDefault(t => t.PalantirEndpoint.GuildID == context.Guild.Id.ToString()));
+            await context.RespondAsync("Updated animated emoji setting.");
         }
 
 
