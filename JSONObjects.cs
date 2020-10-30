@@ -43,6 +43,14 @@ namespace Palantir
         public string MessageID { get; set; }
         public string ObserveToken { get; set; }
         public string GuildName { get; set; }
+        public List<Webhook> Webhooks {get;set;}
+    }
+
+    public class Webhook
+    {
+        public string Name { get; set; }
+        public string Guild { get; set; }
+        public string URL { get; set; }
     }
 
     public class Member

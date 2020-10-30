@@ -69,6 +69,30 @@ namespace Palantir
             Program.Feanor.UpdatePalantirSettings(Program.Feanor.PalantirTethers.FirstOrDefault(t => t.PalantirEndpoint.GuildID == context.Guild.Id.ToString()));
         }
 
+        [Command("addwebhook")]
+        [Description("Add a new webhook")]
+        [RequireUserPermissions(DSharpPlus.Permissions.Administrator)]
+        [RequireGuild()]
+        public async Task AddWebhook(CommandContext context, [Description("Name of the webhook")] string name, [Description("URL of the webhook")] string url)
+        {
+            if (!Program.Feanor.PalantirTethers.Any(t => t.PalantirEndpoint.GuildID == context.Guild.Id.ToString()))
+            {
+                await context.Message.RespondAsync("Set a channel before configuring the settings!");
+                return;
+            }
+
+            ObservedGuild guild = Program.Feanor.PalantirTethers.FirstOrDefault(t => t.PalantirEndpoint.GuildID == context.Guild.Id.ToString()).PalantirEndpoint;
+            guild.Webhooks.Add(new Webhook
+            {
+                Guild = guild.GuildName,
+                URL = url,
+                Name = name
+            });
+
+            Program.Feanor.UpdatePalantirSettings(Program.Feanor.PalantirTethers.FirstOrDefault(t => t.PalantirEndpoint.GuildID == context.Guild.Id.ToString()));
+        }
+
+
         [Command("timezone")]
         [Description("Set the timezone UTC offset of the bot message.")]
         [RequireUserPermissions(DSharpPlus.Permissions.Administrator)]
