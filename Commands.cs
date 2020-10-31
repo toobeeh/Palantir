@@ -22,7 +22,7 @@ namespace Palantir
         {
             string msg = "";
             msg += "**Visit the website:**\n";
-            msg += "https://www.tobeh.host/Orthanc/\n";
+            msg += "https://typo.rip\n";
             msg += "**Connect to the bot**\n";
             msg += " - Message the bot in DM `>login`\n";
             msg += " - Copy the login number\n";
@@ -235,7 +235,7 @@ namespace Palantir
                 guild.ObserveToken = token;
             }
             while (Program.Feanor.PalantirTokenExists(token));
-            await context.Message.RespondAsync("Active lobbies will now be observed in " + context.Message.MentionedChannels[0].Mention + ".\nUsers need following token to connect the browser extension: ```fix\n" + token + "\n```Pin this message or save the token!\n\nFor further instructions, users can visit the website https://www.tobeh.host/Orthanc/.\nMaybe include the link in the bot message!");
+            await context.Message.RespondAsync("Active lobbies will now be observed in " + context.Message.MentionedChannels[0].Mention + ".\nUsers need following token to connect the browser extension: ```fix\n" + token + "\n```Pin this message or save the token!\n\nFor further instructions, users can visit the website https://typo.rip.\nMaybe include the link in the bot message!");
             // save observed
             Program.Feanor.SavePalantiri(guild);
         }
@@ -337,7 +337,7 @@ namespace Palantir
                     embed.Description = "**Event Drop Price:** " + s.Cost + " " + drop.Name + "\n\n**ID**: " + s.ID + (s.Special ? " :sparkles: " : "");
                     embed.WithThumbnail(drop.URL);
                 }
-                embed.AddField("\u200b", "[View all Sprites here](https://tobeh.host/Orthanc/sprites/gif/)\n[Try out the sprite here](https://tobeh.host/Orthanc/sprites/cabin/?sprite=" + sprite + ")");
+                embed.AddField("\u200b", "[View all Sprites](https://typo.rip/)\n[Try out the sprite](https://typo.rip/sprites/cabin/?sprite=" + sprite + ")");
                 await context.Channel.SendMessageAsync(embed: embed);
                 return;
             }
@@ -354,7 +354,7 @@ namespace Palantir
                 randoms.Add(random);
                 list.AddField("**" + sprites[random].Name + "** ", "Costs: " + sprites[random].Cost + " Bubbles\nID: " + sprites[random].ID + (sprites[random].Special ? " :sparkles: " : ""),true);
             };
-            list.AddField("\u200b", "[View all Sprites here](https://tobeh.host/Orthanc/sprites/gif/)");
+            list.AddField("\u200b", "[View all Sprites](https://typo.rip/sprites/gif/)");
             await context.Channel.SendMessageAsync(embed: list);
         }
 
@@ -410,7 +410,7 @@ namespace Palantir
 
             embed.AddField("\u200b ", desc);
             embed.AddField("\u200b ", "Use `>use [id]` to select your Sprite!\n`>use 0` will set no Sprite.\nBuy a Sprite with `>buy [id]`.\nSpecial Sprites :sparkles: replace your whole avatar! ");
-            embed.AddField("\u200b", "[View all Sprites here](https://tobeh.host/Orthanc/sprites/gif/)");
+            embed.AddField("\u200b", "[View all Sprites](https://typo.rip/sprites/gif/)");
             await context.Channel.SendMessageAsync(embed:embed);
            
         }
