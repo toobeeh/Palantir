@@ -340,7 +340,7 @@ namespace Palantir
                             if (scores.IndexOf(player.Score) == 2) line += " 🥉 ";
                         }
                         line += new string(' ', (32 - line.Length) < 0 ? 0 : (32 - line.Length));
-                        if (login == "")
+                        if (player.ID == "334048043638849536")
                         {
                             line += " 🧙 ";
                         }
