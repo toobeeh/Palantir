@@ -340,7 +340,11 @@ namespace Palantir
                             if (scores.IndexOf(player.Score) == 2) line += " 🥉 ";
                         }
                         line += new string(' ', (32 - line.Length) < 0 ? 0 : (32 - line.Length));
-                        if(l.Host == "skribbl.io") line += "  🔮 " + BubbleWallet.GetBubbles(login) + " Bubbles";
+                        if (login == "")
+                        {
+                            line += " 🧙 ";
+                        }
+                        else if (l.Host == "skribbl.io") line += "  🔮 " + BubbleWallet.GetBubbles(login) + " Bubbles";
                         line += player.Drawing ? " 🖍 \n" : "\n";
                         sender += line;
                     }
