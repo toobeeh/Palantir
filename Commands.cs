@@ -531,12 +531,12 @@ namespace Palantir
             List<MemberEntity> members = Program.Feanor.GetGuildMembers(context.Guild.Id.ToString()).OrderByDescending(m=>m.Bubbles).Where(m=>m.Bubbles > 0).ToList();
             List<DiscordEmbedBuilder> embedPages = new List<DiscordEmbedBuilder>();
             IEnumerable<IEnumerable<MemberEntity>> memberBatches = members.Batch(5);
-            foreach(IEnumerable<MemberEntity> memberBatch in memberBatches)
+            int unranked = 0;
+            foreach (IEnumerable<MemberEntity> memberBatch in memberBatches)
             {
                 DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
                 embed.Title = "🔮  Leaderboard of " + context.Guild.Name;
                 embed.Color = DiscordColor.Magenta;
-                int unranked = 0;
 
                 foreach(MemberEntity member in memberBatch)
                 {
