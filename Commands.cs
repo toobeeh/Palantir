@@ -536,13 +536,20 @@ namespace Palantir
                 DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
                 embed.Title = "🔮  Leaderboard of " + context.Guild.Name;
                 embed.Color = DiscordColor.Magenta;
+                int unranked = 0;
 
                 foreach(MemberEntity member in memberBatch)
                 {
                     string name = member.Bubbles.ToString();
+                    int flag = member.Flag;
                     try { name=(await context.Guild.GetMemberAsync(Convert.ToUInt64(JsonConvert.DeserializeObject<Member>(member.Member).UserID))).Username; }
                     catch { };
-                    embed.AddField("**#" + (members.IndexOf(member) + 1).ToString() + " - " + name + "**", BubbleWallet.GetBubbles(member.Login).ToString() + " Bubbles\n" + BubbleWallet.GetDrops(member.Login).ToString() + " Drops\n\u200b");
+                    if (flag == 1)
+                    {
+                        unranked++;
+                        embed.AddField(":flag_black:" + " - " + name ," This player has been flagged as *bubble farming*.\n\u200b");
+                    }
+                    else embed.AddField("**#" + (members.IndexOf(member) + 1 - unranked).ToString() + " - " + name + "**", BubbleWallet.GetBubbles(member.Login).ToString() + " Bubbles\n" + BubbleWallet.GetDrops(member.Login).ToString() + " Drops\n\u200b");
                 }
                 embed.WithFooter(context.Member.DisplayName +  " can react within 2 mins to show the next page.");
                 embedPages.Add(embed);
