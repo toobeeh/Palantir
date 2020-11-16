@@ -178,6 +178,27 @@ namespace Palantir
             context.Dispose();
             return members;
         }
+        public MemberEntity GetMemberByLogin(string login)
+        {
+            PalantirDbContext context = new PalantirDbContext();
+            MemberEntity member = context.Members.FirstOrDefault(m => m.Login == login);
+            context.Dispose();
+            return member;
+        }
+        public int GetFlagByMember(DiscordUser user)
+        {
+            PalantirDbContext context = new PalantirDbContext();
+            MemberEntity member = context.Members.FirstOrDefault(m => m.Member.Contains(user.Id.ToString()));
+            context.Dispose();
+            return member.Flag;
+        }
+        public void SetFlagByID(string id, int flag)
+        {
+            PalantirDbContext context = new PalantirDbContext();
+            MemberEntity member = context.Members.FirstOrDefault(m => m.Member.Contains(id));
+            member.Flag = flag;
+            context.Dispose();
+        }
 
         public void ActivatePalantiri()
         {

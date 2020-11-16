@@ -399,6 +399,10 @@ namespace Palantir
             });
 
             string desc = "";
+            int flag = Program.Feanor.GetFlagByMember(context.User);
+            if (flag == 1) desc += "`🚩 This player has been flagged as 'bubble farming'.`\n\n";
+            if (flag == 2) desc += "`✔️ Verified cool guy.`\n\n";
+
             if (active is object)
             {
                 desc += "\n**Selected sprite:** " + active.Name;
@@ -465,6 +469,7 @@ namespace Palantir
         public async Task Buy(CommandContext context, int sprite)
         {
             string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
+            MemberEntity member = Program.Feanor.GetMemberByLogin(login);
             List<SpriteProperty> inventory;
             try
             {
@@ -493,7 +498,7 @@ namespace Palantir
             int credit = BubbleWallet.CalculateCredit(login);
             if(target.EventDropID <= 0)
             {
-                if (credit < target.Cost)
+                if (credit < target.Cost && member.Flag != 2)
                 {
                     await Program.SendEmbed(context.Channel, "Haha, nice try -.-", "That stuff is too expensive for you. \nSpend few more hours on skribbl.");
                     return;
@@ -501,13 +506,12 @@ namespace Palantir
             }
             else
             {
-                if (BubbleWallet.GetEventCredit(login, target.EventDropID) < target.Cost)
+                if (BubbleWallet.GetEventCredit(login, target.EventDropID) < target.Cost && member.Flag != 2)
                 {
                     await Program.SendEmbed(context.Channel, "Haha, nice try -.-", "That stuff is too expensive for you. \nSpend few more hours on skribbl.");
                     return;
                 }
             }
-            
 
             inventory.Add(new SpriteProperty(target.Name, target.URL, target.Cost, target.ID, target.Special, target.EventDropID, false));
             BubbleWallet.SetInventory(inventory, login);
@@ -547,9 +551,9 @@ namespace Palantir
                     if (flag == 1)
                     {
                         unranked++;
-                        embed.AddField(":flag_black:" + " - " + name ," This player has been flagged as *bubble farming*.\n\u200b");
+                        embed.AddField("`🚩`" + " - " + name ," This player has been flagged as *bubble farming*.\n\u200b");
                     }
-                    else embed.AddField("**#" + (members.IndexOf(member) + 1 - unranked).ToString() + " - " + name + "**", BubbleWallet.GetBubbles(member.Login).ToString() + " Bubbles\n" + BubbleWallet.GetDrops(member.Login).ToString() + " Drops\n\u200b");
+                    else embed.AddField("**#" + (members.IndexOf(member) + 1 - unranked).ToString() + " - " + name + "**" + (flag == 2 ? " `(Dev)`" : ""), BubbleWallet.GetBubbles(member.Login).ToString() + " Bubbles\n" + BubbleWallet.GetDrops(member.Login).ToString() + " Drops\n\u200b");
                 }
                 embed.WithFooter(context.Member.DisplayName +  " can react within 2 mins to show the next page.");
                 embedPages.Add(embed);
@@ -673,7 +677,7 @@ namespace Palantir
         [Command("newevent")]
         public async Task CreateEvent(CommandContext context, string name, int duration, int validInDays, params string[] description)
         {
-            if (context.Message.Author.Id != 334048043638849536) return;
+            if (Program.Feanor.GetFlagByMember(context.User) != 2) return;
 
             PalantirDbContext dbcontext = new PalantirDbContext(); 
 
@@ -712,7 +716,7 @@ namespace Palantir
         [Command("eventdrop")]
         public async Task CreateEventDrop(CommandContext context, int eventID, string name)
         {
-            if (context.Message.Author.Id != 334048043638849536) return;
+            if (Program.Feanor.GetFlagByMember(context.User) != 2) return;
 
             PalantirDbContext dbcontext = new PalantirDbContext();
 
@@ -867,7 +871,7 @@ namespace Palantir
         [Command("eventsprite")]
         public async Task CreateEventSprite(CommandContext context, int eventDropID, string name,  int price, string special = "")
         {
-            if (context.Message.Author.Id != 334048043638849536) return;
+            if (Program.Feanor.GetFlagByMember(context.User) != 2) return;
 
             PalantirDbContext dbcontext = new PalantirDbContext();
 
@@ -907,6 +911,15 @@ namespace Palantir
 
             dbcontext.Dispose();
             await context.Channel.SendMessageAsync(embed: embed);
+        }
+
+        [Description("Set a member flag.")]
+        [Command("flag")]
+        public async Task Flag(CommandContext context, [Description("The id of the member to flag")] int id, [Description("The new flag")] int flag)
+        {
+            if (Program.Feanor.GetFlagByMember(context.User) != 2) return;
+            Program.Feanor.SetFlagByID(id.ToString(), flag);
+            await Program.SendEmbed(context.Channel, "*magic happened*","The Flag of the member " + id + " was set to " + flag);
         }
     }
 }
