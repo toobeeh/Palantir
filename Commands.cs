@@ -959,7 +959,7 @@ namespace Palantir
                 return;
             }
             await Program.SendEmbed(context.Channel, "[literally dies...]", "You made me do this!!!");
-            string op = "bash /home/pi/Palantir/uptr".Bash();
+            string op = "htop".Bash();
             await context.RespondAsync("`" + op + "`");
         }
     }
