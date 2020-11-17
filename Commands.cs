@@ -941,11 +941,10 @@ namespace Palantir
             {
                 DiscordUser target = await Program.Client.GetUserAsync(id);
                 PermissionFlag getperm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(target));
-                PermissionFlag getFlag = new PermissionFlag((byte)flag);
                 string getDesc = "Flag[0] BubbleFarming - "
-                    + getFlag.BubbleFarming + "\nFlag[1] BotAdmin - "
-                    + getFlag.BotAdmin + "\nFlag[2] RestartAndUpdate - " + getFlag.RestartAndUpdate;
-                await Program.SendEmbed(context.Channel, "The flags of " + target.Mention,getDesc);
+                    + getperm.BubbleFarming + "\nFlag[1] BotAdmin - "
+                    + getperm.BotAdmin + "\nFlag[2] RestartAndUpdate - " + getperm.RestartAndUpdate;
+                await Program.SendEmbed(context.Channel, "The flags of " + target.Username,getDesc);
                 return;
             }
             PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
