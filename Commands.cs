@@ -945,7 +945,8 @@ namespace Palantir
                 string getDesc = "Flag[0] BubbleFarming - "
                     + getFlag.BubbleFarming + "\nFlag[1] BotAdmin - "
                     + getFlag.BotAdmin + "\nFlag[2] RestartAndUpdate - " + getFlag.RestartAndUpdate;
-                await Program.SendEmbed(context.Channel, "*magic happened*", "The flag of " + target.Mention + " is:\n" + getDesc);
+                await Program.SendEmbed(context.Channel, "The flags of " + target.Mention,getDesc);
+                return;
             }
             PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
             if (!perm.BotAdmin)
