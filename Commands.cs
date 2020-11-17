@@ -677,7 +677,11 @@ namespace Palantir
         [Command("newevent")]
         public async Task CreateEvent(CommandContext context, string name, int duration, int validInDays, params string[] description)
         {
-            if (Program.Feanor.GetFlagByMember(context.User) != 2) return;
+            if (Program.Feanor.GetFlagByMember(context.User) != 2)
+            {
+                await Program.SendEmbed(context.Channel, "Ts ts...", "This command is only available for higher beings.\n||Some call them Bot-Admins ;))||");
+                return;
+            }
 
             PalantirDbContext dbcontext = new PalantirDbContext(); 
 
@@ -716,7 +720,11 @@ namespace Palantir
         [Command("eventdrop")]
         public async Task CreateEventDrop(CommandContext context, int eventID, string name)
         {
-            if (Program.Feanor.GetFlagByMember(context.User) != 2) return;
+            if (Program.Feanor.GetFlagByMember(context.User) != 2)
+            {
+                await Program.SendEmbed(context.Channel, "Ts ts...", "This command is only available for higher beings.\n||Some call them Bot-Admins ;))||");
+                return;
+            }
 
             PalantirDbContext dbcontext = new PalantirDbContext();
 
@@ -871,7 +879,11 @@ namespace Palantir
         [Command("eventsprite")]
         public async Task CreateEventSprite(CommandContext context, int eventDropID, string name,  int price, string special = "")
         {
-            if (Program.Feanor.GetFlagByMember(context.User) != 2) return;
+            if (Program.Feanor.GetFlagByMember(context.User) != 2)
+            {
+                await Program.SendEmbed(context.Channel, "Ts ts...", "This command is only available for higher beings.\n||Some call them Bot-Admins ;))||");
+                return;
+            }
 
             PalantirDbContext dbcontext = new PalantirDbContext();
 
@@ -915,9 +927,13 @@ namespace Palantir
 
         [Description("Set a member flag.")]
         [Command("flag")]
-        public async Task Flag(CommandContext context, [Description("The id of the member to flag")] int id, [Description("The new flag")] int flag)
+        public async Task Flag(CommandContext context, [Description("The id of the member to flag")] ulong id, [Description("The new flag")] int flag)
         {
-            if (Program.Feanor.GetFlagByMember(context.User) != 2) return;
+            if (Program.Feanor.GetFlagByMember(context.User) != 2)
+            {
+                await Program.SendEmbed(context.Channel, "Ts ts...", "This command is only available for higher beings.\n||Some call them Bot-Admins ;))||");
+                return;
+            }
             Program.Feanor.SetFlagByID(id.ToString(), flag);
             await Program.SendEmbed(context.Channel, "*magic happened*","The Flag of the member " + id + " was set to " + flag);
         }
