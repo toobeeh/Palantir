@@ -963,8 +963,10 @@ namespace Palantir
                 return;
             }
             await Program.SendEmbed(context.Channel, "[literally dies...]", "You made me do this!!!");
-            string op = "/home/pi/Palantir/uptr".Bash();
+            string op = "sudo service palantir restart".Bash();
+            Environment.Exit(0);
             await context.RespondAsync("`" + op + "`");
+
         }
     }
 }
