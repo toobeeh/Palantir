@@ -549,8 +549,7 @@ namespace Palantir
                 foreach(MemberEntity member in memberBatch)
                 {
                     string name = member.Bubbles.ToString();
-                    int flag = member.Flag;
-                    PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
+                    PermissionFlag perm = new PermissionFlag((byte)member.Flag);
                     try { name=(await context.Guild.GetMemberAsync(Convert.ToUInt64(JsonConvert.DeserializeObject<Member>(member.Member).UserID))).Username; }
                     catch { };
                     if (perm.BubbleFarming)
