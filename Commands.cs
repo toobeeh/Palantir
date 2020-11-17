@@ -934,7 +934,7 @@ namespace Palantir
         }
 
         [Description("Set a member flag.")]
-        [Command("setflag")]
+        [Command("flag")]
         public async Task Flag(CommandContext context, [Description("The id of the member to flag")] ulong id, [Description("The new flag")] int flag = -1)
         {
             if(flag == -1)
@@ -974,6 +974,7 @@ namespace Palantir
                 return;
             }
             await Program.SendEmbed(context.Channel, "[literally dies...]", "You made me do this!!!");
+            string upd = "git -C /home/pi/Palantir pull".Bash();
             string op = "sudo service palantir restart".Bash();
             Environment.Exit(0);
             await context.RespondAsync("`" + op + "`");
