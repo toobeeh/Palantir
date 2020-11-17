@@ -550,7 +550,8 @@ namespace Palantir
                 {
                     string name = member.Bubbles.ToString();
                     int flag = member.Flag;
-                    PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));try { name=(await context.Guild.GetMemberAsync(Convert.ToUInt64(JsonConvert.DeserializeObject<Member>(member.Member).UserID))).Username; }
+                    PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
+                    try { name=(await context.Guild.GetMemberAsync(Convert.ToUInt64(JsonConvert.DeserializeObject<Member>(member.Member).UserID))).Username; }
                     catch { };
                     if (perm.BubbleFarming)
                     {
@@ -933,9 +934,19 @@ namespace Palantir
         }
 
         [Description("Set a member flag.")]
-        [Command("flag")]
-        public async Task Flag(CommandContext context, [Description("The id of the member to flag")] ulong id, [Description("The new flag")] int flag)
+        [Command("setflag")]
+        public async Task Flag(CommandContext context, [Description("The id of the member to flag")] ulong id, [Description("The new flag")] int flag = -1)
         {
+            if(flag == -1)
+            {
+                DiscordUser target = await Program.Client.GetUserAsync(id);
+                PermissionFlag getperm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(target));
+                PermissionFlag getFlag = new PermissionFlag((byte)flag);
+                string getDesc = "Flag[0] BubbleFarming - "
+                    + getFlag.BubbleFarming + "\nFlag[1] BotAdmin - "
+                    + getFlag.BotAdmin + "\nFlag[2] RestartAndUpdate - " + getFlag.RestartAndUpdate;
+                await Program.SendEmbed(context.Channel, "*magic happened*", "The flag of " + target.Mention + " is:\n" + getDesc);
+            }
             PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
             if (!perm.BotAdmin)
             {
