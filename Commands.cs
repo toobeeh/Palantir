@@ -953,7 +953,7 @@ namespace Palantir
         public async Task Reboot(CommandContext context)
         {
             PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
-            if (!perm.BotAdmin || !perm.RestartAndUpdate)
+            if (!perm.BotAdmin && !perm.RestartAndUpdate)
             {
                 await Program.SendEmbed(context.Channel, "Ts ts...", "This command is only available for higher beings.\n||Some call them Bot-Admins ;))||");
                 return;
