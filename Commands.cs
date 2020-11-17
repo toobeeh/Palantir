@@ -944,7 +944,11 @@ namespace Palantir
             }
             Program.Feanor.SetFlagByID(id.ToString(), flag);
             string name = (await Program.Client.GetUserAsync(id)).Mention;
-            await Program.SendEmbed(context.Channel, "*magic happened*","The flag of " + name + " was set to " + flag);
+            PermissionFlag newFlag = new PermissionFlag((byte)flag);
+            string desc = "Flag[0] BubbleFarming - " 
+                + newFlag.BubbleFarming + "\nFlag[1] BotAdmin - " 
+                + newFlag.BotAdmin + "\nFlag[2] RestartAndUpdate - " + newFlag.RestartAndUpdate;
+            await Program.SendEmbed(context.Channel, "*magic happened*","The flag of " + name + " was set to " + flag + "\n" + desc);
         }
 
         [Description("Reboots the Bot.")]
