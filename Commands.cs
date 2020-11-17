@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
@@ -399,9 +400,11 @@ namespace Palantir
             });
 
             string desc = "";
-            int flag = Program.Feanor.GetFlagByMember(context.User);
-            if (flag == 1) desc += "`🚩 This player has been flagged as 'bubble farming'.`\n\n";
-            if (flag == 2) desc += "`✔️ Verified cool guy.`\n\n";
+
+            PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
+            if (perm.BubbleFarming) desc += "`🚩 Flagged as 'bubble farming'.`\n\n";
+            if (perm.BotAdmin) desc += "`✔️ Verified cool guy.`\n\n";
+            if (perm.RestartAndUpdate) desc += "`🛠️ Can restart & update Palantir.`\n\n";
 
             if (active is object)
             {
@@ -496,9 +499,10 @@ namespace Palantir
 
             Sprite target = available.FirstOrDefault(s => s.ID == sprite);
             int credit = BubbleWallet.CalculateCredit(login);
-            if(target.EventDropID <= 0)
+            PermissionFlag perm = new PermissionFlag((byte)member.Flag);
+            if (target.EventDropID <= 0)
             {
-                if (credit < target.Cost && member.Flag != 2)
+                if (credit < target.Cost && !perm.BotAdmin)
                 {
                     await Program.SendEmbed(context.Channel, "Haha, nice try -.-", "That stuff is too expensive for you. \nSpend few more hours on skribbl.");
                     return;
@@ -506,7 +510,7 @@ namespace Palantir
             }
             else
             {
-                if (BubbleWallet.GetEventCredit(login, target.EventDropID) < target.Cost && member.Flag != 2)
+                if (BubbleWallet.GetEventCredit(login, target.EventDropID) < target.Cost && !perm.BotAdmin)
                 {
                     await Program.SendEmbed(context.Channel, "Haha, nice try -.-", "That stuff is too expensive for you. \nSpend few more hours on skribbl.");
                     return;
@@ -546,14 +550,14 @@ namespace Palantir
                 {
                     string name = member.Bubbles.ToString();
                     int flag = member.Flag;
-                    try { name=(await context.Guild.GetMemberAsync(Convert.ToUInt64(JsonConvert.DeserializeObject<Member>(member.Member).UserID))).Username; }
+                    PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));try { name=(await context.Guild.GetMemberAsync(Convert.ToUInt64(JsonConvert.DeserializeObject<Member>(member.Member).UserID))).Username; }
                     catch { };
-                    if (flag == 1)
+                    if (perm.BubbleFarming)
                     {
                         unranked++;
-                        embed.AddField("`🚩`" + " - " + name ," This player has been flagged as *bubble farming*.\n\u200b");
+                        embed.AddField("`🚩`" + " - " + name ," `This player has been flagged as *bubble farming*`.\n\u200b");
                     }
-                    else embed.AddField("**#" + (members.IndexOf(member) + 1 - unranked).ToString() + " - " + name + "**" + (flag == 2 ? " `(Dev)`" : ""), BubbleWallet.GetBubbles(member.Login).ToString() + " Bubbles\n" + BubbleWallet.GetDrops(member.Login).ToString() + " Drops\n\u200b");
+                    else if(perm.BotAdmin) embed.AddField("**#" + (members.IndexOf(member) + 1 - unranked).ToString() + " - " + name + "**" + (flag == 2 ? " ` Admin`" : ""), BubbleWallet.GetBubbles(member.Login).ToString() + " Bubbles\n" + BubbleWallet.GetDrops(member.Login).ToString() + " Drops\n\u200b");
                 }
                 embed.WithFooter(context.Member.DisplayName +  " can react within 2 mins to show the next page.");
                 embedPages.Add(embed);
@@ -677,7 +681,8 @@ namespace Palantir
         [Command("newevent")]
         public async Task CreateEvent(CommandContext context, string name, int duration, int validInDays, params string[] description)
         {
-            if (Program.Feanor.GetFlagByMember(context.User) != 2)
+            PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
+            if (!perm.BotAdmin)
             {
                 await Program.SendEmbed(context.Channel, "Ts ts...", "This command is only available for higher beings.\n||Some call them Bot-Admins ;))||");
                 return;
@@ -720,7 +725,8 @@ namespace Palantir
         [Command("eventdrop")]
         public async Task CreateEventDrop(CommandContext context, int eventID, string name)
         {
-            if (Program.Feanor.GetFlagByMember(context.User) != 2)
+            PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
+            if (!perm.BotAdmin)
             {
                 await Program.SendEmbed(context.Channel, "Ts ts...", "This command is only available for higher beings.\n||Some call them Bot-Admins ;))||");
                 return;
@@ -879,7 +885,8 @@ namespace Palantir
         [Command("eventsprite")]
         public async Task CreateEventSprite(CommandContext context, int eventDropID, string name,  int price, string special = "")
         {
-            if (Program.Feanor.GetFlagByMember(context.User) != 2)
+            PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
+            if (!perm.BotAdmin)
             {
                 await Program.SendEmbed(context.Channel, "Ts ts...", "This command is only available for higher beings.\n||Some call them Bot-Admins ;))||");
                 return;
@@ -929,13 +936,29 @@ namespace Palantir
         [Command("flag")]
         public async Task Flag(CommandContext context, [Description("The id of the member to flag")] ulong id, [Description("The new flag")] int flag)
         {
-            if (Program.Feanor.GetFlagByMember(context.User) != 2)
+            PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
+            if (!perm.BotAdmin)
             {
                 await Program.SendEmbed(context.Channel, "Ts ts...", "This command is only available for higher beings.\n||Some call them Bot-Admins ;))||");
                 return;
             }
             Program.Feanor.SetFlagByID(id.ToString(), flag);
-            await Program.SendEmbed(context.Channel, "*magic happened*","The Flag of the member " + id + " was set to " + flag);
+            string name = (await Program.Client.GetUserAsync(id)).Mention;
+            await Program.SendEmbed(context.Channel, "*magic happened*","The flag of " + name + " was set to " + flag);
+        }
+
+        [Description("Reboots the Bot.")]
+        [Command("hardreboot")]
+        public async Task Reboot(CommandContext context)
+        {
+            PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
+            if (perm.BotAdmin || perm.RestartAndUpdate)
+            {
+                await Program.SendEmbed(context.Channel, "Ts ts...", "This command is only available for higher beings.\n||Some call them Bot-Admins ;))||");
+                return;
+            }
+            await Program.SendEmbed(context.Channel, "[literally dies...]", "You made me do this!!!");
+            "bash /home/pi/Palantir/uptr".Bash();
         }
     }
 }

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Diagnostics;
 using DSharpPlus;
 using DSharpPlus.EventArgs;
 using DSharpPlus.Entities;
@@ -126,5 +128,53 @@ namespace Palantir
             return;
         }
 
+    }
+
+    public class PermissionFlag
+    {
+        // Flag schema:
+        // R... Restart - A... Admin - F... Farming
+        // F =  R A F
+        // 0 =  0 0 0
+        // 1 =  0 0 1
+        // 2 =  0 1 0
+        // 4 =  1 0 0
+        // ...
+
+        public bool BotAdmin { get; set; }
+        public bool BubbleFarming { get; set; }
+        public bool RestartAndUpdate { get; set; }
+        public PermissionFlag(byte flag)
+        {
+            BitArray flags = new BitArray(new byte[] { flag });
+            BubbleFarming = flags[0];
+            BotAdmin = flags[1];
+            RestartAndUpdate = flags[2];
+        }
+    }
+
+    // credits: https://loune.net/2017/06/running-shell-bash-commands-in-net-core/
+    public static class ShellHelper
+    {
+        public static string Bash(this string cmd)
+        {
+            var escapedArgs = cmd.Replace("\"", "\\\"");
+
+            var process = new Process()
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = "/bin/bash",
+                    Arguments = $"-c \"{escapedArgs}\"",
+                    RedirectStandardOutput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                }
+            };
+            process.Start();
+            string result = process.StandardOutput.ReadToEnd();
+            process.WaitForExit();
+            return result;
+        }
     }
 }
