@@ -992,6 +992,7 @@ namespace Palantir
             embed.Title = "Latency results:";
             embed.AddField("`🗂️` Database singe read", diffDatabase + "ms");
             embed.AddField("`🌐` Discord API request", diffApi+ "ms");
+            await context.RespondAsync(embed: embed);
         }
 
     }
