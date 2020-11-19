@@ -214,5 +214,20 @@ namespace Palantir
             });
             return exists;
         }
+
+        public double DatabaseReadTime(string id, int reads)
+        {
+            PalantirDbContext context = new PalantirDbContext();
+            DateTime now;
+            double time = 0;
+            for(int i = 0; i < reads; i++)
+            {
+                now = DateTime.Now;
+                context.Members.FirstOrDefault(m => m.Member.Contains(id));
+                time += ((DateTime.Now - now).TotalMilliseconds) / 100;
+            }
+            context.Dispose();
+            return time;
+        }
     }
 }
