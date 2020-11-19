@@ -981,12 +981,16 @@ namespace Palantir
         [Command("ping")]
         public async Task Ping(CommandContext context)
         {
-            
+            System.Net.NetworkInformation.Ping ping = new System.Net.NetworkInformation.Ping();
+            long discordRTT = ping.Send("discord.gg", 100).RoundtripTime;
+
             DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
+            
             embed.Title = "Latency results:";
-            embed.AddField("`🗂️` Database singe read", Program.Feanor.DatabaseReadTime(context.User.Id.ToString(), 1) + "ms"); ;
+            embed.AddField("`🗄️` Database singe read", Program.Feanor.DatabaseReadTime(context.User.Id.ToString(), 1) + "ms"); ;
             embed.AddField("`🗂️` Database average for 100 reads", Program.Feanor.DatabaseReadTime(context.User.Id.ToString(), 100) + "ms");
             embed.AddField("`🌐` Discord API request", Program.Client.Ping + "ms");
+            embed.AddField("`⌛` Discord.gg ping RTT", discordRTT + "ms");
             await context.RespondAsync(embed: embed);
         }
 
