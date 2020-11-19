@@ -985,13 +985,11 @@ namespace Palantir
             Program.Feanor.GetFlagByMember(context.User);
             double diffDatabase = (DateTime.Now - now).TotalMilliseconds;
 
-            now = DateTime.Now;
-            await Program.Client.GetUserAsync(context.User.Id);
-            double diffApi = (DateTime.Now - now).TotalMilliseconds;
+           
             DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
             embed.Title = "Latency results:";
             embed.AddField("`🗂️` Database singe read", diffDatabase + "ms");
-            embed.AddField("`🌐` Discord API request", diffApi+ "ms");
+            embed.AddField("`🌐` Discord API request", Program.Client.Ping + "ms");
             await context.RespondAsync(embed: embed);
         }
 
