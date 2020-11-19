@@ -970,10 +970,13 @@ namespace Palantir
                 await Program.SendEmbed(context.Channel, "Ts ts...", "This command is only available for higher beings.\n||Some call them Bot-Admins ;))||");
                 return;
             }
-            await Program.SendEmbed(context.Channel, "[literally dies...]", "You made me do this!!!");
+
             string upd = "git -C /home/pi/Palantir pull".Bash();
+            await Program.SendEmbed(context.Channel, "[literally dies...]", "You made me do this!!!\n\n**Update result:**\n"+upd);
             string op = "sudo service palantir restart".Bash();
             Environment.Exit(0);
         }
+        
+    
     }
 }
