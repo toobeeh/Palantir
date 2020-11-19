@@ -976,7 +976,23 @@ namespace Palantir
             string op = "sudo service palantir restart".Bash();
             Environment.Exit(0);
         }
-        
-    
+
+        [Description("Reboots the bot & pulls from git.")]
+        [Command("ping")]
+        public async Task Ping(CommandContext context)
+        {
+            DateTime now = DateTime.Now;
+            Program.Feanor.GetFlagByMember(context.User);
+            double diffDatabase = (DateTime.Now - now).TotalMilliseconds;
+
+            now = DateTime.Now;
+            await Program.Client.GetUserAsync(context.User.Id);
+            double diffApi = (DateTime.Now - now).TotalMilliseconds;
+            DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
+            embed.Title = "Latency results:";
+            embed.AddField("`🗂️` Database singe read", diffDatabase + "ms");
+            embed.AddField("`🌐` Discord API request", diffApi+ "ms");
+        }
+
     }
 }
