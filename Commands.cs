@@ -317,7 +317,7 @@ namespace Palantir
         [Description("Get a list of all sprites in the store.")]
         [Command("sprites")]
         [Aliases("spt","sprite")]
-        public async Task Sprites(CommandContext context, int sprite = 0)
+        public async Task Sprites(CommandContext context, [Description("The id of the sprite (eg '15')")] int sprite = 0)
         {
             List<Sprite> sprites = BubbleWallet.GetAvailableSprites();
 
@@ -362,7 +362,6 @@ namespace Palantir
         [Description("Get a overview of your inventory.")]
         [Command("inventory")]
         [Aliases("inv")]
-
         public async Task Inventory(CommandContext context)
         {
             string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
@@ -424,7 +423,7 @@ namespace Palantir
 
         [Description("Choose your sprite.")]
         [Command("use")]
-        public async Task Use(CommandContext context, int sprite, int timeoutSeconds = 0)
+        public async Task Use(CommandContext context, [Description("The id of the sprite (eg '15')")] int sprite, [Description("A timeout in seconds when the action will be performed")] int timeoutSeconds = 0)
         {
             if(timeoutSeconds > 0)
             {
@@ -469,7 +468,7 @@ namespace Palantir
 
         [Description("Buy a sprite.")]
         [Command("buy")]
-        public async Task Buy(CommandContext context, int sprite)
+        public async Task Buy(CommandContext context, [Description("The id of the sprite (eg '15')")]int sprite)
         {
             string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
             MemberEntity member = Program.Feanor.GetMemberByLogin(login);
@@ -679,7 +678,7 @@ namespace Palantir
 
         [Description("Create a new seasonal event")]
         [Command("newevent")]
-        public async Task CreateEvent(CommandContext context, string name, int duration, int validInDays, params string[] description)
+        public async Task CreateEvent(CommandContext context, [Description("The event name")] string name, [Description("The duration of the event in days")]int duration, [Description("The count of days when the event will start")]int validInDays, [Description("The event description")]params string[] description)
         {
             PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
             if (!perm.BotAdmin)
@@ -723,7 +722,7 @@ namespace Palantir
 
         [Description("Add a seasonal drop to an event")]
         [Command("eventdrop")]
-        public async Task CreateEventDrop(CommandContext context, int eventID, string name)
+        public async Task CreateEventDrop(CommandContext context, [Description("The id of the event for the event drop")] int eventID, [Description("The name of the event drop")] string name)
         {
             PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
             if (!perm.BotAdmin)
@@ -736,7 +735,7 @@ namespace Palantir
 
             if(!dbcontext.Events.Any(e=>e.EventID == eventID))
             {
-                await Program.SendEmbed(context.Channel, "Hmm...", "There's no event with that id.\nCheck `>upevent`");
+                await Program.SendEmbed(context.Channel, "Hmm...", "There's no event with that id.\nCheck `>upcoming`");
                 return;
             }
             if (context.Message.Attachments.Count <= 0 || !context.Message.Attachments[0].FileName.EndsWith(".gif"))
@@ -838,7 +837,7 @@ namespace Palantir
 
         [Description("Gift event drops")]
         [Command("gift")]
-        public async Task Gift(CommandContext context, DiscordMember target, int amount, int eventSpriteID)
+        public async Task Gift(CommandContext context, [Description("The gift receiver (@member)")] DiscordMember target, [Description("The amount of gifted event drops")] int amount, [Description("The id of the sprite which can be bought with the gifted event drops")] int eventSpriteID)
         {
             if (amount < 1)
             {
@@ -883,7 +882,7 @@ namespace Palantir
 
         [Description("Add a seasonal sprite to an event")]
         [Command("eventsprite")]
-        public async Task CreateEventSprite(CommandContext context, int eventDropID, string name,  int price, string special = "")
+        public async Task CreateEventSprite(CommandContext context, [Description("The id of the event drop for the sprite")] int eventDropID, [Description("The name of the sprite")] string name, [Description("The event drop price")] int price, [Description("Any string if the sprite should replace the avatar")]string special = "")
         {
             PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
             if (!perm.BotAdmin)
@@ -963,7 +962,6 @@ namespace Palantir
 
         [Description("Reboots the Bot.")]
         [Command("hardreboot")]
-        // requires reboot script "uptr"
         public async Task Reboot(CommandContext context)
         {
             PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
@@ -976,8 +974,6 @@ namespace Palantir
             string upd = "git -C /home/pi/Palantir pull".Bash();
             string op = "sudo service palantir restart".Bash();
             Environment.Exit(0);
-            await context.RespondAsync("`" + op + "`");
-
         }
     }
 }

@@ -108,6 +108,12 @@ namespace Palantir
         private static async Task onCommandErrored(CommandErrorEventArgs e)
         {
             if (e.Exception is DSharpPlus.CommandsNext.Exceptions.CommandNotFoundException) return;
+            if (e.Exception is System.ArgumentException)
+            {
+                await SendEmbed(e.Context.Channel, e.Command + ": Invalid arguments", "The given arguments for the command did not fit.\nCheck `>help " + e.Command + "` to see the correct use!");
+                return;
+            }
+
             DiscordEmbedBuilder embedErr = new DiscordEmbedBuilder();
             embedErr.Title = "Error Executing " + e.Command;
             embedErr.Description = e.Exception.ToString();
