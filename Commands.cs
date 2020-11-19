@@ -960,7 +960,7 @@ namespace Palantir
             await Program.SendEmbed(context.Channel, "*magic happened*","The flag of " + name + " was set to " + flag + "\n" + desc);
         }
 
-        [Description("Reboots the Bot.")]
+        [Description("Reboots the bot & pulls from git.")]
         [Command("hardreboot")]
         public async Task Reboot(CommandContext context)
         {
