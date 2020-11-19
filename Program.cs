@@ -110,7 +110,7 @@ namespace Palantir
             if (e.Exception is DSharpPlus.CommandsNext.Exceptions.CommandNotFoundException) return;
             if (e.Exception is System.ArgumentException)
             {
-                await SendEmbed(e.Context.Channel, e.Command + ": Invalid arguments", "The given arguments for the command did not fit.\nCheck `>help " + e.Command + "` to see the correct use!");
+                await SendEmbed(e.Context.Channel, e.Command.Name + ": Invalid arguments", "The given arguments for the command did not fit.\nCheck `>help " + e.Command.Name + "` to see the correct use!","",DiscordColor.Red.Value);
                 return;
             }
 
