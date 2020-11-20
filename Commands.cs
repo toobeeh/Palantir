@@ -918,7 +918,12 @@ namespace Palantir
             System.Net.WebClient client = new System.Net.WebClient();
             client.DownloadFile(context.Message.Attachments[0].Url, "/home/pi/Webroot/eventsprites/evd" + eventDropID + name + ".gif");
 
-            Sprite eventsprite = new Sprite(name, "https://tobeh.host/eventsprites/evd" + eventDropID + name + ".gif", price, dbcontext.Sprites.Max(s => s.ID) + 1, special != "", eventDropID);
+            Sprite eventsprite = new Sprite(
+                name, 
+                "https://tobeh.host/eventsprites/evd" + eventDropID + name + ".gif", 
+                price, 
+                dbcontext.Sprites.Where(s => s.ID < 1000).Max(s => s.ID) + 1, 
+                special != "", eventDropID);
             BubbleWallet.AddSprite(eventsprite);
 
             DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
