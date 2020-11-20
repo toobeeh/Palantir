@@ -977,7 +977,7 @@ namespace Palantir
             Environment.Exit(0);
         }
 
-        [Description("Reboots the bot & pulls from git.")]
+        [Description("Gets ping statistics.")]
         [Command("ping")]
         public async Task Ping(CommandContext context)
         {
@@ -987,7 +987,7 @@ namespace Palantir
             DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
             
             embed.Title = "Latency results:";
-            embed.AddField("`🗄️` Database singe read", Program.Feanor.DatabaseReadTime(context.User.Id.ToString(), 1) + "ms"); ;
+            embed.AddField("`🗄️` Database singe read", Program.Feanor.DatabaseReadTime(context.User.Id.ToString(), 1) + "ms");
             embed.AddField("`🗂️` Database average for 100 reads", Program.Feanor.DatabaseReadTime(context.User.Id.ToString(), 100) + "ms");
             embed.AddField("`🌐` Discord API request", Program.Client.Ping + "ms");
             embed.AddField("`⌛` Discord.gg ping RTT", discordRTT + "ms");

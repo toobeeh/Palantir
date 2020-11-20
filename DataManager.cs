@@ -224,10 +224,10 @@ namespace Palantir
             {
                 now = DateTime.Now;
                 context.Members.FirstOrDefault(m => m.Member.Contains(id));
-                time += ((DateTime.Now - now).TotalMilliseconds) / reads;
+                time += (DateTime.Now - now).TotalMilliseconds;
             }
             context.Dispose();
-            return time;
+            return time / reads;
         }
     }
 }
