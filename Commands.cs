@@ -390,7 +390,16 @@ namespace Palantir
                     invList += "**#" + s.ID + "** - " + s.Name + "\n";
                     if (s.Activated) active = s;
                 });
-                embed.AddField("All Sprites:", invList);
+                if(invList.Length < 1024) embed.AddField("All Sprites:", invList);
+                else
+                {
+                    List<string> lines = invList.Split("\n").ToList();
+                    lines.Batch(5).ForEach(b =>
+                    {
+                        string batch = b.ToDelimitedString("\n");
+                        embed.AddField("\u200b ", batch);
+                    });
+                }
             }
             else inventory.OrderBy(s => s.ID).ToList().ForEach(s =>
             {
