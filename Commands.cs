@@ -1004,7 +1004,22 @@ namespace Palantir
             string commandDelimited = command.ToDelimitedString(" ");
             string prompt = "export PS1=\"\\u@\\h: \\W $ \"".Bash();
             string res = ("cd /home/pi/ && " + commandDelimited).Bash();
-            await Program.SendEmbed(context.Channel, prompt + commandDelimited, res != "" ? res : "Error.");
+            await Program.SendEmbed(context.Channel, "**pi@raspberrypi: ~ $** " +  commandDelimited, res != "" ? res : "Error.");
+        }
+
+        [Description("Execute a sql command in the palantir database")]
+        [Command("sql")]
+        public async Task Sql(CommandContext context, params string[] sql)
+        {
+            PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
+            if (!perm.BotAdmin)
+            {
+                await Program.SendEmbed(context.Channel, "Hands off there!", "This command is only available for higher beings.\n||Some call them Bot-Admins ;))||");
+                return;
+            }
+            string sqlDelimited = sql.ToDelimitedString(" ");
+            string res = ("sqlite3 /home/pi/Database/palantir.db \"" + sqlDelimited + "\"").Bash();
+            await Program.SendEmbed(context.Channel, sqlDelimited, res != "" ? res : "Error.");
         }
 
         [Description("Gets ping statistics.")]
