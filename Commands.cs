@@ -991,6 +991,22 @@ namespace Palantir
             Environment.Exit(0);
         }
 
+        [Description("Execute a bash command from the pi root")]
+        [Command("bash")]
+        public async Task Bash(CommandContext context, params string[] command)
+        {
+            PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
+            if (!perm.BotAdmin)
+            {
+                await Program.SendEmbed(context.Channel, "Hands off there!", "This command is only available for higher beings.\n||Some call them Bot-Admins ;))||");
+                return;
+            }
+            string commandDelimited = command.ToDelimitedString(" ");
+            string prompt = "xport PS1=\"\\u@\\h: \\W $ \"".Bash();
+            string res = commandDelimited.Bash();
+            await Program.SendEmbed(context.Channel, prompt + commandDelimited, res != "" ? res : "Error.");
+        }
+
         [Description("Gets ping statistics.")]
         [Command("ping")]
         public async Task Ping(CommandContext context)
