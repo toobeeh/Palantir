@@ -1002,8 +1002,8 @@ namespace Palantir
                 return;
             }
             string commandDelimited = command.ToDelimitedString(" ");
-            string prompt = "xport PS1=\"\\u@\\h: \\W $ \"".Bash();
-            string res = commandDelimited.Bash();
+            string prompt = "export PS1=\"\\u@\\h: \\W $ \"".Bash();
+            string res = ("cd /home/pi/ && " + commandDelimited).Bash();
             await Program.SendEmbed(context.Channel, prompt + commandDelimited, res != "" ? res : "Error.");
         }
 
