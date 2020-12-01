@@ -573,7 +573,7 @@ namespace Palantir
             }
 
             DiscordEmoji next = DiscordEmoji.FromName(Program.Client, ":arrow_right:");
-            await leaderboard.ModifyAsync(embed: embedPages[0].Build());
+            await leaderboard.ModifyAsync(content: "", embed: embedPages[0].Build());
             await leaderboard.CreateReactionAsync(next);
             int page = 0;
 
