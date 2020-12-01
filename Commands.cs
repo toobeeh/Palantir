@@ -543,6 +543,7 @@ namespace Palantir
         [Aliases("lbd")]
         public async Task Leaderboard(CommandContext context)
         {
+            DiscordMessage leaderboard = await context.RespondAsync("Loding data...");
             var interactivity = context.Client.GetInteractivity();
             List<MemberEntity> members = Program.Feanor.GetGuildMembers(context.Guild.Id.ToString()).OrderByDescending(m=>m.Bubbles).Where(m=>m.Bubbles > 0).ToList();
             List<DiscordEmbedBuilder> embedPages = new List<DiscordEmbedBuilder>();
@@ -572,7 +573,7 @@ namespace Palantir
             }
 
             DiscordEmoji next = DiscordEmoji.FromName(Program.Client, ":arrow_right:");
-            DiscordMessage leaderboard = await context.RespondAsync(embed: embedPages[0]);
+            await leaderboard.ModifyAsync(embed: embedPages[0].Build());
             await leaderboard.CreateReactionAsync(next);
             int page = 0;
 
