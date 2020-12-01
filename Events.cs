@@ -34,12 +34,12 @@ namespace Palantir
             int randInd = (new Random()).Next(0, drops.Count);
             return drops[randInd].EventDropID;
         }
-        public static SpritesEntity GetEventSprite(int eventDropID)
+        public static List<SpritesEntity> GetEventSprites(int eventDropID)
         {
             PalantirDbContext context = new PalantirDbContext();
-            SpritesEntity sprite = context.Sprites.FirstOrDefault(s => s.EventDropID == eventDropID);
+            List<SpritesEntity> sprites = context.Sprites.Where(s => s.EventDropID == eventDropID).ToList();
             context.Dispose();
-            return sprite;
+            return sprites;
         }
 
 

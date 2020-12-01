@@ -812,8 +812,12 @@ namespace Palantir
                 string dropList = "";
                 Events.GetEventDrops(events.GetRange(0, 1)).ForEach(e =>
                 {
-                    SpritesEntity sprite = Events.GetEventSprite(e.EventDropID);
-                    dropList += "➜ **" + sprite.Name + "** (#" + sprite.ID + ")\n" + BubbleWallet.GetEventCredit(login, e.EventDropID) + " / " + sprite.Cost + " " + e.Name + " Drops collected " + (inv.Any(s=>s.ID == sprite.ID) ? ":package:" : "") + "\n\n";
+                    List<SpritesEntity> sprites = Events.GetEventSprites(e.EventDropID);
+                    sprites.ForEach(sprite =>
+                    {
+                        dropList += "➜ **" + sprite.Name + "** (#" + sprite.ID + ")\n" + BubbleWallet.GetEventCredit(login, e.EventDropID) + " / " + sprite.Cost + " " + e.Name + " Drops collected " + (inv.Any(s => s.ID == sprite.ID) ? ":package:" : "") + "\n\n";
+                    });
+                    
                 });
                 embed.AddField("Event Sprites", dropList == "" ? "No drops added yet." : dropList);
                 embed.AddField("\u200b","Use `>sprite [id]` to see the event drop and sprite!");
