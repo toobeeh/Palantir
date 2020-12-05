@@ -397,7 +397,7 @@ namespace Palantir
                     lines.Batch(5).ForEach(b =>
                     {
                         string batch = b.ToDelimitedString("\n");
-                        embed.AddField("\u200b ", batch, true);
+                        if(!String.IsNullOrWhiteSpace(batch)) embed.AddField("\u200b ", batch, true);
                     });
                 }
             }
