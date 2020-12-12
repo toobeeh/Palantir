@@ -164,7 +164,7 @@ namespace Palantir
     {
         public static string Bash(this string cmd)
         {
-            var escapedArgs = cmd.Replace("\"", "\\\"");
+            var escapedArgs = cmd;//.Replace("\"", "\\\"");
 
             var process = new Process()
             {
