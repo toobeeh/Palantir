@@ -390,6 +390,8 @@ namespace Palantir
             if (PalantirSettings.ShowAnimatedEmojis && GuildLobbies.Count == 0 && searching.Length == 0) message += "\n <a:alone:718807079434846238>\n";
             if (GuildLobbies.Count == 0 && searching.Length == 0) message += PalantirSettings.IdleMessage;
 
+            message += "\n```Merry Christmas y'all! ❤️\nAs an early gift, until December 23rd every caught event drop counts as two.\nAlso thank you so much for the huge support & interest since I started this project - that's more than I could wish for :)```";
+
             GuildLobbiesEntity entity = Database.GuildLobbies.FirstOrDefault(g => g.GuildID == PalantirEndpoint.GuildID);
 
             if (entity != null)
