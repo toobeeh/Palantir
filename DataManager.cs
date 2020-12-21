@@ -215,6 +215,13 @@ namespace Palantir
             return exists;
         }
 
+        public void ValidateGuildPalantir(string guildid)
+        {
+            if(!PalantirTethers.Any(p => p.PalantirEndpoint.GuildID == guildid)){
+                throw new Exception("This server isn't using Palantir yet!\nVisit https://typo.rip to learn how to set up Palantir.");
+            }
+        }
+
         public double DatabaseReadTime(string id, int reads)
         {
             PalantirDbContext context = new PalantirDbContext();

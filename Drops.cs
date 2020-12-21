@@ -101,8 +101,5 @@ namespace Palantir
 
             return (new Random()).Next(min, 4 * min);
         }
-
-
-
     }
 }

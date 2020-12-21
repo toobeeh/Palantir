@@ -78,12 +78,7 @@ namespace Palantir
         [RequireGuild()]
         public async Task AddWebhook(CommandContext context, [Description("Name of the webhook")] string name, [Description("URL of the webhook")] string url)
         {
-            if (!Program.Feanor.PalantirTethers.Any(t => t.PalantirEndpoint.GuildID == context.Guild.Id.ToString()))
-            {
-                await context.Message.RespondAsync("Set a channel before configuring the settings!");
-                return;
-            }
-
+            Program.Feanor.ValidateGuildPalantir(context.Guild.Id.ToString());
 
             Tether target = Program.Feanor.PalantirTethers.FirstOrDefault(t => t.PalantirEndpoint.GuildID == context.Guild.Id.ToString());
             if (target.PalantirEndpoint.Webhooks is null)target.PalantirEndpoint.Webhooks = new List<Webhook>();
@@ -199,7 +194,7 @@ namespace Palantir
         {
             if (!Program.Feanor.PalantirTethers.Any(t => t.PalantirEndpoint.GuildID == context.Guild.Id.ToString()))
             {
-                await context.Message.RespondAsync("Set a channel befor configuring the settings!");
+                await context.Message.RespondAsync("Set a channel before configuring the settings!");
                 return;
             }
             if (state != "on" && state != "off")
@@ -247,6 +242,7 @@ namespace Palantir
         [RequireGuild()]
         public async Task Switch(CommandContext context, [Description("Target channel (#channel)")]string channel)
         {
+            Program.Feanor.ValidateGuildPalantir(context.Guild.Id.ToString());
             if (context.Message.MentionedChannels.Count < 1) { await context.Message.RespondAsync("Invalid channel!"); return; }
 
             // Create message in specified channel which later will be the static message to be continuously edited
@@ -543,6 +539,7 @@ namespace Palantir
         [Aliases("lbd")]
         public async Task Leaderboard(CommandContext context)
         {
+            Program.Feanor.ValidateGuildPalantir(context.Guild.Id.ToString());
             DiscordMessage leaderboard = await context.RespondAsync("Loding data...");
             var interactivity = context.Client.GetInteractivity();
             List<MemberEntity> members = Program.Feanor.GetGuildMembers(context.Guild.Id.ToString()).OrderByDescending(m=>m.Bubbles).Where(m=>m.Bubbles > 0).ToList();

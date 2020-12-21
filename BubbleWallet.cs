@@ -161,7 +161,6 @@ namespace Palantir
         {
             PalantirDbContext context = new PalantirDbContext();
             string inventoryString = context.Members.FirstOrDefault(m => m.Login == login).Sprites;
-            context.SaveChanges();
             context.Dispose();
             return ParseSpriteInventory(inventoryString);
         }
@@ -169,8 +168,15 @@ namespace Palantir
         public static string GetLoginOfMember(string id)
         {
             PalantirDbContext context = new PalantirDbContext();
-            string login = context.Members.FirstOrDefault(m => m.Member.Contains(id)).Login;
-            context.SaveChanges();
+            string login;
+            try
+            {
+                login = context.Members.First(m => m.Member.Contains(id)).Login;
+            }
+            catch
+            {
+                throw new Exception("There is no palantir account connected with this discord account.\nCreate one by messaging Palantir `>login` in DM!");
+            }
             context.Dispose();
             return login;
         }
