@@ -60,7 +60,6 @@ namespace Palantir
             "<a:l12:718816559149350973>"
         }).ToList();
 
-
         public Tether(ObservedGuild guild)
         {
             abort = false;
@@ -390,7 +389,7 @@ namespace Palantir
             if (PalantirSettings.ShowAnimatedEmojis && GuildLobbies.Count == 0 && searching.Length == 0) message += "\n <a:alone:718807079434846238>\n";
             if (GuildLobbies.Count == 0 && searching.Length == 0) message += PalantirSettings.IdleMessage;
 
-            message += "\n```Merry Christmas y'all! ❤️\nAs an early gift, until December 23rd every caught event drop counts as two.\nAlso thank you so much for the huge support & interest since I started this project - that's more than I could wish for :)```";
+            //message += "\n```Merry Christmas y'all! ❤️```";
 
             GuildLobbiesEntity entity = Database.GuildLobbies.FirstOrDefault(g => g.GuildID == PalantirEndpoint.GuildID);
 
