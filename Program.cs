@@ -42,7 +42,7 @@ namespace Palantir
             Client.GuildCreated += onjoin;
             Commands.CommandErrored += onCommandErrored;
             Commands.RegisterCommands<Commands>();
-            await Client.ConnectAsync(new DiscordActivity(" u on skribbl.io",ActivityType.Watching));
+            await Client.ConnectAsync();// new DiscordActivity(" u on skribbl.io",ActivityType.Watching));
             try
             {
                 Feanor = new DataManager();
@@ -73,11 +73,24 @@ namespace Palantir
                     .StartingDailyAt(TimeOfDay.HourAndMinuteOfDay(23, 59))
                 )
                 .Build();
+            IJobDetail statusUpdater = JobBuilder.Create<Tracer.UpdaterJob>()
+                .WithIdentity("Status Updater")
+                .Build();
+            ITrigger statusTrigger = TriggerBuilder.Create()
+                .StartNow()
+                .WithDailyTimeIntervalSchedule
+                (t => t
+                    .WithIntervalInSeconds(10)
+                )
+                .Build();
 
             //Start bubble tracer job
             Console.WriteLine("Starting bubbletracer job\n...");
             await scheduler.ScheduleJob(tracer, tracerTrigger);
 
+            // start status updating
+            Console.WriteLine("Starting status updater job\n...");
+            await scheduler.ScheduleJob(statusUpdater, statusTrigger);
 
             Drops.StartDropping();
             Console.WriteLine("Started dropping cool stuff!");

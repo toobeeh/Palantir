@@ -4,6 +4,8 @@ using System.Linq;
 using Quartz;
 using Quartz.Impl;
 using System.Threading.Tasks;
+using DSharpPlus;
+using DSharpPlus.Entities;
 
 namespace Palantir.Tracer
 {
@@ -42,6 +44,17 @@ namespace Palantir.Tracer
 
             Console.WriteLine("All done!");
             dbcontext.Dispose();
+        }
+    }
+
+    public class UpdaterJob : IJob
+    {
+        public async Task Execute(IJobExecutionContext context)
+        {
+            PalantirDbContext dbcontext = new PalantirDbContext();
+            int count = dbcontext.Status.Count();
+            dbcontext.Dispose();
+            await Program.Client.UpdateStatusAsync(new DiscordActivity(" " + count + " ppl on skribbl.io", ActivityType.Watching));
         }
     }
 
