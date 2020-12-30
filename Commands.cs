@@ -536,7 +536,7 @@ namespace Palantir
 
         [Description("See who's got the most bubbles.")]
         [Command("Leaderboard")]
-        [Aliases("lbd")]
+        [Aliases("lbd","ldb")]
         public async Task Leaderboard(CommandContext context)
         {
             Program.Feanor.ValidateGuildPalantir(context.Guild.Id.ToString());
@@ -607,13 +607,33 @@ namespace Palantir
 
         [Description("Show bubble gain statistics")]
         [Command("stat")]
-        public async Task Stat(CommandContext context)
+        public async Task Stat(CommandContext context, [Description("Time span mode: 'day', 'week' or 'month'.")]string mode = "day")
         {
             CultureInfo iv = CultureInfo.InvariantCulture;
             string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
-            Tracer.BubbleTrace trace = new Tracer.BubbleTrace(login, 20);
-
             string msg = "```css\n";
+            Tracer.BubbleTrace trace;
+            if (mode == "week") 
+            { 
+                trace = new Tracer.BubbleTrace(login, 7 * 10); 
+                trace.History = trace.History.Where(
+                    t => t.Key.DayOfWeek == DayOfWeek.Monday || t.Key == trace.History.Keys.Min() || t.Key == trace.History.Keys.Max()
+                    ).ToDictionary(); 
+                msg += " Weekly "; }
+            else if (mode == "month") 
+            { 
+                trace = new Tracer.BubbleTrace(login); 
+                trace.History = trace.History.Where(
+                     t => t.Key.Day == 1 || t.Key == trace.History.Keys.Min() || t.Key == trace.History.Keys.Max()
+                     ).ToDictionary();
+                msg += " Monthly "; 
+            }
+            else 
+            { 
+                trace = new Tracer.BubbleTrace(login, 30); 
+                msg += " Daily "; 
+            }
+
             msg += " Bubble-Gain from " + Convert.ToDateTime(trace.History.Keys.Min()).ToString("M", iv) + " to " + Convert.ToDateTime(trace.History.Keys.Max()).ToString("M", iv) + "\n\n";
             double offs = trace.History.Values.Min() * 0.8;
             double res = (trace.History.Values.Max()-offs) / 45;
@@ -628,19 +648,17 @@ namespace Palantir
                 "\n";
                 prev = t.Value;
             });
-            msg += "```";
-
-            msg += "\n";
+            msg += "```\n";
             int diff = trace.History.Values.Max() - trace.History.Values.Min();
+            int diffDays = (trace.History.Keys.Max() - trace.History.Keys.Min()).Days;
             msg += "> ➜ Total gained: `" + diff + " Bubbles` \n";
             double hours  = (double)diff / 360;
             msg += "> ➜ Equals `" + (TimeSpan.FromHours(hours).Days * 24 + TimeSpan.FromHours(hours).Hours).ToString() + "h "
                 + TimeSpan.FromHours(hours).Minutes.ToString() + "min "
                 + TimeSpan.FromHours(hours).Seconds.ToString() + "s` on skribbl.io\n";
-            msg += "> ➜ Average `" + (diff / 20) + " Bubbles` per day";
+            msg += "> ➜ Average `" + (diff / diffDays) + " Bubbles` per day";
 
             await context.Channel.SendMessageAsync(msg);
-           
         }
 
         [Description("Fancy calculation stuff")]

@@ -60,23 +60,22 @@ namespace Palantir.Tracer
 
     public class BubbleTrace
     {
-        public Dictionary<DateTime, int> History { get; private set; }
-        public BubbleTrace(string login, int dayLimit)
+        public Dictionary<DateTime, int> History { get; set; }
+        public BubbleTrace(string login, int? dayLimit = null)
         {
             History = new Dictionary<DateTime, int>();
             PalantirDbContext context = new PalantirDbContext();
-            DateTime compDate = DateTime.UtcNow.AddDays(dayLimit * -1);
             List<BubbleTraceEntity> traces = context.BubbleTraces.Where(t => t.Login == login).ToList();
-            Dictionary<DateTime, int> combined = new Dictionary<DateTime, int>();
+            if (dayLimit is null) dayLimit = traces.Count;
+             Dictionary<DateTime, int> combined = new Dictionary<DateTime, int>();
             traces.OrderBy(k => k.Bubbles);
-            for (int daysAgo = dayLimit; daysAgo > 1; daysAgo--)
+            for (int daysAgo = (int)dayLimit; daysAgo > 1; daysAgo--)
             {
                 DateTime historyPoint = DateTime.Now.AddDays(-1 * daysAgo);
                 int lastEarlier = 0;
                 while (lastEarlier+1 < traces.Count && Convert.ToDateTime(traces[lastEarlier].Date) < historyPoint ) lastEarlier++;
                 if (!History.ContainsKey(historyPoint)) History.Add(historyPoint.AddDays(1), traces[lastEarlier].Bubbles);
             }
-
             context.Dispose();
         }
     }
