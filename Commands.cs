@@ -619,19 +619,19 @@ namespace Palantir
                 trace.History = trace.History.Where(
                     t => t.Key.DayOfWeek == DayOfWeek.Monday || t.Key == trace.History.Keys.Min() || t.Key == trace.History.Keys.Max()
                     ).ToDictionary(); 
-                msg += " Weekly "; }
+                msg += " Weekly"; }
             else if (mode == "month") 
             { 
                 trace = new Tracer.BubbleTrace(login); 
                 trace.History = trace.History.Where(
                      t => t.Key.Day == 1 || t.Key == trace.History.Keys.Min() || t.Key == trace.History.Keys.Max()
                      ).ToDictionary();
-                msg += " Monthly "; 
+                msg += " Monthly"; 
             }
             else 
             { 
                 trace = new Tracer.BubbleTrace(login, 30); 
-                msg += " Daily "; 
+                msg += " Daily"; 
             }
 
             msg += " Bubble-Gain from " + Convert.ToDateTime(trace.History.Keys.Min()).ToString("M", iv) + " to " + Convert.ToDateTime(trace.History.Keys.Max()).ToString("M", iv) + "\n\n";
@@ -641,7 +641,7 @@ namespace Palantir
 
             trace.History.ForEach(t =>
             {
-                msg += (Convert.ToDateTime(t.Key)).ToString("dd") + " " +  
+                msg += (Convert.ToDateTime(t.Key)).ToString("dd.MM") + " " +  
                 new string('█', (int)Math.Round((t.Value-offs) / res, 0)) + 
                 (t.Value - prev > 0 ? "    +" + (t.Value - prev) : "") + 
                 ( trace.History.Keys.ToList().IndexOf(t.Key) == 0 || trace.History.Keys.ToList().IndexOf(t.Key) == trace.History.Count - 1 ? "    @" + t.Value : "") +
