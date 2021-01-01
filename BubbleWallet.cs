@@ -148,10 +148,10 @@ namespace Palantir
         {
             PalantirDbContext context = new PalantirDbContext();
             int credit = 0;
-            if (context.EventCredits.Any(c => c.EventDropID == eventDropID && c.Login == login))
-            {
+            try { 
                 credit = context.EventCredits.FirstOrDefault(c => c.EventDropID == eventDropID && c.Login == login).Credit;
             }
+            catch { }
             
             context.Dispose();
             return credit;
@@ -199,7 +199,6 @@ namespace Palantir
             newsprite.Date = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss");
             newsprite.Sprite = playersprite is object ? playersprite.ID.ToString() : "0";
             context.OnlineSprites.Add(newsprite);
-           
             try
             {
                 context.SaveChanges();

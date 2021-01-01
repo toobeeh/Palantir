@@ -514,7 +514,7 @@ namespace Palantir
             }
             else
             {
-                if (BubbleWallet.GetEventCredit(login, target.EventDropID) < target.Cost && !perm.BotAdmin)
+                if (BubbleWallet.GetRemainingEventDrops(login, target.EventDropID) < target.Cost && !perm.BotAdmin)
                 {
                     await Program.SendEmbed(context.Channel, "Haha, nice try -.-", "That stuff is too expensive for you. \nSpend few more hours on skribbl.");
                     return;
@@ -811,22 +811,46 @@ namespace Palantir
             await context.Channel.SendMessageAsync(embed: embed);
         }
 
+        [Description("Show passed events")]
+        [Command("passed")]
+        public async Task PassedEvents(CommandContext context)
+        {
+            List<EventEntity> events = Events.GetEvents();
+            string eventsList = "";
+            events = events.Where(e => Convert.ToDateTime(e.ValidFrom).AddDays(e.DayLength) < DateTime.Now).OrderByDescending(e => Convert.ToDateTime(e.ValidFrom)).ToList();
+            events.ForEach(e =>
+            {
+                eventsList += "➜ **" + e.EventName + "** [#" + e.EventID + "]: " + e.ValidFrom + " to " + Convert.ToDateTime(e.ValidFrom).AddDays(e.DayLength).ToShortDateString() + "\n";
+                eventsList += e.Description + "\n\n";
+            });
+            if (eventsList == "") eventsList = "There have no events passed.";
+
+            DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
+            embed.Title = ":champagne:  Passed Events:";
+            embed.Color = DiscordColor.Magenta;
+            embed.WithDescription(eventsList);
+            await context.Channel.SendMessageAsync(embed: embed);
+        }
+
         [Description("Show event info")]
         [Command("event")]
-        public async Task ShowEvent(CommandContext context)
+        public async Task ShowEvent(CommandContext context, int? eventID)
         {
             List<EventEntity> events = Events.GetEvents(true);
             DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
             string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
             List<SpriteProperty> inv = BubbleWallet.GetInventory(login);
+            EventEntity evt;
+            if (eventID is null || !events.Any(e => e.EventID == eventID)) evt = events[0];
+            else evt = events.FirstOrDefault(e => e.EventID == eventID);
             if (events.Count > 0)
             {
-                embed.Title = ":champagne: " + events[0].EventName;
+                embed.Title = ":champagne: " + evt.EventName;
                 embed.Color = DiscordColor.Magenta;
-                embed.WithDescription(events[0].Description + "\nLasts until " + Convert.ToDateTime(events[0].ValidFrom).AddDays(events[0].DayLength).ToString("MMMM dd") + "\n");
+                embed.WithDescription(evt.Description + "\nLasts until " + Convert.ToDateTime(evt.ValidFrom).AddDays(evt.DayLength).ToString("MMMM dd") + "\n");
 
                 string dropList = "";
-                Events.GetEventDrops(events.GetRange(0, 1)).ForEach(e =>
+                Events.GetEventDrops(new List<EventEntity> { evt }).ForEach(e =>
                 {
                     List<SpritesEntity> sprites = Events.GetEventSprites(e.EventDropID);
                     sprites.ForEach(sprite =>
@@ -842,7 +866,7 @@ namespace Palantir
             {
                 embed.Title = ":champagne: No Event active :(";
                 embed.Color = DiscordColor.Magenta;
-                embed.WithDescription("Check all events with `>upcoming`.\nGift event drops with `>gift [@person] [amount of drops] [id of the sprite]`.\nBtw - I keep up to 50% of the gift for myself! ;)");
+                embed.WithDescription("Check all events with `>upcoming`.\nSee past events with `>passed [id]`.\nGift event drops with `>gift [@person] [amount of drops] [id of the sprite]`.\nBtw - I keep up to 50% of the gift for myself! ;)");
             }
 
             await context.Channel.SendMessageAsync(embed: embed);
@@ -868,7 +892,7 @@ namespace Palantir
         [Command("gift")]
         public async Task Gift(CommandContext context, [Description("The gift receiver (@member)")] DiscordMember target, [Description("The amount of gifted event drops")] int amount, [Description("The id of the sprite which can be bought with the gifted event drops")] int eventSpriteID)
         {
-            if (amount < 1)
+            if (amount < 0)
             {
                 await Program.SendEmbed(context.Channel, "LOL!", "Your'e tryna steal some stuff, huh?");
                 return;
@@ -886,7 +910,7 @@ namespace Palantir
             }
             int eventDropID = sprites.FirstOrDefault(s => s.ID == eventSpriteID).EventDropID;
             string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
-            int credit = BubbleWallet.GetEventCredit(login, eventDropID);
+            int credit = BubbleWallet.GetRemainingEventDrops(login, eventDropID);
             List<SpriteProperty> inv = BubbleWallet.GetInventory(login);
             if(inv.Any(s => s.ID == eventSpriteID)) credit -= inv.FirstOrDefault(s => s.ID == eventSpriteID).Cost;
 
