@@ -834,14 +834,14 @@ namespace Palantir
 
         [Description("Show event info")]
         [Command("event")]
-        public async Task ShowEvent(CommandContext context, int? eventID)
+        public async Task ShowEvent(CommandContext context, int eventID = 0)
         {
             List<EventEntity> events = Events.GetEvents(true);
             DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
             string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
             List<SpriteProperty> inv = BubbleWallet.GetInventory(login);
             EventEntity evt;
-            if (eventID is null || !events.Any(e => e.EventID == eventID)) evt = events[0];
+            if (eventID > 0 || !events.Any(e => e.EventID == eventID)) evt = events[0];
             else evt = events.FirstOrDefault(e => e.EventID == eventID);
             if (events.Count > 0)
             {
