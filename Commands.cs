@@ -836,14 +836,14 @@ namespace Palantir
         [Command("event")]
         public async Task ShowEvent(CommandContext context, int eventID = 0)
         {
-            List<EventEntity> events = Events.GetEvents(true);
+            List<EventEntity> events = Events.GetEvents(false);
             DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
             string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
             List<SpriteProperty> inv = BubbleWallet.GetInventory(login);
             EventEntity evt;
-            if (eventID > 0 || !events.Any(e => e.EventID == eventID)) evt = events[0];
+            if (eventID < 1 || !events.Any(e => e.EventID == eventID)) evt = (Events.GetEvents().Count > 0 ? Events.GetEvents()[0] : null);
             else evt = events.FirstOrDefault(e => e.EventID == eventID);
-            if (events.Count > 0)
+            if (evt != null)
             {
                 embed.Title = ":champagne: " + evt.EventName;
                 embed.Color = DiscordColor.Magenta;
