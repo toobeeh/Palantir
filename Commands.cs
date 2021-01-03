@@ -334,7 +334,7 @@ namespace Palantir
                     embed.Description = "**Event Drop Price:** " + s.Cost + " " + drop.Name + "\n\n**ID**: " + s.ID + (s.Special ? " :sparkles: " : "");
                     embed.WithThumbnail(drop.URL);
                 }
-                embed.AddField("\u200b", "[View all Sprites](https://typo.rip/)\n[Try out the sprite](https://typo.rip/sprites/cabin/?sprite=" + sprite + ")");
+                embed.AddField("\u200b", "[View all Sprites](https://typo.rip/#sprites)\n[Try out the sprite](https://tobeh.host/Orthanc/sprites/cabin/?sprite=" + sprite + ")");
                 await context.Channel.SendMessageAsync(embed: embed);
                 return;
             }
@@ -351,7 +351,7 @@ namespace Palantir
                 randoms.Add(random);
                 list.AddField("**" + sprites[random].Name + "** ", "Costs: " + sprites[random].Cost + " Bubbles\nID: " + sprites[random].ID + (sprites[random].Special ? " :sparkles: " : ""),true);
             };
-            list.AddField("\u200b", "[View all Sprites](https://typo.rip/sprites/gif/)");
+            list.AddField("\u200b", "[View all Sprites](https://typo.rip/#sprites)");
             await context.Channel.SendMessageAsync(embed: list);
         }
 
@@ -421,7 +421,7 @@ namespace Palantir
 
             embed.AddField("\u200b ", desc);
             embed.AddField("\u200b ", "Use `>use [id]` to select your Sprite!\n`>use 0` will set no Sprite.\nBuy a Sprite with `>buy [id]`.\nSpecial Sprites :sparkles: replace your whole avatar! ");
-            embed.AddField("\u200b", "[View all Sprites](https://typo.rip/sprites/gif/)");
+            embed.AddField("\u200b", "[View all Sprites](https://typo.rip/#sprites)");
             await context.Channel.SendMessageAsync(embed:embed);
            
         }
