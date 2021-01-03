@@ -912,7 +912,6 @@ namespace Palantir
             string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
             int credit = BubbleWallet.GetRemainingEventDrops(login, eventDropID);
             List<SpriteProperty> inv = BubbleWallet.GetInventory(login);
-            if(inv.Any(s => s.ID == eventSpriteID)) credit -= inv.FirstOrDefault(s => s.ID == eventSpriteID).Cost;
 
             List<EventDropEntity> drops = Events.GetEventDrops();
             string name = drops.FirstOrDefault(d => d.EventDropID == eventDropID).Name;

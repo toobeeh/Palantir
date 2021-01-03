@@ -233,7 +233,7 @@ namespace Palantir
             });
 
             List<EventEntity> events = Events.GetEvents(true);
-            message += "Btw - learn about all commands & features on https://typo.rip\n\n";
+            message += "Remade and polished website: https://typo.rip\n\n";
             if (events.Count <= 0) message += "```arm\nNo event active :( Check upcoming events with '>upcoming'.\n‎As soon as an event is live, you can see details using '>event'.```\n\n";
             else message += "```arm\n" + events[0].EventName + ":\n" + "‎" + events[0].Description + "\n‎View details with '>event'!```\n\n";
 
