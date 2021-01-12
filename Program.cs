@@ -35,7 +35,8 @@ namespace Palantir
             {
                 StringPrefixes = new string[] { ">" },
                 DmHelp = false,
-                IgnoreExtraArguments = true
+                IgnoreExtraArguments = true,
+                CaseSensitive = false
             });
             Interactivity = Client.UseInteractivity(new InteractivityConfiguration { 
             });

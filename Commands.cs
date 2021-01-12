@@ -383,7 +383,7 @@ namespace Palantir
                 string invList = ""; 
                 inventory.OrderBy(s => s.ID).ToList().ForEach(s =>
                 {
-                    invList += "**#" + s.ID + "** - " + s.Name + "\n";
+                    invList += "**#" + s.ID + "** - " + s.Name + " " + (s.Special ? ":sparkles:" : "") + "\n";
                     if (s.Activated) active = s;
                 });
                 if(invList.Length < 1024) embed.AddField("All Sprites:", invList);
