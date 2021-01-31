@@ -771,7 +771,7 @@ namespace Palantir
 
             EventDropEntity newDrop = new EventDropEntity();
             newDrop.EventID = eventID;
-            newDrop.Name = name;
+            newDrop.Name = name.Replace("_"," ");
             newDrop.URL = context.Message.Attachments[0].Url;
             if (dbcontext.EventDrops.Count() <= 0) newDrop.EventDropID = 0;
             else newDrop.EventDropID = dbcontext.EventDrops.Max(e => e.EventDropID) + 1;
@@ -971,7 +971,7 @@ namespace Palantir
             client.DownloadFile(context.Message.Attachments[0].Url, "/home/pi/Webroot/eventsprites/evd" + eventDropID + name + ".gif");
 
             Sprite eventsprite = new Sprite(
-                name, 
+                name.Replace("_"," "), 
                 "https://tobeh.host/eventsprites/evd" + eventDropID + name + ".gif", 
                 price, 
                 dbcontext.Sprites.Where(s => s.ID < 1000).Max(s => s.ID) + 1, 
