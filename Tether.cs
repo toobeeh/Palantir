@@ -255,7 +255,7 @@ namespace Palantir
 
             List<EventEntity> events = Events.GetEvents(true);
             if (events.Count <= 0) message += "```arm\nNo event active :( Check upcoming events with '>upcoming'.\n‎As soon as an event is live, you can see details using '>event'.```\n\n";
-            else message += "```arm\n" + events[0].EventName + ": View details with '>event'!```\n";
+            else message += "```arm\n" + events[0].EventName + ": \n"+ events[0].Description + "\nView details with '>event'!```\n";
 
             message += PalantirSettings.Header + "\n";
             if(PalantirSettings.ShowRefreshed) message += "Refreshed: " + DateTime.UtcNow.AddHours(PalantirSettings.Timezone).ToShortTimeString() + " (UTC " + PalantirSettings.Timezone.ToString("+0;-#") + ")\n"; 
