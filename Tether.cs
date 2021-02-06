@@ -169,10 +169,10 @@ namespace Palantir
                     if(content.Length <= 1900) TargetMessage = await TargetMessage.ModifyAsync(content);
                     else
                     {
-                        int lastLinebreak = content.Length > 1900 ? 1900 : content.Length;
-                        while (content[lastLinebreak] != '\n' || lastLinebreak < 1000) lastLinebreak--;
-                        TargetMessage = await TargetMessage.ModifyAsync(content.Substring(0, lastLinebreak - 1));
-                        split = await split.ModifyAsync(content.Substring(lastLinebreak, content.Length - lastLinebreak));
+                        int lastLobbyBreak = content.Length > 1900 ? 1900 : content.Length;
+                        while (content[lastLobbyBreak] != ' ' || lastLobbyBreak < 1000) lastLobbyBreak--;
+                        TargetMessage = await TargetMessage.ModifyAsync(content.Substring(0, lastLobbyBreak - 1));
+                        split = await split.ModifyAsync(content.Substring(lastLobbyBreak+1, content.Length - lastLobbyBreak-1));
                     }
                     await TargetChannel.TriggerTypingAsync();
                     notFound = 0;
@@ -388,6 +388,7 @@ namespace Palantir
 
                 lobby += "\n\n\n";
                 message += lobby;
+                message += " "; // lobby break indicator em space
 
                 //Set lobby id to index (for displaying) and unique id (for searching)
                 l.ID = l. ID + ":" + lobbyUniqueID;
