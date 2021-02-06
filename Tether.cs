@@ -174,7 +174,7 @@ namespace Palantir
                         TargetMessage = await TargetMessage.ModifyAsync(content.Substring(0, lastLinebreak - 1));
                         split = await split.ModifyAsync(content.Substring(lastLinebreak, content.Length - lastLinebreak));
                     }
-
+                    await TargetChannel.TriggerTypingAsync();
                     notFound = 0;
                 }
                 catch (Microsoft.Data.Sqlite.SqliteException e) // catch sql exceptions
