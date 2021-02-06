@@ -174,7 +174,7 @@ namespace Palantir
                         int lastLobbyBreak = content.Length > 1900 ? 1900 : content.Length;
                         while (content[lastLobbyBreak] != ' ' || lastLobbyBreak < 1000) lastLobbyBreak--;
                         TargetMessage = await TargetMessage.ModifyAsync(content.Substring(0, lastLobbyBreak - 1).Replace(" ", ""));
-                        split = await split.ModifyAsync(content.Substring(lastLobbyBreak + 1, content.Length - lastLobbyBreak - 1).Replace(" ", "");
+                        split = await split.ModifyAsync(content.Substring(lastLobbyBreak + 1, content.Length - lastLobbyBreak - 1).Replace(" ", ""));
                     }
                     await TargetChannel.TriggerTypingAsync();
                     notFound = 0;
