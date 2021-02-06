@@ -153,7 +153,28 @@ namespace Palantir
                 try
                 {
                     // try to build lobby message
-                    TargetMessage = await TargetMessage.ModifyAsync(BuildLobbyContent());
+                    string content = BuildLobbyContent();
+                        
+                    DiscordMessage split;
+                    try
+                    {
+                        do split = (await TargetChannel.GetMessagesAfterAsync(TargetMessage.Id, 1)).First();
+                        while (split.Author.Id != Program.Client.CurrentUser.Id);
+                        if(content.Length > 1900) await split.ModifyAsync("_ _");
+                    }
+                    catch
+                    {
+                        split = await TargetChannel.SendMessageAsync("_ _");
+                    }
+                    if(content.Length <= 1900) TargetMessage = await TargetMessage.ModifyAsync(content);
+                    else
+                    {
+                        int lastLinebreak = content.Length > 1900 ? 1900 : content.Length;
+                        while (content[lastLinebreak] != '\n' || lastLinebreak < 1000) lastLinebreak--;
+                        TargetMessage = await TargetMessage.ModifyAsync(content.Substring(0, lastLinebreak - 1));
+                        split = await split.ModifyAsync(content.Substring(lastLinebreak, content.Length - lastLinebreak));
+                    }
+
                     notFound = 0;
                 }
                 catch (Microsoft.Data.Sqlite.SqliteException e) // catch sql exceptions
