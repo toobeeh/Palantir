@@ -166,7 +166,7 @@ namespace Palantir
                         split = await TargetChannel.SendMessageAsync("_ _");
                     }
                     if (content.Length <= 1900) {
-                        TargetMessage = await TargetMessage.ModifyAsync(content);
+                        TargetMessage = await TargetMessage.ModifyAsync(content.Replace(" ", ""));
                         await split.ModifyAsync("_ _");
                     }
                     else
