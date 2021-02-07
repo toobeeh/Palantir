@@ -163,17 +163,19 @@ namespace Palantir
                     }
                     catch
                     {
-                        split = await TargetChannel.SendMessageAsync("_ _");
+                        // no split message found -> not required yet
+                        split = null;
                     }
                     if (content.Length <= 1900) {
                         TargetMessage = await TargetMessage.ModifyAsync(content.Replace(" ", ""));
-                        await split.ModifyAsync("_ _");
+                        if(!(split is null)) await split.ModifyAsync("_ _");
                     }
                     else
                     {
                         int lastLobbyBreak = content.Length > 1900 ? 1900 : content.Length;
                         while (content[lastLobbyBreak] != ' ' || lastLobbyBreak < 1000) lastLobbyBreak--;
                         TargetMessage = await TargetMessage.ModifyAsync(content.Substring(0, lastLobbyBreak - 1).Replace(" ", ""));
+                        if(split is null) split = await TargetChannel.SendMessageAsync("_ _"); 
                         split = await split.ModifyAsync(content.Substring(lastLobbyBreak + 1, content.Length - lastLobbyBreak - 1).Replace(" ", ""));
                     }
                     await TargetChannel.TriggerTypingAsync();
