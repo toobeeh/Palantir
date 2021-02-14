@@ -212,7 +212,7 @@ namespace Palantir
             {
                 context.SaveChanges();
             }
-            catch (Exception e) { //Console.WriteLine("Error writing sprite:\n" + e); 
+            catch (Exception e) { Console.WriteLine("Error writing sprite:\n" + e); 
             }
             context.Dispose();
         }
