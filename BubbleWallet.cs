@@ -98,9 +98,13 @@ namespace Palantir
         {
             string inv = "";
             List<Sprite> available = GetAvailableSprites();
-            sprites.ForEach(s =>
+            available.ForEach(s =>
             {
-                if(available.Any(a=>a.ID == s.ID)) inv += (s.Activated ? new string('.', s.Slot) : "") + s.ID + ",";
+                if (sprites.Any(a => a.ID == s.ID))
+                {
+                    SpriteProperty found = sprites.FirstOrDefault(a => a.ID == s.ID);
+                    inv += (found.Activated ? new string('.', found.Slot) : "") + s.ID + ",";
+                }
             });
             inv = inv.Remove(inv.Length - 1);
             PalantirDbContext context = new PalantirDbContext();
