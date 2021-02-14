@@ -376,7 +376,7 @@ namespace Palantir
             embed.Color = DiscordColor.Magenta;
             embed.Title = "🔮  " + context.Message.Author.Username + "s Inventory";
 
-            SpriteProperty active = null;
+            List<SpriteProperty> active = new List<SpriteProperty>();
             
             if(inventory.Count > 20)
             {
@@ -384,7 +384,7 @@ namespace Palantir
                 inventory.OrderBy(s => s.ID).ToList().ForEach(s =>
                 {
                     invList += "**#" + s.ID + "** - " + s.Name + " " + (s.Special ? ":sparkles:" : "") + "\n";
-                    if (s.Activated) active = s;
+                    if (s.Activated) active.Add(s);
                 });
                 if(invList.Length < 1024) embed.AddField("All Sprites:", invList);
                 else
@@ -400,7 +400,7 @@ namespace Palantir
             else inventory.OrderBy(s => s.ID).ToList().ForEach(s =>
             {
                 embed.AddField("**" + s.Name + "** " ,  "#" + s.ID + " |  Worth " + s.Cost + (s.EventDropID > 0 ? " Event Drops" : " Bubbles") + (s.Special ? " :sparkles: " : ""),true);
-                if (s.Activated) active = s;
+                if (s.Activated) active.Add(s);
             });
 
             string desc = "";
@@ -410,17 +410,28 @@ namespace Palantir
             if (perm.BotAdmin) desc += "`✔️ Verified cool guy.`\n\n";
             if (perm.RestartAndUpdate) desc += "`🛠️ Can restart & update Palantir.`\n\n";
 
-            if (active is object)
+            active.ForEach(sprite =>
             {
-                desc += "\n**Selected sprite:** " + active.Name;
-                embed.ImageUrl = active.URL;
-            }
+                if(active.Count <= 1)
+                {
+                    desc += "\n**Selected sprite:** " + sprite.Name;
+                    embed.ImageUrl = sprite.URL;
+                }
+                else
+                {
+                    desc += "\n**Slot " + sprite.Slot + ":** " + sprite.Name;
+                    if(sprite.Slot == 1) embed.ImageUrl = sprite.URL;
+                }
+            });
+            int drops = BubbleWallet.GetDrops(login);
             if (inventory.Count <= 0) desc = "You haven't unlocked any sprites yet!";
             desc += "\n\n🔮 **" + BubbleWallet.CalculateCredit(login) + "** of "+ BubbleWallet.GetBubbles(login) + " collected Bubbles available.";
-            desc += "\n\n💧 **" + BubbleWallet.GetDrops(login) + "** Drops collected.";
+            desc += "\n\n💧 **" + drops + "** Drops collected.";
+            if(drops >= 1000 || perm.BotAdmin) desc += "\n\n<a:chest:810521425156636682> **" + (perm.BotAdmin ? "∞" : (drops / 1000 + 1).ToString()) + " ** Sprite slots available.";
 
             embed.AddField("\u200b ", desc);
-            embed.AddField("\u200b ", "Use `>use [id]` to select your Sprite!\n`>use 0` will set no Sprite.\nBuy a Sprite with `>buy [id]`.\nSpecial Sprites :sparkles: replace your whole avatar! ");
+
+            if(inventory.Count < 5) embed.AddField("\u200b ", "Use `>use [id]` to select your Sprite!\n`>use 0` will set no Sprite.\nBuy a Sprite with `>buy [id]`.\nSpecial Sprites :sparkles: replace your whole avatar! ");
             embed.AddField("\u200b", "[View all Sprites](https://typo.rip/#sprites)");
             await context.Channel.SendMessageAsync(embed:embed);
            
@@ -428,7 +439,7 @@ namespace Palantir
 
         [Description("Choose your sprite.")]
         [Command("use")]
-        public async Task Use(CommandContext context, [Description("The id of the sprite (eg '15')")] int sprite, [Description("A timeout in seconds when the action will be performed")] int timeoutSeconds = 0)
+        public async Task Use(CommandContext context, [Description("The id of the sprite (eg '15')")] int sprite, [Description("The sprite-slot which will be set. Starts at slot 1.")] int slot = 1, [Description("A timeout in seconds when the action will be performed")] int timeoutSeconds = 0)
         {
             if(timeoutSeconds > 0)
             {
@@ -453,6 +464,12 @@ namespace Palantir
                 return;
             }
 
+            if (slot < 1 || slot > BubbleWallet.GetDrops(login) / 1000 + 1)
+            {
+                await Program.SendEmbed(context.Channel, "Out of your league.", "You can't use that sprite slot!\nFor each thousand collected drops, you get one extra slot.");
+                return;
+            }
+
             if (sprite == 0)
             {
                 await Program.SendEmbed(context.Channel, "Minimalist, huh? Your sprite was disabled.", "");
@@ -461,11 +478,11 @@ namespace Palantir
                 return;
             }
 
-            inventory.ForEach(i => i.Activated = i.ID == sprite);
+            inventory.ForEach(i => { i.Activated = i.ID == sprite; i.Slot = i.Activated ? slot : -1; });
             BubbleWallet.SetInventory(inventory, login);
 
             DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
-            embed.Title = "Your fancy sprite was set to **" + BubbleWallet.GetSpriteByID(sprite).Name + "**";
+            embed.Title = "Your fancy sprite on slot " + slot + "was set to **" + BubbleWallet.GetSpriteByID(sprite).Name + "**";
             embed.ImageUrl = BubbleWallet.GetSpriteByID(sprite).URL;
             embed.Color = DiscordColor.Magenta;
             await context.Channel.SendMessageAsync(embed: embed);
@@ -521,7 +538,7 @@ namespace Palantir
                 }
             }
 
-            inventory.Add(new SpriteProperty(target.Name, target.URL, target.Cost, target.ID, target.Special, target.EventDropID, false));
+            inventory.Add(new SpriteProperty(target.Name, target.URL, target.Cost, target.ID, target.Special, target.EventDropID, false, -1));
             BubbleWallet.SetInventory(inventory, login);
 
             DiscordEmbedBuilder embed = new DiscordEmbedBuilder();

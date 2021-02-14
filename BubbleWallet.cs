@@ -69,14 +69,20 @@ namespace Palantir
             List<string> spriteIds = sprites.Split(',').ToList();
             spriteIds.ForEach(i =>
             {
-                bool own = false;
-                if (i.StartsWith(".")) { own = true; i = i.Replace(".", ""); }
+                bool activated = false;
+                int slot = -1;
+                if (i.StartsWith(".")) 
+                { 
+                    activated = true; 
+                    slot = i.Count(ctr => ctr == '.'); 
+                    i = i.Replace(".", ""); 
+                }
                 availableSprites.ForEach(s =>
                 {
                     try
                     {
                         int id;
-                        if (int.TryParse(i,out id) && id == s.ID) spriteInventory.Add(new SpriteProperty(s.Name, s.URL, s.Cost, s.ID, s.Special, s.EventDropID, own));
+                        if (int.TryParse(i,out id) && id == s.ID) spriteInventory.Add(new SpriteProperty(s.Name, s.URL, s.Cost, s.ID, s.Special, s.EventDropID, activated, slot));
                     }
                     catch(Exception e)
                     {
@@ -94,7 +100,7 @@ namespace Palantir
             List<Sprite> available = GetAvailableSprites();
             sprites.ForEach(s =>
             {
-                if(available.Any(a=>a.ID == s.ID)) inv += (s.Activated ? "." : "") + s.ID + ",";
+                if(available.Any(a=>a.ID == s.ID)) inv += (s.Activated ? new string('.', s.Slot) : "") + s.ID + ",";
             });
             inv = inv.Remove(inv.Length - 1);
             PalantirDbContext context = new PalantirDbContext();
@@ -182,7 +188,7 @@ namespace Palantir
         }
 
         public static void SetOnlineSprite(string login, string lobbyKey, string lobbyPlayerID){
-            Sprite playersprite = GetInventory(login).FirstOrDefault(i => i.Activated);
+            List<SpriteProperty> playersprites = GetInventory(login).Where(i => i.Activated).ToList();
             PalantirDbContext context = new PalantirDbContext();
 
             context.OnlineSprites.RemoveRange(context.OnlineSprites.Where(o => o.LobbyKey == lobbyKey && lobbyPlayerID == o.LobbyPlayerID));
@@ -192,13 +198,16 @@ namespace Palantir
             }
             catch (Exception e) { //Console.WriteLine("Error deleting sprite:\n" + e); 
             }
-
-            OnlineSpritesEntity newsprite = new OnlineSpritesEntity();
-            newsprite.LobbyKey = lobbyKey;
-            newsprite.LobbyPlayerID = lobbyPlayerID;
-            newsprite.Date = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss");
-            newsprite.Sprite = playersprite is object ? playersprite.ID.ToString() : "0";
-            context.OnlineSprites.Add(newsprite);
+            foreach(SpriteProperty slot in playersprites)
+            {
+                OnlineSpritesEntity newsprite = new OnlineSpritesEntity();
+                newsprite.LobbyKey = lobbyKey;
+                newsprite.LobbyPlayerID = lobbyPlayerID;
+                newsprite.Date = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss");
+                newsprite.Sprite = slot is object ? slot.ID.ToString() : "0";
+                newsprite.Slot = slot.Slot;
+                context.OnlineSprites.Add(newsprite);
+            }
             try
             {
                 context.SaveChanges();
@@ -285,9 +294,11 @@ namespace Palantir
     public class SpriteProperty : Sprite
     {
         public bool Activated;
-        public SpriteProperty(string name, string url, int cost, int id, bool special, int eventID, bool activated) : base(name,url,cost,id, special, eventID)
+        public int Slot;
+        public SpriteProperty(string name, string url, int cost, int id, bool special, int eventID, bool activated, int slot) : base(name,url,cost,id, special, eventID)
         {
             Activated = activated;
+            Slot = activated ? slot : -1;
         }
     }
 }

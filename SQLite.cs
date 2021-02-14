@@ -103,6 +103,7 @@ namespace Palantir
         public string LobbyPlayerID { get; set; }
         public string Sprite { get; set; }
         public string Date { get; set; }
+        public int Slot { get; set; }
     }
 
     public class DropEntity
