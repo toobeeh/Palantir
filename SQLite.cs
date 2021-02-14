@@ -99,6 +99,7 @@ namespace Palantir
     public class OnlineSpritesEntity
     {
         [Key]
+        public string ID { get; set; }
         public string LobbyKey { get; set; }
         public string LobbyPlayerID { get; set; }
         public string Sprite { get; set; }
