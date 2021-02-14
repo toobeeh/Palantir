@@ -427,7 +427,7 @@ namespace Palantir
             if (inventory.Count <= 0) desc = "You haven't unlocked any sprites yet!";
             desc += "\n\n🔮 **" + BubbleWallet.CalculateCredit(login) + "** of "+ BubbleWallet.GetBubbles(login) + " collected Bubbles available.";
             desc += "\n\n💧 **" + drops + "** Drops collected.";
-            if(drops >= 1000 || perm.BotAdmin) desc += "\n\n<a:chest:810521425156636682> **" + (perm.BotAdmin ? "∞" : (drops / 1000 + 1).ToString()) + " ** Sprite slots available.";
+            if(drops >= 1000 || perm.BotAdmin) desc += "\n\n<a:chest:810521425156636682> **" + (perm.BotAdmin ? "Infinite" : (drops / 1000 + 1).ToString()) + " ** Sprite slots available.";
 
             embed.AddField("\u200b ", desc);
 
@@ -473,7 +473,7 @@ namespace Palantir
                 return;
             }
 
-            if(BubbleWallet.GetSpriteByID(sprite).Special && inventory.Any(active => active.Activated && active.Special)){
+            if(BubbleWallet.GetSpriteByID(sprite).Special && inventory.Any(active => active.Activated && active.Special && active.Slot != slot)){
                 await Program.SendEmbed(context.Channel, "Too overpowered!!", "Only one of your sprite slots may have a special sprite.");
                 return;
             }
