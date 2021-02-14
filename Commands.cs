@@ -410,7 +410,7 @@ namespace Palantir
             if (perm.BotAdmin) desc += "`✔️ Verified cool guy.`\n\n";
             if (perm.RestartAndUpdate) desc += "`🛠️ Can restart & update Palantir.`\n\n";
 
-            active.ForEach(sprite =>
+            active.OrderBy(slot => slot.Slot).ForEach(sprite =>
             {
                 if(active.Count <= 1)
                 {
@@ -470,6 +470,11 @@ namespace Palantir
             if (!perm.BotAdmin && (slot < 1 || slot > BubbleWallet.GetDrops(login) / 1000 + 1))
             {
                 await Program.SendEmbed(context.Channel, "Out of your league.", "You can't use that sprite slot!\nFor each thousand collected drops, you get one extra slot.");
+                return;
+            }
+
+            if(BubbleWallet.GetSpriteByID(sprite).Special && inventory.Any(active => active.Activated && active.Special)){
+                await Program.SendEmbed(context.Channel, "Too overpowered!!", "Only one of your sprite slots may have a special sprite.");
                 return;
             }
 
