@@ -481,11 +481,15 @@ namespace Palantir
                 return;
             }
 
-            inventory.ForEach(i => { i.Activated = i.ID == sprite; i.Slot = i.Activated ? slot : -1; });
+            inventory.ForEach(i => {
+                if (i.ID == sprite && i.Activated) i.Slot = slot; // if sprite is already activated, activate on other slot
+                else if(i.ID == sprite && !i.Activated) { i.Activated = true; i.Slot = slot; } // if sprite is not activated, activate on slot
+                else { i.Activated = false; i.Slot = -1; } // else deactivate
+            });
             BubbleWallet.SetInventory(inventory, login);
 
             DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
-            embed.Title = "Your fancy sprite on slot " + slot + "was set to **" + BubbleWallet.GetSpriteByID(sprite).Name + "**";
+            embed.Title = "Your fancy sprite on slot " + slot + " was set to **`" + BubbleWallet.GetSpriteByID(sprite).Name + "`**";
             embed.ImageUrl = BubbleWallet.GetSpriteByID(sprite).URL;
             embed.Color = DiscordColor.Magenta;
             await context.Channel.SendMessageAsync(embed: embed);
