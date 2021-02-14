@@ -483,8 +483,9 @@ namespace Palantir
 
             inventory.ForEach(i => {
                 if (i.ID == sprite && i.Activated) i.Slot = slot; // if sprite is already activated, activate on other slot
-                else if(i.ID == sprite && !i.Activated) { i.Activated = true; i.Slot = slot; } // if sprite is not activated, activate on slot
-                else { i.Activated = false; i.Slot = -1; } // else deactivate
+                else if (i.ID == sprite && !i.Activated) { i.Activated = true; i.Slot = slot; } // if sprite is not activated, activate on slot
+                else if (!(i.Activated && i.ID != sprite && i.Slot != slot)) {i.Activated = false; i.Slot = -1; } 
+                // if sprite ist not desired not activated on slot deactivate
             });
             BubbleWallet.SetInventory(inventory, login);
 
