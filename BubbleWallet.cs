@@ -206,7 +206,7 @@ namespace Palantir
                 newsprite.Date = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss");
                 newsprite.Sprite = slot is object ? slot.ID.ToString() : "0";
                 newsprite.Slot = slot.Slot;
-                newsprite.ID = lobbyKey + lobbyPlayerID + slot;
+                newsprite.ID = lobbyKey + lobbyPlayerID + slot.ToString();
                 context.OnlineSprites.Add(newsprite);
             }
             try
