@@ -473,16 +473,18 @@ namespace Palantir
                 return;
             }
 
-            if(BubbleWallet.GetSpriteByID(sprite).Special && inventory.Any(active => active.Activated && active.Special && active.Slot != slot)){
-                await Program.SendEmbed(context.Channel, "Too overpowered!!", "Only one of your sprite slots may have a special sprite.");
-                return;
-            }
-
             if (sprite == 0)
             {
                 await Program.SendEmbed(context.Channel, "Minimalist, huh? Your sprite was disabled.", "");
-                inventory.ForEach(i => i.Activated =false);
+                inventory.ForEach(i => {
+                    if (i.Slot == slot) i.Activated = false;
+                });
                 BubbleWallet.SetInventory(inventory, login);
+                return;
+            }
+
+            if (BubbleWallet.GetSpriteByID(sprite).Special && inventory.Any(active => active.Activated && active.Special && active.Slot != slot)){
+                await Program.SendEmbed(context.Channel, "Too overpowered!!", "Only one of your sprite slots may have a special sprite.");
                 return;
             }
 
