@@ -441,7 +441,7 @@ namespace Palantir
         [Command("use")]
         public async Task Use(CommandContext context, [Description("The id of the sprite (eg '15')")] int sprite, [Description("The sprite-slot which will be set. Starts at slot 1.")] int slot = 1, [Description("A timeout in seconds when the action will be performed")] int timeoutSeconds = 0)
         {
-            if(timeoutSeconds > 0)
+            if (timeoutSeconds > 0)
             {
                 await Program.SendEmbed(context.Channel, "Tick tock...", "The command will be executed in " + timeoutSeconds + "s.", "", DiscordColor.Green.Value);
                 await Task.Delay(timeoutSeconds * 1000);
@@ -464,7 +464,10 @@ namespace Palantir
                 return;
             }
 
-            if (slot < 1 || slot > BubbleWallet.GetDrops(login) / 1000 + 1)
+            MemberEntity member = Program.Feanor.GetMemberByLogin(login);
+            PermissionFlag perm = new PermissionFlag((byte)member.Flag);
+
+            if (!perm.BotAdmin && (slot < 1 || slot > BubbleWallet.GetDrops(login) / 1000 + 1))
             {
                 await Program.SendEmbed(context.Channel, "Out of your league.", "You can't use that sprite slot!\nFor each thousand collected drops, you get one extra slot.");
                 return;
