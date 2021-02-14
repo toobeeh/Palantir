@@ -207,13 +207,16 @@ namespace Palantir
                 newsprite.Sprite = slot is object ? slot.ID.ToString() : "0";
                 newsprite.Slot = slot.Slot;
                 context.OnlineSprites.Add(newsprite);
+                try
+                {
+                    context.SaveChanges();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Error writing sprite:\n" + e);
+                }
             }
-            try
-            {
-                context.SaveChanges();
-            }
-            catch (Exception e) { Console.WriteLine("Error writing sprite:\n" + e); 
-            }
+            
             context.Dispose();
         }
 
