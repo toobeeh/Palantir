@@ -6,28 +6,34 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System.Globalization;
 using Newtonsoft.Json;
+using System.Threading.Tasks;
+using Quartz;
 
 namespace Palantir
 {
+
+    public class BubbleCounter : IJob
+    {
+        private List<string> loginTicks = new List<string>();
+        public async Task Execute(IJobExecutionContext context)
+        {
+            string[] logins = BubbleWallet.loginBubbleTicks.ToArray();
+            BubbleWallet.loginBubbleTicks = new List<string>();
+            PalantirDbContext dbcontext = new PalantirDbContext();
+            foreach (string login in logins)
+            {
+                dbcontext.Members.FirstOrDefault(s => s.Login == login).Bubbles++;
+            }
+            await dbcontext.SaveChangesAsync();
+            dbcontext.Dispose();
+        }
+    }
     public static class BubbleWallet
     {
-        public static Dictionary<string, DateTime> Ticks = new Dictionary<string, DateTime>();
+        public static List<string> loginBubbleTicks = new List<string>();
         public static void AddBubble(string login)
         {
-            // Remove all ticks that passed the max tick interval
-            Ticks.Where(tick => (tick.Value < DateTime.Now.AddSeconds(-10))).ToList().ForEach(tick => { if (tick.Key != null) Ticks.Remove(tick.Key); });
-            if (Ticks.TryAdd(login, DateTime.Now))
-            {
-                PalantirDbContext context = new PalantirDbContext();
-                MemberEntity entity = context.Members.FirstOrDefault(s => s.Login == login);
-
-                if (entity != null)
-                {
-                    entity.Bubbles++;
-                    context.SaveChanges();
-                }
-                context.Dispose();
-            } 
+            if (!loginBubbleTicks.Any(tick => tick == login)) loginBubbleTicks.Add(login);
         }
 
         public static int GetBubbles(string login)

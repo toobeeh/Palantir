@@ -80,6 +80,16 @@ namespace Palantir
                     .WithIntervalInSeconds(10)
                 )
                 .Build();
+            IJobDetail bubbleCounter = JobBuilder.Create<BubbleCounter>()
+                .WithIdentity("Bubble Counter")
+                .Build();
+            ITrigger bubbleTrigger = TriggerBuilder.Create()
+                .StartNow()
+                .WithDailyTimeIntervalSchedule
+                (t => t
+                    .WithIntervalInSeconds(10)
+                )
+                .Build();
 
             //Start bubble tracer job
             Console.WriteLine("Starting bubbletracer job\n...");
