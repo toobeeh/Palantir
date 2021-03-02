@@ -55,7 +55,7 @@ namespace Palantir
             Console.WriteLine("Palantir activated. Fool of a Took!");
 
             // Initialize bubble tracer job
-            Console.WriteLine("Initializing bubbletracer job\n...");
+            Console.WriteLine("Initializing jobs\n...");
             ISchedulerFactory schedFact = new StdSchedulerFactory();
             IScheduler scheduler = await schedFact.GetScheduler();
             await scheduler.Start();
@@ -100,8 +100,8 @@ namespace Palantir
             await scheduler.ScheduleJob(statusUpdater, statusTrigger);
 
             // start bubble counting
-            Console.WriteLine("Starting status updater job\n...");
-            await scheduler.ScheduleJob(statusUpdater, statusTrigger);
+            Console.WriteLine("Starting bubble counter job\n...");
+            await scheduler.ScheduleJob(bubbleCounter, bubbleTrigger);
 
             Drops.StartDropping();
             Console.WriteLine("Started dropping cool stuff!");
