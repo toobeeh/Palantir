@@ -563,7 +563,7 @@ namespace Palantir
         public async Task Leaderboard(CommandContext context)
         {
             Program.Feanor.ValidateGuildPalantir(context.Guild.Id.ToString());
-            DiscordMessage leaderboard = await context.RespondAsync("Loding data...");
+            DiscordMessage leaderboard = await context.RespondAsync("Loding members of " + context.Guild.Name + "...");
             var interactivity = context.Client.GetInteractivity();
             List<MemberEntity> members = Program.Feanor.GetGuildMembers(context.Guild.Id.ToString()).OrderByDescending(m=>m.Bubbles).Where(m=>m.Bubbles > 0).ToList();
             List<IEnumerable<MemberEntity>> memberBatches = members.Batch(5).ToList();
@@ -591,9 +591,9 @@ namespace Palantir
                     if (perm.BubbleFarming)
                     {
                         unranked++;
-                        embed.AddField("\u200b", "**`🚩` - " + name + "**\n `This player has been flagged as *bubble farming*`.\n\u200b");
+                        embed.AddField("\u200b", "**`🚩` - " + name + "**\n `This player has been flagged as *bubble farming*`.");
                     }
-                    else embed.AddField("\u200b", "**#" + (members.IndexOf(member) + 1 - unranked).ToString() + " - " + name + "**" + (perm.BotAdmin ? " ` Admin`**\n" : "**\n") + BubbleWallet.GetBubbles(member.Login).ToString() + " Bubbles\n" + BubbleWallet.GetDrops(member.Login).ToString() + " Drops\n\u200b");
+                    else embed.AddField("\u200b", "**#" + (members.IndexOf(member) + 1 - unranked).ToString() + " - " + name + "**" + (perm.BotAdmin ? " ` Admin`\n" : "\n") + BubbleWallet.GetBubbles(member.Login).ToString() + " Bubbles\n" + BubbleWallet.GetDrops(member.Login).ToString() + " Drops");
                 }
                 embed.WithFooter(context.Member.DisplayName + " can react within 2 mins to show the next page.");
 
