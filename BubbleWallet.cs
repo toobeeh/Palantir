@@ -14,16 +14,20 @@ namespace Palantir
 
     public class BubbleCounter : IJob
     {
-        private List<string> loginTicks = new List<string>();
         public async Task Execute(IJobExecutionContext context)
         {
             string[] logins = BubbleWallet.loginBubbleTicks.ToArray();
             BubbleWallet.loginBubbleTicks = new List<string>();
             PalantirDbContext dbcontext = new PalantirDbContext();
-            foreach (string login in logins)
+            try
             {
-                dbcontext.Members.FirstOrDefault(s => s.Login == login).Bubbles++;
+
+                foreach (string login in logins)
+                {
+                    dbcontext.Members.FirstOrDefault(s => s.Login == login).Bubbles++;
+                }
             }
+            catch(Exception e) { Console.WriteLine(e.ToString()); }
             await dbcontext.SaveChangesAsync();
             dbcontext.Dispose();
         }
