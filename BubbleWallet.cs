@@ -18,6 +18,7 @@ namespace Palantir
         {
             string[] logins = BubbleWallet.loginBubbleTicks.Distinct().ToArray();
             BubbleWallet.loginBubbleTicks = new List<string>();
+            Dictionary<string, int> cache = new Dictionary<string, int>();
             PalantirDbContext dbcontext = new PalantirDbContext();
             try
             {
@@ -29,12 +30,18 @@ namespace Palantir
             }
             catch(Exception e) { Console.WriteLine(e.ToString()); }
             await dbcontext.SaveChangesAsync();
+            foreach(MemberEntity member in dbcontext.Members)
+            {
+                cache.Add(member.Login.ToString(), member.Bubbles);
+            }
             dbcontext.Dispose();
+            BubbleWallet.BubbleCache = cache;
         }
     }
     public static class BubbleWallet
     {
         public static List<string> loginBubbleTicks = new List<string>();
+        public static Dictionary<string, int> BubbleCache = new Dictionary<string, int>();
         public static void AddBubble(string login)
         {
             loginBubbleTicks.Add(login);
@@ -42,17 +49,8 @@ namespace Palantir
 
         public static int GetBubbles(string login)
         {
-            PalantirDbContext context = new PalantirDbContext();
-            MemberEntity entity = context.Members.FirstOrDefault(s => s.Login == login);
             int bubbles = 0;
-
-            if (entity != null)
-            {
-                bubbles = entity.Bubbles;
-            }
-            context.SaveChanges();
-            context.Dispose();
-
+            BubbleCache.TryGetValue(login, out bubbles);
             return bubbles;
         }
 
