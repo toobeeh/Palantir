@@ -566,7 +566,7 @@ namespace Palantir
             DiscordMessage leaderboard = await context.RespondAsync("`⏱️` Loading members of `" + context.Guild.Name + "`...");
             var interactivity = context.Client.GetInteractivity();
             List<MemberEntity> members = Program.Feanor.GetGuildMembers(context.Guild.Id.ToString()).OrderByDescending(m=>m.Bubbles).Where(m=>m.Bubbles > 0).ToList();
-            List<IEnumerable<MemberEntity>> memberBatches = members.Batch(5).ToList();
+            List<IEnumerable<MemberEntity>> memberBatches = members.Batch(9).ToList();
             int unranked = 0;
             
             DiscordEmoji down = await (await Program.Client.GetGuildAsync(779435254225698827)).GetEmojiAsync(790349869138968596);
@@ -590,9 +590,9 @@ namespace Palantir
                     if (perm.BubbleFarming)
                     {
                         unranked++;
-                        embed.AddField("\u200b", "**`🚩` - " + name + "**\n `This player has been flagged as *bubble farming*`.");
+                        embed.AddField("\u200b", "**`🚩` - " + name + "**\n `This player has been flagged as *bubble farming*`.",true);
                     }
-                    else embed.AddField("\u200b", "**#" + (members.IndexOf(member) + 1 - unranked).ToString() + " - " + name + "**" + (perm.BotAdmin ? " ` Admin`\n" : "\n") + BubbleWallet.GetBubbles(member.Login).ToString() + " Bubbles\n" + BubbleWallet.GetDrops(member.Login).ToString() + " Drops");
+                    else embed.AddField("\u200b", "**#" + (members.IndexOf(member) + 1 - unranked).ToString() + " - " + name + "**" + (perm.BotAdmin ? " ` Admin`\n" : "\n") + BubbleWallet.GetBubbles(member.Login).ToString() + " Bubbles\n" + BubbleWallet.GetDrops(member.Login).ToString() + " Drops", true);
                 }
                 embed.WithFooter(context.Member.DisplayName + " can react within 2 mins to show the next page.");
 
