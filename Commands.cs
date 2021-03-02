@@ -592,7 +592,7 @@ namespace Palantir
                         unranked++;
                         embed.AddField("\u200b", "**`🚩` - " + name + "**\n `This player has been flagged as *bubble farming*`.",true);
                     }
-                    else embed.AddField("\u200b", "**#" + (members.IndexOf(member) + 1 - unranked).ToString() + " - " + name + "**" + (perm.BotAdmin ? " ` Admin`\n`🔮` " : "\n`🔮` ") + BubbleWallet.GetBubbles(member.Login).ToString() + "\n`💧` " + BubbleWallet.GetDrops(member.Login).ToString(), true);
+                    else embed.AddField("\u200b", "**#" + (members.IndexOf(member) + 1 - unranked).ToString() + " - " + name + "**" + (perm.BotAdmin ? " ` Admin`\n🔮 " : "\n🔮 ") + BubbleWallet.GetBubbles(member.Login).ToString() + " Bubbles\n`💧` " + BubbleWallet.GetDrops(member.Login).ToString() + " Drops", true);
                 }
                 embed.WithFooter(context.Member.DisplayName + " can react within 2 mins to show the next page.");
 
