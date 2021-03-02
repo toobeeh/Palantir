@@ -16,7 +16,7 @@ namespace Palantir
     {
         public async Task Execute(IJobExecutionContext context)
         {
-            string[] logins = BubbleWallet.loginBubbleTicks.ToArray();
+            string[] logins = BubbleWallet.loginBubbleTicks.Distinct().ToArray();
             BubbleWallet.loginBubbleTicks = new List<string>();
             PalantirDbContext dbcontext = new PalantirDbContext();
             try
@@ -37,7 +37,7 @@ namespace Palantir
         public static List<string> loginBubbleTicks = new List<string>();
         public static void AddBubble(string login)
         {
-            if (!loginBubbleTicks.Any(tick => tick == login)) loginBubbleTicks.Add(login);
+            loginBubbleTicks.Add(login);
         }
 
         public static int GetBubbles(string login)
