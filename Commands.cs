@@ -566,11 +566,9 @@ namespace Palantir
             DiscordMessage leaderboard = await context.RespondAsync("Loding data...");
             var interactivity = context.Client.GetInteractivity();
             List<MemberEntity> members = Program.Feanor.GetGuildMembers(context.Guild.Id.ToString()).OrderByDescending(m=>m.Bubbles).Where(m=>m.Bubbles > 0).ToList();
-            List<DiscordEmbedBuilder> embedPages = new List<DiscordEmbedBuilder>();
             List<IEnumerable<MemberEntity>> memberBatches = members.Batch(5).ToList();
             int unranked = 0;
             
-            await leaderboard.ModifyAsync(content: "", embed: embedPages[0].Build());
             DiscordEmoji down = await (await Program.Client.GetGuildAsync(779435254225698827)).GetEmojiAsync(790349869138968596);
             await leaderboard.CreateReactionAsync(down);
             int page = 0;
@@ -601,7 +599,7 @@ namespace Palantir
 
                 await leaderboard.ModifyAsync(embed: embed.Build());
                 page++;
-                if (page >= embedPages.Count) page = 0;
+                if (page >= memberBatches.Count) page = 0;
             }
             while (!(await interactivity.WaitForReactionAsync(reaction => reaction.Emoji == down, context.User, TimeSpan.FromMinutes(2))).TimedOut);
             try { await leaderboard.DeleteAllReactionsAsync(); }
