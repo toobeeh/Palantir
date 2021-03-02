@@ -598,7 +598,7 @@ namespace Palantir
 
                 await leaderboard.ModifyAsync(embed: embed.Build(), content: "");
                 page++;
-                if (page >= memberBatches.Count) page = 0;
+                if (page >= memberBatches.Count) { page = 0; unranked = 0; }
             }
             while (!(await interactivity.WaitForReactionAsync(reaction => reaction.Emoji == down, context.User, TimeSpan.FromMinutes(2))).TimedOut);
             try { await leaderboard.DeleteAllReactionsAsync(); }
