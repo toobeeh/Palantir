@@ -560,12 +560,12 @@ namespace Palantir
         [Description("See who's got the most bubbles.")]
         [Command("Leaderboard")]
         [Aliases("lbd","ldb")]
-        public async Task Leaderboard(CommandContext context)
+        public async Task Leaderboard(CommandContext context, string mode = "bubbles")
         {
             Program.Feanor.ValidateGuildPalantir(context.Guild.Id.ToString());
             DiscordMessage leaderboard = await context.RespondAsync("`⏱️` Loading members of `" + context.Guild.Name + "`...");
             var interactivity = context.Client.GetInteractivity();
-            List<MemberEntity> members = Program.Feanor.GetGuildMembers(context.Guild.Id.ToString()).OrderByDescending(m=>m.Bubbles).Where(m=>m.Bubbles > 0).ToList();
+            List<MemberEntity> members = Program.Feanor.GetGuildMembers(context.Guild.Id.ToString()).OrderByDescending(m=>(mode == "drops" ? m.Drops : m.Bubbles)).Where(m=>m.Bubbles > 0).ToList();
             List<IEnumerable<MemberEntity>> memberBatches = members.Batch(9).ToList();
             int unranked = 0;
             
