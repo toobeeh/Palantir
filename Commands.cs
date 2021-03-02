@@ -448,16 +448,7 @@ namespace Palantir
             }
             string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
             List<SpriteProperty> inventory;
-            try
-            {
-                inventory = BubbleWallet.GetInventory(login);
-            }
-            catch (Exception e)
-            {
-                await Program.SendEmbed(context.Channel, "Error executing command", e.ToString());
-                return;
-            }
-
+            inventory = BubbleWallet.GetInventory(login);
             if (sprite !=0 && !inventory.Any(s=>s.ID == sprite))
             {
                 await Program.SendEmbed(context.Channel, "Hold on!", "You don't own that. \nGet it first with `>buy " + sprite + "`.");
@@ -576,49 +567,43 @@ namespace Palantir
             var interactivity = context.Client.GetInteractivity();
             List<MemberEntity> members = Program.Feanor.GetGuildMembers(context.Guild.Id.ToString()).OrderByDescending(m=>m.Bubbles).Where(m=>m.Bubbles > 0).ToList();
             List<DiscordEmbedBuilder> embedPages = new List<DiscordEmbedBuilder>();
-            IEnumerable<IEnumerable<MemberEntity>> memberBatches = members.Batch(5);
+            List<IEnumerable<MemberEntity>> memberBatches = members.Batch(5).ToList();
             int unranked = 0;
-            foreach (IEnumerable<MemberEntity> memberBatch in memberBatches)
+            
+            await leaderboard.ModifyAsync(content: "", embed: embedPages[0].Build());
+            DiscordEmoji down = await (await Program.Client.GetGuildAsync(779435254225698827)).GetEmojiAsync(790349869138968596);
+            await leaderboard.CreateReactionAsync(down);
+            int page = 0;
+            do
             {
+                try
+                {
+                    await leaderboard.DeleteAllReactionsAsync();
+                    await leaderboard.CreateReactionAsync(down);
+                }
+                catch { }
                 DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
                 embed.Title = "🔮  Leaderboard of " + context.Guild.Name;
                 embed.Color = DiscordColor.Magenta;
-
-                foreach(MemberEntity member in memberBatch)
+                IEnumerable<MemberEntity> memberBatch = memberBatches[page];
+                foreach (MemberEntity member in memberBatch)
                 {
-                    string name = member.Bubbles.ToString();
+                    string name = "<@" + JsonConvert.DeserializeObject<Member>(member.Member).UserID + ">";
                     PermissionFlag perm = new PermissionFlag((byte)member.Flag);
-                    try { name=(await context.Guild.GetMemberAsync(Convert.ToUInt64(JsonConvert.DeserializeObject<Member>(member.Member).UserID))).Username; }
-                    catch { };
                     if (perm.BubbleFarming)
                     {
                         unranked++;
-                        embed.AddField("`🚩`" + " - " + name ," `This player has been flagged as *bubble farming*`.\n\u200b");
+                        embed.AddField("`🚩`" + " - " + name, " `This player has been flagged as *bubble farming*`.\n\u200b");
                     }
                     else embed.AddField("**#" + (members.IndexOf(member) + 1 - unranked).ToString() + " - " + name + "**" + (perm.BotAdmin ? " ` Admin`" : ""), BubbleWallet.GetBubbles(member.Login).ToString() + " Bubbles\n" + BubbleWallet.GetDrops(member.Login).ToString() + " Drops\n\u200b");
                 }
-                embed.WithFooter(context.Member.DisplayName +  " can react within 2 mins to show the next page.");
-                embedPages.Add(embed);
-            }
+                embed.WithFooter(context.Member.DisplayName + " can react within 2 mins to show the next page.");
 
-            DiscordEmoji next = DiscordEmoji.FromName(Program.Client, ":arrow_right:");
-            await leaderboard.ModifyAsync(content: "", embed: embedPages[0].Build());
-            await leaderboard.CreateReactionAsync(next);
-            int page = 0;
-
-            while (!(await interactivity.WaitForReactionAsync(reaction => reaction.Emoji == next, context.User, TimeSpan.FromMinutes(2))).TimedOut)
-            {
-                try 
-                { 
-                    await leaderboard.DeleteAllReactionsAsync();
-                    await leaderboard.CreateReactionAsync(next);
-                }
-                catch { }
+                await leaderboard.ModifyAsync(embed: embed.Build());
                 page++;
                 if (page >= embedPages.Count) page = 0;
-                await leaderboard.ModifyAsync(embed: embedPages[page].Build());
             }
-
+            while (!(await interactivity.WaitForReactionAsync(reaction => reaction.Emoji == down, context.User, TimeSpan.FromMinutes(2))).TimedOut);
             try { await leaderboard.DeleteAllReactionsAsync(); }
             catch { }
             await leaderboard.CreateReactionAsync(DiscordEmoji.FromName(Program.Client, ":no_entry_sign:"));
