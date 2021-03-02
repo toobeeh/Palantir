@@ -99,6 +99,10 @@ namespace Palantir
             Console.WriteLine("Starting status updater job\n...");
             await scheduler.ScheduleJob(statusUpdater, statusTrigger);
 
+            // start bubble counting
+            Console.WriteLine("Starting status updater job\n...");
+            await scheduler.ScheduleJob(statusUpdater, statusTrigger);
+
             Drops.StartDropping();
             Console.WriteLine("Started dropping cool stuff!");
 

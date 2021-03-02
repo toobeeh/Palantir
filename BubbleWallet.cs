@@ -17,7 +17,6 @@ namespace Palantir
         public async Task Execute(IJobExecutionContext context)
         {
             string[] logins = BubbleWallet.loginBubbleTicks.Distinct().ToArray();
-            Console.WriteLine("ticks: " + logins.Length);
             BubbleWallet.loginBubbleTicks = new List<string>();
             PalantirDbContext dbcontext = new PalantirDbContext();
             try
