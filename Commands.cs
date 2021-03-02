@@ -563,7 +563,7 @@ namespace Palantir
         public async Task Leaderboard(CommandContext context)
         {
             Program.Feanor.ValidateGuildPalantir(context.Guild.Id.ToString());
-            DiscordMessage leaderboard = await context.RespondAsync("Loading members of " + context.Guild.Name + "...");
+            DiscordMessage leaderboard = await context.RespondAsync("`:stopwatch:` Loading members of `" + context.Guild.Name + "`...");
             var interactivity = context.Client.GetInteractivity();
             List<MemberEntity> members = Program.Feanor.GetGuildMembers(context.Guild.Id.ToString()).OrderByDescending(m=>m.Bubbles).Where(m=>m.Bubbles > 0).ToList();
             List<IEnumerable<MemberEntity>> memberBatches = members.Batch(5).ToList();
@@ -596,7 +596,7 @@ namespace Palantir
                 }
                 embed.WithFooter(context.Member.DisplayName + " can react within 2 mins to show the next page.");
 
-                await leaderboard.ModifyAsync(embed: embed.Build());
+                await leaderboard.ModifyAsync(embed: embed.Build(), content: "");
                 page++;
                 if (page >= memberBatches.Count) page = 0;
             }
