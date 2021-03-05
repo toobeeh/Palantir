@@ -24,7 +24,7 @@ namespace Palantir
         public DbSet<EventEntity> Events { get; set; }
         public DbSet<EventDropEntity> EventDrops { get; set; }
         public DbSet<EventCreditEntity> EventCredits { get; set; }
-        public DbSet<TypoTheme> Themes { get; set; }
+        public DbSet<TypoThemeEntity> Themes { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder options)
             => options.UseSqlite("Data Source=/home/pi/Database/palantir.db");
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -152,8 +152,9 @@ namespace Palantir
         public int EventDropID { get; set; }
         public int Credit { get; set; }
     }
-    public class TypoTheme
+    public class TypoThemeEntity
     {
+        [Key]
         public string Ticket { get; set; }
         public string Theme { get; set; }
         public string ThumbnailLanding { get; set; }
