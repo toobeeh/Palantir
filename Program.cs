@@ -163,23 +163,26 @@ namespace Palantir
     public class PermissionFlag
     {
         // Flag schema:
-        // R... Restart - A... Admin - F... Farming
-        // F =  R A F
-        // 0 =  0 0 0
-        // 1 =  0 0 1
-        // 2 =  0 1 0
-        // 4 =  1 0 0
+        // M... Mod - A... Admin - F... Farming - T... Full Typo Cloud Access
+        // F =  T M A F
+        // 0 =  0 0 0 0
+        // 1 =  0 0 0 1
+        // 2 =  0 0 1 0
+        // 4 =  0 1 0 0
+        // 8 =  1 0 0 0
         // ...
 
         public bool BotAdmin { get; set; }
         public bool BubbleFarming { get; set; }
-        public bool RestartAndUpdate { get; set; }
+        public bool Moderator { get; set; }
+        public bool CloudUnlimited { get; set; }
         public PermissionFlag(byte flag)
         {
             BitArray flags = new BitArray(new byte[] { flag });
             BubbleFarming = flags[0];
             BotAdmin = flags[1];
-            RestartAndUpdate = flags[2];
+            Moderator = flags[2];
+            CloudUnlimited = flags[3];
         }
     }
 

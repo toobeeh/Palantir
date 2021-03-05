@@ -407,8 +407,9 @@ namespace Palantir
 
             PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
             if (perm.BubbleFarming) desc += "`🚩 Flagged as 'bubble farming'.`\n\n";
-            if (perm.BotAdmin) desc += "`✔️ Verified cool guy.`\n\n";
-            if (perm.RestartAndUpdate) desc += "`🛠️ Can restart & update Palantir.`\n\n";
+            if (perm.BotAdmin) desc += "`✔️ Verified cool guy aka Admin.`\n\n";
+            if (perm.Moderator) desc += "`🛠️ Palantir Moderator.`\n\n";
+            if (perm.CloudUnlimited) desc += "`📦 Unlimited cloud storage.`\n\n";
 
             active.OrderBy(slot => slot.Slot).ForEach(sprite =>
             {
@@ -1012,7 +1013,7 @@ namespace Palantir
                 PermissionFlag getperm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(target));
                 string getDesc = "Flag[0] BubbleFarming - "
                     + getperm.BubbleFarming + "\nFlag[1] BotAdmin - "
-                    + getperm.BotAdmin + "\nFlag[2] RestartAndUpdate - " + getperm.RestartAndUpdate;
+                    + getperm.BotAdmin + "\nFlag[2] Moderator - " + getperm.Moderator;
                 await Program.SendEmbed(context.Channel, "The flags of " + target.Username,getDesc);
                 return;
             }
@@ -1027,7 +1028,7 @@ namespace Palantir
             PermissionFlag newFlag = new PermissionFlag((byte)flag);
             string desc = "Flag[0] BubbleFarming - " 
                 + newFlag.BubbleFarming + "\nFlag[1] BotAdmin - " 
-                + newFlag.BotAdmin + "\nFlag[2] RestartAndUpdate - " + newFlag.RestartAndUpdate;
+                + newFlag.BotAdmin + "\nFlag[2] Moderator - " + newFlag.Moderator;
             await Program.SendEmbed(context.Channel, "*magic happened*","The flag of " + name + " was set to " + flag + "\n" + desc);
         }
 
@@ -1036,7 +1037,7 @@ namespace Palantir
         public async Task Reboot(CommandContext context)
         {
             PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
-            if (!perm.BotAdmin && !perm.RestartAndUpdate)
+            if (!perm.BotAdmin && !perm.Moderator)
             {
                 await Program.SendEmbed(context.Channel, "Ts ts...", "This command is only available for higher beings.\n||Some call them Bot-Admins ;))||");
                 return;
@@ -1094,6 +1095,105 @@ namespace Palantir
             embed.AddField("`🌐` Discord API request", Program.Client.Ping + "ms");
             embed.AddField("`⌛` Discord.gg ping RTT", discordRTT + "ms");
             await context.RespondAsync(embed: embed);
+        }
+        [Description("Creates a new theme ticket which can be used by anyone to add a new theme to typo.")]
+        [Command("themeticket")]
+        public async Task CreateThemeTicket(CommandContext context)
+        {
+            PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
+            if (!perm.BotAdmin && !perm.Moderator)
+            {
+                await Program.SendEmbed(context.Channel, "Ts ts...", "This command is only available for Palantir Mods.");
+                return;
+            }
+
+            TypoTheme empty = new TypoTheme();
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            const int length = 6;
+            Random random = new Random();
+            PalantirDbContext dbcontext = new PalantirDbContext();
+            do
+            {
+                empty.Ticket = new string(Enumerable.Repeat(chars, length)
+                .Select(s => s[random.Next(s.Length)]).ToArray());
+            }
+            while (dbcontext.Themes.Any(theme => theme.Ticket == empty.Ticket));
+            dbcontext.Themes.Add(empty);
+            dbcontext.SaveChanges();
+            dbcontext.Dispose();
+            string response = "Successfully created theme ticket!\nUse it with the command `>addtheme`.\nTicket: `" + empty.Ticket + "`";
+            if (context.Channel.IsPrivate) await context.RespondAsync(response);
+            else await context.Member.SendMessageAsync(response);
+        }
+
+        [Description("Adds a new theme. You'll need to have a valid theme ticket.")]
+        [Command("addtheme")]
+        public async Task AddTheme(CommandContext context)
+        {
+            var interactivity = Program.Client.GetInteractivity();
+            await Program.SendEmbed(context.Channel, "Add a theme", "Respond within one minute with your theme ticket.\nThe ticket is a 6-digit code which Palantir moderators can generate.");
+            InteractivityResult<DiscordMessage> msgTicket = await interactivity.WaitForMessageAsync(message => message.Author == context.User, TimeSpan.FromMinutes(1));
+            TypoTheme ticket = null;
+            ticket.Ticket = msgTicket.TimedOut ? "0" : msgTicket.Result.Content;
+            PalantirDbContext dbcontext = new PalantirDbContext();
+            ticket = dbcontext.Themes.FirstOrDefault(theme => theme.Ticket == ticket.Ticket && theme.Theme.Length == 0);
+            ticket.Author = context.Member.Username;
+            dbcontext.Dispose();
+            if (ticket is null)
+            {
+                await Program.SendEmbed(context.Channel, "Invalid theme ticket :(","");
+                return;
+            }
+            //get name
+            await Program.SendEmbed(context.Channel, "Add a theme", "Respond within one minute with the theme Name.");
+            InteractivityResult<DiscordMessage> msgName = await interactivity.WaitForMessageAsync(message => message.Author == context.User, TimeSpan.FromMinutes(1));
+            if (msgName.TimedOut) {
+                await Program.SendEmbed(context.Channel, "Timed out :(", "");
+                return;
+            }
+            ticket.Name = msgName.Result.Content;
+            // get theme
+            await Program.SendEmbed(context.Channel, "Add a theme", "Respond within one minute with the theme text.");
+            InteractivityResult<DiscordMessage> msgTheme = await interactivity.WaitForMessageAsync(message => message.Author == context.User, TimeSpan.FromMinutes(1));
+            if (msgTheme.TimedOut)
+            {
+                await Program.SendEmbed(context.Channel, "Timed out :(", "");
+                return;
+            }
+            ticket.Theme = msgTheme.Result.Content;
+            // get description
+            await Program.SendEmbed(context.Channel, "Add a theme", "Respond within one minute with the theme description.");
+            InteractivityResult<DiscordMessage> msgDesc = await interactivity.WaitForMessageAsync(message => message.Author == context.User, TimeSpan.FromMinutes(1));
+            if (msgDesc.TimedOut)
+            {
+                await Program.SendEmbed(context.Channel, "Timed out :(", "");
+                return;
+            }
+            ticket.Description = msgDesc.Result.Content;
+            // get thumbnail landing
+            await Program.SendEmbed(context.Channel, "Add a theme", "Respond within one minute with a screenshot from the skribbl landing page.\nRespond without attachment to skip.");
+            InteractivityResult<DiscordMessage> msgLanding = await interactivity.WaitForMessageAsync(message => message.Author == context.User, TimeSpan.FromMinutes(1));
+            if (msgLanding.TimedOut)
+            {
+                await Program.SendEmbed(context.Channel, "Timed out :(", "");
+                return;
+            }
+            if(msgLanding.Result.Attachments.Count > 0) ticket.ThumbnailLanding = msgLanding.Result.Attachments[0].Url;
+            // get thumbnail game
+            await Program.SendEmbed(context.Channel, "Add a theme", "Respond within one minute with a screenshot from skribbl in-game.\nRespond without attachment to skip.");
+            InteractivityResult<DiscordMessage> msgGame = await interactivity.WaitForMessageAsync(message => message.Author == context.User, TimeSpan.FromMinutes(1));
+            if (msgGame.TimedOut)
+            {
+                await Program.SendEmbed(context.Channel, "Timed out :(", "");
+                return;
+            }
+            if (msgGame.Result.Attachments.Count > 0) ticket.ThumbnailGame = msgGame.Result.Attachments[0].Url;
+
+            dbcontext = new PalantirDbContext();
+            dbcontext.Themes.Add(ticket);
+            dbcontext.SaveChanges();
+            dbcontext.Dispose();
+            await Program.SendEmbed(context.Channel, "Theme successfully added!", "Note down your ticket!");
         }
 
     }

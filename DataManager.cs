@@ -197,6 +197,7 @@ namespace Palantir
             PalantirDbContext context = new PalantirDbContext();
             MemberEntity member = context.Members.FirstOrDefault(m => m.Member.Contains(id));
             member.Flag = flag;
+            context.SaveChanges();
             context.Dispose();
         }
 
