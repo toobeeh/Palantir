@@ -1136,7 +1136,7 @@ namespace Palantir
             TypoThemeEntity ticket = new TypoThemeEntity();
             ticket.Ticket = msgTicket.TimedOut ? "0" : msgTicket.Result.Content;
             PalantirDbContext dbcontext = new PalantirDbContext();
-            ticket = dbcontext.Themes.FirstOrDefault(theme => theme.Ticket == ticket.Ticket && theme.Theme.Length == 0);
+            ticket = dbcontext.Themes.FirstOrDefault(theme => theme.Ticket == ticket.Ticket && theme.Theme != " ");
             dbcontext.Dispose();
             if (ticket is null)
             {
