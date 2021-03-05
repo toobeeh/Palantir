@@ -1133,7 +1133,7 @@ namespace Palantir
             var interactivity = Program.Client.GetInteractivity();
             await Program.SendEmbed(context.Channel, "Add a theme", "Respond within one minute with your theme ticket.\nThe ticket is a 6-digit code which Palantir moderators can generate.");
             InteractivityResult<DiscordMessage> msgTicket = await interactivity.WaitForMessageAsync(message => message.Author == context.User, TimeSpan.FromMinutes(1));
-            TypoThemeEntity ticket = null;
+            TypoThemeEntity ticket = new TypoThemeEntity();
             ticket.Ticket = msgTicket.TimedOut ? "0" : msgTicket.Result.Content;
             PalantirDbContext dbcontext = new PalantirDbContext();
             ticket = dbcontext.Themes.FirstOrDefault(theme => theme.Ticket == ticket.Ticket && theme.Theme.Length == 0);
