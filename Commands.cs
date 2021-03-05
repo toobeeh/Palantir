@@ -1143,7 +1143,7 @@ namespace Palantir
                 await Program.SendEmbed(context.Channel, "Invalid theme ticket :(","");
                 return;
             }
-            ticket.Author = context.Member.Username;
+            ticket.Author = context.User.Username;
             //get name
             await Program.SendEmbed(context.Channel, "Add a theme", "Respond within one minute with the theme Name.");
             InteractivityResult<DiscordMessage> msgName = await interactivity.WaitForMessageAsync(message => message.Author == context.User, TimeSpan.FromMinutes(1));
