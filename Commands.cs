@@ -1137,13 +1137,13 @@ namespace Palantir
             ticket.Ticket = msgTicket.TimedOut ? "0" : msgTicket.Result.Content;
             PalantirDbContext dbcontext = new PalantirDbContext();
             ticket = dbcontext.Themes.FirstOrDefault(theme => theme.Ticket == ticket.Ticket && theme.Theme.Length == 0);
-            ticket.Author = context.Member.Username;
             dbcontext.Dispose();
             if (ticket is null)
             {
                 await Program.SendEmbed(context.Channel, "Invalid theme ticket :(","");
                 return;
             }
+            ticket.Author = context.Member.Username;
             //get name
             await Program.SendEmbed(context.Channel, "Add a theme", "Respond within one minute with the theme Name.");
             InteractivityResult<DiscordMessage> msgName = await interactivity.WaitForMessageAsync(message => message.Author == context.User, TimeSpan.FromMinutes(1));
