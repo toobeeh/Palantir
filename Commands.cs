@@ -1145,16 +1145,16 @@ namespace Palantir
             }
             ticket.Author = context.User.Username;
             //get name
-            await Program.SendEmbed(context.Channel, "Add a theme", "Respond within one minute with the theme Name.");
-            InteractivityResult<DiscordMessage> msgName = await interactivity.WaitForMessageAsync(message => message.Author == context.User, TimeSpan.FromMinutes(1));
+            await Program.SendEmbed(context.Channel, "Add a theme", "Respond within five minutes with the theme Name.");
+            InteractivityResult<DiscordMessage> msgName = await interactivity.WaitForMessageAsync(message => message.Author == context.User, TimeSpan.FromMinutes(5));
             if (msgName.TimedOut) {
                 await Program.SendEmbed(context.Channel, "Timed out :(", "");
                 return;
             }
             ticket.Name = msgName.Result.Content;
             // get theme
-            await Program.SendEmbed(context.Channel, "Add a theme", "Respond within one minute with the theme text.");
-            InteractivityResult<DiscordMessage> msgTheme = await interactivity.WaitForMessageAsync(message => message.Author == context.User, TimeSpan.FromMinutes(1));
+            await Program.SendEmbed(context.Channel, "Add a theme", "Respond within five minutes with the theme text.");
+            InteractivityResult<DiscordMessage> msgTheme = await interactivity.WaitForMessageAsync(message => message.Author == context.User, TimeSpan.FromMinutes(5));
             if (msgTheme.TimedOut)
             {
                 await Program.SendEmbed(context.Channel, "Timed out :(", "");
@@ -1162,8 +1162,8 @@ namespace Palantir
             }
             ticket.Theme = msgTheme.Result.Content;
             // get description
-            await Program.SendEmbed(context.Channel, "Add a theme", "Respond within one minute with the theme description.");
-            InteractivityResult<DiscordMessage> msgDesc = await interactivity.WaitForMessageAsync(message => message.Author == context.User, TimeSpan.FromMinutes(1));
+            await Program.SendEmbed(context.Channel, "Add a theme", "Respond within five minutes with the theme description.");
+            InteractivityResult<DiscordMessage> msgDesc = await interactivity.WaitForMessageAsync(message => message.Author == context.User, TimeSpan.FromMinutes(5));
             if (msgDesc.TimedOut)
             {
                 await Program.SendEmbed(context.Channel, "Timed out :(", "");
@@ -1171,8 +1171,8 @@ namespace Palantir
             }
             ticket.Description = msgDesc.Result.Content;
             // get thumbnail landing
-            await Program.SendEmbed(context.Channel, "Add a theme", "Respond within one minute with a screenshot from the skribbl landing page.\nRespond without attachment to skip.");
-            InteractivityResult<DiscordMessage> msgLanding = await interactivity.WaitForMessageAsync(message => message.Author == context.User, TimeSpan.FromMinutes(1));
+            await Program.SendEmbed(context.Channel, "Add a theme", "Respond within five minutes with a screenshot from the skribbl landing page.\nRespond without attachment to skip.");
+            InteractivityResult<DiscordMessage> msgLanding = await interactivity.WaitForMessageAsync(message => message.Author == context.User, TimeSpan.FromMinutes(5));
             if (msgLanding.TimedOut)
             {
                 await Program.SendEmbed(context.Channel, "Timed out :(", "");
@@ -1180,8 +1180,8 @@ namespace Palantir
             }
             if(msgLanding.Result.Attachments.Count > 0) ticket.ThumbnailLanding = msgLanding.Result.Attachments[0].Url;
             // get thumbnail game
-            await Program.SendEmbed(context.Channel, "Add a theme", "Respond within one minute with a screenshot from skribbl in-game.\nRespond without attachment to skip.");
-            InteractivityResult<DiscordMessage> msgGame = await interactivity.WaitForMessageAsync(message => message.Author == context.User, TimeSpan.FromMinutes(1));
+            await Program.SendEmbed(context.Channel, "Add a theme", "Respond within five minutes with a screenshot from skribbl in-game.\nRespond without attachment to skip.");
+            InteractivityResult<DiscordMessage> msgGame = await interactivity.WaitForMessageAsync(message => message.Author == context.User, TimeSpan.FromMinutes(5));
             if (msgGame.TimedOut)
             {
                 await Program.SendEmbed(context.Channel, "Timed out :(", "");
@@ -1193,7 +1193,8 @@ namespace Palantir
             dbcontext.Themes.Update(ticket);
             dbcontext.SaveChanges();
             dbcontext.Dispose();
-            await Program.SendEmbed(context.Channel, "Theme successfully added!", "Note down your ticket!");
+            await Program.SendEmbed(context.Channel, "Theme successfully added!", "You can now use following link to instantly share your theme:");
+            await context.RespondAsync("https://tobeh.host/typo/theme/?ticket=" + ticket.Ticket);
         }
 
     }
