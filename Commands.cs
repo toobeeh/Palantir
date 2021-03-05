@@ -1013,7 +1013,8 @@ namespace Palantir
                 PermissionFlag getperm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(target));
                 string getDesc = "Flag[0] BubbleFarming - "
                     + getperm.BubbleFarming + "\nFlag[1] BotAdmin - "
-                    + getperm.BotAdmin + "\nFlag[2] Moderator - " + getperm.Moderator;
+                    + getperm.BotAdmin + "\nFlag[2] Moderator - "
+                    + getperm.Moderator + "\nFlag[2] Unlimited Cloud - " + getperm.CloudUnlimited;
                 await Program.SendEmbed(context.Channel, "The flags of " + target.Username,getDesc);
                 return;
             }
@@ -1026,9 +1027,10 @@ namespace Palantir
             Program.Feanor.SetFlagByID(id.ToString(), flag);
             string name = (await Program.Client.GetUserAsync(id)).Mention;
             PermissionFlag newFlag = new PermissionFlag((byte)flag);
-            string desc = "Flag[0] BubbleFarming - " 
-                + newFlag.BubbleFarming + "\nFlag[1] BotAdmin - " 
-                + newFlag.BotAdmin + "\nFlag[2] Moderator - " + newFlag.Moderator;
+            string desc = "Flag[0] BubbleFarming - "
+                   + newFlag.BubbleFarming + "\nFlag[1] BotAdmin - "
+                   + newFlag.BotAdmin + "\nFlag[2] Moderator - "
+                   + newFlag.Moderator + "\nFlag[2] Unlimited Cloud - " + newFlag.CloudUnlimited;
             await Program.SendEmbed(context.Channel, "*magic happened*","The flag of " + name + " was set to " + flag + "\n" + desc);
         }
 
