@@ -1190,7 +1190,7 @@ namespace Palantir
             if (msgGame.Result.Attachments.Count > 0) ticket.ThumbnailGame = msgGame.Result.Attachments[0].Url;
 
             dbcontext = new PalantirDbContext();
-            dbcontext.Themes.Add(ticket);
+            dbcontext.Themes.Update(ticket);
             dbcontext.SaveChanges();
             dbcontext.Dispose();
             await Program.SendEmbed(context.Channel, "Theme successfully added!", "Note down your ticket!");
