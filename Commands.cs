@@ -1196,7 +1196,7 @@ namespace Palantir
             dbcontext.SaveChanges();
             dbcontext.Dispose();
             await Program.SendEmbed(context.Channel, "Theme successfully added!", "You can now use following link to instantly share your theme:");
-            await context.RespondAsync("https://tobeh.host/typo/theme/?ticket=" + ticket.Ticket);
+            await context.RespondAsync("https://typo.rip/t?ticket=" + ticket.Ticket);
         }
 
     }
