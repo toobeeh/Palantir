@@ -74,12 +74,11 @@ namespace Palantir
 
         [Command("addwebhook")]
         [Description("Add a new webhook")]
-        [RequireUserPermissions(DSharpPlus.Permissions.Administrator)]
+        [RequireUserPermissions(DSharpPlus.Permissions.ManageWebhooks)]
         [RequireGuild()]
         public async Task AddWebhook(CommandContext context, [Description("Name of the webhook")] string name, [Description("URL of the webhook")] string url)
         {
             Program.Feanor.ValidateGuildPalantir(context.Guild.Id.ToString());
-
             Tether target = Program.Feanor.PalantirTethers.FirstOrDefault(t => t.PalantirEndpoint.GuildID == context.Guild.Id.ToString());
             if (target.PalantirEndpoint.Webhooks is null)target.PalantirEndpoint.Webhooks = new List<Webhook>();
             target.PalantirEndpoint.Webhooks.Add(new Webhook

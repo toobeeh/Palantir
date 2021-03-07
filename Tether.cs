@@ -295,6 +295,7 @@ namespace Palantir
                     };
 
                     if (d != "") lobbyDescription = "> `" + DSharpPlus.Formatter.Sanitize(d) + "`\n";
+                    if (d.Contains("#nojoin")) l.Link = "Closed Private Game";
                 }
 
                 // set id to index
