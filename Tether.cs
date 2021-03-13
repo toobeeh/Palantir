@@ -294,7 +294,7 @@ namespace Palantir
                         d = "";
                     };
 
-                    if (d != "") lobbyDescription = "> `" + DSharpPlus.Formatter.Sanitize(d).Replace("`","").Replace("\\","") + "`\n";
+                    if (d != "") lobbyDescription = "> `" + DSharpPlus.Formatter.Sanitize(d).Replace("`","").Replace("\n","") + "`\n";
                     if (d.Contains("#nojoin")) l.Link = "Closed Private Game";
                 }
 
