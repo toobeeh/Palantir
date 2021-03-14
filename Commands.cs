@@ -514,8 +514,7 @@ namespace Palantir
                 await Program.SendEmbed(context.Channel, "Gotcha!", "You can't use that many sprite slots!\nFor each thousand collected drops, you get one extra slot.");
                 return;
             }
-
-            if (sprites.Where(sprite => BubbleWallet.GetSpriteByID(sprite).Special).Count() > 1)
+            if (sprites.Where(sprite => !(BubbleWallet.GetSpriteByID(sprite) is null) && BubbleWallet.GetSpriteByID(sprite).Special).Count() > 1)
             {
                 await Program.SendEmbed(context.Channel, "Too overpowered!!", "Only one of your sprite slots may have a special sprite.");
                 return;
