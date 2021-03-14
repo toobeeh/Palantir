@@ -625,7 +625,7 @@ namespace Palantir
                     await leaderboard.DeleteAllReactionsAsync();
                     await leaderboard.CreateReactionAsync(DiscordEmoji.FromName(Program.Client, ":arrow_right:"));
                 }
-                catch { }
+                catch(Exception e) { await context.Channel.SendMessageAsync(e.ToString()); }
                 DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
                 embed.Title = "🔮  Leaderboard of " + context.Guild.Name;
                 embed.Color = DiscordColor.Magenta;
