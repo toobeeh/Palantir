@@ -1140,12 +1140,28 @@ namespace Palantir
             long discordRTT = ping.Send("discord.gg", 100).RoundtripTime;
 
             DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
-            
+
             embed.Title = "Latency results:";
             embed.AddField("`🗄️` Database singe read", Program.Feanor.DatabaseReadTime(context.User.Id.ToString(), 1) + "ms");
             embed.AddField("`🗂️` Database average for 100 reads", Program.Feanor.DatabaseReadTime(context.User.Id.ToString(), 100) + "ms");
             embed.AddField("`🌐` Discord API request", Program.Client.Ping + "ms");
             embed.AddField("`⌛` Discord.gg ping RTT", discordRTT + "ms");
+            await context.RespondAsync(embed: embed);
+        }
+        [Description("Show some nice information about the bot.")]
+        [Command("about")]
+        public async Task About(CommandContext context)
+        {
+            DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
+
+            embed.Title = "About me";
+            embed.AddField("🤖` Hi!", "I'm Palantir - I integrate skribbl typo into Discord. \nMy main task is to sell sprites and show you information what's going on with typo.");
+            embed.AddField("`👪` Currently **", Program.Feanor.PalantirTethers.Count + "** servers are using me to show skribbl lobbies.");
+            embed.AddField("`🗄️` Overall **", Program.Client.Guilds.Count + " ** servers invited me to join.");
+            PalantirDbContext cont = new PalantirDbContext();
+            int members = cont.Members.Count();
+            cont.Dispose();
+            embed.AddField("`👥` **", members + "** people have registered on Palantir.");
             await context.RespondAsync(embed: embed);
         }
         [Description("Creates a new theme ticket which can be used by anyone to add a new theme to typo.")]
