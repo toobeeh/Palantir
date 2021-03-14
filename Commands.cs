@@ -615,8 +615,8 @@ namespace Palantir
             List<MemberEntity> members = Program.Feanor.GetGuildMembers(context.Guild.Id.ToString()).OrderByDescending(m=>(mode == "drops" ? m.Drops : m.Bubbles)).Where(m=>m.Bubbles > 0).ToList();
             List<IEnumerable<MemberEntity>> memberBatches = members.Batch(9).ToList();
             int unranked = 0;
-            
-            DiscordEmoji down = await (await Program.Client.GetGuildAsync(779435254225698827)).GetEmojiAsync(790349869138968596);
+
+            DiscordEmoji down = DiscordEmoji.FromGuildEmote(Program.Client, 790349869138968596); //await (await Program.Client.GetGuildAsync(779435254225698827)).GetEmojiAsync(790349869138968596);
             int page = 0;
             do
             {
