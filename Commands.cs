@@ -405,10 +405,10 @@ namespace Palantir
             string desc = "";
 
             PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
-            if (perm.BubbleFarming) desc += "`🚩 Flagged as 'bubble farming'.`\n\n";
-            if (perm.BotAdmin) desc += "`✔️ Verified cool guy aka Admin.`\n\n";
-            if (perm.Moderator) desc += "`🛠️ Palantir Moderator.`\n\n";
-            if (perm.CloudUnlimited) desc += "`📦 Unlimited cloud storage.`\n\n";
+            if (perm.BubbleFarming) desc += "`🚩 Flagged as 'bubble farming'.`\n";
+            if (perm.BotAdmin) desc += "`✔️ Verified cool guy aka Admin.`\n";
+            if (perm.Moderator) desc += "`🛠️ Palantir Moderator.`\n";
+            if (perm.CloudUnlimited) desc += "`📦 Unlimited cloud storage.`\n";
 
             active.OrderBy(slot => slot.Slot).ForEach(sprite =>
             {
@@ -529,7 +529,7 @@ namespace Palantir
             {
                 if (slot > 0) {
                     inventory.Find(item => item.ID == slot).Activated = true;
-                    inventory.Find(item => item.ID == slot).Slot = slot;
+                    inventory.Find(item => item.ID == slot).Slot = slots.IndexOf(slot) + 1;
                 }
             });
             BubbleWallet.SetInventory(inventory, login);
