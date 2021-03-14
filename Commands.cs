@@ -623,7 +623,7 @@ namespace Palantir
                 try
                 {
                     await leaderboard.DeleteAllReactionsAsync();
-                    await leaderboard.CreateReactionAsync(down);
+                    await leaderboard.CreateReactionAsync(DiscordEmoji.FromName(Program.Client, ":arrow_right:"));
                 }
                 catch { }
                 DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
@@ -647,7 +647,7 @@ namespace Palantir
                 page++;
                 if (page >= memberBatches.Count) { page = 0; unranked = 0; }
             }
-            while (!(await interactivity.WaitForReactionAsync(reaction => reaction.Emoji == down, context.User, TimeSpan.FromMinutes(2))).TimedOut);
+            while (!(await interactivity.WaitForReactionAsync(reaction => reaction.Emoji == DiscordEmoji.FromName(Program.Client, ":arrow_right:"), context.User, TimeSpan.FromMinutes(2))).TimedOut);
             try { await leaderboard.DeleteAllReactionsAsync(); }
             catch { }
             await leaderboard.CreateReactionAsync(DiscordEmoji.FromName(Program.Client, ":no_entry_sign:"));
