@@ -494,9 +494,9 @@ namespace Palantir
             await context.Channel.SendMessageAsync(embed: embed);
         }
 
-        [Description("Activate  sprite slot combo.")]
+        [Description("Activate sprite slot combo.")]
         [Command("combo")]
-        public async Task Combo(CommandContext context, [Description("The id of the sprite (eg '15')")] params int[] sprites)
+        public async Task Combo(CommandContext context, [Description("The id of the sprites (eg '15 0 16 17')")] params int[] sprites)
         {
             string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
             List<SpriteProperty> inventory = BubbleWallet.GetInventory(login);
@@ -536,7 +536,7 @@ namespace Palantir
             BubbleWallet.SetInventory(inventory, login);
 
             DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
-            embed.Title = "Your epic sprite combo was activted!";
+            embed.Title = "Your epic sprite combo was activated!";
             embed.Color = DiscordColor.Magenta;
             await context.Channel.SendMessageAsync(embed: embed);
         }
