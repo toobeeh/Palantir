@@ -616,16 +616,20 @@ namespace Palantir
             List<IEnumerable<MemberEntity>> memberBatches = members.Batch(9).ToList();
             int unranked = 0;
 
-            DiscordEmoji down = DiscordEmoji.FromName(Program.Client, ":arrow_right:"); //await (await Program.Client.GetGuildAsync(779435254225698827)).GetEmojiAsync(790349869138968596);
+            DiscordEmoji down = await (await Program.Client.GetGuildAsync(779435254225698827)).GetEmojiAsync(790349869138968596);
             int page = 0;
             do
             {
                 try
                 {
                     await leaderboard.DeleteAllReactionsAsync();
-                    await leaderboard.CreateReactionAsync(DiscordEmoji.FromName(Program.Client, ":arrow_right:"));
                 }
-                catch(Exception e) { await context.Channel.SendMessageAsync(e.ToString()); }
+                catch(Exception e) {}
+                try
+                {
+                    await leaderboard.CreateReactionAsync(down);
+                }
+                catch (Exception e) { }
                 DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
                 embed.Title = "🔮  Leaderboard of " + context.Guild.Name;
                 embed.Color = DiscordColor.Magenta;
@@ -647,7 +651,7 @@ namespace Palantir
                 page++;
                 if (page >= memberBatches.Count) { page = 0; unranked = 0; }
             }
-            while (!(await interactivity.WaitForReactionAsync(reaction => reaction.Emoji == DiscordEmoji.FromName(Program.Client, ":arrow_right:"), context.User, TimeSpan.FromMinutes(2))).TimedOut);
+            while (!(await interactivity.WaitForReactionAsync(reaction => reaction.Emoji == down, context.User, TimeSpan.FromMinutes(2))).TimedOut);
             try { await leaderboard.DeleteAllReactionsAsync(); }
             catch { }
             await leaderboard.CreateReactionAsync(DiscordEmoji.FromName(Program.Client, ":no_entry_sign:"));
