@@ -1156,8 +1156,8 @@ namespace Palantir
 
             embed.Title = "About me";
             embed.AddField("`🤖` Hi!", "I'm Palantir - I integrate skribbl typo into Discord. \nMy main task is to sell sprites and show you information what's going on with typo.");
-            embed.AddField("`👪` ", "Currently **" + Program.Feanor.PalantirTethers.Count + " * * servers are using me to show skribbl lobbies.");
-            embed.AddField("`🗄️` ", "Overall **" + Program.Client.Guilds.Count + " * * servers invited me to join.");
+            embed.AddField("`👪` ", "Currently **" + Program.Feanor.PalantirTethers.Count + " ** servers are using me to show skribbl lobbies.");
+            embed.AddField("`🗄️` ", "Overall **" + Program.Client.Guilds.Count + " ** servers invited me to join.");
             PalantirDbContext cont = new PalantirDbContext();
             int members = cont.Members.Count();
             cont.Dispose();
