@@ -494,6 +494,54 @@ namespace Palantir
             await context.Channel.SendMessageAsync(embed: embed);
         }
 
+        [Description("Activate  sprite slot combo.")]
+        [Command("combo")]
+        public async Task Combo(CommandContext context, [Description("The id of the sprite (eg '15')")] params int[] sprites)
+        {
+            string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
+            List<SpriteProperty> inventory = BubbleWallet.GetInventory(login);
+            if (sprites.Any(sprite => sprite != 0 && !inventory.Any(item => item.ID == sprite)))
+            {
+                await Program.SendEmbed(context.Channel, "Gonna stop you right there.", "You don't own all sprites from this combo.");
+                return;
+            }
+
+            MemberEntity member = Program.Feanor.GetMemberByLogin(login);
+            PermissionFlag perm = new PermissionFlag((byte)member.Flag);
+
+            if (!perm.BotAdmin && (sprites.Length < 1 || sprites.Length > BubbleWallet.GetDrops(login) / 1000 + 1))
+            {
+                await Program.SendEmbed(context.Channel, "Gotcha!", "You can't use that many sprite slots!\nFor each thousand collected drops, you get one extra slot.");
+                return;
+            }
+
+            if (sprites.Where(sprite => BubbleWallet.GetSpriteByID(sprite).Special).Count() > 1)
+            {
+                await Program.SendEmbed(context.Channel, "Too overpowered!!", "Only one of your sprite slots may have a special sprite.");
+                return;
+            }
+
+            inventory.ForEach(item => {
+                item.Activated = false;
+                item.Slot = 0;
+            });
+            List<int> slots = sprites.ToList();
+            slots.ForEach(slot =>
+            {
+                if (slot > 0) {
+                    inventory.Find(item => item.ID == slot).Activated = true;
+                    inventory.Find(item => item.ID == slot).Slot = slot;
+                }
+            });
+            BubbleWallet.SetInventory(inventory, login);
+
+            DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
+            embed.Title = "Your epic sprite combo was activted!";
+            embed.Color = DiscordColor.Magenta;
+            await context.Channel.SendMessageAsync(embed: embed);
+        }
+
+
         [Description("Buy a sprite.")]
         [Command("buy")]
         public async Task Buy(CommandContext context, [Description("The id of the sprite (eg '15')")]int sprite)
