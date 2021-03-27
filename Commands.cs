@@ -335,23 +335,36 @@ namespace Palantir
                 }
                 embed.AddField("\u200b", "[View all Sprites](https://typo.rip/#sprites)\n[Try out the sprite](https://tobeh.host/Orthanc/sprites/cabin/?sprite=" + sprite + ")");
                 await context.Channel.SendMessageAsync(embed: embed);
-                return;
             }
-
-            DiscordEmbedBuilder list = new DiscordEmbedBuilder();
-            list.Color = DiscordColor.Magenta;
-            list.Title = "🔮 3 random Sprites";
-            list.Description = "Show one of the available Sprites with `>sprites [id]`";
-            List<int> randoms = new List<int>();
-            while(randoms.Count < 3)
+            else
             {
-                int random = 0;
-                while(randoms.Contains(random) || random == 0) random = (new Random()).Next(sprites.Count - 1) + 1;
-                randoms.Add(random);
-                list.AddField("**" + sprites[random].Name + "** ", "Costs: " + sprites[random].Cost + " Bubbles\nID: " + sprites[random].ID + (sprites[random].Special ? " :sparkles: " : ""),true);
-            };
-            list.AddField("\u200b", "[View all Sprites](https://typo.rip/#sprites)");
-            await context.Channel.SendMessageAsync(embed: list);
+                DiscordEmbedBuilder list = new DiscordEmbedBuilder();
+                list.Color = DiscordColor.Magenta;
+                list.Title = "🔮 Top 10 Popular Sprites";
+                list.Description = "Show one of the available Sprites with `>sprites [id]`";
+                // get all bought sprites
+                List<SpriteProperty> joined = new List<SpriteProperty>();
+                Program.Feanor.PalantirMembers.ForEach(member => joined.AddRange(BubbleWallet.GetInventory(member.UserLogin)));
+                // calculate scores
+                Dictionary<int, int[]> spriteScores = new Dictionary<int, int[]>();
+                BubbleWallet.GetAvailableSprites().ForEach(sprite =>
+                {
+                    int score = 0;
+                    int active = joined.Where(spriteprop => spriteprop.ID == sprite.ID && spriteprop.Activated).ToList().Count;
+                    int bought = joined.Where(spriteprop => spriteprop.ID == sprite.ID && !spriteprop.Activated).ToList().Count;
+                    score = active * 5 + bought;
+                    int[] value = { score, active, bought };
+                    spriteScores.Add(sprite.ID, value);
+                });
+                spriteScores = spriteScores.OrderBy(score => score.Value[0]).Slice(0, 10).ToDictionary();
+                spriteScores.ForEach(score =>
+                {
+                    Sprite spt = sprites.First(sprite => sprite.ID == score.Key);
+                    list.AddField("**#1: " + spt.Name + "** ", "ID: " + spt.ID + (spt.Special ? " :sparkles: " : "") + " - Active: " + score.Value[1] + ", Bought: " + score.Value[2], true);
+                });
+                list.AddField("\u200b", "[View all Sprites](https://typo.rip/#sprites)");
+                await context.Channel.SendMessageAsync(embed: list);
+            }
         }
 
         [Description("Get a overview of your inventory.")]
