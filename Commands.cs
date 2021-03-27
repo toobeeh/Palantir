@@ -344,7 +344,6 @@ namespace Palantir
                 list.Description = "Show one of the available Sprites with `>sprites [id]`";
                 // get all bought sprites
                 List<SpriteProperty> joined = new List<SpriteProperty>();
-                //Program.Feanor.PalantirMembers.ForEach(member => joined.AddRange(BubbleWallet.GetInventory(member.UserLogin)));
                 PalantirDbContext db = new PalantirDbContext();
                 db.Members.ForEach(member => {
                     string[] sprites = member.Sprites.Split(",");
@@ -636,10 +635,15 @@ namespace Palantir
 
         [Description("See who's got the most bubbles.")]
         [Command("Leaderboard")]
-        [Aliases("lbd","ldb")]
+        [Aliases("lbd", "ldb")]
         public async Task Leaderboard(CommandContext context, string mode = "bubbles")
         {
             Program.Feanor.ValidateGuildPalantir(context.Guild.Id.ToString());
+            if (!Program.Feanor.PalantirMembers.Any(member => member.Guilds.Any(guild => guild.GuildID == context.Guild.Id.ToString())))
+            {
+                await Program.SendEmbed(context.Channel, "Uh oh, caught you stalking!", "Connect to this discord server to use this command here.");
+                return;
+            }
             DiscordMessage leaderboard = await context.RespondAsync("`⏱️` Loading members of `" + context.Guild.Name + "`...");
             var interactivity = context.Client.GetInteractivity();
             List<MemberEntity> members = Program.Feanor.GetGuildMembers(context.Guild.Id.ToString()).OrderByDescending(m=>(mode == "drops" ? m.Drops : m.Bubbles)).Where(m=>m.Bubbles > 0).ToList();
