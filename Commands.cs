@@ -640,7 +640,8 @@ namespace Palantir
         {
             Program.Feanor.ValidateGuildPalantir(context.Guild.Id.ToString());
             Program.Feanor.UpdateMemberGuilds();
-            if (!Program.Feanor.PalantirMembers.Any(member => member.Guilds.Any(guild => guild.GuildID == context.Guild.Id.ToString())))
+            if (!Program.Feanor.PalantirMembers.FirstOrDefault(member => member.UserID == context.User.Id.ToString())
+                .Guilds.Any(guild => guild.GuildID == context.Guild.Id.ToString()))
             {
                 await Program.SendEmbed(context.Channel, "Uh oh, caught you stalking!", "Connect to this discord server to use this command here.");
                 return;
