@@ -321,7 +321,7 @@ namespace Palantir
                 Sprite s = BubbleWallet.GetSpriteByID(sprite);
                 DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
                 embed.Color = DiscordColor.Magenta;
-                embed.Title = s.Name + (s.EventDropID > 0 ? " (Event Sprite)" : "") ;
+                embed.Title = s.Name + (s.EventDropID > 0 ? " (Event Sprite)" : "");
                 embed.ImageUrl = s.URL;
                 if (s.EventDropID <= 0)
                 {
@@ -344,7 +344,18 @@ namespace Palantir
                 list.Description = "Show one of the available Sprites with `>sprites [id]`";
                 // get all bought sprites
                 List<SpriteProperty> joined = new List<SpriteProperty>();
-                Program.Feanor.PalantirMembers.ForEach(member => joined.AddRange(BubbleWallet.GetInventory(member.UserLogin)));
+                //Program.Feanor.PalantirMembers.ForEach(member => joined.AddRange(BubbleWallet.GetInventory(member.UserLogin)));
+                PalantirDbContext db = new PalantirDbContext();
+                db.Members.ForEach(member => {
+                    string[] sprites = member.Sprites.Split(",");
+                    sprites.ForEach(id =>
+                    {
+                        int indOfActive = id.ToString().LastIndexOf(".");
+                        id = id.Substring(indOfActive < 0 ? 0 : indOfActive + 1);
+                        joined.Add(new SpriteProperty("", "", 0, Convert.ToInt32(id), false, 0, indOfActive >= 0, 0));
+                    });
+                });            
+                db.Dispose();
                 // calculate scores
                 Dictionary<int, int[]> spriteScores = new Dictionary<int, int[]>();
                 BubbleWallet.GetAvailableSprites().ForEach(sprite =>
