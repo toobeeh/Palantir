@@ -352,13 +352,17 @@ namespace Palantir
                     {
                         int indOfActive = id.ToString().LastIndexOf(".");
                         id = id.Substring(indOfActive < 0 ? 0 : indOfActive + 1);
-                        joined.Add(new SpriteProperty("", "", 0, Convert.ToInt32(id), false, 0, indOfActive >= 0, 0));
+                        int spriteid = 0;
+                        if(Int32.TryParse(id, out spriteid))
+                        {
+                            joined.Add(new SpriteProperty("", "", 0, spriteid, false, 0, indOfActive >= 0, 0));
+                        }
                     });
                 });            
                 db.Dispose();
                 // calculate scores
                 Dictionary<int, int[]> spriteScores = new Dictionary<int, int[]>();
-                BubbleWallet.GetAvailableSprites().ForEach(sprite =>
+                sprites.ForEach(sprite =>
                 {
                     int score = 0;
                     int active = joined.Where(spriteprop => spriteprop.ID == sprite.ID && spriteprop.Activated).ToList().Count;
