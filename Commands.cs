@@ -918,7 +918,7 @@ namespace Palantir
                 Events.GetEventDrops(new List<EventEntity> { evt }).ForEach(e =>
                 {
                     List<SpritesEntity> sprites = Events.GetEventSprites(e.EventDropID);
-                    sprites.ForEach(sprite =>
+                    sprites.OrderBy(sprite => sprite.ID).ForEach(sprite =>
                     {
                         dropList += "➜ **" + sprite.Name + "** (#" + sprite.ID + ")\n" + BubbleWallet.GetEventCredit(login, e.EventDropID) + " / " + sprite.Cost + " " + e.Name + " Drops collected " + (inv.Any(s => s.ID == sprite.ID) ? ":package:" : "") + "\n\n";
                     });
