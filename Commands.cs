@@ -356,11 +356,11 @@ namespace Palantir
                     int[] value = { score, active, bought };
                     spriteScores.Add(sprite.ID, value);
                 });
-                spriteScores = spriteScores.OrderBy(score => score.Value[0]).Slice(0, 10).ToDictionary();
+                spriteScores = spriteScores.OrderByDescending(score => score.Value[0]).Slice(0, 10).ToDictionary();
                 spriteScores.ForEach(score =>
                 {
                     Sprite spt = sprites.First(sprite => sprite.ID == score.Key);
-                    list.AddField("**#1: " + spt.Name + "** ", "ID: " + spt.ID + (spt.Special ? " :sparkles: " : "") + " - Active: " + score.Value[1] + ", Bought: " + score.Value[2], true);
+                    list.AddField("**#1: " + spt.Name + "** ", "ID: " + spt.ID + (spt.Special ? " :sparkles: " : "") + " - Active: " + score.Value[1] + ", Bought: " + score.Value[2]);
                 });
                 list.AddField("\u200b", "[View all Sprites](https://typo.rip/#sprites)");
                 await context.Channel.SendMessageAsync(embed: list);
