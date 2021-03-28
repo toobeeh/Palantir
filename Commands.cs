@@ -952,14 +952,15 @@ namespace Palantir
 
                 string dropList = "";
                 List<SpritesEntity> eventsprites = new List<SpritesEntity>();
-                Events.GetEventDrops(new List<EventEntity> { evt }).ForEach(e =>
+                List<EventDropEntity> eventdrops = Events.GetEventDrops(new List<EventEntity> { evt });
+                eventdrops.ForEach(e =>
                 {
                     List<SpritesEntity> sprites = Events.GetEventSprites(e.EventDropID);
                     sprites.OrderBy(sprite => sprite.ID).ForEach(sprite => eventsprites.Add(sprite));
                 });
                 eventsprites.OrderBy(sprite => sprite.ID).ForEach(sprite =>
                 {
-                    dropList += "➜ **" + sprite.Name + "** (#" + sprite.ID + ")\n" + BubbleWallet.GetEventCredit(login, sprite.EventDropID) + " / " + sprite.Cost + " " + sprite.Name + " Drops collected " + (inv.Any(s => s.ID == sprite.ID) ? ":package:" : "") + "\n\n";
+                    dropList += "➜ **" + sprite.Name + "** (#" + sprite.ID + ")\n" + BubbleWallet.GetEventCredit(login, sprite.EventDropID) + " / " + sprite.Cost + " " + eventdrops.FirstOrDefault(drop => drop.EventDropID == sprite.EventDropID).Name + " Drops collected " + (inv.Any(s => s.ID == sprite.ID) ? ":package:" : "") + "\n\n";
                 });
                 embed.AddField("Event Sprites", dropList == "" ? "No drops added yet." : dropList);
                 embed.AddField("\u200b","Use `>sprite [id]` to see the event drop and sprite!");
