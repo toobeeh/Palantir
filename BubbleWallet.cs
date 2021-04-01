@@ -221,14 +221,14 @@ namespace Palantir
                 newsprite.ID = lobbyKey + lobbyPlayerID + slot.Slot.ToString();
                 context.OnlineSprites.Add(newsprite);
             }
-            OnlineSpritesEntity aprilf = new OnlineSpritesEntity();
-            aprilf.LobbyKey = lobbyKey;
-            aprilf.LobbyPlayerID = lobbyPlayerID;
-            aprilf.Date = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss");
-            aprilf.Sprite = (new Random()).Next(1,83).ToString();
-            aprilf.Slot = 1;
-            aprilf.ID = lobbyKey + lobbyPlayerID + "aprf";
-            context.OnlineSprites.Add(aprilf);
+            //OnlineSpritesEntity aprilf = new OnlineSpritesEntity();
+            //aprilf.LobbyKey = lobbyKey;
+            //aprilf.LobbyPlayerID = lobbyPlayerID;
+            //aprilf.Date = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss");
+            //aprilf.Sprite = (new Random()).Next(1,83).ToString();
+            //aprilf.Slot = 1;
+            //aprilf.ID = lobbyKey + lobbyPlayerID + "aprf";
+            //context.OnlineSprites.Add(aprilf);
             try
             {
                 context.SaveChanges();
