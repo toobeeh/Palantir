@@ -1000,11 +1000,6 @@ namespace Palantir
                 await Program.SendEmbed(context.Channel, "LOL!", "Your'e tryna steal some stuff, huh?");
                 return;
             }
-            if (amount < 3)
-            {
-                await Program.SendEmbed(context.Channel, "That's all you got?", "The minimal gift amount is 3 event drops.");
-                return;
-            }
             List<Sprite> sprites = BubbleWallet.GetAvailableSprites();
             if(!sprites.Any(s=>s.ID == eventSpriteID && s.EventDropID != 0))
             {
@@ -1014,6 +1009,11 @@ namespace Palantir
             int eventDropID = sprites.FirstOrDefault(s => s.ID == eventSpriteID).EventDropID;
             string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
             int credit = BubbleWallet.GetRemainingEventDrops(login, eventDropID);
+            if (amount < 3 && credit >= 3)
+            {
+                await Program.SendEmbed(context.Channel, "That's all you got?", "With a credit of more than 3 drops, the minimal gift amount is 3 event drops.");
+                return;
+            }
             List<SpriteProperty> inv = BubbleWallet.GetInventory(login);
 
             List<EventDropEntity> drops = Events.GetEventDrops();
@@ -1023,7 +1023,7 @@ namespace Palantir
                 await Program.SendEmbed(context.Channel, "You can't trick me!", "Your event credit is too few. You have only " + credit + " " + name + " left.");
                 return;
             }
-            int lost = (new Random()).Next(0, amount / 3 + 1);
+            int lost = amount >= 3 ? (new Random()).Next(0, amount / 3 + 1) : (new Random()).Next(0, 2);
             string targetLogin = BubbleWallet.GetLoginOfMember(target.Id.ToString());
 
             if(BubbleWallet.ChangeEventDropCredit(targetLogin, eventDropID, amount - lost))
