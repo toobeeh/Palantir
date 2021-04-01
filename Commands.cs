@@ -1009,9 +1009,10 @@ namespace Palantir
             int eventDropID = sprites.FirstOrDefault(s => s.ID == eventSpriteID).EventDropID;
             string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
             int credit = BubbleWallet.GetRemainingEventDrops(login, eventDropID);
-            if (amount < 3 && credit >= 3)
+            int total = BubbleWallet.GetEventCredit(login, eventDropID);
+            if (amount < 3 && total >= 3)
             {
-                await Program.SendEmbed(context.Channel, "That's all you got?", "With a credit of more than 3 drops, the minimal gift amount is 3 event drops.");
+                await Program.SendEmbed(context.Channel, "That's all you got?", "With more than 3 drops collected, the minimal gift amount is 3 event drops.");
                 return;
             }
             List<SpriteProperty> inv = BubbleWallet.GetInventory(login);
