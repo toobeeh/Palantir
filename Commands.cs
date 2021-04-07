@@ -371,7 +371,7 @@ namespace Palantir
                     int score = 0;
                     int active = joined.Where(spriteprop => spriteprop.ID == sprite.ID && spriteprop.Activated).ToList().Count;
                     int bought = joined.Where(spriteprop => spriteprop.ID == sprite.ID && !spriteprop.Activated).ToList().Count;
-                    score = active * 5 + bought;
+                    score = active * 10 + bought;
                     int[] value = { score, active, bought };
                     spriteScores.Add(sprite.ID, value);
                 });
@@ -443,6 +443,7 @@ namespace Palantir
             if (perm.BotAdmin) desc += "`✔️ Verified cool guy aka Admin.`\n";
             if (perm.Moderator) desc += "`🛠️ Palantir Moderator.`\n";
             if (perm.CloudUnlimited) desc += "`📦 Unlimited cloud storage.`\n";
+            if (BubbleWallet.IsEarlyUser(login)) desc += "💎 Early User.`\n";
 
             active.OrderBy(slot => slot.Slot).ForEach(sprite =>
             {

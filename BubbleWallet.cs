@@ -183,6 +183,13 @@ namespace Palantir
             return ParseSpriteInventory(inventoryString);
         }
 
+        public static bool IsEarlyUser(string login)
+        {
+            PalantirDbContext context = new PalantirDbContext();
+            bool exists = context.BubbleTraces.Any(trace => trace.Date == "31/08/2020" && trace.Login == login);
+            context.Dispose();
+            return exists;
+        }
         public static string GetLoginOfMember(string id)
         {
             PalantirDbContext context = new PalantirDbContext();
