@@ -323,6 +323,10 @@ namespace Palantir
                 embed.Color = DiscordColor.Magenta;
                 embed.Title = s.Name + (s.EventDropID > 0 ? " (Event Sprite)" : "");
                 embed.ImageUrl = s.URL;
+                if (!(s.Artist is null) && s.Artist != "")
+                {
+                    embed.Description = "**Artist:** " + s.Artist + " \n";
+                }
                 if (s.EventDropID <= 0)
                 {
                     embed.Description = "**Costs:** " + s.Cost + " Bubbles\n\n**ID**: " + s.ID + (s.Special ? " :sparkles: " : "");
@@ -354,7 +358,7 @@ namespace Palantir
                         int spriteid = 0;
                         if(Int32.TryParse(id, out spriteid))
                         {
-                            joined.Add(new SpriteProperty("", "", 0, spriteid, false, 0, indOfActive >= 0, 0));
+                            joined.Add(new SpriteProperty("", "", 0, spriteid, false, 0, "", indOfActive >= 0, 0));
                         }
                     });
                 });            
@@ -620,7 +624,7 @@ namespace Palantir
                 }
             }
 
-            inventory.Add(new SpriteProperty(target.Name, target.URL, target.Cost, target.ID, target.Special, target.EventDropID, false, -1));
+            inventory.Add(new SpriteProperty(target.Name, target.URL, target.Cost, target.ID, target.Special, target.EventDropID, target.Artist, false, -1));
             BubbleWallet.SetInventory(inventory, login);
 
             DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
@@ -1038,7 +1042,7 @@ namespace Palantir
 
         [Description("Add a seasonal sprite to an event")]
         [Command("eventsprite")]
-        public async Task CreateEventSprite(CommandContext context, [Description("The id of the event drop for the sprite")] int eventDropID, [Description("The name of the sprite")] string name, [Description("The event drop price")] int price, [Description("Any string if the sprite should replace the avatar")]string special = "")
+        public async Task CreateEventSprite(CommandContext context, [Description("The id of the event drop for the sprite")] int eventDropID, [Description("The name of the sprite")] string name, [Description("The event drop price")] int price, [Description("Any string except '-' if the sprite should replace the avatar")]string special = "", [Description("Any string except '-' to set the sprite artist")]string artist = "")
         {
             PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
             if (!perm.BotAdmin)
@@ -1079,7 +1083,10 @@ namespace Palantir
                 "https://tobeh.host/eventsprites/evd" + eventDropID + name + ".gif", 
                 price, 
                 dbcontext.Sprites.Where(s => s.ID < 1000).Max(s => s.ID) + 1, 
-                special != "", eventDropID);
+                special != "-" && special != "", 
+                eventDropID, 
+                artist == "" || artist == "-" ? "" : artist 
+            );
             BubbleWallet.AddSprite(eventsprite);
 
             DiscordEmbedBuilder embed = new DiscordEmbedBuilder();

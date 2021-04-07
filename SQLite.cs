@@ -62,6 +62,7 @@ namespace Palantir
         public int Cost { get; set; }
         public bool Special { get; set; }
         public int EventDropID { get; set; }
+        public string Artist { get; set; }
     }
     public class ReportEntity
     {

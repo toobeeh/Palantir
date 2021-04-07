@@ -90,7 +90,7 @@ namespace Palantir
                     try
                     {
                         int id;
-                        if (int.TryParse(i,out id) && id == s.ID) spriteInventory.Add(new SpriteProperty(s.Name, s.URL, s.Cost, s.ID, s.Special, s.EventDropID, activated, slot));
+                        if (int.TryParse(i,out id) && id == s.ID) spriteInventory.Add(new SpriteProperty(s.Name, s.URL, s.Cost, s.ID, s.Special, s.EventDropID, s.Artist, activated, slot));
                     }
                     catch(Exception e)
                     {
@@ -126,7 +126,7 @@ namespace Palantir
         {
             List<Sprite> sprites = new List<Sprite>();
             PalantirDbContext context = new PalantirDbContext();
-            context.Sprites.ToList().ForEach(s => sprites.Add(new Sprite(s.Name, s.URL, s.Cost, s.ID, s.Special, s.EventDropID)));
+            context.Sprites.ToList().ForEach(s => sprites.Add(new Sprite(s.Name, s.URL, s.Cost, s.ID, s.Special, s.EventDropID, s.Artist)));
             context.SaveChanges();
             context.Dispose();
             return sprites;
@@ -301,7 +301,8 @@ namespace Palantir
         public int Cost;
         public bool Special;
         public int EventDropID;
-        public Sprite(string name, string url, int cost, int id, bool special, int eventDropID)
+        public string Artist;
+        public Sprite(string name, string url, int cost, int id, bool special, int eventDropID, string artist)
         {
             Name = name;
             URL = url;
@@ -309,6 +310,7 @@ namespace Palantir
             ID = id;
             Special = special;
             EventDropID = eventDropID;
+            Artist = artist;
         }
     }
 
@@ -316,7 +318,7 @@ namespace Palantir
     {
         public bool Activated;
         public int Slot;
-        public SpriteProperty(string name, string url, int cost, int id, bool special, int eventID, bool activated, int slot) : base(name,url,cost,id, special, eventID)
+        public SpriteProperty(string name, string url, int cost, int id, bool special, int eventdropID, string artist, bool activated, int slot) : base(name,url,cost,id, special, eventdropID, artist)
         {
             Activated = activated;
             Slot = activated ? slot : -1;
