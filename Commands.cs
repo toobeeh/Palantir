@@ -323,7 +323,7 @@ namespace Palantir
                 embed.Color = DiscordColor.Magenta;
                 embed.Title = s.Name + (s.EventDropID > 0 ? " (Event Sprite)" : "");
                 embed.ImageUrl = s.URL;
-                if (!(s.Artist is null) && s.Artist != "")
+                if (s.Artist != "")
                 {
                     embed.Description = "**Artist:** " + s.Artist + " \n";
                 }
