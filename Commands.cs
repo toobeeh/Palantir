@@ -323,18 +323,19 @@ namespace Palantir
                 embed.Color = DiscordColor.Magenta;
                 embed.Title = s.Name + (s.EventDropID > 0 ? " (Event Sprite)" : "");
                 embed.ImageUrl = s.URL;
+                embed.Description = "";
                 if (s.Artist != "")
                 {
-                    embed.Description = "**Artist:** " + s.Artist + " \n";
+                    embed.Description += "**Artist:** " + s.Artist + " \n";
                 }
                 if (s.EventDropID <= 0)
                 {
-                    embed.Description = "**Costs:** " + s.Cost + " Bubbles\n\n**ID**: " + s.ID + (s.Special ? " :sparkles: " : "");
+                    embed.Description += "**Costs:** " + s.Cost + " Bubbles\n\n**ID**: " + s.ID + (s.Special ? " :sparkles: " : "");
                 }
                 else
                 {
                     EventDropEntity drop = Events.GetEventDrops().FirstOrDefault(d => d.EventDropID == s.EventDropID);
-                    embed.Description = "**Event Drop Price:** " + s.Cost + " " + drop.Name + "\n\n**ID**: " + s.ID + (s.Special ? " :sparkles: " : "");
+                    embed.Description += "**Event Drop Price:** " + s.Cost + " " + drop.Name + "\n\n**ID**: " + s.ID + (s.Special ? " :sparkles: " : "");
                     embed.WithThumbnail(drop.URL);
                 }
                 embed.AddField("\u200b", "[View all Sprites](https://typo.rip/#sprites)\n[Try out the sprite](https://tobeh.host/Orthanc/sprites/cabin/?sprite=" + sprite + ")");
