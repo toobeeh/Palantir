@@ -813,7 +813,7 @@ namespace Palantir
         public async Task CreateEvent(CommandContext context, [Description("The event name")] string name, [Description("The duration of the event in days")]int duration, [Description("The count of days when the event will start")]int validInDays, [Description("The event description")]params string[] description)
         {
             PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
-            if (!perm.BotAdmin)
+            if (!perm.Moderator || !perm.BotAdmin)
             {
                 await Program.SendEmbed(context.Channel, "Ts ts...", "This command is only available for higher beings.\n||Some call them Bot-Admins ;))||");
                 return;
@@ -857,7 +857,7 @@ namespace Palantir
         public async Task CreateEventDrop(CommandContext context, [Description("The id of the event for the event drop")] int eventID, [Description("The name of the event drop")] string name)
         {
             PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
-            if (!perm.BotAdmin)
+            if (!perm.Moderator || !perm.BotAdmin)
             {
                 await Program.SendEmbed(context.Channel, "Ts ts...", "This command is only available for higher beings.\n||Some call them Bot-Admins ;))||");
                 return;
@@ -1047,7 +1047,7 @@ namespace Palantir
         public async Task CreateEventSprite(CommandContext context, [Description("The id of the event drop for the sprite")] int eventDropID, [Description("The name of the sprite")] string name, [Description("The event drop price")] int price, [Description("Any string except '-' if the sprite should replace the avatar")]string special = "", [Description("Any string except '-' to set the sprite artist")]string artist = "")
         {
             PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
-            if (!perm.BotAdmin)
+            if (!perm.Moderator || !perm.BotAdmin)
             {
                 await Program.SendEmbed(context.Channel, "Ts ts...", "This command is only available for higher beings.\n||Some call them Bot-Admins ;))||");
                 return;
@@ -1096,6 +1096,59 @@ namespace Palantir
             embed.Color = DiscordColor.Magenta;
             embed.WithDescription("ID: " + eventsprite.ID + "\nYou can buy and view the sprite with the usual comands.");
             embed.WithThumbnail(eventsprite.URL);
+
+            dbcontext.Dispose();
+            await context.Channel.SendMessageAsync(embed: embed);
+        }
+
+        [Description("Add a sprite")]
+        [Command("addsprite")]
+        public async Task AddSprite(CommandContext context, [Description("The name of the sprite")] string name, [Description("The bubble price")] int price, [Description("Any string except '-' if the sprite should replace the avatar")]string special = "", [Description("Any string except '-' to set the sprite artist")]string artist = "")
+        {
+            PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
+            if (!perm.Moderator || !perm.BotAdmin)
+            {
+                await Program.SendEmbed(context.Channel, "Ts ts...", "This command is only available for higher beings.\n||Some call them Bot-Admins ;))||");
+                return;
+            }
+
+            PalantirDbContext dbcontext = new PalantirDbContext();
+            if (context.Message.Attachments.Count <= 0 || !context.Message.Attachments[0].FileName.EndsWith(".gif"))
+            {
+                await Program.SendEmbed(context.Channel, "Hmm...", "There's no valid gif attached.");
+                return;
+            }
+            if (price < 1000)
+            {
+                await Program.SendEmbed(context.Channel, "Hmm...", "We don't gift sprites. The price is too low.");
+                return;
+            }
+            if (String.IsNullOrWhiteSpace(name))
+            {
+                await Program.SendEmbed(context.Channel, "Hmm...", "Something went wrong with the name.");
+                return;
+            }
+
+            // download sprite
+            System.Net.WebClient client = new System.Net.WebClient();
+            client.DownloadFile(context.Message.Attachments[0].Url, "/home/pi/Webroot/regsprites/spt" + name + ".gif");
+
+            Sprite sprite = new Sprite(
+                name.Replace("_", " "),
+                "https://tobeh.host/regsprites/spt" + name + ".gif",
+                price,
+                dbcontext.Sprites.Where(s => s.ID < 1000).Max(s => s.ID) + 1,
+                special != "-" && special != "",
+                0,
+                artist == "" || artist == "-" ? "" : artist
+            );
+            BubbleWallet.AddSprite(sprite);
+
+            DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
+            embed.Title = ":champagne:  Sprite **" + name + "** with ID " + sprite.ID + " was added!";
+            embed.Color = DiscordColor.Magenta;
+            embed.WithDescription("ID: " + sprite.ID + "\nYou can buy and view the sprite with the usual comands.");
+            embed.WithThumbnail(sprite.URL);
 
             dbcontext.Dispose();
             await context.Channel.SendMessageAsync(embed: embed);
