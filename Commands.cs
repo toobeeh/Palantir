@@ -1140,7 +1140,7 @@ namespace Palantir
                 dbcontext.Sprites.Where(s => s.ID < 1000).Max(s => s.ID) + 1,
                 special != "-" && special != "",
                 0,
-                artist == "" || artist == "-" ? "" : artist
+                (artist == "" || artist == "-") ? "" : artist
             );
             BubbleWallet.AddSprite(sprite);
 

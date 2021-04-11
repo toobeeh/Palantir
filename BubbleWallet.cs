@@ -146,6 +146,7 @@ namespace Palantir
             s.URL = sprite.URL;
             s.EventDropID = sprite.EventDropID;
             s.Cost = sprite.Cost;
+            s.Artist = sprite.Artist;
             context.Sprites.Add(s);
             context.SaveChanges();
             context.Dispose();
