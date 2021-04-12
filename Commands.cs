@@ -1078,16 +1078,16 @@ namespace Palantir
 
             // download sprite
             System.Net.WebClient client = new System.Net.WebClient();
-            client.DownloadFile(context.Message.Attachments[0].Url, "/home/pi/Webroot/eventsprites/evd" + eventDropID + name + ".gif");
+            client.DownloadFile(context.Message.Attachments[0].Url, "/home/pi/Webroot/eventsprites/evd" + eventDropID + name.Replace("'", "-") + ".gif");
 
             Sprite eventsprite = new Sprite(
                 name.Replace("_"," "), 
-                "https://tobeh.host/eventsprites/evd" + eventDropID + name + ".gif", 
+                "https://tobeh.host/eventsprites/evd" + eventDropID + name.Replace("'", "-") + ".gif", 
                 price, 
                 dbcontext.Sprites.Where(s => s.ID < 1000).Max(s => s.ID) + 1, 
                 special != "-" && special != "", 
                 eventDropID, 
-                artist == "" || artist == "-" ? "" : artist 
+                artist == "" || artist == "-" ? null : artist 
             );
             BubbleWallet.AddSprite(eventsprite);
 
@@ -1131,16 +1131,16 @@ namespace Palantir
 
             // download sprite
             System.Net.WebClient client = new System.Net.WebClient();
-            client.DownloadFile(context.Message.Attachments[0].Url, "/home/pi/Webroot/regsprites/spt" + name + ".gif");
+            client.DownloadFile(context.Message.Attachments[0].Url, "/home/pi/Webroot/regsprites/spt" + name.Replace("'", "-") + ".gif");
 
             Sprite sprite = new Sprite(
                 name.Replace("_", " "),
-                "https://tobeh.host/regsprites/spt" + name + ".gif",
+                "https://tobeh.host/regsprites/spt" + name.Replace("'", "-") + ".gif",
                 price,
                 dbcontext.Sprites.Where(s => s.ID < 1000).Max(s => s.ID) + 1,
                 special != "-" && special != "",
                 0,
-                (artist == "" || artist == "-") ? "" : artist
+                (artist == "" || artist == "-") ? null : artist
             );
             BubbleWallet.AddSprite(sprite);
 

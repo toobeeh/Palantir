@@ -287,8 +287,12 @@ namespace Palantir
                     try
                     {
                         json = Database.Lobbies.FirstOrDefault(lobbyEntity => lobbyEntity.LobbyID == l.ID).Lobby;
-                        d = JsonConvert.DeserializeObject<ProvidedLobby>(json).Description;
+                        ProvidedLobby lobbyraw = JsonConvert.DeserializeObject<ProvidedLobby>(json);
+                        d = lobbyraw.Description;
                         if (d.Length > 100) d = d.Substring(0, 100);
+                        if (d.Contains("#nojoin")) { l.Link = "Closed Private Game"; }
+                        if (lobbyraw.Restriction == "restricted") { l.Link = "Restricted Private Game"; }
+                        else if (lobbyraw.Restriction != "unrestricted" && PalantirEndpoint.GuildID != lobbyraw.Restriction) { l.Link = "Server-Restricted Private Game"; }
                     }
                     catch (Exception e) { 
                         //Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > Cant parse description: " + json);
@@ -296,7 +300,6 @@ namespace Palantir
                     };
 
                     if (d != "") lobbyDescription = "> `" + DSharpPlus.Formatter.Sanitize(d).Replace("`","").Replace("\n","") + "`\n";
-                    if (d.Contains("#nojoin")) l.Link = "Closed Private Game";
                 }
 
                 // set id to index
