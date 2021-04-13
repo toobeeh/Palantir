@@ -49,8 +49,8 @@ namespace Palantir
             Console.WriteLine("Palantir ready. Do not uncover it.");
             Console.WriteLine("Stored guilds:");
             Feanor.PalantirTethers.ForEach((t) => { Console.WriteLine("- " + t.PalantirEndpoint.GuildID + " / " + t.PalantirEndpoint.GuildName); });
-            Console.WriteLine("Stored members:");
-            Feanor.PalantirMembers.ForEach((m) => { Console.WriteLine("- " + m.UserName); });
+            //Console.WriteLine("Stored members:");
+            //Feanor.PalantirMembers.ForEach((m) => { Console.WriteLine("- " + m.UserName); });
             Feanor.ActivatePalantiri();
             Console.WriteLine("Palantir activated. Fool of a Took!");
 

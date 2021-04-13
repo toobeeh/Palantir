@@ -49,11 +49,16 @@ namespace Palantir
 
             // remove palantir from db
             PalantirDbContext context = new PalantirDbContext();
-            PalantirEntity e = new PalantirEntity();
-            e.Token = guild.ObserveToken;
+            PalantirEntity e = context.Palantiri.FirstOrDefault(ptr => ptr.Token == guild.ObserveToken);
             context.Palantiri.Remove(e);
-            context.SaveChanges();
+            try
+            {
+                context.SaveChanges();
+            }
+            catch(Exception ex) { Console.WriteLine(ex.ToString()); }
             context.Dispose();
+            // restart string op = "sudo service palantir restart".Bash();
+            //Environment.Exit(0);
             UpdateMemberGuilds();
         }
 
