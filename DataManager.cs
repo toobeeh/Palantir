@@ -59,7 +59,7 @@ namespace Palantir
             context.Dispose();
             // restart string op = "sudo service palantir restart".Bash();
             //Environment.Exit(0);
-            UpdateMemberGuilds();
+            //UpdateMemberGuilds();
         }
 
         public void UpdatePalantirSettings(Tether tether)

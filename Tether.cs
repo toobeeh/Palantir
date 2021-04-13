@@ -108,6 +108,7 @@ namespace Palantir
 
         private async void RemoveTether()
         {
+            Console.WriteLine("remove " + PalantirEndpoint.GuildName);
             try
             {
                 await (await Program.Client.GetChannelAsync(Convert.ToUInt64(PalantirEndpoint.ChannelID))).SendMessageAsync("The observed message couldn't be found. \nSet a channel using `>observe #channel`!");
