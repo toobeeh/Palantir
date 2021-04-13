@@ -1118,7 +1118,7 @@ namespace Palantir
                 await Program.SendEmbed(context.Channel, "Hmm...", "There's no valid gif attached.");
                 return;
             }
-            if (price < 1000)
+            if (price < 500)
             {
                 await Program.SendEmbed(context.Channel, "Hmm...", "We don't gift sprites. The price is too low.");
                 return;
