@@ -200,6 +200,18 @@ namespace Palantir
                         return;
                     }
                 }
+                catch (DSharpPlus.Exceptions.UnauthorizedException e) // catch Discord api axceptions
+                {
+                    notFound++;
+                    if (notFound > maxErrorCount)
+                    {
+                        Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")
+                            + " > Target Message couldnt be edited. Not found incremented to " + notFound + " / " + maxErrorCount
+                            + " Error: " + e.ToString());
+                        RemoveTether();
+                        return;
+                    }
+                }
                 catch (Exception e) // catch other exceptions
                 {
                     int line = new StackTrace(e, true).GetFrame(0).GetFileLineNumber();
