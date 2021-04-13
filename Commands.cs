@@ -324,7 +324,7 @@ namespace Palantir
                 embed.Title = s.Name + (s.EventDropID > 0 ? " (Event Sprite)" : "");
                 embed.ImageUrl = s.URL;
                 embed.Description = "";
-                if (string.IsNullOrEmpty(s.Artist))
+                if (!string.IsNullOrEmpty(s.Artist))
                 {
                     embed.Description += "**Artist:** " + s.Artist + " \n";
                 }
