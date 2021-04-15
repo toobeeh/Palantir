@@ -141,8 +141,7 @@ namespace Palantir
             }
             catch(Exception e)
             {
-                // usual error when sd card was too slow for some reason, seems not to appear on faster sdcards
-                Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > Exception: " + e.ToString() + "at Channel:" + PalantirEndpoint.ChannelID + ", Msg: "+PalantirEndpoint.MessageID + ",Client:" + Program.Client.CurrentUser.Username);
+                Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > Exception: " + e.ToString() + "at Channel:" + PalantirEndpoint.ChannelID + ", Msg: "+PalantirEndpoint.MessageID + ", Guild:" + PalantirEndpoint.GuildName);
                 //RemoveTether();
                 return;
             }
