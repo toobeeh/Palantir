@@ -155,7 +155,7 @@ namespace Palantir
                 {
                     // try to build lobby message
                     string content = BuildLobbyContent();
-                        
+                    Console.WriteLine("> Building Content for " + PalantirEndpoint.GuildName);    
                     DiscordMessage split;
                     try
                     {
@@ -209,7 +209,7 @@ namespace Palantir
                         Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")
                             + " > Target Message couldnt be edited. Not found incremented to " + notFound + " / " + maxErrorCount
                             + " Error: " + e.ToString());
-                        RemoveTether();
+                        //RemoveTether();
                         return;
                     }
                 }
@@ -362,7 +362,7 @@ namespace Palantir
                             }
                             catch (Exception e)
                             {
-                                Console.WriteLine("Unhandled error setting Sprite for login " + login + " : \n" + e.ToString());
+                                Console.WriteLine("Unhandled error setting Sprite for login " + login);
                             }
                         }
                             

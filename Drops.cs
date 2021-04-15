@@ -84,7 +84,6 @@ namespace Palantir
                 Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > Next drop in " + sleep 
                     + " ms at " + DateTime.Now.AddMilliseconds(sleep).ToString("HH:mm:ss")
                     + " for EventDropID #" + drop.EventDropID);
-                if (Events.GetEvents().Count > 0) sleep /= 2;
                 Thread.Sleep(sleep);
             }
         }
