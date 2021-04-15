@@ -23,7 +23,7 @@ namespace Palantir
         static InteractivityExtension Interactivity;
         static async Task Main(string[] args)
         {
-            File.WriteAllText("/home/pi/palantirOutput.log", String.Empty);
+            //File.WriteAllText("/home/pi/palantirOutput.log", String.Empty);
             Console.WriteLine("Huh, it's " + DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " - lemme sleep!!\n");
             Console.WriteLine("Initializing Palantir\n...");
 
