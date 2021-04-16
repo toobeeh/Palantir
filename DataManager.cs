@@ -207,10 +207,11 @@ namespace Palantir
         public async Task<int> UpdatePatrons()
         {
             List<string> patrons = new List<string>();
-            // collect ids of patron members
-            foreach (DiscordMember member in (await Program.Client.GetGuildAsync(779435254225698827)).Members.Values)
+            // collect ids of patron members 832744566905241610 779435254225698827
+            DiscordGuild typotestground = await Program.Client.GetGuildAsync(779435254225698827);
+            foreach (ulong member in typotestground.Members.Keys)
             {
-                if (member.Roles.Any(role => role.Id == 832744566905241610)) patrons.Add(member.Id.ToString());
+                if ((await typotestground.GetMemberAsync(member)).Roles.Any(role => role.Id == 832744566905241610)) patrons.Add(member.ToString());
             };
             PalantirDbContext db = new PalantirDbContext();
             // iterate through palantir members and set flags
