@@ -1233,6 +1233,15 @@ namespace Palantir
             await Program.SendEmbed(context.Channel, sqlDelimited, res != "" ? res : "Error.");
         }
 
+        [Description("Refresh the patrons and show how many there are currently")]
+        [Command("patrons")]
+        public async Task Ptrons(CommandContext context)
+        {
+            DateTime r = DateTime.Now;
+            int ptr = await Program.Feanor.UpdatePatrons();
+            await Program.SendEmbed(context.Channel, ptr + " Patrons", DateTime.Now.Ticks - r.Ticks + " passed");
+        }
+
         [Description("Gets ping statistics.")]
         [Command("ping")]
         public async Task Ping(CommandContext context)

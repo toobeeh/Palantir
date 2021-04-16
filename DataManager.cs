@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.IO;
 using DSharpPlus.Entities;
+using System.Threading.Tasks;
 
 namespace Palantir
 {
@@ -109,12 +110,10 @@ namespace Palantir
                     memberEntity.Member = JsonConvert.SerializeObject(member);
                     Console.WriteLine("Member " + member.UserName + " has no verified guilds.");
                 }
-
             }
             context.SaveChanges();
             context.Dispose();
         }
-
         public void SavePalantiri(ObservedGuild guild)
         {
             bool newGuild = true;
@@ -204,6 +203,26 @@ namespace Palantir
             member.Flag = flag;
             context.SaveChanges();
             context.Dispose();
+        }
+        public async Task<int> UpdatePatrons()
+        {
+            List<string> patrons = new List<string>();
+            // collect ids of patron members
+            foreach (DiscordMember member in (await Program.Client.GetGuildAsync(779435254225698827)).Members.Values)
+            {
+                if (member.Roles.Any(role => role.Id == 832744566905241610)) patrons.Add(member.Id.ToString());
+            };
+            PalantirDbContext db = new PalantirDbContext();
+            // iterate through palantir members and set flags
+            await db.Members.ForEachAsync(member =>
+            {
+                PermissionFlag flag = new PermissionFlag((byte)member.Flag);
+                flag.Patron = patrons.Any(patron => member.Member.Contains(patron));
+                member.Flag = flag.CalculateFlag();
+            });
+            db.SaveChanges();
+            db.Dispose();
+            return patrons.Count;
         }
 
         public void ActivatePalantiri()

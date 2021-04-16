@@ -165,18 +165,19 @@ namespace Palantir
     {
         // Flag schema:
         // M... Mod - A... Admin - F... Farming - T... Full Typo Cloud Access
-        // F =  T M A F
-        // 0 =  0 0 0 0
-        // 1 =  0 0 0 1
-        // 2 =  0 0 1 0
-        // 4 =  0 1 0 0
-        // 8 =  1 0 0 0
-        // ...
+        // F =  P T M A F
+        // 0 =  0 0 0 0 0
+        // 1 =  0 0 0 0 1
+        // 2 =  0 0 0 1 0
+        // 4 =  0 0 1 0 0
+        // 8 =  0 1 0 0 0
+        // 16 =  1 0 0 0 0
 
         public bool BotAdmin { get; set; }
         public bool BubbleFarming { get; set; }
         public bool Moderator { get; set; }
         public bool CloudUnlimited { get; set; }
+        public bool Patron { get; set; }
         public PermissionFlag(byte flag)
         {
             BitArray flags = new BitArray(new byte[] { flag });
@@ -184,6 +185,16 @@ namespace Palantir
             BotAdmin = flags[1];
             Moderator = flags[2];
             CloudUnlimited = flags[3];
+            Patron = flags[4];
+        }
+
+        public int CalculateFlag()
+        {
+            return (BubbleFarming ? 1 : 0)
+                + (BotAdmin ? 2 : 0)
+                + (Moderator ? 4 : 0)
+                + (CloudUnlimited ? 8 : 0)
+                + (Patron ? 16 : 0);
         }
     }
 

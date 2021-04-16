@@ -103,6 +103,7 @@ namespace Palantir
 
         public void StopDataflow()
         {
+            Console.WriteLine("Stopped Dataflow for " + PalantirEndpoint.GuildName);
             abort = true;
         }
 
@@ -153,8 +154,7 @@ namespace Palantir
                 try
                 {
                     // try to build lobby message
-                    string content = BuildLobbyContent();
-                    Console.WriteLine("> Building Content for " + PalantirEndpoint.GuildName);    
+                    string content = BuildLobbyContent();   
                     DiscordMessage split;
                     try
                     {
