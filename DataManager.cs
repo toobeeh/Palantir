@@ -14,7 +14,7 @@ namespace Palantir
     {
         public List<Tether> PalantirTethers;
         public List<Member> PalantirMembers;
-        public Dictionary<string, string> PatronEmojis;
+        public Dictionary<string, string> PatronEmojis = new Dictionary<string, string>();
 
         public DataManager()
         {
@@ -25,7 +25,6 @@ namespace Palantir
         public void LoadConnections()
         {
             PalantirDbContext Database = new PalantirDbContext();
-            PatronEmojis = new Dictionary<string, string>();
             PalantirTethers = new List<Tether>();
             foreach (PalantirEntity palantirEntity in Database.Palantiri)
             {
