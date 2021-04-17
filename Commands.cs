@@ -444,7 +444,7 @@ namespace Palantir
             if (perm.Moderator) desc += "`🛠️ Palantir Moderator.`\n";
             if (perm.CloudUnlimited || perm.Patron) desc += "`📦 Unlimited cloud storage.`\n";
             if (BubbleWallet.IsEarlyUser(login)) desc += "`💎 Early User.`\n";
-            if (perm.Patron) desc += "🎖️ Patron 💖`\n";
+            if (perm.Patron) desc += "`🎖️ Patron 💖`\n";
 
             active.OrderBy(slot => slot.Slot).ForEach(sprite =>
             {
