@@ -55,6 +55,7 @@ namespace Palantir.Tracer
             int count = dbcontext.Status.Count();
             dbcontext.Dispose();
             await Program.Client.UpdateStatusAsync(new DiscordActivity(" " + count + " ppl on skribbl.io", ActivityType.Watching));
+            await Program.Feanor.UpdatePatrons();
         }
     }
 

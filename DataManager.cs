@@ -14,6 +14,7 @@ namespace Palantir
     {
         public List<Tether> PalantirTethers;
         public List<Member> PalantirMembers;
+        public Dictionary<string, string> PatronEmojis;
 
         public DataManager()
         {
@@ -24,6 +25,7 @@ namespace Palantir
         public void LoadConnections()
         {
             PalantirDbContext Database = new PalantirDbContext();
+            PatronEmojis = new Dictionary<string, string>();
             PalantirTethers = new List<Tether>();
             foreach (PalantirEntity palantirEntity in Database.Palantiri)
             {
@@ -207,6 +209,7 @@ namespace Palantir
         public async Task<int> UpdatePatrons()
         {
             List<string> patrons = new List<string>();
+            Dictionary<string, string> emojis = new Dictionary<string, string>();
             // collect ids of patron members 832744566905241610 779435254225698827
             DiscordGuild typotestground = await Program.Client.GetGuildAsync(779435254225698827);
             foreach (DiscordMember member in await typotestground.GetAllMembersAsync())
@@ -219,10 +222,12 @@ namespace Palantir
             {
                 PermissionFlag flag = new PermissionFlag((byte)member.Flag);
                 flag.Patron = patrons.Any(patron => member.Member.Contains(patron));
+                emojis.Add(member.Login, member.Emoji);
                 member.Flag = flag.CalculateFlag();
             });
             db.SaveChanges();
             db.Dispose();
+            PatronEmojis = emojis;
             return patrons.Count;
         }
 

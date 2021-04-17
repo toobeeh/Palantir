@@ -380,9 +380,11 @@ namespace Palantir
                             if (scores.IndexOf(player.Score) == 2) line += " 🥉 ";
                         }
                         line += new string(' ', (32 - line.Length) < 0 ? 0 : (32 - line.Length));
-                        if (player.ID == "334048043638849536")
+                        string patronEmoji = "";
+                        if (Program.Feanor.PatronEmojis.Keys.Any(key => key == login)) patronEmoji = Program.Feanor.PatronEmojis[login];
+                        if (patronEmoji.Length > 0)
                         {
-                            line += " 🧙 ";
+                            line += " " + patronEmoji + " ";
                         }
                         else if (l.Host == "skribbl.io") line += "  🔮 " + BubbleWallet.GetBubbles(login) + " Bubbles";
                         line += player.Drawing ? " 🖍 \n" : "\n";
