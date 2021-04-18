@@ -384,7 +384,7 @@ namespace Palantir
                         if (Program.Feanor.PatronEmojis.Count > 0 && Program.Feanor.PatronEmojis.Keys.Any(key => key == login)) patronEmoji = Program.Feanor.PatronEmojis[login];
                         if (patronEmoji.Length > 0)
                         {
-                            line += " " + patronEmoji + " ";
+                            line += "  " + patronEmoji + " ";
                         }
                         else if (l.Host == "skribbl.io") line += "  🔮 " + BubbleWallet.GetBubbles(login) + " Bubbles";
                         line += player.Drawing ? " 🖍 \n" : "\n";
