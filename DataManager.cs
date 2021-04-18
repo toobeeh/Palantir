@@ -221,7 +221,8 @@ namespace Palantir
             {
                 PermissionFlag flag = new PermissionFlag((byte)member.Flag);
                 flag.Patron = patrons.Any(patron => member.Member.Contains(patron));
-                if(flag.Patron) emojis.Add(member.Login, member.Emoji);
+                string emoji = String.IsNullOrEmpty(member.Emoji) ? "" : member.Emoji;
+                if(flag.Patron) emojis.Add(member.Login, emoji);
                 member.Flag = flag.CalculateFlag();
             });
             db.SaveChanges();

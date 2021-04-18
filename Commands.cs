@@ -1287,6 +1287,7 @@ namespace Palantir
             int members = cont.Members.Count();
             cont.Dispose();
             embed.AddField("`👥` ", "**" +  members + " ** people have registered on Palantir.");
+            embed.AddField("❤️` ", "**" + Program.Feanor.PatronEmojis.Count + " ** Patrons are supporting Typo on Patreon.");
             await context.RespondAsync(embed: embed);
         }
         [Description("Creates a new theme ticket which can be used by anyone to add a new theme to typo.")]
