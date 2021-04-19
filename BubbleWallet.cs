@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
-using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
 using System.Globalization;
 using Newtonsoft.Json;
 using System.Threading.Tasks;

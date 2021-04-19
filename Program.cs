@@ -12,6 +12,7 @@ using System.IO;
 using System.Collections.Generic;
 using Quartz;
 using Quartz.Impl;
+using DSharpPlus.Interactivity.Extensions;
 
 namespace Palantir
 {
@@ -39,8 +40,7 @@ namespace Palantir
                 IgnoreExtraArguments = true,
                 CaseSensitive = false
             });
-            Interactivity = Client.UseInteractivity(new InteractivityConfiguration { 
-            });
+            Interactivity = Client.UseInteractivity();
             Client.GuildCreated += onjoin;
             Commands.CommandErrored += onCommandErrored;
             Commands.RegisterCommands<Commands>();
@@ -112,7 +112,7 @@ namespace Palantir
             await Task.Delay(-1);
         }
 
-        private static async Task onjoin(GuildCreateEventArgs e)
+        private static async Task onjoin(DiscordClient client, GuildCreateEventArgs e)
         {
             try
             {
@@ -131,7 +131,7 @@ namespace Palantir
             }
         }
 
-        private static async Task onCommandErrored(CommandErrorEventArgs e)
+        private static async Task onCommandErrored(CommandsNextExtension commands, CommandErrorEventArgs e)
         {
             if (e.Exception is DSharpPlus.CommandsNext.Exceptions.CommandNotFoundException) return;
             if (e.Exception.ToString().Contains("Could not find a suitable overload for the command"))

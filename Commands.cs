@@ -10,6 +10,7 @@ using System.Linq;
 using MoreLinq.Extensions;
 using Newtonsoft.Json;
 using DSharpPlus.Interactivity;
+using DSharpPlus.Interactivity.Extensions;
 using System.Globalization;
 
 namespace Palantir
