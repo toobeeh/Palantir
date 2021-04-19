@@ -218,7 +218,7 @@ namespace Palantir
                     Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > Unhandled exception on line " + line + " - Target message couldnt be edited. No removal of tether, just 15s timeout. Error: " + e.ToString());
                     Thread.Sleep(15000);
                 }
-                Thread.Sleep(2000);
+                Thread.Sleep(4000);
             }
         }
 
