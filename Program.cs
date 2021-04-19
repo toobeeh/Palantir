@@ -44,9 +44,10 @@ namespace Palantir
             Client.GuildCreated += onjoin;
             Commands.CommandErrored += onCommandErrored;
             Commands.RegisterCommands<Commands>();
+            Console.Write("Connecting CLient...");
             await Client.ConnectAsync();
+            Console.WriteLine("Initializig Connections...");
             Feanor = new DataManager();
-
             Console.WriteLine("Palantir ready. Do not uncover it.");
             Console.WriteLine("Stored guilds:");
             Feanor.PalantirTethers.ForEach((t) => { Console.WriteLine("- " + t.PalantirEndpoint.GuildID + " / " + t.PalantirEndpoint.GuildName); });
