@@ -611,10 +611,13 @@ namespace Palantir
             Sprite target = available.FirstOrDefault(s => s.ID == sprite);
             int credit = BubbleWallet.CalculateCredit(login);
             PermissionFlag perm = new PermissionFlag((byte)member.Flag);
-            if(target.ID == 1003 && !perm.Patron)
+            if(target.ID == 1003)
             {
-                await Program.SendEmbed(context.Channel, "Haha, nice try -.-", "This sprite is exclusive for patrons!");
-                return;
+                if (!perm.Patron)
+                {
+                    await Program.SendEmbed(context.Channel, "Haha, nice try -.-", "This sprite is exclusive for patrons!");
+                    return;
+                }
             }
             else if (target.EventDropID <= 0)
             {
