@@ -27,7 +27,6 @@ namespace Palantir
             //File.WriteAllText("/home/pi/palantirOutput.log", String.Empty);
             Console.WriteLine("Huh, it's " + DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " - lemme sleep!!\n");
             Console.WriteLine("Initializing Palantir\n...");
-
             Client = new DiscordClient(new DiscordConfiguration
             {
                 Token = File.ReadAllText("/home/pi/palantirToken.txt"),

@@ -611,7 +611,12 @@ namespace Palantir
             Sprite target = available.FirstOrDefault(s => s.ID == sprite);
             int credit = BubbleWallet.CalculateCredit(login);
             PermissionFlag perm = new PermissionFlag((byte)member.Flag);
-            if (target.EventDropID <= 0)
+            if(target.ID == 1003 && !perm.Patron)
+            {
+                await Program.SendEmbed(context.Channel, "Haha, nice try -.-", "This sprite is exclusive for patrons!");
+                return;
+            }
+            else if (target.EventDropID <= 0)
             {
                 if (credit < target.Cost && !perm.BotAdmin)
                 {
@@ -824,7 +829,7 @@ namespace Palantir
             PalantirDbContext dbcontext = new PalantirDbContext(); 
 
             EventEntity newEvent = new EventEntity();
-            newEvent.EventName = name;
+            newEvent.EventName = name.Replace("_"," ");
             newEvent.DayLength = duration;
             newEvent.ValidFrom = DateTime.Now.AddDays(validInDays).ToShortDateString();
             newEvent.Description = description.ToDelimitedString(" ");

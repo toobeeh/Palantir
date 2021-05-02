@@ -20,10 +20,10 @@ namespace Palantir
             PalantirDbContext dbcontext = new PalantirDbContext();
             try
             {
-
                 foreach (string login in logins)
                 {
-                    dbcontext.Members.FirstOrDefault(s => s.Login == login).Bubbles++;
+                    MemberEntity member = dbcontext.Members.FirstOrDefault(s => s.Login == login);
+                    if(JsonConvert.DeserializeObject<Member>(member.Member).Guilds.Count > 0) member.Bubbles++;
                 }
             }
             catch(Exception e) { Console.WriteLine(e.ToString()); }
