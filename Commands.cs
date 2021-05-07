@@ -464,7 +464,7 @@ namespace Palantir
             {
                 string path = SpriteComboImage.GenerateImage(SpriteComboImage.GetSpriteSources(spriteIDs.ToArray()), "/home/pi/Webroot/files/combos/")
                     .Replace(@"/home/pi/Webroot/", "https://tobeh.host/");
-                embed.Url = path;
+                embed.ImageUrl = path;
             }
 
             int drops = BubbleWallet.GetDrops(login);
