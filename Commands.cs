@@ -572,7 +572,7 @@ namespace Palantir
             BubbleWallet.SetInventory(inventory, login);
 
             
-            string path = SpriteComboImage.GenerateImage(SpriteComboImage.GetSpriteSources(sprites), "/home/pi/Webroot/combos/");
+            string path = SpriteComboImage.GenerateImage(SpriteComboImage.GetSpriteSources(sprites), "/home/pi/Webroot/files/combos/");
 
             DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
             embed.Title = "Your epic sprite combo was activated!";

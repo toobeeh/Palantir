@@ -37,12 +37,6 @@ namespace Palantir
                     data.SaveTo(stream);
                 }
             }
-
-            //SvgDocument doc = Svg.SvgDocument.FromSvg<SvgDocument>(svgst);
-            //doc.ShapeRendering = SvgShapeRendering.Auto;
-            //Bitmap mp = doc.Draw();
-            //savePath = savePath + DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString() + ".png";
-            //mp.Save(savePath, System.Drawing.Imaging.ImageFormat.Png);
             return savePath;
         }
 
@@ -65,7 +59,7 @@ namespace Palantir
                 {
                     // download sprite
                     System.Net.WebClient client = new System.Net.WebClient();
-                    string path = "/home/pi/Webroot/combos/" + DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString() + ".gif";
+                    string path = "/home/pi/Webroot/files/combos/" + DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString() + ".gif";
                     client.DownloadFile(spt.URL,path);
                     sources.Add(path);
                 }
