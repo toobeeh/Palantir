@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using Svg;
-using System.Drawing;
 using SkiaSharp;
 
 namespace Palantir
@@ -47,6 +44,33 @@ namespace Palantir
             //savePath = savePath + DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString() + ".png";
             //mp.Save(savePath, System.Drawing.Imaging.ImageFormat.Png);
             return savePath;
+        }
+
+        public static string[] GetSpriteSources(int[] sprites)
+        {
+            List<string> sources = new List<string>();
+            foreach (int id in sprites)
+            {
+                Sprite spt;
+                try
+                {
+                    spt = BubbleWallet.GetSpriteByID(id);
+                }
+                catch { continue; }
+                if (spt.URL.Contains("https://tobeh.host/"))
+                {
+                    sources.Add(spt.URL.Replace("https://tobeh.host/", "/home/pi/Webroot/"));
+                }
+                else
+                {
+                    // download sprite
+                    System.Net.WebClient client = new System.Net.WebClient();
+                    string path = "/home/pi/tmpGen/" + DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString() + ".gif";
+                    client.DownloadFile(spt.URL,path);
+                    sources.Add(path);
+                }
+            }
+            return sources.ToArray();
         }
     }
 }

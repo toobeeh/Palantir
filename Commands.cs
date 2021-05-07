@@ -1404,17 +1404,11 @@ namespace Palantir
         [Command("combopng")]
         public async Task Combopng(CommandContext context, [Description("The id of the sprites (eg '15 0 16 17')")] params int[] sprites)
         {
-            List<string> sources = new List<string>();
-            foreach(int id in sprites)
-            {
-                Sprite spt = BubbleWallet.GetSpriteByID(id);
-                sources.Add(spt.URL.Replace("https://tobeh.host/", "/home/pi/Webroot/"));
-            }
-            string path = SpriteComboImage.GenerateImage(sources.ToArray(), "/home/pi/tmpGen/");
+            string path = SpriteComboImage.GenerateImage(SpriteComboImage.GetSpriteSources(sprites), "/home/pi/tmpGen/");
             using (var fs = new System.IO.FileStream(path, System.IO.FileMode.Open, System.IO.FileAccess.Read))
             {
                 var msg = await new DiscordMessageBuilder()
-                    .WithFiles(new Dictionary<string, System.IO.Stream>() { { "cool.png", fs } })
+                    .WithFiles(new Dictionary<string, System.IO.Stream>() { { "combo.png", fs } })
                     .SendAsync(context.Channel);
             }
         }

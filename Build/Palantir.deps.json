@@ -19,7 +19,6 @@
           "SkiaSharp.NativeAssets.Linux": "2.80.3-preview.40",
           "SkiaSharp.NativeAssets.Linux.NoDependencies": "2.80.3-preview.40",
           "SkiaSharp.Svg": "1.60.0",
-          "Svg": "3.2.3",
           "morelinq": "3.3.2"
         },
         "runtime": {
@@ -87,14 +86,6 @@
           "lib/netcoreapp2.1/Emzi0767.Common.dll": {
             "assemblyVersion": "2.4.1.0",
             "fileVersion": "2.4.1.0"
-          }
-        }
-      },
-      "Fizzler/1.2.0": {
-        "runtime": {
-          "lib/netstandard2.0/Fizzler.dll": {
-            "assemblyVersion": "1.2.0.0",
-            "fileVersion": "1.2.0.0"
           }
         }
       },
@@ -423,81 +414,6 @@
       },
       "runtime.opensuse.13.2-x64.runtime.native.System.Security.Cryptography.OpenSsl/4.3.2": {},
       "runtime.opensuse.42.1-x64.runtime.native.System.Security.Cryptography.OpenSsl/4.3.2": {},
-      "runtime.osx.10.10-x64.CoreCompat.System.Drawing/5.8.64": {
-        "runtime": {
-          "lib/netstandard2.0/runtime.osx.10.10-x64.CoreCompat.System.Drawing.dll": {
-            "assemblyVersion": "5.8.64.0",
-            "fileVersion": "5.8.64.0"
-          }
-        },
-        "runtimeTargets": {
-          "runtimes/osx-x64/native/libcairo.2.dylib": {
-            "rid": "osx-x64",
-            "assetType": "native",
-            "fileVersion": "0.0.0.0"
-          },
-          "runtimes/osx-x64/native/libfontconfig.1.dylib": {
-            "rid": "osx-x64",
-            "assetType": "native",
-            "fileVersion": "0.0.0.0"
-          },
-          "runtimes/osx-x64/native/libfreetype.6.dylib": {
-            "rid": "osx-x64",
-            "assetType": "native",
-            "fileVersion": "0.0.0.0"
-          },
-          "runtimes/osx-x64/native/libgdiplus-lighthouse.dylib": {
-            "rid": "osx-x64",
-            "assetType": "native",
-            "fileVersion": "0.0.0.0"
-          },
-          "runtimes/osx-x64/native/libgdiplus.dylib": {
-            "rid": "osx-x64",
-            "assetType": "native",
-            "fileVersion": "0.0.0.0"
-          },
-          "runtimes/osx-x64/native/libgif.7.dylib": {
-            "rid": "osx-x64",
-            "assetType": "native",
-            "fileVersion": "0.0.0.0"
-          },
-          "runtimes/osx-x64/native/libglib-2.0.0.dylib": {
-            "rid": "osx-x64",
-            "assetType": "native",
-            "fileVersion": "0.0.0.0"
-          },
-          "runtimes/osx-x64/native/libintl.8.dylib": {
-            "rid": "osx-x64",
-            "assetType": "native",
-            "fileVersion": "0.0.0.0"
-          },
-          "runtimes/osx-x64/native/libjpeg.9.dylib": {
-            "rid": "osx-x64",
-            "assetType": "native",
-            "fileVersion": "0.0.0.0"
-          },
-          "runtimes/osx-x64/native/libpcre.1.dylib": {
-            "rid": "osx-x64",
-            "assetType": "native",
-            "fileVersion": "0.0.0.0"
-          },
-          "runtimes/osx-x64/native/libpixman-1.0.dylib": {
-            "rid": "osx-x64",
-            "assetType": "native",
-            "fileVersion": "0.0.0.0"
-          },
-          "runtimes/osx-x64/native/libpng16.16.dylib": {
-            "rid": "osx-x64",
-            "assetType": "native",
-            "fileVersion": "0.0.0.0"
-          },
-          "runtimes/osx-x64/native/libtiff.5.dylib": {
-            "rid": "osx-x64",
-            "assetType": "native",
-            "fileVersion": "0.0.0.0"
-          }
-        }
-      },
       "runtime.osx.10.10-x64.runtime.native.System.Security.Cryptography.Apple/4.3.0": {},
       "runtime.osx.10.10-x64.runtime.native.System.Security.Cryptography.OpenSsl/4.3.2": {},
       "runtime.rhel.7-x64.runtime.native.System.Security.Cryptography.OpenSsl/4.3.2": {},
@@ -680,22 +596,6 @@
           "lib/netstandard2.0/SQLitePCLRaw.provider.dynamic_cdecl.dll": {
             "assemblyVersion": "2.0.2.669",
             "fileVersion": "2.0.2.669"
-          }
-        }
-      },
-      "Svg/3.2.3": {
-        "dependencies": {
-          "Fizzler": "1.2.0",
-          "System.Drawing.Common": "4.7.0",
-          "System.Memory": "4.5.4",
-          "System.ObjectModel": "4.3.0",
-          "System.ValueTuple": "4.5.0",
-          "runtime.osx.10.10-x64.CoreCompat.System.Drawing": "5.8.64"
-        },
-        "runtime": {
-          "lib/netcoreapp3.0/Svg.dll": {
-            "assemblyVersion": "3.2.0.0",
-            "fileVersion": "3.2.3.36087"
           }
         }
       },
@@ -992,15 +892,6 @@
           "System.Threading": "4.3.0",
           "System.Threading.Tasks": "4.3.0",
           "System.Threading.Timer": "4.3.0"
-        }
-      },
-      "System.ObjectModel/4.3.0": {
-        "dependencies": {
-          "System.Collections": "4.3.0",
-          "System.Diagnostics.Debug": "4.3.0",
-          "System.Resources.ResourceManager": "4.3.0",
-          "System.Runtime": "4.3.0",
-          "System.Threading": "4.3.0"
         }
       },
       "System.Reflection/4.3.0": {
@@ -1379,13 +1270,6 @@
       "path": "emzi0767.common/2.4.1",
       "hashPath": "emzi0767.common.2.4.1.nupkg.sha512"
     },
-    "Fizzler/1.2.0": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-CPxuWF8EPvM0rwAtMTR5G+7EuLoGNXsEfqyx06upN9JyVALZ73KgbGn3SLFwGosifiUAXrvNHtXlUwGGytdECg==",
-      "path": "fizzler/1.2.0",
-      "hashPath": "fizzler.1.2.0.nupkg.sha512"
-    },
     "Microsoft.Bcl.AsyncInterfaces/1.1.1": {
       "type": "package",
       "serviceable": true,
@@ -1666,13 +1550,6 @@
       "path": "runtime.opensuse.42.1-x64.runtime.native.system.security.cryptography.openssl/4.3.2",
       "hashPath": "runtime.opensuse.42.1-x64.runtime.native.system.security.cryptography.openssl.4.3.2.nupkg.sha512"
     },
-    "runtime.osx.10.10-x64.CoreCompat.System.Drawing/5.8.64": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-Ey7xQgWwixxdrmhzEUvaR4kxZDSQMWQScp8ViLvmL5xCBKG6U3TaMv/jzHilpfQXpHmJ4IylKGzzMvnYX2FwHQ==",
-      "path": "runtime.osx.10.10-x64.corecompat.system.drawing/5.8.64",
-      "hashPath": "runtime.osx.10.10-x64.corecompat.system.drawing.5.8.64.nupkg.sha512"
-    },
     "runtime.osx.10.10-x64.runtime.native.System.Security.Cryptography.Apple/4.3.0": {
       "type": "package",
       "serviceable": true,
@@ -1770,13 +1647,6 @@
       "sha512": "sha512-ZSwacbKJUsxJEZxwT23uZVrGbaIvXcADZDz5Sr66fikO5eehdcceDncjzwzTzWfW13di8gpTpstx3WJSt/Ci5Q==",
       "path": "sqlitepclraw.provider.dynamic_cdecl/2.0.2",
       "hashPath": "sqlitepclraw.provider.dynamic_cdecl.2.0.2.nupkg.sha512"
-    },
-    "Svg/3.2.3": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-rSyJ6CLAE4Ac/0c5Li2AJ6fLaT0cyq68N046ROQG+3U3LwgkUZbkmORlX69xmpEFvRG4hY4GPK6qc2tbSwERRQ==",
-      "path": "svg/3.2.3",
-      "hashPath": "svg.3.2.3.nupkg.sha512"
     },
     "System.Collections/4.3.0": {
       "type": "package",
@@ -1952,13 +1822,6 @@
       "sha512": "sha512-LqSrocFY47SxEmu1fYWbUmXcFJ2B/PqnMtc6zudOTUhNINgo75hgmoHv46ynkJLmqjkpxPzl251SGWHc+jofFQ==",
       "path": "system.net.websockets.client/4.3.2",
       "hashPath": "system.net.websockets.client.4.3.2.nupkg.sha512"
-    },
-    "System.ObjectModel/4.3.0": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-bdX+80eKv9bN6K4N+d77OankKHGn6CH711a6fcOpMQu2Fckp/Ft4L/kW9WznHpyR0NRAvJutzOMHNNlBGvxQzQ==",
-      "path": "system.objectmodel/4.3.0",
-      "hashPath": "system.objectmodel.4.3.0.nupkg.sha512"
     },
     "System.Reflection/4.3.0": {
       "type": "package",

@@ -33,7 +33,6 @@
     <PackageReference Include="SkiaSharp.NativeAssets.Linux" Version="2.80.3-preview.40" />
     <PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="2.80.3-preview.40" />
     <PackageReference Include="SkiaSharp.Svg" Version="1.60.0" />
-    <PackageReference Include="Svg" Version="3.2.3" />
   </ItemGroup>
 
 </Project>
