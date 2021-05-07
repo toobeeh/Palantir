@@ -16,6 +16,8 @@
           "Newtonsoft.Json": "13.0.1",
           "Quartz": "3.3.2",
           "SkiaSharp": "2.80.3-preview.40",
+          "SkiaSharp.NativeAssets.Linux": "2.80.3-preview.40",
+          "SkiaSharp.NativeAssets.Linux.NoDependencies": "2.80.3-preview.40",
           "SkiaSharp.Svg": "1.60.0",
           "Svg": "3.2.3",
           "morelinq": "3.3.2"
@@ -533,6 +535,38 @@
             "assetType": "native",
             "fileVersion": "0.0.0.0"
           }
+        }
+      },
+      "SkiaSharp.NativeAssets.Linux/2.80.3-preview.40": {
+        "dependencies": {
+          "SkiaSharp": "2.80.3-preview.40"
+        },
+        "runtimeTargets": {
+          "runtimes/linux-arm/native/libSkiaSharp.so": {
+            "rid": "linux-arm",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/linux-arm64/native/libSkiaSharp.so": {
+            "rid": "linux-arm64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/linux-musl-x64/native/libSkiaSharp.so": {
+            "rid": "linux-musl-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/linux-x64/native/libSkiaSharp.so": {
+            "rid": "linux-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          }
+        }
+      },
+      "SkiaSharp.NativeAssets.Linux.NoDependencies/2.80.3-preview.40": {
+        "dependencies": {
+          "SkiaSharp": "2.80.3-preview.40"
         }
       },
       "SkiaSharp.Svg/1.60.0": {
@@ -1687,6 +1721,20 @@
       "sha512": "sha512-zpxDen1BzZxkskLr79IgPenUlkYUJkp38fQla4nfrgVc4/Rge5DLTmi193tcVc4MQykUw5/WtbkEFmMsbD4zog==",
       "path": "skiasharp/2.80.3-preview.40",
       "hashPath": "skiasharp.2.80.3-preview.40.nupkg.sha512"
+    },
+    "SkiaSharp.NativeAssets.Linux/2.80.3-preview.40": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-SssPX8wmTjzS6uYshPh8kzIlmj+jfwTXxl8rloWzspwcswrsnrR3VjZVBvL2Q3GBH2Y5qFyMCM2TumuBE+/daw==",
+      "path": "skiasharp.nativeassets.linux/2.80.3-preview.40",
+      "hashPath": "skiasharp.nativeassets.linux.2.80.3-preview.40.nupkg.sha512"
+    },
+    "SkiaSharp.NativeAssets.Linux.NoDependencies/2.80.3-preview.40": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-i/jUOOUzAsDBJ3gm1me89LiV0EQ29geaalwg1o7IQFl5P9YWzaL1+QNqgwV+3tVYmGccocqGLrKRzgZZ/JzQxg==",
+      "path": "skiasharp.nativeassets.linux.nodependencies/2.80.3-preview.40",
+      "hashPath": "skiasharp.nativeassets.linux.nodependencies.2.80.3-preview.40.nupkg.sha512"
     },
     "SkiaSharp.Svg/1.60.0": {
       "type": "package",
