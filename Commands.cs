@@ -571,20 +571,13 @@ namespace Palantir
             });
             BubbleWallet.SetInventory(inventory, login);
 
-            string url = "";
-            string path = SpriteComboImage.GenerateImage(SpriteComboImage.GetSpriteSources(sprites), "/home/pi/tmpGen/");
-            using (var fs = new System.IO.FileStream(path, System.IO.FileMode.Open, System.IO.FileAccess.Read))
-            {
-                var msg = await new DiscordMessageBuilder()
-                    .WithFiles(new Dictionary<string, System.IO.Stream>() { { "combo.png", fs } })
-                    .SendAsync(await Program.Client.GetChannelAsync(840229353366224896));
-                url = msg.Attachments[0].Url;
-            }
+            
+            string path = SpriteComboImage.GenerateImage(SpriteComboImage.GetSpriteSources(sprites), "/home/pi/Webroot/combos/");
 
             DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
             embed.Title = "Your epic sprite combo was activated!";
             embed.Color = DiscordColor.Magenta;
-            embed.ImageUrl = url;
+            embed.ImageUrl = path.Replace(@"/home/pi/Webroot/", "https://tobeh.host/");
             await context.Channel.SendMessageAsync(embed: embed);
         }
 

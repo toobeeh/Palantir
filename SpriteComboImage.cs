@@ -65,7 +65,7 @@ namespace Palantir
                 {
                     // download sprite
                     System.Net.WebClient client = new System.Net.WebClient();
-                    string path = "/home/pi/tmpGen/" + DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString() + ".gif";
+                    string path = "/home/pi/Webroot/combos/" + DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString() + ".gif";
                     client.DownloadFile(spt.URL,path);
                     sources.Add(path);
                 }
