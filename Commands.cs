@@ -447,19 +447,26 @@ namespace Palantir
             if (BubbleWallet.IsEarlyUser(login)) desc += "`💎 Early User.`\n";
             if (perm.Patron) desc += "`🎖️  Patron 💖`\n";
 
+            List<int> spriteIDs = new List<int>();
             active.OrderBy(slot => slot.Slot).ForEach(sprite =>
             {
+                spriteIDs.Add(sprite.ID);
                 if(active.Count <= 1)
                 {
                     desc += "\n**Selected sprite:** " + sprite.Name;
-                    embed.ImageUrl = sprite.URL;
                 }
                 else
                 {
                     desc += "\n**Slot " + sprite.Slot + ":** " + sprite.Name;
-                    if(sprite.Slot == 1) embed.ImageUrl = sprite.URL;
                 }
             });
+            if(spriteIDs.Count > 0)
+            {
+                string path = SpriteComboImage.GenerateImage(SpriteComboImage.GetSpriteSources(spriteIDs.ToArray()), "/home/pi/Webroot/files/combos/")
+                    .Replace(@"/home/pi/Webroot/", "https://tobeh.host/");
+                embed.Url = path;
+            }
+
             int drops = BubbleWallet.GetDrops(login);
             if (inventory.Count <= 0) desc = "You haven't unlocked any sprites yet!";
             desc += "\n\n🔮 **" + BubbleWallet.CalculateCredit(login) + "** of "+ BubbleWallet.GetBubbles(login) + " collected Bubbles available.";
@@ -571,13 +578,13 @@ namespace Palantir
             });
             BubbleWallet.SetInventory(inventory, login);
 
-            
-            string path = SpriteComboImage.GenerateImage(SpriteComboImage.GetSpriteSources(sprites), "/home/pi/Webroot/files/combos/");
+            string path = SpriteComboImage.GenerateImage(SpriteComboImage.GetSpriteSources(sprites), "/home/pi/Webroot/files/combos/")
+                .Replace(@"/home/pi/Webroot/", "https://tobeh.host/");
 
             DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
             embed.Title = "Your epic sprite combo was activated!";
             embed.Color = DiscordColor.Magenta;
-            embed.ImageUrl = path.Replace(@"/home/pi/Webroot/", "https://tobeh.host/");
+            embed.ImageUrl = path;
             await context.Channel.SendMessageAsync(embed: embed);
         }
 
