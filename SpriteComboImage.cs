@@ -21,10 +21,10 @@ namespace Palantir
             var svg = new SKSvg(new SKSize(80, 80));
             System.IO.Stream svgstream = new System.IO.MemoryStream(System.Text.Encoding.ASCII.GetBytes(svgst));
             svg.Load(svgstream);
-
             var bitmap = new SKBitmap((int)svg.CanvasSize.Width, (int)svg.CanvasSize.Height);
             var canvas = new SKCanvas(bitmap);
             canvas.DrawPicture(svg.Picture);
+            
             canvas.Flush();
             canvas.Save();
 
