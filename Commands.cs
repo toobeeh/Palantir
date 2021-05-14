@@ -1187,11 +1187,14 @@ namespace Palantir
             {
                 DiscordUser target = await Program.Client.GetUserAsync(id);
                 PermissionFlag getperm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(target));
-                string getDesc = "Flag[0] BubbleFarming - "
-                    + getperm.BubbleFarming + "\nFlag[1] BotAdmin - "
+                string getDesc = "Flag[0] Bubble Farming - "
+                    + getperm.BubbleFarming + "\nFlag[1] Bot Admin - "
                     + getperm.BotAdmin + "\nFlag[2] Moderator - "
-                    + getperm.Moderator + "\nFlag[2] Unlimited Cloud - " + getperm.CloudUnlimited
-                    + getperm.Patron + "\nFlag[2] Patron - " + getperm.Patron;
+                    + getperm.Moderator + "\nFlag[3] Unlimited Cloud - "
+                    + getperm.CloudUnlimited + "\nFlag[4] Patron - " 
+                    + getperm.Patron + "\nFlag[5] Permanent Ban - "
+                    + getperm.Permanban + "\nFlag[6] Drop Ban - "
+                    + getperm.Dropban;
                 await Program.SendEmbed(context.Channel, "The flags of " + target.Username,getDesc);
                 return;
             }
