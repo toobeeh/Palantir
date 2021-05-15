@@ -449,7 +449,7 @@ namespace Palantir
                 Database.SaveChanges();
             }
             Database.Dispose();
-            message += "```diff\n- Just a friendly reminder: Drop-clicker-bots are rewarded with a ban. Go for it!\n```";
+            //message += "```diff\n- Just a friendly reminder: Drop-clicker-bots are rewarded with a ban. Go for it!\n```";
             return message;
         }
     }

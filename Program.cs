@@ -39,6 +39,7 @@ namespace Palantir
                 IgnoreExtraArguments = true,
                 CaseSensitive = false
             });
+            //Program.Client.UpdateCurrentUserAsync(avatar:)
             Interactivity = Client.UseInteractivity();
             Client.GuildCreated += onjoin;
             Commands.CommandErrored += onCommandErrored;

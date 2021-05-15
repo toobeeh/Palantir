@@ -6,6 +6,7 @@ using Quartz.Impl;
 using System.Threading.Tasks;
 using DSharpPlus;
 using DSharpPlus.Entities;
+using Newtonsoft.Json;
 
 namespace Palantir.Tracer
 {
@@ -51,8 +52,14 @@ namespace Palantir.Tracer
     {
         public async Task Execute(IJobExecutionContext context)
         {
+            List<string> onlineIDs = new List<string>();
             PalantirDbContext dbcontext = new PalantirDbContext();
-            int count = dbcontext.Status.Count();
+            dbcontext.Status.ToList().ForEach(status =>
+            {
+                string id = JsonConvert.DeserializeObject<PlayerStatus>(status.Status).PlayerMember.UserID;
+                if (!onlineIDs.Contains(id)) onlineIDs.Add(id);
+            });
+            int count = onlineIDs.Count();
             dbcontext.Dispose();
             await Program.Client.UpdateStatusAsync(new DiscordActivity(" " + count + " ppl on skribbl.io", ActivityType.Watching));
             await Program.Feanor.UpdatePatrons();

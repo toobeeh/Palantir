@@ -4,6 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
 using System.Linq;
+using Newtonsoft.Json;
 
 namespace Palantir
 {
@@ -92,7 +93,14 @@ namespace Palantir
         {
             PalantirDbContext context = new PalantirDbContext();
 
-            int count = context.Status.ToList().Count;
+            List<string> onlineIDs = new List<string>();
+            PalantirDbContext dbcontext = new PalantirDbContext();
+            dbcontext.Status.ToList().ForEach(status =>
+            {
+                string id = JsonConvert.DeserializeObject<PlayerStatus>(status.Status).PlayerMember.UserID;
+                if (!onlineIDs.Contains(id)) onlineIDs.Add(id);
+            });
+            int count = onlineIDs.Count();
             context.Dispose();
 
             if (count <= 0) count = 1;
