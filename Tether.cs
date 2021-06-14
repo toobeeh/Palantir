@@ -449,7 +449,7 @@ namespace Palantir
                 Database.SaveChanges();
             }
             Database.Dispose();
-            message += "```fix\nVote NOW for the next Palantir profile picture!\n```https://tobeh.host/profile-contest/ ";
+            //message += "```fix\nVote NOW for the next Palantir profile picture!\n```https://tobeh.host/profile-contest/ ";
             return message;
         }
     }
