@@ -838,7 +838,7 @@ namespace Palantir
         public async Task CreateEvent(CommandContext context, [Description("The event name")] string name, [Description("The duration of the event in days")]int duration, [Description("The count of days when the event will start")]int validInDays, [Description("The event description")]params string[] description)
         {
             PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
-            if (!perm.Moderator || !perm.BotAdmin)
+            if (!perm.Moderator && !perm.BotAdmin)
             {
                 await Program.SendEmbed(context.Channel, "Ts ts...", "This command is only available for higher beings.\n||Some call them Bot-Admins ;))||");
                 return;
@@ -882,7 +882,7 @@ namespace Palantir
         public async Task CreateEventDrop(CommandContext context, [Description("The id of the event for the event drop")] int eventID, [Description("The name of the event drop")] string name)
         {
             PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
-            if (!perm.Moderator || !perm.BotAdmin)
+            if (!perm.Moderator && !perm.BotAdmin)
             {
                 await Program.SendEmbed(context.Channel, "Ts ts...", "This command is only available for higher beings.\n||Some call them Bot-Admins ;))||");
                 return;
@@ -1072,7 +1072,7 @@ namespace Palantir
         public async Task CreateEventSprite(CommandContext context, [Description("The id of the event drop for the sprite")] int eventDropID, [Description("The name of the sprite")] string name, [Description("The event drop price")] int price, [Description("Any string except '-' if the sprite should replace the avatar")]string special = "", [Description("Any string except '-' to set the sprite artist")]string artist = "")
         {
             PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
-            if (!perm.Moderator || !perm.BotAdmin)
+            if (!perm.Moderator && !perm.BotAdmin)
             {
                 await Program.SendEmbed(context.Channel, "Ts ts...", "This command is only available for higher beings.\n||Some call them Bot-Admins ;))||");
                 return;
@@ -1131,7 +1131,7 @@ namespace Palantir
         public async Task AddSprite(CommandContext context, [Description("The name of the sprite")] string name, [Description("The bubble price")] int price, [Description("Any string except '-' if the sprite should replace the avatar")]string special = "", [Description("Any string except '-' to set the sprite artist")]string artist = "")
         {
             PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
-            if (!perm.Moderator || !perm.BotAdmin)
+            if (!perm.Moderator && !perm.BotAdmin)
             {
                 await Program.SendEmbed(context.Channel, "Ts ts...", "This command is only available for higher beings.\n||Some call them Bot-Admins ;))||");
                 return;
@@ -1267,7 +1267,7 @@ namespace Palantir
         public async Task Patronemoji(CommandContext context, string emoji)
         {
             PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
-            if (!perm.Patron)
+            if (!perm.Patron && !perm.BotAdmin)
             {
                 await Program.SendEmbed(context.Channel, "Hey cutie!", "Youre no Patron yet... :smirk:\nJoin on https://www.patreon.com/skribbltypo");
                 return;
