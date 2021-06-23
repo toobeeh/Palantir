@@ -42,6 +42,7 @@ namespace Palantir
 
         public static string SVGtoPNG(string svgst, string savePath)
         {
+            savePath = savePath + DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString() + ".png";
             var svg = new SKSvg(new SKSize(80, 80));
             System.IO.Stream svgstream = new System.IO.MemoryStream(System.Text.Encoding.ASCII.GetBytes(svgst));
             svg.Load(svgstream);
