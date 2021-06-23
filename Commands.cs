@@ -744,13 +744,9 @@ namespace Palantir
             leaderboard.WithContent("`⏱️` Loading members of `" + context.Guild.Name + "`...").AddComponents(btnnext, btnprev);
             DiscordMessage msg = await leaderboard.SendAsync(context.Channel);
 
-            InteractivityResult<DSharpPlus.EventArgs.ComponentInteractionCreateEventArgs> press = new InteractivityResult<DSharpPlus.EventArgs.ComponentInteractionCreateEventArgs>();
+            InteractivityResult<DSharpPlus.EventArgs.ComponentInteractionCreateEventArgs> press;
             do
             {
-                if (press.Result.Id == "lbdprev") page--;
-                else if (press.Result.Id == "lbdnext") page++;
-                if (page >= memberBatches.Count) { page = 0; unranked = 0; }
-
                 DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
                 embed.Title = "🔮  Leaderboard of " + context.Guild.Name;
                 embed.Color = DiscordColor.Magenta;
@@ -772,6 +768,12 @@ namespace Palantir
                 await leaderboard.ModifyAsync(msg);
 
                 press = await interactivity.WaitForButtonAsync(msg, TimeSpan.FromMinutes(2));
+                if (!press.TimedOut)
+                {
+                    if (press.Result.Id == "lbdprev") page--;
+                    else if (press.Result.Id == "lbdnext") page++;
+                }
+                if (page >= memberBatches.Count) { page = 0; unranked = 0; }
             }
             while (!press.TimedOut);
 
