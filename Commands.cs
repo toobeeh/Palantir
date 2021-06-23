@@ -744,7 +744,7 @@ namespace Palantir
             DiscordButtonComponent btnnext, btnprev;
             btnnext = new DiscordButtonComponent(ButtonStyle.Primary, "lbdnext", "Next Page");
             btnprev = new DiscordButtonComponent(ButtonStyle.Secondary, "lbdprev", "Previous Page");
-            leaderboard.WithContent("`⏱️` Loading members of `" + context.Guild.Name + "`...").AddComponents(btnnext, btnprev);
+            leaderboard.WithContent("`⏱️` Loading members of `" + context.Guild.Name + "`...").AddComponents(btnprev, btnnext);
             DiscordMessage msg = await leaderboard.SendAsync(context.Channel);
 
             InteractivityResult<DSharpPlus.EventArgs.ComponentInteractionCreateEventArgs> press;
@@ -762,7 +762,7 @@ namespace Palantir
                     {
                         embed.AddField("\u200b", "**`🚩` - " + name + "**\n `This player has been flagged as *bubble farming*`.", true);
                     }
-                    else embed.AddField("\u200b", "**#" + ranks.IndexOf(member.Login) + " - " + name + "**" + (perm.BotAdmin ? " ` Admin` " : "") + (perm.Patron ? " ` 🎖️ Patron` " : "") + "\n🔮 " + BubbleWallet.GetBubbles(member.Login).ToString() + " Bubbles\n💧 " + BubbleWallet.GetDrops(member.Login).ToString() + " Drops", true);
+                    else embed.AddField("\u200b", "**#" + (ranks.IndexOf(member.Login) +1) + " - " + name + "**" + (perm.BotAdmin ? " ` Admin` " : "") + (perm.Patron ? " ` 🎖️ Patron` " : "") + "\n🔮 " + BubbleWallet.GetBubbles(member.Login).ToString() + " Bubbles\n💧 " + BubbleWallet.GetDrops(member.Login).ToString() + " Drops", true);
                 }
 
                 leaderboard.Embed = embed.Build();
@@ -770,14 +770,14 @@ namespace Palantir
                 await leaderboard.ModifyAsync(msg);
 
                 press = await interactivity.WaitForButtonAsync(msg, TimeSpan.FromMinutes(2));
-                await press.Result.Interaction.CreateResponseAsync(DSharpPlus.InteractionResponseType.UpdateMessage);
                 if (!press.TimedOut)
                 {
                     if (press.Result.Id == "lbdprev") page--;
                     else if (press.Result.Id == "lbdnext") page++;
+                    if (page >= memberBatches.Count) page = 0;
+                    else if (page < 0) page = memberBatches.Count - 1;
+                    await press.Result.Interaction.CreateResponseAsync(DSharpPlus.InteractionResponseType.UpdateMessage);
                 }
-                if (page >= memberBatches.Count) page = 0;
-                else if (page < 0) page = memberBatches.Count - 1;
             }
             while (!press.TimedOut);
 
