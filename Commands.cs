@@ -764,6 +764,7 @@ namespace Palantir
                     }
                     else embed.AddField("\u200b", "**#" + (ranks.IndexOf(member.Login) +1) + " - " + name + "**" + (perm.BotAdmin ? " ` Admin` " : "") + (perm.Patron ? " ` 🎖️ Patron` " : "") + "\n🔮 " + BubbleWallet.GetBubbles(member.Login).ToString() + " Bubbles\n💧 " + BubbleWallet.GetDrops(member.Login).ToString() + " Drops", true);
                 }
+                embed.WithFooter(context.Member.DisplayName + " can react within 2 mins to show the next page.");
 
                 leaderboard.Embed = embed.Build();
                 leaderboard.Content = "";
