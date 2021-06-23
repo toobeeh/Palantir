@@ -46,6 +46,7 @@ namespace Palantir
             System.IO.File.WriteAllText(savePath + ".svg", svgst);
             string command = "sudo inkscape --export-dpi=200 -z " + savePath + ".svg -e " + savePath + ".png";
             command.Bash();
+            System.IO.File.Delete(savePath + ".svg");
             return savePath + ".png";
         }
 

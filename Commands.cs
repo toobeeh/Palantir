@@ -1502,12 +1502,11 @@ namespace Palantir
             System.Net.WebClient client = new System.Net.WebClient();
             string content = client.DownloadString(url);
             await context.RespondAsync(content.Substring(0,200));
-            string path = SpriteComboImage.SVGtoPNG(content, "/home/pi/Webroot/files/combos/")
-                    .Replace(@"/home/pi/Webroot/", "https://tobeh.host/");
+            string path = SpriteComboImage.SVGtoPNG(content, "/home/pi/tmpGen/");
             using (var fs = new System.IO.FileStream(path, System.IO.FileMode.Open, System.IO.FileAccess.Read))
             {
                 var msg = await new DiscordMessageBuilder()
-                    .WithContent(path)
+                    .WithFiles(new Dictionary<string, System.IO.Stream>() { { "combo.png", fs } })
                     .SendAsync(context.Channel);
             }
         }
