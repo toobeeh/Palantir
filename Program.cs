@@ -183,11 +183,17 @@ namespace Palantir
 
         public static async Task RefreshPicture()
         {
-            string avatar;
-            if (DateTime.Now.Hour is < 8 or > 20) avatar = "https://cdn.discordapp.com/attachments/334696834322661376/857269025100136468/tucpbptr.png";
-            else avatar = "https://cdn.discordapp.com/attachments/334696834322661376/857269026841690123/skypbptr.png";
-            System.Net.WebClient client = new System.Net.WebClient();
-            await Program.Client.UpdateCurrentUserAsync(avatar: client.OpenRead(avatar));
+            try
+            {
+                string avatar;
+                if (DateTime.Now.Hour is < 8 or > 20) avatar = "https://cdn.discordapp.com/attachments/334696834322661376/857269025100136468/tucpbptr.png";
+                else avatar = "https://cdn.discordapp.com/attachments/334696834322661376/857269026841690123/skypbptr.png";
+                System.Net.WebClient client = new System.Net.WebClient();
+                System.IO.Stream str = client.OpenRead(avatar);
+                await Program.Client.UpdateCurrentUserAsync(avatar: str);
+            }
+            catch(Exception e) { Console.WriteLine(e.ToString()); }
+            
         }
 
     }
