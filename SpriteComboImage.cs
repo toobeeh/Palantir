@@ -42,27 +42,11 @@ namespace Palantir
 
         public static string SVGtoPNG(string svgst, string savePath)
         {
-            savePath = savePath + DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString() + ".png";
-            var svg = new SKSvg(new SKSize(80, 80));
-            System.IO.Stream svgstream = new System.IO.MemoryStream(System.Text.Encoding.ASCII.GetBytes(svgst));
-            svg.Load(svgstream);
-            var bitmap = new SKBitmap((int)svg.CanvasSize.Width, (int)svg.CanvasSize.Height);
-            var canvas = new SKCanvas(bitmap);
-            canvas.DrawPicture(svg.Picture);
-
-            canvas.Flush();
-            canvas.Save();
-
-            using (var image = SKImage.FromBitmap(bitmap))
-            using (var data = image.Encode(SKEncodedImageFormat.Png, 80))
-            {
-                // save the data to a stream
-                using (var stream = System.IO.File.OpenWrite(savePath))
-                {
-                    data.SaveTo(stream);
-                }
-            }
-            return savePath;
+            savePath = savePath + DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString();
+            System.IO.File.WriteAllText(savePath + ".svg", svgst);
+            string command = "sudo inkscape --export-dpi=200 -z " + savePath + ".svg -e " + savePath + ".png";
+            command.Bash();
+            return savePath + ".png";
         }
 
         public static string[] GetSpriteSources(int[] sprites)
