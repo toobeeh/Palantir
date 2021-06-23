@@ -7,8 +7,9 @@ using System.Threading.Tasks;
 using DSharpPlus;
 using DSharpPlus.Entities;
 using Newtonsoft.Json;
+using System.Net;
 
-namespace Palantir.Tracer
+namespace Palantir.QuartzJobs
 {
     public class TracerJob : IJob
     {
@@ -48,7 +49,7 @@ namespace Palantir.Tracer
         }
     }
 
-    public class UpdaterJob : IJob
+    public class StatusUpdaterJob : IJob
     {
         public async Task Execute(IJobExecutionContext context)
         {
@@ -63,6 +64,14 @@ namespace Palantir.Tracer
             dbcontext.Dispose();
             await Program.Client.UpdateStatusAsync(new DiscordActivity(" " + count + " ppl on skribbl.io", ActivityType.Watching));
             await Program.Feanor.UpdatePatrons();
+        }
+    }
+
+    public class PictureUpdaterJob : IJob
+    {
+        public async Task Execute(IJobExecutionContext context)
+        {
+            await Program.RefreshPicture();
         }
     }
 

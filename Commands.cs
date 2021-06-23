@@ -807,17 +807,17 @@ namespace Palantir
             CultureInfo iv = CultureInfo.InvariantCulture;
             string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
             string msg = "```css\n";
-            Tracer.BubbleTrace trace;
+            QuartzJobs.BubbleTrace trace;
             if (mode == "week") 
             { 
-                trace = new Tracer.BubbleTrace(login, 7 * 10); 
+                trace = new QuartzJobs.BubbleTrace(login, 7 * 10); 
                 trace.History = trace.History.Where(
                     t => t.Key.DayOfWeek == DayOfWeek.Monday || t.Key == trace.History.Keys.Min() || t.Key == trace.History.Keys.Max()
                     ).ToDictionary(); 
                 msg += " Weekly"; }
             else if (mode == "month") 
             { 
-                trace = new Tracer.BubbleTrace(login); 
+                trace = new QuartzJobs.BubbleTrace(login); 
                 trace.History = trace.History.Where(
                      t => t.Key.Day == 1 || t.Key == trace.History.Keys.Min() || t.Key == trace.History.Keys.Max()
                      ).ToDictionary();
@@ -825,7 +825,7 @@ namespace Palantir
             }
             else 
             { 
-                trace = new Tracer.BubbleTrace(login, 30); 
+                trace = new QuartzJobs.BubbleTrace(login, 30); 
                 msg += " Daily"; 
             }
 

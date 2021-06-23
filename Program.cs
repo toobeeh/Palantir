@@ -59,12 +59,12 @@ namespace Palantir
             Feanor.ActivatePalantiri();
             Console.WriteLine("Palantir activated. Fool of a Took!");
 
-            // Initialize bubble tracer job
+            // Initialize quartz jobs
             Console.WriteLine("Initializing jobs\n...");
             ISchedulerFactory schedFact = new StdSchedulerFactory();
             IScheduler scheduler = await schedFact.GetScheduler();
             await scheduler.Start();
-            IJobDetail tracer = JobBuilder.Create<Tracer.TracerJob>()
+            IJobDetail tracer = JobBuilder.Create<QuartzJobs.TracerJob>()
                 .WithIdentity("Bubble Tracer")
                 .Build();
             ITrigger tracerTrigger = TriggerBuilder.Create()
@@ -75,7 +75,7 @@ namespace Palantir
                     .StartingDailyAt(TimeOfDay.HourAndMinuteOfDay(23, 59))
                 )
                 .Build();
-            IJobDetail statusUpdater = JobBuilder.Create<Tracer.UpdaterJob>()
+            IJobDetail statusUpdater = JobBuilder.Create<QuartzJobs.StatusUpdaterJob>()
                 .WithIdentity("Status Updater")
                 .Build();
             ITrigger statusTrigger = TriggerBuilder.Create()
@@ -84,6 +84,12 @@ namespace Palantir
                 (t => t
                     .WithIntervalInSeconds(10)
                 )
+                .Build();
+            IJobDetail pictureUpdater = JobBuilder.Create<QuartzJobs.PictureUpdaterJob>()
+                .WithIdentity("Picture Updater")
+                .Build();
+            ITrigger pictureTrigger = TriggerBuilder.Create()
+                .StartNow().WithCronSchedule("0 0 8,20 ? * * *")
                 .Build();
             IJobDetail bubbleCounter = JobBuilder.Create<BubbleCounter>()
                 .WithIdentity("Bubble Counter")
@@ -103,6 +109,11 @@ namespace Palantir
             // start status updating
             Console.WriteLine("Starting status updater job\n...");
             await scheduler.ScheduleJob(statusUpdater, statusTrigger);
+
+            // start picture updating and immediately set image
+            Console.WriteLine("Starting picture updater job\n...");
+            await scheduler.ScheduleJob(pictureUpdater, pictureTrigger);
+            await RefreshPicture();
 
             // start bubble counting
             Console.WriteLine("Starting bubble counter job\n...");
@@ -137,6 +148,13 @@ namespace Palantir
         private static async Task onCommandErrored(CommandsNextExtension commands, CommandErrorEventArgs e)
         {
             if (e.Exception is DSharpPlus.CommandsNext.Exceptions.CommandNotFoundException) return;
+            if (e.Exception is DSharpPlus.CommandsNext.Exceptions.ChecksFailedException) {
+                string checks = "";
+                //((DSharpPlus.CommandsNext.Exceptions.ChecksFailedException)e.Exception).FailedChecks.ToList().ForEach(check => check.)
+                e.Command.ExecutionChecks.ToList().ForEach(attr => checks += typeof(Attribute).ToString());
+                await SendEmbed(e.Context.Channel, e.Command.Name + ": Not allowed", "Some commands require a sepcific role or being executed in a DM channel. \n\nThis command needs:\n" + checks, "", DiscordColor.Red.Value);
+                return;
+            }
             if (e.Exception.ToString().Contains("Could not find a suitable overload for the command"))
             {
                 await SendEmbed(e.Context.Channel, e.Command.Name + ": Invalid arguments", "The given arguments for the command did not fit.\nCheck `>help " + e.Command.Name + "` to see the correct use!","",DiscordColor.Red.Value);
@@ -161,6 +179,15 @@ namespace Palantir
             if (footer != "") embedErr.WithFooter(footer);
             await channel.SendMessageAsync(embed: embedErr);
             return;
+        }
+
+        public static async Task RefreshPicture()
+        {
+            string avatar;
+            if (DateTime.Now.Hour is < 8 or > 20) avatar = "https://cdn.discordapp.com/attachments/334696834322661376/857269025100136468/tucpbptr.png";
+            else avatar = "https://cdn.discordapp.com/attachments/334696834322661376/857269026841690123/skypbptr.png";
+            System.Net.WebClient client = new System.Net.WebClient();
+            await Program.Client.UpdateCurrentUserAsync(avatar: client.OpenRead(avatar));
         }
 
     }
