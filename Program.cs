@@ -152,7 +152,7 @@ namespace Palantir
                 string checks = "";
                 //((DSharpPlus.CommandsNext.Exceptions.ChecksFailedException)e.Exception).FailedChecks.ToList().ForEach(check => check.)
                 e.Command.ExecutionChecks.ToList().ForEach(attr => checks += attr.GetType());
-                await SendEmbed(e.Context.Channel, e.Command.Name + ": Not allowed", "Some commands require a sepcific role or being executed in a DM channel. \n\nThis command needs:\n" + checks, "", DiscordColor.Red.Value);
+                await SendEmbed(e.Context.Channel, e.Command.Name + ": Not allowed", "Some commands require a specific role or being executed in a DM channel. \n\nThis command needs:\n" + checks, "", DiscordColor.Red.Value);
                 return;
             }
             if (e.Exception.ToString().Contains("Could not find a suitable overload for the command"))

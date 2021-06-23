@@ -40,6 +40,30 @@ namespace Palantir
             return savePath;
         }
 
+        public static string SVGtoPNG(string svgst, string savePath)
+        {
+            var svg = new SKSvg(new SKSize(80, 80));
+            System.IO.Stream svgstream = new System.IO.MemoryStream(System.Text.Encoding.ASCII.GetBytes(svgst));
+            svg.Load(svgstream);
+            var bitmap = new SKBitmap((int)svg.CanvasSize.Width, (int)svg.CanvasSize.Height);
+            var canvas = new SKCanvas(bitmap);
+            canvas.DrawPicture(svg.Picture);
+
+            canvas.Flush();
+            canvas.Save();
+
+            using (var image = SKImage.FromBitmap(bitmap))
+            using (var data = image.Encode(SKEncodedImageFormat.Png, 80))
+            {
+                // save the data to a stream
+                using (var stream = System.IO.File.OpenWrite(savePath))
+                {
+                    data.SaveTo(stream);
+                }
+            }
+            return savePath;
+        }
+
         public static string[] GetSpriteSources(int[] sprites)
         {
             List<string> sources = new List<string>();

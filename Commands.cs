@@ -1494,5 +1494,22 @@ namespace Palantir
             }
         }
 
+        [Description("Gets a png of a svg file")]
+        [Command("svgpng")]
+        public async Task Combopng(CommandContext context)
+        {
+            string url = context.Message.Attachments[0].Url;
+            System.Net.WebClient client = new System.Net.WebClient();
+            string content = client.DownloadString(url);
+            await context.RespondAsync(content);
+            string path = SpriteComboImage.SVGtoPNG(content,"/home/pi/tmpGen/");
+            using (var fs = new System.IO.FileStream(path, System.IO.FileMode.Open, System.IO.FileAccess.Read))
+            {
+                var msg = await new DiscordMessageBuilder()
+                    .WithFiles(new Dictionary<string, System.IO.Stream>() { { "combo.png", fs } })
+                    .SendAsync(context.Channel);
+            }
+        }
+
     }
 }
