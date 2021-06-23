@@ -734,7 +734,10 @@ namespace Palantir
             var interactivity = context.Client.GetInteractivity();
             List<MemberEntity> members = Program.Feanor.GetGuildMembers(context.Guild.Id.ToString()).OrderByDescending(m => (mode == "drops" ? m.Drops : m.Bubbles)).Where(m => m.Bubbles > 0).ToList();
             List<IEnumerable<MemberEntity>> memberBatches = members.Batch(9).ToList();
-            int unranked = 0;
+            List<string> ranks = new List<string>();
+            members.ForEach(member => {
+                if (!(new PermissionFlag((byte)member.Flag)).BubbleFarming) ranks.Add(member.Login);
+            });
             int page = 0;
 
             DiscordMessageBuilder leaderboard = new DiscordMessageBuilder();
@@ -757,10 +760,9 @@ namespace Palantir
                     PermissionFlag perm = new PermissionFlag((byte)member.Flag);
                     if (perm.BubbleFarming)
                     {
-                        unranked++;
                         embed.AddField("\u200b", "**`🚩` - " + name + "**\n `This player has been flagged as *bubble farming*`.", true);
                     }
-                    else embed.AddField("\u200b", "**#" + (members.IndexOf(member) + 1 - unranked).ToString() + " - " + name + "**" + (perm.BotAdmin ? " ` Admin` " : "") + (perm.Patron ? " ` 🎖️ Patron` " : "") + "\n🔮 " + BubbleWallet.GetBubbles(member.Login).ToString() + " Bubbles\n💧 " + BubbleWallet.GetDrops(member.Login).ToString() + " Drops", true);
+                    else embed.AddField("\u200b", "**#" + ranks.IndexOf(member.Login) + " - " + name + "**" + (perm.BotAdmin ? " ` Admin` " : "") + (perm.Patron ? " ` 🎖️ Patron` " : "") + "\n🔮 " + BubbleWallet.GetBubbles(member.Login).ToString() + " Bubbles\n💧 " + BubbleWallet.GetDrops(member.Login).ToString() + " Drops", true);
                 }
 
                 leaderboard.Embed = embed.Build();
@@ -768,13 +770,14 @@ namespace Palantir
                 await leaderboard.ModifyAsync(msg);
 
                 press = await interactivity.WaitForButtonAsync(msg, TimeSpan.FromMinutes(2));
-                await press.Result.Interaction.CreateResponseAsync(DSharpPlus.InteractionResponseType.Pong);
+                await press.Result.Interaction.CreateResponseAsync(DSharpPlus.InteractionResponseType.UpdateMessage);
                 if (!press.TimedOut)
                 {
                     if (press.Result.Id == "lbdprev") page--;
                     else if (press.Result.Id == "lbdnext") page++;
                 }
-                if (page >= memberBatches.Count) { page = 0; unranked = 0; }
+                if (page >= memberBatches.Count) page = 0;
+                else if (page < 0) page = memberBatches.Count - 1;
             }
             while (!press.TimedOut);
 
