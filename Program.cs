@@ -40,9 +40,12 @@ namespace Palantir
                 CaseSensitive = false
             });
             //Program.Client.UpdateCurrentUserAsync(avatar:)
+            Console.WriteLine("Creating interactivity\n...");
             Interactivity = Client.UseInteractivity();
+            Console.WriteLine("Adding handlers\n...");
             Client.GuildCreated += onjoin;
             Commands.CommandErrored += onCommandErrored;
+            Console.WriteLine("Registering commands\n...");
             Commands.RegisterCommands<Commands>();
             Console.Write("Connecting CLient...");
             await Client.ConnectAsync();
