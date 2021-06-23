@@ -713,7 +713,6 @@ namespace Palantir
                     else embed.AddField("\u200b", "**#" + (members.IndexOf(member) + 1 - unranked).ToString() + " - " + name + "**" + (perm.BotAdmin ? " ` Admin` " : "") + (perm.Patron ? " ` 🎖️ Patron` " : "") + "\n🔮 " + BubbleWallet.GetBubbles(member.Login).ToString() + " Bubbles\n💧 " + BubbleWallet.GetDrops(member.Login).ToString() + " Drops", true);
                 }
                 embed.WithFooter(context.Member.DisplayName + " can react within 2 mins to show the next page.");
-
                 await leaderboard.ModifyAsync(embed: embed.Build(), content: "");
                 page++;
                 if (page >= memberBatches.Count) { page = 0; unranked = 0; }
@@ -722,6 +721,63 @@ namespace Palantir
             try { await leaderboard.DeleteAllReactionsAsync(); }
             catch { }
             await leaderboard.CreateReactionAsync(DiscordEmoji.FromName(Program.Client, ":no_entry_sign:"));
+        }
+
+        [Description("See who's got the most bubbles.")]
+        [Command("Leaderboard")]
+        [Aliases("newlbd", "newldb")]
+        public async Task NewLeaderboard(CommandContext context, string mode = "bubbles")
+        {
+            Program.Feanor.ValidateGuildPalantir(context.Guild.Id.ToString());
+            Program.Feanor.UpdateMemberGuilds();
+            //DiscordMessage leaderboard = await context.RespondAsync("`⏱️` Loading members of `" + context.Guild.Name + "`...");
+            var interactivity = context.Client.GetInteractivity();
+            List<MemberEntity> members = Program.Feanor.GetGuildMembers(context.Guild.Id.ToString()).OrderByDescending(m => (mode == "drops" ? m.Drops : m.Bubbles)).Where(m => m.Bubbles > 0).ToList();
+            List<IEnumerable<MemberEntity>> memberBatches = members.Batch(9).ToList();
+            int unranked = 0;
+            int page = 0;
+
+            DiscordMessageBuilder leaderboard = new DiscordMessageBuilder();
+            DiscordButtonComponent btnnext, btnprev;
+            btnnext = new DiscordButtonComponent(ButtonStyle.Primary, "lbdnext", "Next Page");
+            btnprev = new DiscordButtonComponent(ButtonStyle.Secondary, "lbdprev", "Previous Page");
+            leaderboard.WithContent("`⏱️` Loading members of `" + context.Guild.Name + "`...").AddComponents(btnnext, btnprev);
+            DiscordMessage msg = await leaderboard.SendAsync(context.Channel);
+            
+            InteractivityResult<DSharpPlus.EventArgs.ComponentInteractionCreateEventArgs> press = new InteractivityResult<DSharpPlus.EventArgs.ComponentInteractionCreateEventArgs>();
+            do
+            {
+                if (press.Result.Id == "lbdprev") page--;
+                else if (press.Result.Id == "lbdnext") page++;
+                if (page >= memberBatches.Count) { page = 0; unranked = 0; }
+
+                DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
+                embed.Title = "🔮  Leaderboard of " + context.Guild.Name;
+                embed.Color = DiscordColor.Magenta;
+                IEnumerable<MemberEntity> memberBatch = memberBatches[page];
+                foreach (MemberEntity member in memberBatch)
+                {
+                    string name = "<@" + JsonConvert.DeserializeObject<Member>(member.Member).UserID + ">";
+                    PermissionFlag perm = new PermissionFlag((byte)member.Flag);
+                    if (perm.BubbleFarming)
+                    {
+                        unranked++;
+                        embed.AddField("\u200b", "**`🚩` - " + name + "**\n `This player has been flagged as *bubble farming*`.", true);
+                    }
+                    else embed.AddField("\u200b", "**#" + (members.IndexOf(member) + 1 - unranked).ToString() + " - " + name + "**" + (perm.BotAdmin ? " ` Admin` " : "") + (perm.Patron ? " ` 🎖️ Patron` " : "") + "\n🔮 " + BubbleWallet.GetBubbles(member.Login).ToString() + " Bubbles\n💧 " + BubbleWallet.GetDrops(member.Login).ToString() + " Drops", true);
+                }
+
+                leaderboard.Embed = embed.Build();
+                leaderboard.Content = "";
+                await leaderboard.ModifyAsync(msg);
+
+                press = await interactivity.WaitForButtonAsync(msg, TimeSpan.FromMinutes(2));
+            }
+            while (!press.TimedOut);
+
+            btnnext.Disabled = true;
+            btnprev.Disabled = true;
+            await leaderboard.ModifyAsync(msg);
         }
 
         [Description("Manual on how to use Bubbles")]
