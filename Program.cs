@@ -151,7 +151,7 @@ namespace Palantir
             if (e.Exception is DSharpPlus.CommandsNext.Exceptions.ChecksFailedException) {
                 string checks = "";
                 //((DSharpPlus.CommandsNext.Exceptions.ChecksFailedException)e.Exception).FailedChecks.ToList().ForEach(check => check.)
-                e.Command.ExecutionChecks.ToList().ForEach(attr => checks += typeof(Attribute).ToString());
+                e.Command.ExecutionChecks.ToList().ForEach(attr => checks += attr.GetType());
                 await SendEmbed(e.Context.Channel, e.Command.Name + ": Not allowed", "Some commands require a sepcific role or being executed in a DM channel. \n\nThis command needs:\n" + checks, "", DiscordColor.Red.Value);
                 return;
             }
@@ -189,7 +189,8 @@ namespace Palantir
                 if (DateTime.Now.Hour is < 8 or > 20) avatar = "https://cdn.discordapp.com/attachments/334696834322661376/857269025100136468/tucpbptr.png";
                 else avatar = "https://cdn.discordapp.com/attachments/334696834322661376/857269026841690123/skypbptr.png";
                 System.Net.WebClient client = new System.Net.WebClient();
-                System.IO.Stream str = client.OpenRead(avatar);
+                byte[] data = client.DownloadData(avatar);
+                MemoryStream str = new MemoryStream(data);
                 await Program.Client.UpdateCurrentUserAsync(avatar: str);
             }
             catch(Exception e) { Console.WriteLine(e.ToString()); }
