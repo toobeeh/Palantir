@@ -665,8 +665,8 @@ namespace Palantir
         }
 
         [Description("See who's got the most bubbles.")]
-        [Command("Leaderboard")]
-        [Aliases("lbd", "ldb")]
+        [Command("Old Leaderboard")]
+        [Aliases("oldlbd", "oldldb")]
         public async Task Leaderboard(CommandContext context, string mode = "bubbles")
         {
             Program.Feanor.ValidateGuildPalantir(context.Guild.Id.ToString());
@@ -724,8 +724,8 @@ namespace Palantir
         }
 
         [Description("See who's got the most bubbles.")]
-        [Command("New-Leaderboard")]
-        [Aliases("newlbd")]
+        [Command("Leaderboard")]
+        [Aliases("lbd", "ldb")]
         public async Task NewLeaderboard(CommandContext context, string mode = "bubbles")
         {
             Program.Feanor.ValidateGuildPalantir(context.Guild.Id.ToString());
