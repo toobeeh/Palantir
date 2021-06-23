@@ -769,7 +769,7 @@ namespace Palantir
                 leaderboard.Content = "";
                 await leaderboard.ModifyAsync(msg);
 
-                press = await interactivity.WaitForButtonAsync(msg, TimeSpan.FromMinutes(2));
+                press = await interactivity.WaitForButtonAsync(msg, context.Message.Author, TimeSpan.FromMinutes(2));
                 if (!press.TimedOut)
                 {
                     if (press.Result.Id == "lbdprev") page--;
