@@ -724,7 +724,7 @@ namespace Palantir
         }
 
         [Description("See who's got the most bubbles.")]
-        [Command("Leaderboard")]
+        [Command("New Leaderboard")]
         [Aliases("newlbd", "newldb")]
         public async Task NewLeaderboard(CommandContext context, string mode = "bubbles")
         {
