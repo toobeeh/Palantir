@@ -768,6 +768,7 @@ namespace Palantir
                 await leaderboard.ModifyAsync(msg);
 
                 press = await interactivity.WaitForButtonAsync(msg, TimeSpan.FromMinutes(2));
+                await press.Result.Interaction.CreateResponseAsync(DSharpPlus.InteractionResponseType.Pong);
                 if (!press.TimedOut)
                 {
                     if (press.Result.Id == "lbdprev") page--;
