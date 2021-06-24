@@ -47,6 +47,7 @@ namespace Palantir
             string greyout = (patron ? "" : " #patron * {opacity: .5} ")
                 + (early ? "" : " #early * {opacity: .5} ")
                 + (moderator ? "" : " #moderator * {opacity: .5} ");
+            if (username.Length > 15) username = username.Substring(0, 12) + "..";
             svg = svg.Replace("$username$", username)
                 .Replace("$bubbles$", bubbles + " Bubbles")
                 .Replace("$drops$", drops + " Drops")
