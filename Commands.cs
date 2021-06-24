@@ -1530,7 +1530,7 @@ namespace Palantir
             string spritebase64 = Convert.ToBase64String(System.IO.File.ReadAllBytes(combopath));
             System.IO.File.Delete(combopath);
 
-            SpriteComboImage.FillPlaceholders(ref content, profilebase64, spritebase64, color, dMember is not null ? dMember.DisplayName : dUser.Username, member.Bubbles.ToString(), member.Drops.ToString(), Math.Round((double)member.Drops / (member.Bubbles / 1000),2),
+            SpriteComboImage.FillPlaceholders(ref content, profilebase64, spritebase64, color, dMember is not null ? dMember.DisplayName : dUser.Username, member.Bubbles.ToString(), member.Drops.ToString(), Math.Round((double)member.Drops / (member.Bubbles / 1000),1),
                 BubbleWallet.FirstTrace(login), BubbleWallet.GetInventory(login).Count.ToString(), BubbleWallet.ParticipatedEvents(login).Count.ToString(), Math.Round((double)member.Bubbles * 10 / 3600).ToString(),
                 BubbleWallet.GlobalRanking(login).ToString(), BubbleWallet.GlobalRanking(login, true).ToString(), memberDetail.Guilds.Count.ToString(), perm.Patron, BubbleWallet.IsEarlyUser(login), perm.Moderator);
 
