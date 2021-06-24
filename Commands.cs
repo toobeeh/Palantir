@@ -1498,9 +1498,15 @@ namespace Palantir
         [Command("svgpng")]
         public async Task Combopng(CommandContext context)
         {
+            string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
+            MemberEntity member = Program.Feanor.GetMemberByLogin(login);
+
             string url = context.Message.Attachments[0].Url;
             System.Net.WebClient client = new System.Net.WebClient();
             string content = client.DownloadString(url);
+            SpriteComboImage.FillPlaceholders(ref content, context.Member.DisplayName, member.Bubbles.ToString(), member.Drops.ToString(), (member.Drops / (member.Bubbles / 1000)).ToString(),
+                "never", member.Sprites.Split(",").ToList().Where(spt => !spt.StartsWith("0")).Count().ToString(), "2", Math.Round((double)member.Bubbles / 10 / 3600).ToString(),
+                "#1", "#5", "5", true, true, true);
             string path = SpriteComboImage.SVGtoPNG(content, "/home/pi/tmpGen/");
             using (var fs = new System.IO.FileStream(path, System.IO.FileMode.Open, System.IO.FileAccess.Read))
             {
