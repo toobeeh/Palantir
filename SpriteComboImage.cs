@@ -48,7 +48,7 @@ namespace Palantir
                 + (early ? "" : " #early * {opacity: .5} ")
                 + (moderator ? "" : " #moderator * {opacity: .5} ");
             if (username.Length > 15) username = username.Substring(0, 12) + "..";
-            string rationame = (dropratio < 0.5 ? "Newbie" : dropratio < 1 ? "Relaxed" : dropratio < 2 ? "Ambitious" : dropratio < 4 ? "Capable" : dropratio < 8 ? "Skilled" : dropratio < 10 ? "Expert" : dropratio < 12 ? "Epic!" : "Godmode");
+            string rationame = (dropratio < 0.5 ? "Newbie" : dropratio < 2 ? "Relaxed" : dropratio < 3 ? "Ambitious" : dropratio < 5 ? "Capable" : dropratio < 8 ? "Skilled" : dropratio < 10 ? "Expert" : dropratio < 12 ? "Epic!" : "Godmode");
             svg = svg.Replace("$username$", username)
                 .Replace("$bubbles$", bubbles + " Bubbles")
                 .Replace("$drops$", drops + " Drops")
