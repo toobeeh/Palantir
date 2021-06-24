@@ -55,6 +55,7 @@ namespace Palantir
                 .Replace("$brank$", " #" + brank)
                 .Replace("$drank$", " #" + drank)
                 .Replace("$servers$", servers)
+                .Replace("$profilebase64$", profilebase64)
                 .Replace("$customstyle$", font + color);
         }
 
