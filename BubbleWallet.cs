@@ -196,6 +196,28 @@ namespace Palantir
             context.Dispose();
             return dates.Min(date => DateTime.Parse(date)).ToShortDateString();
         }
+        public static List<int> ParticipatedEvents(string login)
+        {
+            List<int> events = new List<int>();
+            PalantirDbContext context = new PalantirDbContext();
+            List<int> eventdrops = context.EventCredits.Where(credit => credit.Login == login).Select(credit => credit.EventDropID).Distinct().ToList();
+            eventdrops.ForEach(drop =>
+            {
+                int eventid = context.EventDrops.FirstOrDefault(drop => drop.EventDropID == drop.EventDropID).EventID;
+                if (!events.Contains(eventid)) events.Add(eventid);
+            });
+            context.Dispose();
+            return events;
+        }
+
+        public static int GlobalRanking(string login, bool drops = false)
+        {
+            PalantirDbContext context = new PalantirDbContext();
+            int index = context.Members.OrderByDescending(member => drops ? member.Drops : member.Bubbles).Select(member => member.Login).ToList().IndexOf(login);
+            context.Dispose();
+            return index;
+        }
+
         public static string GetLoginOfMember(string id)
         {
             PalantirDbContext context = new PalantirDbContext();

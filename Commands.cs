@@ -1516,8 +1516,8 @@ namespace Palantir
             System.IO.File.Delete(combopath);
 
             SpriteComboImage.FillPlaceholders(ref content, profilebase64, spritebase64, color, context.Member.DisplayName, member.Bubbles.ToString(), member.Drops.ToString(), (member.Drops / (member.Bubbles / 1000)).ToString(),
-                BubbleWallet.FirstTrace(login), member.Sprites.Replace(".","").Split(",").ToList().Where(spt => !spt.StartsWith("0")).Count().ToString(), "2", Math.Round((double)member.Bubbles / 10 / 3600).ToString(),
-                "1", "5", memberDetail.Guilds.Count.ToString(), true, true, true);
+                BubbleWallet.FirstTrace(login), member.Sprites.Replace(".","").Split(",").ToList().Where(spt => !spt.StartsWith("0")).Count().ToString(), BubbleWallet.ParticipatedEvents(login).Count.ToString(), Math.Round((double)member.Bubbles * 10 / 3600).ToString(),
+                BubbleWallet.GlobalRanking(login).ToString(), BubbleWallet.GlobalRanking(login, true).ToString(), memberDetail.Guilds.Count.ToString(), true, true, true);
 
             string path = SpriteComboImage.SVGtoPNG(content, "/home/pi/Webroot/files/combos/");
             await response.ModifyAsync(content: path.Replace(@"/home/pi/Webroot/", "https://tobeh.host/"));
