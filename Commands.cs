@@ -1505,7 +1505,7 @@ namespace Palantir
                 return;
             }
 
-            DiscordMessage response = await context.RespondAsync("> \n>  <a:working:857610439588053023> **Building your card afap!!**\n");
+            DiscordMessage response = await context.RespondAsync("> \n> \n> ... <a:working:857610439588053023> **Building your card afap!!**\n> \n> ");
             string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
             MemberEntity member = Program.Feanor.GetMemberByLogin(login);
             Member memberDetail = JsonConvert.DeserializeObject<Member>(member.Member);
