@@ -1507,13 +1507,13 @@ namespace Palantir
 
             string profilebase64 = Convert.ToBase64String(client.DownloadData(context.Member.AvatarUrl));
             string combopath = SpriteComboImage.GenerateImage(SpriteComboImage.GetSpriteSources(
-                Array.ConvertAll<string, int>(member.Sprites.Split(",").Where(spt => !spt.StartsWith("0")).ToArray(), sprite => int.Parse(sprite))),
+                Array.ConvertAll(member.Sprites.Split(",").Where(spt => !spt.StartsWith(".0") && spt.Contains(".")).ToArray(), sprite => int.Parse(sprite.Replace(".","")))),
                 "/home/pi/tmpGen/");
             string spritebase64 = Convert.ToBase64String(System.IO.File.ReadAllBytes(combopath));
             System.IO.File.Delete(combopath);
 
             SpriteComboImage.FillPlaceholders(ref content, profilebase64, spritebase64, color, context.Member.DisplayName, member.Bubbles.ToString(), member.Drops.ToString(), (member.Drops / (member.Bubbles / 1000)).ToString(),
-                "never", member.Sprites.Split(",").ToList().Where(spt => !spt.StartsWith("0")).Count().ToString(), "2", Math.Round((double)member.Bubbles / 10 / 3600).ToString(),
+                "never", member.Sprites.Replace(".","").Split(",").ToList().Where(spt => !spt.StartsWith("0")).Count().ToString(), "2", Math.Round((double)member.Bubbles / 10 / 3600).ToString(),
                 "1", "5", "5", true, true, true);
 
             string path = SpriteComboImage.SVGtoPNG(content, "/home/pi/tmpGen/");
