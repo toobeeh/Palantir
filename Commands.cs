@@ -1498,7 +1498,7 @@ namespace Palantir
         [Command("card")]
         public async Task Combopng(CommandContext context, string color = "black")
         {
-            DiscordMessage response = await context.RespondAsync("> <a:l9:718816560915021884> **Building your card afap!!**");
+            DiscordMessage response = await context.RespondAsync("> <a:working:857610439588053023> **Building your card afap!!**");
             string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
             MemberEntity member = Program.Feanor.GetMemberByLogin(login);
             Member memberDetail = JsonConvert.DeserializeObject<Member>(member.Member);
