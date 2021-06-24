@@ -1504,10 +1504,18 @@ namespace Palantir
             string url = context.Message.Attachments[0].Url;
             System.Net.WebClient client = new System.Net.WebClient();
             string content = client.DownloadString(url);
+
             string profilebase64 = Convert.ToBase64String(client.DownloadData(context.Member.AvatarUrl));
-            SpriteComboImage.FillPlaceholders(ref content, profilebase64, color, context.Member.DisplayName, member.Bubbles.ToString(), member.Drops.ToString(), (member.Drops / (member.Bubbles / 1000)).ToString(),
+            string combopath = SpriteComboImage.GenerateImage(SpriteComboImage.GetSpriteSources(
+                Array.ConvertAll<string, int>(member.Sprites.Split(",").Where(spt => !spt.StartsWith("0")).ToArray(), sprite => int.Parse(sprite))),
+                "/home/pi/tmpGen/");
+            string spritebase64 = Convert.ToBase64String(System.IO.File.ReadAllBytes(combopath));
+            System.IO.File.Delete(combopath);
+
+            SpriteComboImage.FillPlaceholders(ref content, profilebase64, spritebase64, color, context.Member.DisplayName, member.Bubbles.ToString(), member.Drops.ToString(), (member.Drops / (member.Bubbles / 1000)).ToString(),
                 "never", member.Sprites.Split(",").ToList().Where(spt => !spt.StartsWith("0")).Count().ToString(), "2", Math.Round((double)member.Bubbles / 10 / 3600).ToString(),
                 "1", "5", "5", true, true, true);
+
             string path = SpriteComboImage.SVGtoPNG(content, "/home/pi/tmpGen/");
             using (var fs = new System.IO.FileStream(path, System.IO.FileMode.Open, System.IO.FileAccess.Read))
             {
