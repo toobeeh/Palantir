@@ -201,9 +201,9 @@ namespace Palantir
             List<int> events = new List<int>();
             PalantirDbContext context = new PalantirDbContext();
             List<int> eventdrops = context.EventCredits.Where(credit => credit.Login == login).Select(credit => credit.EventDropID).ToList();
-            eventdrops.ForEach(drop =>
+            eventdrops.ForEach(caughtdrop =>
             {
-                int eventid = context.EventDrops.FirstOrDefault(drop => drop.EventDropID == drop.EventDropID).EventID;
+                int eventid = context.EventDrops.FirstOrDefault(drop => caughtdrop == drop.EventDropID).EventID;
                 if (!events.Contains(eventid)) events.Add(eventid);
             });
             context.Dispose();

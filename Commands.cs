@@ -1515,7 +1515,7 @@ namespace Palantir
             //string content = client.DownloadString(url);
             string content = Palantir.Properties.Resources.SVGcard;
 
-            int[] sprites = BubbleWallet.GetInventory(login).OrderBy(spt=>spt.Slot).Select(spt=>spt.ID).ToArray();
+            int[] sprites = BubbleWallet.GetInventory(login).Where(spt => spt.Activated).OrderBy(spt=>spt.Slot).Select(spt=>spt.ID).ToArray();
 
             string profilebase64 = Convert.ToBase64String(client.DownloadData(context.User.AvatarUrl));
             string combopath = SpriteComboImage.GenerateImage(SpriteComboImage.GetSpriteSources(sprites),"/home/pi/tmpGen/");
@@ -1523,7 +1523,7 @@ namespace Palantir
             System.IO.File.Delete(combopath);
 
             SpriteComboImage.FillPlaceholders(ref content, profilebase64, spritebase64, color, context.Member is not null ? context.Member.DisplayName : context.User.Username, member.Bubbles.ToString(), member.Drops.ToString(), (member.Drops / (member.Bubbles / 1000)).ToString(),
-                BubbleWallet.FirstTrace(login), sprites.Length.ToString(), BubbleWallet.ParticipatedEvents(login).Count.ToString(), Math.Round((double)member.Bubbles * 10 / 3600).ToString(),
+                BubbleWallet.FirstTrace(login), BubbleWallet.GetInventory(login).Count.ToString(), BubbleWallet.ParticipatedEvents(login).Count.ToString(), Math.Round((double)member.Bubbles * 10 / 3600).ToString(),
                 BubbleWallet.GlobalRanking(login).ToString(), BubbleWallet.GlobalRanking(login, true).ToString(), memberDetail.Guilds.Count.ToString(), perm.Patron, BubbleWallet.IsEarlyUser(login), perm.Moderator);
 
             string path = SpriteComboImage.SVGtoPNG(content, "/home/pi/Webroot/files/combos/");
