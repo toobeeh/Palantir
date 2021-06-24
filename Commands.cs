@@ -1501,7 +1501,6 @@ namespace Palantir
             string url = context.Message.Attachments[0].Url;
             System.Net.WebClient client = new System.Net.WebClient();
             string content = client.DownloadString(url);
-            await context.RespondAsync(content.Substring(0,200));
             string path = SpriteComboImage.SVGtoPNG(content, "/home/pi/tmpGen/");
             using (var fs = new System.IO.FileStream(path, System.IO.FileMode.Open, System.IO.FileAccess.Read))
             {
