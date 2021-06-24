@@ -200,7 +200,7 @@ namespace Palantir
         {
             List<int> events = new List<int>();
             PalantirDbContext context = new PalantirDbContext();
-            List<int> eventdrops = context.EventCredits.Where(credit => credit.Login == login).Select(credit => credit.EventDropID).Distinct().ToList();
+            List<int> eventdrops = context.EventCredits.Where(credit => credit.Login == login).Select(credit => credit.EventDropID).ToList();
             eventdrops.ForEach(drop =>
             {
                 int eventid = context.EventDrops.FirstOrDefault(drop => drop.EventDropID == drop.EventDropID).EventID;
@@ -213,7 +213,7 @@ namespace Palantir
         public static int GlobalRanking(string login, bool drops = false)
         {
             PalantirDbContext context = new PalantirDbContext();
-            int index = context.Members.OrderByDescending(member => drops ? member.Drops : member.Bubbles).Select(member => member.Login).ToList().IndexOf(login);
+            int index = context.Members.OrderByDescending(member => drops ? member.Drops : member.Bubbles).Select(member => member.Login).ToList().IndexOf(login) + 1;
             context.Dispose();
             return index;
         }
