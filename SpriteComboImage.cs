@@ -49,7 +49,7 @@ namespace Palantir
                 .Replace("$drops$", drops + " Drops")
                 .Replace("$dropratio$", " " + dropratio)
                 .Replace("$firstseen$", firstseen)
-                .Replace("$sprites$", sprites + " bought")
+                .Replace("$sprites$", " " + sprites + " bought")
                 .Replace("$events$", events)
                 .Replace("$hours$", " " + hours)
                 .Replace("$brank$", " #" + brank)

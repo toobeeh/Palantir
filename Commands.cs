@@ -1502,9 +1502,10 @@ namespace Palantir
             MemberEntity member = Program.Feanor.GetMemberByLogin(login);
             Member memberDetail = JsonConvert.DeserializeObject<Member>(member.Member);
 
-            string url = context.Message.Attachments[0].Url;
+            //string url = context.Message.Attachments[0].Url;
             System.Net.WebClient client = new System.Net.WebClient();
-            string content = client.DownloadString(url);
+            //string content = client.DownloadString(url);
+            string content = Palantir.Properties.Resources.SVGcard;
 
             string profilebase64 = Convert.ToBase64String(client.DownloadData(context.Member.AvatarUrl));
             string combopath = SpriteComboImage.GenerateImage(SpriteComboImage.GetSpriteSources(

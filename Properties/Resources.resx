@@ -1,0 +1,123 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="SVGcard" xml:space="preserve">
+    <value>&lt;svg id="Ebene_1" data-name="Ebene 1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="500" height="333.46809" viewBox="0 0 500 333.46809"&gt; &lt;defs&gt; &lt;style&gt;$customstyle$ .{}.cls-1, .cls-21{fill: none;}.cls-2{fill: #18191c;}.cls-3{clip-path: url(#clip-path);}.cls-4, .cls-7{fill: #36a9e1;}.cls-21, .cls-4, .cls-7{stroke: #36a9e1;}.cls-4{stroke-linecap: square;}.cls-18, .cls-19, .cls-21, .cls-4, .cls-7{stroke-miterlimit: 10;}.cls-21, .cls-4{stroke-width: 8px;}.cls-5{font-size: 25px;}.cls-13, .cls-5{fill: #fff;}.cls-13, .cls-5, .cls-6{font-family: Arial-BoldMT, Arial; font-weight: 700;}.cls-6{font-size: 14px; fill: #dadada;}.cls-8{fill: #821350;}.cls-9{fill: #ad126b;}.cls-10{fill: #e6007e;}.cls-11, .cls-12, .cls-13{font-size: 13px;}.cls-11{fill: #575756;}.cls-11, .cls-12{font-family: ArialMT, Arial;}.cls-12{fill: #9d9d9c;}.cls-14{fill: #ad1924;}.cls-15{fill: #e30613;}.cls-16{fill: #1d71b8;}.cls-17{fill: #00a19a;}.cls-18{fill: #683c11; stroke: #683c11;}.cls-18, .cls-19, .cls-21{stroke-linecap: round;}.cls-18, .cls-19{stroke-width: 2px;}.cls-19{fill: #936037; stroke: #936037;}.cls-20{clip-path: url(#clip-path-2);}&lt;/style&gt; &lt;clipPath id="clip-path"&gt; &lt;path class="cls-1" d="M34.30763,6.141H464.54847a27.40426,27.40426,0,0,1,27.40426,27.40426V300.94947a27.40425,27.40425,0,0,1-27.40425,27.40425H34.30763A27.40427,27.40427,0,0,1,6.90336,300.94945V33.54522A27.40427,27.40427,0,0,1,34.30763,6.141Z"/&gt; &lt;/clipPath&gt; &lt;clipPath id="clip-path-2"&gt; &lt;circle class="cls-1" cx="51.50121" cy="39.4873" r="26.12877"/&gt; &lt;/clipPath&gt; &lt;/defs&gt; &lt;path class="cls-2" d="M36.23313,7.32979H464.54846a27.40427,27.40427,0,0,1,27.40427,27.40427v285.6566a9.1519,9.1519,0,0,1-9.1519,9.1519H17.99422a9.16535,9.16535,0,0,1-9.16535-9.16535V34.734A27.40425,27.40425,0,0,1,36.23313,7.32979Z"/&gt; &lt;g class="cls-3"&gt; &lt;path id="header" class="cls-4" d="M490.01954,5.62766H8.83655V74.092c72.387.23142,81.20239-.23141,153.58934,0,11.10793-.10185,51.81695,0,59.9828,0,41.01388,0,48.22046,14.978,69.91482,27.54189,17.75234,10.281,26.73444,12.48814,46.71839,12.97641,52.549,0,99.28223.51064,150.98234,0Z"/&gt; &lt;/g&gt; &lt;text id="username" class="cls-5" transform="translate(95.2032 50.84337)"&gt;$username$&lt;/text&gt; &lt;g&gt; &lt;text class="cls-6" transform="translate(84.69502 123.56841)"&gt;$bubbles$&lt;/text&gt; &lt;text class="cls-6" transform="translate(83.90401 159.86723)"&gt;$drops$&lt;/text&gt; &lt;path class="cls-7" d="M53.53765,145.46969q-2.89515,6.42174-6.3125,13.02827l-.02247.04325a7.421,7.421,0,0,0-.10315,6.81981,7.70851,7.70851,0,0,0,3.89444,3.58463c3.76964,1.46851,7.99485-.88236,9.63306-4.34319l.01865-.03967a6.22734,6.22734,0,0,0-.12859-5.36362Z"/&gt; &lt;g&gt; &lt;circle class="cls-8" cx="51.34454" cy="124.75352" r="6.93896"/&gt; &lt;circle class="cls-9" cx="58.57707" cy="115.65281" r="7.23253"/&gt; &lt;circle class="cls-10" cx="47.73437" cy="115.16517" r="6.02058"/&gt; &lt;/g&gt; &lt;/g&gt; &lt;g&gt; &lt;text class="cls-11" transform="translate(246.67178 161.55362)"&gt;Drop-Bubble-ratio:&lt;/text&gt; &lt;text id="dropratio" class="cls-12" transform="translate(365.57562 162.04767)"&gt;$dropratio$&lt;/text&gt; &lt;text class="cls-11" transform="translate(246.67178 205.57802)"&gt;Sprite inventory: &lt;/text&gt; &lt;text id="sprites" class="cls-12" transform="translate(356.55534 205.57802)"&gt;$sprites$&lt;/text&gt; &lt;text class="cls-11" transform="translate(246.67178 226.51468)"&gt;Participated events: &lt;/text&gt; &lt;text id="participated" class="cls-12" transform="translate(379.99638 226.59865)"&gt;$events$&lt;/text&gt; &lt;text class="cls-11" transform="translate(246.67178 247.45036)"&gt;Hours spent on skribbl: &lt;/text&gt; &lt;text id="hours" class="cls-12" transform="translate(397.59181 247.45085)"&gt;$hours$&lt;/text&gt; &lt;text class="cls-11" transform="translate(246.67178 268.38654)"&gt;Global Bubble ranking: &lt;/text&gt; &lt;text id="globbubble" class="cls-12" transform="translate(398.67139 268.4705)"&gt;$brank$&lt;/text&gt; &lt;rect class="cls-1" x="388.58164" y="272.10706" width="54.31648" height="20.93617"/&gt; &lt;rect class="cls-1" x="385.37503" y="281.58412" width="54.31648" height="20.93617"/&gt; &lt;text class="cls-11" transform="translate(246.67178 289.32222)"&gt;Global Drop ranking: &lt;/text&gt; &lt;text class="cls-11" transform="translate(246.67178 310.09435)"&gt;Connected servers:&lt;/text&gt; &lt;text id="globdrop" class="cls-12" transform="translate(388.45176 290.89124)"&gt;$drank$&lt;/text&gt; &lt;text id="connserver" class="cls-12" transform="translate(382.01904 310.09436)"&gt;$servers$&lt;/text&gt; &lt;text class="cls-11" transform="translate(246.67178 183.60859)"&gt;First seen: &lt;/text&gt; &lt;text id="firstseen" class="cls-12" transform="translate(320.61987 183.69256)"&gt;$firstseen$&lt;/text&gt; &lt;/g&gt; &lt;g id="patron"&gt; &lt;text class="cls-13" transform="translate(396.59133 39.48753)"&gt;Patron&lt;/text&gt; &lt;g&gt; &lt;path class="cls-14" d="M375.12058,29.63131c-1.12348-2.68229-2.53683-4.14267-5.00755-4.311-2.59457-.17679-4.34111.66547-4.90484,3.48249-.73855,3.69053,2.50028,9.14782,9.91239,13.09084"/&gt; &lt;path class="cls-15" d="M375.12058,29.63131c1.12348-2.68229,2.53682-4.14267,5.00754-4.311,2.59457-.17679,4.34111.66547,4.90485,3.48249.73854,3.69053-2.50029,9.14782-9.91239,13.09084"/&gt; &lt;/g&gt; &lt;/g&gt; &lt;g id="early"&gt; &lt;text class="cls-13" transform="translate(397.21887 98.67004)"&gt;Early User&lt;/text&gt; &lt;g&gt; &lt;polyline class="cls-16" points="366.587 92.234 375.121 101.272 375.121 92.234 375.121 88.514 371.97 88.514 368.95 88.514"/&gt; &lt;polyline class="cls-17" points="383.654 92.234 375.121 101.272 375.121 92.234 375.121 88.514 378.271 88.514 381.291 88.514"/&gt; &lt;/g&gt; &lt;/g&gt; &lt;g id="moderator"&gt; &lt;text class="cls-13" transform="translate(396.57182 69.7862)"&gt;Moderator&lt;/text&gt; &lt;g&gt; &lt;polygon class="cls-18" points="374.124 62.324 374.124 72.896 366.993 68.468 366.993 58.215 374.124 62.324"/&gt; &lt;polygon class="cls-19" points="376.117 62.324 376.117 72.896 383.248 68.468 383.248 58.215 376.117 62.324"/&gt; &lt;/g&gt; &lt;/g&gt; &lt;g class="cls-20"&gt; &lt;image id="profilepicture" width="1000" height="1000" transform="translate(25.37244 13.35853) scale(0.05226 0.05226)" xlink:href="data:image/png;base64,$profilebase64$"/&gt; &lt;/g&gt; &lt;path id="border" class="cls-21" d="M8.04727,283.42554V33.03191A27.40425,27.40425,0,0,1,35.45153,5.62766H230.58316"/&gt; &lt;image id="sprite" width="80" height="80" transform="translate(51.50121 186.09539) scale(1.69535)" xlink:href="data:image/png;base64,$spritebase64$"/&gt;&lt;/svg&gt;</value>
+  </data>
+</root>
