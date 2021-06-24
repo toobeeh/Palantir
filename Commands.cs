@@ -1515,7 +1515,7 @@ namespace Palantir
             //string content = client.DownloadString(url);
             string content = Palantir.Properties.Resources.SVGcard;
 
-            string profilebase64 = Convert.ToBase64String(client.DownloadData(context.Member.AvatarUrl));
+            string profilebase64 = Convert.ToBase64String(client.DownloadData(context.User.AvatarUrl));
             string combopath = SpriteComboImage.GenerateImage(SpriteComboImage.GetSpriteSources(
                 Array.ConvertAll(member.Sprites.Split(",").Where(spt => !spt.StartsWith(".0") && spt.Contains(".")).ToArray(), sprite => int.Parse(sprite.Replace(".","")))),
                 "/home/pi/tmpGen/");
