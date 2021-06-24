@@ -1498,6 +1498,7 @@ namespace Palantir
         [Command("card")]
         public async Task Combopng(CommandContext context, string color = "black")
         {
+            DiscordMessage response = await context.RespondAsync("> <a:l9:718816560915021884> **Building your card afap!!**");
             string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
             MemberEntity member = Program.Feanor.GetMemberByLogin(login);
             Member memberDetail = JsonConvert.DeserializeObject<Member>(member.Member);
@@ -1519,12 +1520,8 @@ namespace Palantir
                 "1", "5", memberDetail.Guilds.Count.ToString(), true, true, true);
 
             string path = SpriteComboImage.SVGtoPNG(content, "/home/pi/Webroot/files/combos/");
-            using (var fs = new System.IO.FileStream(path, System.IO.FileMode.Open, System.IO.FileAccess.Read))
-            {
-                var msg = await new DiscordMessageBuilder()
-                    .WithContent(path.Replace(@"/home/pi/Webroot/", "https://tobeh.host/"))
-                    .SendAsync(context.Channel);
-            }
+            await response.ModifyAsync(content: path.Replace(@"/home/pi/Webroot/", "https://tobeh.host/"));
+            
         }
 
     }
