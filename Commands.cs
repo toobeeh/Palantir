@@ -1496,7 +1496,7 @@ namespace Palantir
 
         [Description("Gets a png of a svg file")]
         [Command("svgpng")]
-        public async Task Combopng(CommandContext context)
+        public async Task Combopng(CommandContext context, string color)
         {
             string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
             MemberEntity member = Program.Feanor.GetMemberByLogin(login);
@@ -1504,7 +1504,7 @@ namespace Palantir
             string url = context.Message.Attachments[0].Url;
             System.Net.WebClient client = new System.Net.WebClient();
             string content = client.DownloadString(url);
-            SpriteComboImage.FillPlaceholders(ref content, context.Member.DisplayName, member.Bubbles.ToString(), member.Drops.ToString(), (member.Drops / (member.Bubbles / 1000)).ToString(),
+            SpriteComboImage.FillPlaceholders(ref content, color, context.Member.DisplayName, member.Bubbles.ToString(), member.Drops.ToString(), (member.Drops / (member.Bubbles / 1000)).ToString(),
                 "never", member.Sprites.Split(",").ToList().Where(spt => !spt.StartsWith("0")).Count().ToString(), "2", Math.Round((double)member.Bubbles / 10 / 3600).ToString(),
                 "1", "5", "5", true, true, true);
             string path = SpriteComboImage.SVGtoPNG(content, "/home/pi/tmpGen/");
