@@ -56,7 +56,7 @@ namespace Palantir
                 .Replace("$brank$", " #" + brank)
                 .Replace("$drank$", " #" + drank)
                 .Replace("$servers$", servers)
-                .Replace("$scustomstyle$", font + color);
+                .Replace("$customstyle$", font + color);
         }
 
         public static string SVGtoPNG(string svgst, string savePath)
