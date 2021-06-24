@@ -1498,15 +1498,23 @@ namespace Palantir
         [Command("card")]
         public async Task Combopng(CommandContext context, string color = "black")
         {
+            DiscordMember dMember = context.Member;
+            DiscordUser dUser = context.User;
+            if (context.Message.ReferencedMessage is not null) {
+                dUser = context.Message.ReferencedMessage.Author;
+                dMember = null;
+            }
+
             PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
             if (!perm.BotAdmin && !perm.Patron)
             {
                 await Program.SendEmbed(context.Channel, "Ha, PAYWALL!", "This command is only available for Patreon Subscriber.\nLet's join them! \nhttps://www.patreon.com/skribbltypo");
                 return;
             }
+            perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(dUser));
 
             DiscordMessage response = await context.RespondAsync(">  \n>  \n>   <a:working:857610439588053023> **Building your card afap!!**\n> _ _ \n> _ _ ");
-            string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
+            string login = BubbleWallet.GetLoginOfMember(dUser.Id.ToString());
             MemberEntity member = Program.Feanor.GetMemberByLogin(login);
             Member memberDetail = JsonConvert.DeserializeObject<Member>(member.Member);
 
@@ -1517,12 +1525,12 @@ namespace Palantir
 
             int[] sprites = BubbleWallet.GetInventory(login).Where(spt => spt.Activated).OrderBy(spt=>spt.Slot).Select(spt=>spt.ID).ToArray();
 
-            string profilebase64 = Convert.ToBase64String(client.DownloadData(context.User.AvatarUrl));
+            string profilebase64 = Convert.ToBase64String(client.DownloadData(dUser.AvatarUrl));
             string combopath = SpriteComboImage.GenerateImage(SpriteComboImage.GetSpriteSources(sprites),"/home/pi/tmpGen/");
             string spritebase64 = Convert.ToBase64String(System.IO.File.ReadAllBytes(combopath));
             System.IO.File.Delete(combopath);
 
-            SpriteComboImage.FillPlaceholders(ref content, profilebase64, spritebase64, color, context.Member is not null ? context.Member.DisplayName : context.User.Username, member.Bubbles.ToString(), member.Drops.ToString(), Math.Round((double)member.Drops / (member.Bubbles / 1000),2),
+            SpriteComboImage.FillPlaceholders(ref content, profilebase64, spritebase64, color, dMember is not null ? dMember.DisplayName : dUser.Username, member.Bubbles.ToString(), member.Drops.ToString(), Math.Round((double)member.Drops / (member.Bubbles / 1000),2),
                 BubbleWallet.FirstTrace(login), BubbleWallet.GetInventory(login).Count.ToString(), BubbleWallet.ParticipatedEvents(login).Count.ToString(), Math.Round((double)member.Bubbles * 10 / 3600).ToString(),
                 BubbleWallet.GlobalRanking(login).ToString(), BubbleWallet.GlobalRanking(login, true).ToString(), memberDetail.Guilds.Count.ToString(), perm.Patron, BubbleWallet.IsEarlyUser(login), perm.Moderator);
 
