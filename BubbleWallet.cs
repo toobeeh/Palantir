@@ -189,6 +189,13 @@ namespace Palantir
             context.Dispose();
             return exists;
         }
+        public static string FirstTrace(string login)
+        {
+            PalantirDbContext context = new PalantirDbContext();
+            List<string> dates = context.BubbleTraces.Where(trace => trace.Login == login).Select(trace => trace.Date).ToList();
+            context.Dispose();
+            return dates.Min(date => DateTime.Parse(date)).ToShortDateString();
+        }
         public static string GetLoginOfMember(string id)
         {
             PalantirDbContext context = new PalantirDbContext();

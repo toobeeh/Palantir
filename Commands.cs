@@ -1494,12 +1494,13 @@ namespace Palantir
             }
         }
 
-        [Description("Gets a png of a svg file")]
-        [Command("svgpng")]
-        public async Task Combopng(CommandContext context, string color)
+        [Description("Generates a card of your profile")]
+        [Command("card")]
+        public async Task Combopng(CommandContext context, string color = "black")
         {
             string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
             MemberEntity member = Program.Feanor.GetMemberByLogin(login);
+            Member memberDetail = JsonConvert.DeserializeObject<Member>(member.Member);
 
             string url = context.Message.Attachments[0].Url;
             System.Net.WebClient client = new System.Net.WebClient();
@@ -1513,14 +1514,14 @@ namespace Palantir
             System.IO.File.Delete(combopath);
 
             SpriteComboImage.FillPlaceholders(ref content, profilebase64, spritebase64, color, context.Member.DisplayName, member.Bubbles.ToString(), member.Drops.ToString(), (member.Drops / (member.Bubbles / 1000)).ToString(),
-                "never", member.Sprites.Replace(".","").Split(",").ToList().Where(spt => !spt.StartsWith("0")).Count().ToString(), "2", Math.Round((double)member.Bubbles / 10 / 3600).ToString(),
-                "1", "5", "5", true, true, true);
+                BubbleWallet.FirstTrace(login), member.Sprites.Replace(".","").Split(",").ToList().Where(spt => !spt.StartsWith("0")).Count().ToString(), "2", Math.Round((double)member.Bubbles / 10 / 3600).ToString(),
+                "1", "5", memberDetail.Guilds.Count.ToString(), true, true, true);
 
-            string path = SpriteComboImage.SVGtoPNG(content, "/home/pi/tmpGen/");
+            string path = SpriteComboImage.SVGtoPNG(content, "/home/pi/Webroot/files/combos/");
             using (var fs = new System.IO.FileStream(path, System.IO.FileMode.Open, System.IO.FileAccess.Read))
             {
                 var msg = await new DiscordMessageBuilder()
-                    .WithFiles(new Dictionary<string, System.IO.Stream>() { { "combo.png", fs } })
+                    .WithContent(path.Replace(@"/home/pi/Webroot/", "https://tobeh.host/"))
                     .SendAsync(context.Channel);
             }
         }
