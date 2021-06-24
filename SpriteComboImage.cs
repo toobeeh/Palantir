@@ -41,18 +41,18 @@ namespace Palantir
         }
 
         public static void FillPlaceholders(ref string svg, string username, string bubbles, string drops, string dropratio, string firstseen, 
-            string sprites, string events, string hours, string brnk, string drank, string servers, bool patron, bool early, bool moderator)
+            string sprites, string events, string hours, string brank, string drank, string servers, bool patron, bool early, bool moderator)
         {
-            svg = svg.Replace("$username$", username);
-            svg = svg.Replace("$bubbles$", bubbles);
-            svg = svg.Replace("$drops$", drops);
-            svg = svg.Replace("$dropratio$", dropratio);
+            svg = svg.Replace("$username$", username );
+            svg = svg.Replace("$bubbles$", bubbles + " Bubbles");
+            svg = svg.Replace("$drops$", drops + " Drop");
+            svg = svg.Replace("$dropratio$", " " + dropratio);
             svg = svg.Replace("$firstseen$", firstseen);
             svg = svg.Replace("$sprites$", sprites);
             svg = svg.Replace("$events$", events);
             svg = svg.Replace("$hours$", hours);
-            svg = svg.Replace("$brnk$", brnk);
-            svg = svg.Replace("$drank$", drank);
+            svg = svg.Replace("$brank$", " #" + brank);
+            svg = svg.Replace("$drank$", " #" + drank);
             svg = svg.Replace("$servers$", servers);
         }
 
@@ -60,7 +60,7 @@ namespace Palantir
         {
             savePath = savePath + DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString();
             System.IO.File.WriteAllText(savePath + ".svg", svgst);
-            string command = "sudo inkscape --export-dpi=200 -z " + savePath + ".svg -e " + savePath + ".png";
+            string command = "sudo inkscape --export-dpi=300 -z " + savePath + ".svg -e " + savePath + ".png";
             command.Bash();
             System.IO.File.Delete(savePath + ".svg");
             return savePath + ".png";
