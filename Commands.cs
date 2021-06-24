@@ -1498,6 +1498,13 @@ namespace Palantir
         [Command("card")]
         public async Task Combopng(CommandContext context, string color = "black")
         {
+            PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
+            if (!perm.BotAdmin && !perm.Patron)
+            {
+                await Program.SendEmbed(context.Channel, "Ha, PAYWALL!", "This command is only available for Patreon Subscriber.\nLet's join them! \nhttps://www.patreon.com/skribbltypo");
+                return;
+            }
+
             DiscordMessage response = await context.RespondAsync("> <a:working:857610439588053023> **Building your card afap!!**");
             string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
             MemberEntity member = Program.Feanor.GetMemberByLogin(login);
