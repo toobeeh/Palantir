@@ -553,11 +553,13 @@ namespace Palantir
                     spritebatches.Skip(1).Concat(spritebatches.Take(1)) :
                     Enumerable.TakeLast(spritebatches, 1).Concat(Enumerable.SkipLast(spritebatches, 1));
 
-                sleft.Value = spritebatches.First().Take(batchsize).ToDelimitedString("\n");
-                smiddle.Value = spritebatches.First().Count() > batchsize ? 
-                    spritebatches.First().Skip(batchsize).Take(batchsize).ToDelimitedString("\n") : "\u200b ";
-                sright.Value = spritebatches.First().Count() > 2 * batchsize ? 
-                    spritebatches.First().Skip(batchsize * 2).ToDelimitedString("\n") : "\u200b ";
+                var firstbatch = spritebatches.First();
+                int size = firstbatch.Count();
+                sleft.Value = firstbatch.Take(size / 3).ToDelimitedString("\n");
+                smiddle.Value = size > size / 3 ? 
+                    firstbatch.Skip(size/3).Take(size/3).ToDelimitedString("\n") : "\u200b ";
+                sright.Value = size > 2 * (size / 3) ? 
+                    spritebatches.First().Skip(2 * (size / 3)).ToDelimitedString("\n") : "\u200b ";
 
                 response.Embed = embed.Build();
                 sent = sent is null ? await response.SendAsync(context.Channel) : await sent.ModifyAsync(response);
