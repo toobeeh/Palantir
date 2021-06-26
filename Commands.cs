@@ -561,7 +561,7 @@ namespace Palantir
                     firstbatch.Skip(size/3).Take(size/3).ToDelimitedString("\n") : "\u200b ";
                 sright.Value = size > 2 * (size / 3) ? 
                     spritebatches.First().Skip(2 * (size / 3)).ToDelimitedString("\n") : "\u200b ";
-                nav.Label = "(" + size + "/" + spritebatches.Flatten().Count() + ")";
+                nav.Label = "Navigate Sprites (" + size + "/" + spritebatches.Flatten().Count() + ")";
                 response.Embed = embed.Build();
                 sent = sent is null ? await response.SendAsync(context.Channel) : await sent.ModifyAsync(response);
                 result = await Program.Interactivity.WaitForButtonAsync(sent, context.User, TimeSpan.FromMinutes(2));
