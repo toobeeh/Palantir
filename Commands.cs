@@ -389,10 +389,10 @@ namespace Palantir
             }
         }
 
-        [Description("Get a overview of your inventory.")]
-        [Command("inventory")]
-        [Aliases("inv")]
-        public async Task Inventory(CommandContext context)
+        [Description("Get a overview of your inventory. (old layout)")]
+        [Command("oldinventory")]
+        [Aliases("oldinv")]
+        public async Task OldInventory(CommandContext context)
         {
             string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
             List<SpriteProperty> inventory;
@@ -477,8 +477,94 @@ namespace Palantir
 
             if(inventory.Count < 5) embed.AddField("\u200b ", "Use `>use [id]` to select your Sprite!\n`>use 0` will set no Sprite.\nBuy a Sprite with `>buy [id]`.\nSpecial Sprites :sparkles: replace your whole avatar! ");
             embed.AddField("\u200b", "[View all Sprites](https://typo.rip/#sprites)");
-            await context.Channel.SendMessageAsync(embed:embed);
-           
+            await context.Channel.SendMessageAsync(embed:embed);          
+        }
+
+        [Description("Get a overview of your inventory.")]
+        [Command("inventory")]
+        [Aliases("inv")]
+        public async Task Inventory(CommandContext context)
+        {
+            string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
+            int drops = BubbleWallet.GetDrops(login);
+            int bubbles = BubbleWallet.GetBubbles(login);
+            int credit = BubbleWallet.CalculateCredit(login);
+            List<SpriteProperty> inventory = BubbleWallet.GetInventory(login).OrderBy(s => s.ID).ToList();
+
+            DiscordEmbedBuilder embed = new DiscordEmbedBuilder()
+                .WithColor(DiscordColor.Magenta)
+                .WithTitle("🔮  " + context.Message.Author.Username + "s Inventory");
+
+            List<string> sprites = new List<string>();
+            inventory.OrderBy(s => s.ID).ToList().ForEach(s =>
+            {
+                sprites.Add(
+                    "**" + s.Name + ":** " + "#" + s.ID
+                    + "(" + s.Cost + (s.EventDropID > 0 ? " Event Drops)" : " Bubbles)")
+                    + (s.Special ? " :sparkles: " : ""));
+            });
+
+            embed.AddField("\u200b ",
+                "🔮 **" + credit + " ** / " + bubbles + " Bubbles\n"
+                + "💧 **" + drops + "** Drops caught");
+
+            PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
+            string flags = "";
+            if (perm.BubbleFarming) flags += "`🚩 Bubble Farming.`\n";
+            if (perm.BotAdmin) flags += "`✔️ Verified cool guy aka Admin.`\n";
+            if (perm.Moderator) flags += "`🛠️ Palantir Moderator.`\n";
+            if (perm.CloudUnlimited || perm.Patron) flags += "`📦 Unlimited cloud storage.`\n";
+            if (BubbleWallet.IsEarlyUser(login)) flags += "`💎 Early User.`\n";
+            if (perm.Patron) flags += "`💖️ Patreon Subscriber`\n";
+            if(flags.Length > 0) embed.AddField("Flags:", flags);
+
+            string selected = "";
+            inventory.Where(spt => spt.Activated).OrderBy(slot => slot.Slot).ForEach(sprite =>
+            {
+                selected += "Slot " + sprite.Slot + ": " + sprite.Name + " (" + sprite.ID + ")\n";
+            });
+            if (drops >= 1000 || perm.BotAdmin || perm.Patron) selected += "\n\n<a:chest:810521425156636682> **" + (perm.BotAdmin ? "Infinite" : (drops / 1000 + 1 + (perm.Patron ? 1 : 0)).ToString()) + " ** Sprite slots available.";
+            embed.AddField("Selected Sprites:", selected.Length > 0 ? selected : "None");
+
+            if (inventory.Where(spt => spt.Activated).Count() == 1) 
+                embed.ImageUrl = inventory.FirstOrDefault(s => s.Activated).URL;
+            if (inventory.Where(spt => spt.Activated).Count() > 1)
+                embed.ImageUrl = SpriteComboImage.GenerateImage(SpriteComboImage.GetSpriteSources(
+                    inventory.Where(s=>s.Activated).OrderBy(s=>s.Slot).Select(s=>s.ID).ToArray()), "/home/pi/Webroot/files/combos/")
+                    .Replace(@"/home/pi/Webroot/", "https://tobeh.host/");
+
+
+            DiscordEmbedField sleft = embed.AddField("\u200b ", "", true).Fields.Last();
+            DiscordEmbedField smiddle = embed.AddField("\u200b ", "", true).Fields.Last();
+            DiscordEmbedField sright = embed.AddField("\u200b ", "", true).Fields.Last();
+            var spritebatches = sprites.Batch(30);
+            int batchIndex = 0;
+            
+            if (inventory.Count < 5) embed.AddField("Command help: ", "Use `>use [id]` to select your Sprite!\n`>use 0` will set no Sprite.\nBuy a Sprite with `>buy [id]`.\nSpecial Sprites :sparkles: replace your whole avatar! ");
+            embed.AddField("\u200b", "[View all Sprites](https://typo.rip/#sprites)");
+            DiscordMessageBuilder response = new DiscordMessageBuilder();
+            DiscordButtonComponent prev = new DiscordButtonComponent(ButtonStyle.Secondary, "last", "Previous");
+            DiscordButtonComponent next = new DiscordButtonComponent(ButtonStyle.Primary, "next", "Next");
+            DiscordMessage sent;
+            DSharpPlus.Interactivity.InteractivityResult<DSharpPlus.EventArgs.ComponentInteractionCreateEventArgs> result;
+            int direction = 0;
+            do
+            {
+                // rotate batch so relevant is always first index
+                spritebatches = direction == 0 ? spritebatches : direction > 0 ?
+                    spritebatches.Skip(1).Concat(spritebatches.Take(1)) :
+                    Enumerable.TakeLast(spritebatches, 1).Concat(Enumerable.SkipLast(spritebatches, 1));
+
+                sleft.Value = spritebatches.First().Take(5).ToDelimitedString("\n");
+                smiddle.Value = spritebatches.First().Skip(5).Take(5).ToDelimitedString("\n");
+                sright.Value = spritebatches.First().Skip(10).ToDelimitedString("\n");
+
+                response.Embed = embed.Build();
+                sent = await response.SendAsync(context.Channel);
+                result = await Program.Interactivity.WaitForButtonAsync(sent, context.User, TimeSpan.FromMinutes(2));
+                if (!result.TimedOut) direction = result.Result.Id == "next" ? 1 : -1;
+            }
+            while(!result.TimedOut);
         }
 
         [Description("Choose your sprite.")]

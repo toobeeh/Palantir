@@ -21,7 +21,7 @@ namespace Palantir
         public static DataManager Feanor;
         public static DiscordClient Client { get; private set; }
         public static CommandsNextExtension Commands { get; private set; }
-        static InteractivityExtension Interactivity;
+        public static InteractivityExtension Interactivity;
         static async Task Main(string[] args)
         {
             //File.WriteAllText("/home/pi/palantirOutput.log", String.Empty);
