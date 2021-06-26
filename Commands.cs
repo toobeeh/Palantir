@@ -483,7 +483,7 @@ namespace Palantir
         [Description("Get a overview of your inventory.")]
         [Command("inventory")]
         [Aliases("inv")]
-        public async Task Inventory(CommandContext context)
+        public async Task Inventory(CommandContext context, int batchsize = 7)
         {
             string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
             int drops = BubbleWallet.GetDrops(login);
@@ -532,13 +532,10 @@ namespace Palantir
                     inventory.Where(s=>s.Activated).OrderBy(s=>s.Slot).Select(s=>s.ID).ToArray()), "/home/pi/Webroot/files/combos/")
                     .Replace(@"/home/pi/Webroot/", "https://tobeh.host/");
 
-
-            embed.AddField("Available Sprites:", "\u200b ");
             DiscordEmbedField sleft = embed.AddField("\u200b ", "\u200b ", true).Fields.Last();
             DiscordEmbedField smiddle = embed.AddField("\u200b ", "\u200b ", true).Fields.Last();
             DiscordEmbedField sright = embed.AddField("\u200b ", "\u200b ", true).Fields.Last();
-            var spritebatches = sprites.Batch(21);
-            int batchIndex = 0;
+            var spritebatches = sprites.Batch(batchsize * 3);
             
             if (inventory.Count < 5) embed.AddField("Command help: ", "Use `>use [id]` to select your Sprite!\n`>use 0` will set no Sprite.\nBuy a Sprite with `>buy [id]`.\nSpecial Sprites :sparkles: replace your whole avatar! ");
             embed.AddField("\u200b", "[View all Sprites](https://typo.rip/#sprites)");
@@ -556,9 +553,9 @@ namespace Palantir
                     spritebatches.Skip(1).Concat(spritebatches.Take(1)) :
                     Enumerable.TakeLast(spritebatches, 1).Concat(Enumerable.SkipLast(spritebatches, 1));
 
-                sleft.Value = spritebatches.First().Take(7).ToDelimitedString("\n");
-                smiddle.Value = spritebatches.First().Skip(7).Take(7).ToDelimitedString("\n");
-                sright.Value = spritebatches.First().Skip(14).ToDelimitedString("\n");
+                sleft.Value = spritebatches.First().Take(batchsize).ToDelimitedString("\n");
+                smiddle.Value = spritebatches.First().Skip(batchsize).Take(batchsize).ToDelimitedString("\n");
+                sright.Value = spritebatches.First().Skip(batchsize * 2).ToDelimitedString("\n");
 
                 response.Embed = embed.Build();
                 sent = sent is null ? await response.SendAsync(context.Channel) : await sent.ModifyAsync(response);
