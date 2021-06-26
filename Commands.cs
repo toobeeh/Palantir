@@ -522,7 +522,7 @@ namespace Palantir
             {
                 selected += "Slot " + sprite.Slot + ": " + sprite.Name + " (" + sprite.ID + ")\n";
             });
-            if (drops >= 1000 || perm.BotAdmin || perm.Patron) selected += "\n\n<a:chest:810521425156636682> **" + (perm.BotAdmin ? "Infinite" : (drops / 1000 + 1 + (perm.Patron ? 1 : 0)).ToString()) + " ** Sprite slots available.";
+            if (drops >= 1000 || perm.BotAdmin || perm.Patron) selected += "\n<a:chest:810521425156636682> **" + (perm.BotAdmin ? "Infinite" : (drops / 1000 + 1 + (perm.Patron ? 1 : 0)).ToString()) + " ** Sprite slots available.";
             embed.AddField("Selected Sprites:", selected.Length > 0 ? selected : "None");
 
             if (inventory.Where(spt => spt.Activated).Count() == 1) 
@@ -533,6 +533,7 @@ namespace Palantir
                     .Replace(@"/home/pi/Webroot/", "https://tobeh.host/");
 
 
+            embed.AddField("Available Sprites:", "\u200b ");
             DiscordEmbedField sleft = embed.AddField("\u200b ", "\u200b ", true).Fields.Last();
             DiscordEmbedField smiddle = embed.AddField("\u200b ", "\u200b ", true).Fields.Last();
             DiscordEmbedField sright = embed.AddField("\u200b ", "\u200b ", true).Fields.Last();
@@ -544,7 +545,7 @@ namespace Palantir
             DiscordMessageBuilder response = new DiscordMessageBuilder();
             DiscordButtonComponent prev = new DiscordButtonComponent(ButtonStyle.Secondary, "last", "Previous");
             DiscordButtonComponent next = new DiscordButtonComponent(ButtonStyle.Primary, "next", "Next");
-            response.AddComponents(prev, next);
+            response.AddComponents(prev, new DiscordButtonComponent(ButtonStyle.Secondary,"nav","Navigate Sprites", true), next);
             DiscordMessage sent = null;
             DSharpPlus.Interactivity.InteractivityResult<DSharpPlus.EventArgs.ComponentInteractionCreateEventArgs> result;
             int direction = 0;
@@ -562,8 +563,11 @@ namespace Palantir
                 response.Embed = embed.Build();
                 sent = sent is null ? await response.SendAsync(context.Channel) : await sent.ModifyAsync(response);
                 result = await Program.Interactivity.WaitForButtonAsync(sent, context.User, TimeSpan.FromMinutes(2));
-                await result.Result.Interaction.CreateResponseAsync(DSharpPlus.InteractionResponseType.UpdateMessage);
-                if (!result.TimedOut) direction = result.Result.Id == "next" ? 1 : -1;
+                if (!result.TimedOut)
+                {
+                    await result.Result.Interaction.CreateResponseAsync(DSharpPlus.InteractionResponseType.UpdateMessage);
+                    direction = result.Result.Id == "next" ? 1 : -1;
+                }
             }
             while(!result.TimedOut);
         }
