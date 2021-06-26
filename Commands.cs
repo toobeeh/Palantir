@@ -570,6 +570,8 @@ namespace Palantir
                 }
             }
             while(!result.TimedOut);
+            prev.Disabled = next.Disabled = true;
+            await sent.ModifyAsync(response);
         }
 
         [Description("Choose your sprite.")]
