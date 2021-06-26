@@ -520,7 +520,7 @@ namespace Palantir
             string selected = "";
             inventory.Where(spt => spt.Activated).OrderBy(slot => slot.Slot).ForEach(sprite =>
             {
-                selected += "Slot " + sprite.Slot + ": " + sprite.Name + " (" + sprite.ID + ")\n";
+                selected += "Slot " + sprite.Slot + ": " + sprite.Name + " (#" + sprite.ID + ")\n";
             });
             if (drops >= 1000 || perm.BotAdmin || perm.Patron) selected += "\n<a:chest:810521425156636682> **" + (perm.BotAdmin ? "Infinite" : (drops / 1000 + 1 + (perm.Patron ? 1 : 0)).ToString()) + " ** Sprite slots available.";
             embed.AddField("Selected Sprites:", selected.Length > 0 ? selected : "None");
