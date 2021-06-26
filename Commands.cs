@@ -546,7 +546,7 @@ namespace Palantir
             DiscordButtonComponent prev = new DiscordButtonComponent(ButtonStyle.Secondary, "last", "Previous");
             DiscordButtonComponent next = new DiscordButtonComponent(ButtonStyle.Primary, "next", "Next");
             response.AddComponents(prev, next);
-            DiscordMessage sent;
+            DiscordMessage sent = null;
             DSharpPlus.Interactivity.InteractivityResult<DSharpPlus.EventArgs.ComponentInteractionCreateEventArgs> result;
             int direction = 0;
             do
@@ -561,8 +561,9 @@ namespace Palantir
                 sright.Value = spritebatches.First().Skip(20).ToDelimitedString("\n");
 
                 response.Embed = embed.Build();
-                sent = await response.SendAsync(context.Channel);
+                sent = sent is null ? await response.SendAsync(context.Channel) : await sent.ModifyAsync(response);
                 result = await Program.Interactivity.WaitForButtonAsync(sent, context.User, TimeSpan.FromMinutes(2));
+                await result.Result.Interaction.CreateResponseAsync(DSharpPlus.InteractionResponseType.UpdateMessage);
                 if (!result.TimedOut) direction = result.Result.Id == "next" ? 1 : -1;
             }
             while(!result.TimedOut);
