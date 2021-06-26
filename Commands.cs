@@ -499,7 +499,7 @@ namespace Palantir
             inventory.OrderBy(s => s.ID).ToList().ForEach(s =>
             {
                 sprites.Add(
-                    "**" + s.Name + "** (" + "#" + s.ID + ")"
+                    "**#" + s.ID + "** -" + s.Name
                     + (s.Special ? " :sparkles: " : ""));
             });
 
@@ -536,7 +536,7 @@ namespace Palantir
             DiscordEmbedField sleft = embed.AddField("\u200b ", "\u200b ", true).Fields.Last();
             DiscordEmbedField smiddle = embed.AddField("\u200b ", "\u200b ", true).Fields.Last();
             DiscordEmbedField sright = embed.AddField("\u200b ", "\u200b ", true).Fields.Last();
-            var spritebatches = sprites.Batch(30);
+            var spritebatches = sprites.Batch(21);
             int batchIndex = 0;
             
             if (inventory.Count < 5) embed.AddField("Command help: ", "Use `>use [id]` to select your Sprite!\n`>use 0` will set no Sprite.\nBuy a Sprite with `>buy [id]`.\nSpecial Sprites :sparkles: replace your whole avatar! ");
@@ -555,9 +555,9 @@ namespace Palantir
                     spritebatches.Skip(1).Concat(spritebatches.Take(1)) :
                     Enumerable.TakeLast(spritebatches, 1).Concat(Enumerable.SkipLast(spritebatches, 1));
 
-                sleft.Value = spritebatches.First().Take(10).ToDelimitedString("\n");
-                smiddle.Value = spritebatches.First().Skip(10).Take(10).ToDelimitedString("\n");
-                sright.Value = spritebatches.First().Skip(20).ToDelimitedString("\n");
+                sleft.Value = spritebatches.First().Take(7).ToDelimitedString("\n");
+                smiddle.Value = spritebatches.First().Skip(7).Take(7).ToDelimitedString("\n");
+                sright.Value = spritebatches.First().Skip(14).ToDelimitedString("\n");
 
                 response.Embed = embed.Build();
                 sent = sent is null ? await response.SendAsync(context.Channel) : await sent.ModifyAsync(response);
