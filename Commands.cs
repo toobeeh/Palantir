@@ -534,9 +534,9 @@ namespace Palantir
                     .Replace(@"/home/pi/Webroot/", "https://tobeh.host/");
 
 
-            DiscordEmbedField sleft = embed.AddField("\u200b ", "", true).Fields.Last();
-            DiscordEmbedField smiddle = embed.AddField("\u200b ", "", true).Fields.Last();
-            DiscordEmbedField sright = embed.AddField("\u200b ", "", true).Fields.Last();
+            DiscordEmbedField sleft = embed.AddField("\u200b ", "\u200b ", true).Fields.Last();
+            DiscordEmbedField smiddle = embed.AddField("\u200b ", "\u200b ", true).Fields.Last();
+            DiscordEmbedField sright = embed.AddField("\u200b ", "\u200b ", true).Fields.Last();
             var spritebatches = sprites.Batch(30);
             int batchIndex = 0;
             
