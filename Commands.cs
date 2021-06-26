@@ -545,6 +545,7 @@ namespace Palantir
             DiscordMessageBuilder response = new DiscordMessageBuilder();
             DiscordButtonComponent prev = new DiscordButtonComponent(ButtonStyle.Secondary, "last", "Previous");
             DiscordButtonComponent next = new DiscordButtonComponent(ButtonStyle.Primary, "next", "Next");
+            response.AddComponents(prev, next);
             DiscordMessage sent;
             DSharpPlus.Interactivity.InteractivityResult<DSharpPlus.EventArgs.ComponentInteractionCreateEventArgs> result;
             int direction = 0;
@@ -555,9 +556,9 @@ namespace Palantir
                     spritebatches.Skip(1).Concat(spritebatches.Take(1)) :
                     Enumerable.TakeLast(spritebatches, 1).Concat(Enumerable.SkipLast(spritebatches, 1));
 
-                sleft.Value = spritebatches.First().Take(5).ToDelimitedString("\n");
-                smiddle.Value = spritebatches.First().Skip(5).Take(5).ToDelimitedString("\n");
-                sright.Value = spritebatches.First().Skip(10).ToDelimitedString("\n");
+                sleft.Value = spritebatches.First().Take(10).ToDelimitedString("\n");
+                smiddle.Value = spritebatches.First().Skip(10).Take(10).ToDelimitedString("\n");
+                sright.Value = spritebatches.First().Skip(20).ToDelimitedString("\n");
 
                 response.Embed = embed.Build();
                 sent = await response.SendAsync(context.Channel);
