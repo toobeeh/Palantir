@@ -499,8 +499,7 @@ namespace Palantir
             inventory.OrderBy(s => s.ID).ToList().ForEach(s =>
             {
                 sprites.Add(
-                    "**" + s.Name + ":** " + "#" + s.ID
-                    + "(" + s.Cost + (s.EventDropID > 0 ? " Event Drops)" : " Bubbles)")
+                    "**" + s.Name + "** (" + "#" + s.ID + ")"
                     + (s.Special ? " :sparkles: " : ""));
             });
 
