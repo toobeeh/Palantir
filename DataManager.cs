@@ -208,12 +208,15 @@ namespace Palantir
         public async Task<int> UpdatePatrons()
         {
             List<string> patrons = new List<string>();
+            List<string> patronizer = new List<string>();
+            List<string> patronized = new List<string>();
             Dictionary<string, string> emojis = new Dictionary<string, string>();
-            // collect ids of patron members 832744566905241610 779435254225698827
+            // collect ids of patron members 
             DiscordGuild typotestground = await Program.Client.GetGuildAsync(779435254225698827);
             foreach (DiscordMember member in await typotestground.GetAllMembersAsync())
             {
                 if (member.Roles.Any(role => role.Id == 832744566905241610)) patrons.Add(member.Id.ToString());
+                if (member.Roles.Any(role => role.Id == 859100010184572938)) patronizer.Add(member.Id.ToString());
             };
             PalantirDbContext db = new PalantirDbContext();
             // iterate through palantir members and set flags
@@ -221,10 +224,26 @@ namespace Palantir
             {
                 PermissionFlag flag = new PermissionFlag((byte)member.Flag);
                 flag.Patron = patrons.Any(patron => member.Member.Contains(patron));
+                if (patronizer.Any(id => member.Member.Contains(id)))
+                {
+                    flag.Patronizer = true;
+                    if(member.Patronize is not null)patronized.Add(member.Patronize);
+                }
                 string emoji = String.IsNullOrEmpty(member.Emoji) ? "" : member.Emoji;
                 if(flag.Patron) emojis.Add(member.Login, emoji);
                 member.Flag = flag.CalculateFlag();
             });
+            // set flags of patronized members
+            patronized.ForEach(id =>
+            {
+                MemberEntity member = db.Members.FirstOrDefault(member => member.Member.Contains(id));
+                PermissionFlag flag = new PermissionFlag((byte)member.Flag);
+                flag.Patron = true;
+                string emoji = String.IsNullOrEmpty(member.Emoji) ? "" : member.Emoji;
+                emojis.Add(member.Login, emoji);
+                member.Flag = flag.CalculateFlag();
+            });
+
             db.SaveChanges();
             db.Dispose();
             PatronEmojis = emojis;

@@ -47,6 +47,7 @@ namespace Palantir
         public int Drops { get; set; }
         public int Flag { get; set; }
         public string Emoji { get; set; }
+        public string Patronize { get; set; }
     }
     public class PalantirEntity
     {

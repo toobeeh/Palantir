@@ -218,6 +218,7 @@ namespace Palantir
         public bool Patron { get; set; }
         public bool Permanban { get; set; }
         public bool Dropban { get; set; }
+        public bool Patronizer { get; set; }
         public PermissionFlag(byte flag)
         {
             BitArray flags = new BitArray(new byte[] { flag });
@@ -228,6 +229,7 @@ namespace Palantir
             Patron = flags[4];
             Permanban = flags[5];
             Dropban = flags[6];
+            Patronizer = flags[7];
         }
 
         public int CalculateFlag()
@@ -238,7 +240,8 @@ namespace Palantir
                 + (CloudUnlimited ? 8 : 0)
                 + (Patron ? 16 : 0)
                 +(Permanban ? 32 : 0)
-                + (Dropban ? 64 : 0);
+                + (Dropban ? 64 : 0)
+                +(Patronizer ? 128 : 0);
         }
     }
 
