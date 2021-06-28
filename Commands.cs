@@ -1456,12 +1456,18 @@ namespace Palantir
                 await Program.SendEmbed(context.Channel, "Gifts are beautiful!", "Looking to get Palantir & Typo Patron perks, but however can't pay a Patreon patronge?\n\nAsk a friend with the `Patronizer Package` subscription on Patreon to patronize you!\nYour friend just has to use the command `>patronize " + context.User.Id + "`.");
                 return;
             }
+            else if (gift_id == "")
+            {
+                await Program.SendEmbed(context.Channel, "Oh, a patronizer! :o", "To gift patreon perks to a friend, use the command `>patronize id`, where id is the User-ID of your friend.\nYour friend can use `>patronize` to get their id!");
+                return;
+            }
             DiscordUser patronized = await Program.Client.GetUserAsync(Convert.ToUInt64(gift_id));
             if(patronized is null)
             {
                 await Program.SendEmbed(context.Channel, "Sorry...", "I don't know this user ID :(\nYour friend has to use the `>patronize` command and tell you his ID!");
                 return;
             }
+
             PalantirDbContext db = new PalantirDbContext();
             string login = BubbleWallet.GetLoginOfMember(context.User.Id.ToString());
             db.Members.FirstOrDefault(member => member.Login == login).Patronize = gift_id;
