@@ -557,7 +557,7 @@ namespace Palantir
 
                 var firstbatch = spritebatches.First();
                 int size = firstbatch.Count();
-                sleft.Value = firstbatch.Take(size / 3).ToDelimitedString("\n");
+                sleft.Value = size > 0 ? firstbatch.Take(size / 3).ToDelimitedString("\n") : "\u200b ";
                 smiddle.Value = size > size / 3 ? 
                     firstbatch.Skip(size/3).Take(size/3).ToDelimitedString("\n") : "\u200b ";
                 sright.Value = size > 2 * (size / 3) ? 
