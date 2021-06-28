@@ -515,6 +515,7 @@ namespace Palantir
             if (perm.CloudUnlimited || perm.Patron) flags += "`📦 Unlimited cloud storage.`\n";
             if (BubbleWallet.IsEarlyUser(login)) flags += "`💎 Early User.`\n";
             if (perm.Patron) flags += "`💖️ Patreon Subscriber`\n";
+            if (perm.Patronizer) flags += "`🎁 Patronizer`\n";
             if(flags.Length > 0) embed.AddField("Flags:", flags);
 
             string selected = "";
@@ -1352,7 +1353,8 @@ namespace Palantir
                     + getperm.CloudUnlimited + "\nFlag[4] Patron - " 
                     + getperm.Patron + "\nFlag[5] Permanent Ban - "
                     + getperm.Permanban + "\nFlag[6] Drop Ban - "
-                    + getperm.Dropban;
+                    + getperm.Dropban + "\nFlag[7] Patronizer - "
+                    + getperm.Patronizer;
                 await Program.SendEmbed(context.Channel, "The flags of " + target.Username,getDesc);
                 return;
             }
@@ -1365,10 +1367,15 @@ namespace Palantir
             Program.Feanor.SetFlagByID(id.ToString(), flag);
             string name = (await Program.Client.GetUserAsync(id)).Mention;
             PermissionFlag newFlag = new PermissionFlag((byte)flag);
-            string desc = "Flag[0] BubbleFarming - "
-                   + newFlag.BubbleFarming + "\nFlag[1] BotAdmin - "
-                   + newFlag.BotAdmin + "\nFlag[2] Moderator - "
-                   + newFlag.Moderator + "\nFlag[2] Unlimited Cloud - " + newFlag.CloudUnlimited;
+            string desc = "Flag[0] Bubble Farming - "
+                    + newFlag.BubbleFarming + "\nFlag[1] Bot Admin - "
+                    + newFlag.BotAdmin + "\nFlag[2] Moderator - "
+                    + newFlag.Moderator + "\nFlag[3] Unlimited Cloud - "
+                    + newFlag.CloudUnlimited + "\nFlag[4] Patron - "
+                    + newFlag.Patron + "\nFlag[5] Permanent Ban - "
+                    + newFlag.Permanban + "\nFlag[6] Drop Ban - "
+                    + newFlag.Dropban + "\nFlag[7] Patronizer - "
+                    + newFlag.Patronizer;
             await Program.SendEmbed(context.Channel, "*magic happened*","The flag of " + name + " was set to " + flag + "\n" + desc);
         }
 
@@ -1438,6 +1445,29 @@ namespace Palantir
             db.SaveChanges();
             db.Dispose();
             await Program.SendEmbed(context.Channel, "Emoji set to: `" + emojimatch.Value + "`", "Disable it with the same command without emoji.");
+        }
+        [Description("Gift patronage to a friend")]
+        [Command("patronize")]
+        public async Task Patronize(CommandContext context, string gift_id = "")
+        {
+            PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
+            if (!perm.Patron && gift_id == "")
+            {
+                await Program.SendEmbed(context.Channel, "Gifts are beautiful!", "Looking to get Palantir & Typo Patron perks, but however can't pay a Patreon patronge?\n\nAsk a friend with the `Patronizer Package` subscription on Patreon to patronize you!\nYour friend just has to use the command `>patronize " + context.User.Id + "`.");
+                return;
+            }
+            DiscordUser patronized = await Program.Client.GetUserAsync(Convert.ToUInt64(gift_id));
+            if(patronized is null)
+            {
+                await Program.SendEmbed(context.Channel, "Sorry...", "I don't know this user ID :(\nYour friend has to use the `>patronize` command and tell you his ID!");
+                return;
+            }
+            PalantirDbContext db = new PalantirDbContext();
+            string login = BubbleWallet.GetLoginOfMember(context.User.Id.ToString());
+            db.Members.FirstOrDefault(member => member.Login == login).Patronize = gift_id;
+            db.SaveChanges();
+            db.Dispose();
+            await Program.SendEmbed(context.Channel, "You're awesome!!", "You just gifted " + patronized.Username + " patron perks as long as you have the patronizer subscription!");
         }
 
         [Description("Gets ping statistics.")]
