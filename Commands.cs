@@ -1451,7 +1451,7 @@ namespace Palantir
         public async Task Patronize(CommandContext context, string gift_id = "")
         {
             PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
-            if (!perm.Patron)
+            if (!perm.Patronizer)
             {
                 await Program.SendEmbed(context.Channel, "Gifts are beautiful!", "Looking to get Palantir & Typo Patron perks, but however can't pay a Patreon patronge?\n\nAsk a friend with the `Patronizer Package` subscription on Patreon to patronize you!\nYour friend just has to use the command `>patronize " + context.User.Id + "`.");
                 return;
