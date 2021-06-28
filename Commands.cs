@@ -554,8 +554,8 @@ namespace Palantir
                 spritebatches = direction == 0 ? spritebatches : direction > 0 ?
                     spritebatches.Skip(1).Concat(spritebatches.Take(1)) :
                     Enumerable.TakeLast(spritebatches, 1).Concat(Enumerable.SkipLast(spritebatches, 1));
-
-                var firstbatch = spritebatches.First();
+                
+                var firstbatch = spritebatches.Count() > 0 ? spritebatches.First() : Enumerable.Empty<string>();
                 int size = firstbatch.Count();
                 sleft.Value = size > 0 ? firstbatch.Take(size / 3).ToDelimitedString("\n") : "\u200b ";
                 smiddle.Value = size > size / 3 ? 
