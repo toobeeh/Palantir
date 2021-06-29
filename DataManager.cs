@@ -227,7 +227,7 @@ namespace Palantir
                 if (patronizer.Any(id => member.Member.Contains(id)))
                 {
                     flag.Patronizer = true;
-                    if (member.Patronize is not null) patronized.Add(member.Patronize);
+                    if (member.Patronize is not null) patronized.Add(member.Patronize.Split(":")[0]);
                 }
                 else flag.Patronizer = false;
                 string emoji = String.IsNullOrEmpty(member.Emoji) ? "" : member.Emoji;

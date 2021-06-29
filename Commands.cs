@@ -1454,26 +1454,49 @@ namespace Palantir
             if (!perm.Patronizer)
             {
                 await Program.SendEmbed(context.Channel, "Gifts are beautiful!", "Looking to get Palantir & Typo Patron perks, but however can't pay a Patreon patronge?\n\nAsk a friend with the `Patronizer Package` subscription on Patreon to patronize you!\nYour friend just has to use the command `>patronize " + context.User.Id + "`.");
-                return;
             }
             else if (gift_id == "")
             {
                 await Program.SendEmbed(context.Channel, "Oh, a patronizer! :o", "To gift patreon perks to a friend, use the command `>patronize id`, where id is the User-ID of your friend.\nYour friend can use `>patronize` to get their id!");
-                return;
+            
             }
-            DiscordUser patronized = await Program.Client.GetUserAsync(Convert.ToUInt64(gift_id));
-            if(patronized is null)
+            else if(gift_id == "none")
             {
-                await Program.SendEmbed(context.Channel, "Sorry...", "I don't know this user ID :(\nYour friend has to use the `>patronize` command and tell you his ID!");
-                return;
+                PalantirDbContext db = new PalantirDbContext();
+                string login = BubbleWallet.GetLoginOfMember(context.User.Id.ToString());
+                MemberEntity patronizer = db.Members.FirstOrDefault(member => member.Login == login);
+                if (DateTime.Now - DateTime.ParseExact(patronizer.Patronize.Split(":")[1], "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture) < TimeSpan.FromDays(5))
+                    await Program.SendEmbed(context.Channel, "Sorry...", "You'll have to wait five days from the date of the gift (" + patronizer.Patronize.Split(":")[1] + ") to remove it!");
+                else
+                {
+                    patronizer.Patronize = null;
+                    await Program.SendEmbed(context.Channel, "Well, okay", "The gift was removed.\nMaybe choose someone else? <3");
+                }
+                db.SaveChanges();
+                db.Dispose();
+            }
+            else
+            {
+                DiscordUser patronized = await Program.Client.GetUserAsync(Convert.ToUInt64(gift_id));
+                if (patronized is null)
+                    await Program.SendEmbed(context.Channel, "Sorry...", "I don't know this user ID :(\nYour friend has to use the `>patronize` command and tell you his ID!");
+                else
+                {
+                    PalantirDbContext db = new PalantirDbContext();
+                    string login = BubbleWallet.GetLoginOfMember(context.User.Id.ToString());
+                    MemberEntity patronizer = db.Members.FirstOrDefault(member => member.Login == login);
+                    if(DateTime.Now - DateTime.ParseExact(patronizer.Patronize.Split(":")[1], "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture) < TimeSpan.FromDays(5))
+                        await Program.SendEmbed(context.Channel, "Sorry...", "You'll have to wait five days from the date of the gift (" + patronizer.Patronize.Split(":")[1] + ") to change the receiver!");
+                    else
+                    {
+                        patronizer.Patronize = gift_id + ":" + DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss");
+                        await Program.SendEmbed(context.Channel, "You're awesome!!", "You just gifted " + patronized.Username + " patron perks as long as you have the patronizer subscription!");
+                    }
+                    db.SaveChanges();
+                    db.Dispose();
+                }
             }
 
-            PalantirDbContext db = new PalantirDbContext();
-            string login = BubbleWallet.GetLoginOfMember(context.User.Id.ToString());
-            db.Members.FirstOrDefault(member => member.Login == login).Patronize = gift_id;
-            db.SaveChanges();
-            db.Dispose();
-            await Program.SendEmbed(context.Channel, "You're awesome!!", "You just gifted " + patronized.Username + " patron perks as long as you have the patronizer subscription!");
         }
 
         [Description("Gets ping statistics.")]
