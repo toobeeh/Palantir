@@ -1458,14 +1458,13 @@ namespace Palantir
             else if (gift_id == "")
             {
                 await Program.SendEmbed(context.Channel, "Oh, a patronizer! :o", "To gift patreon perks to a friend, use the command `>patronize id`, where id is the User-ID of your friend.\nYour friend can use `>patronize` to get their id!");
-            
             }
             else if(gift_id == "none")
             {
                 PalantirDbContext db = new PalantirDbContext();
                 string login = BubbleWallet.GetLoginOfMember(context.User.Id.ToString());
                 MemberEntity patronizer = db.Members.FirstOrDefault(member => member.Login == login);
-                if (DateTime.Now - DateTime.ParseExact(patronizer.Patronize.Split(":")[1], "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture) < TimeSpan.FromDays(5))
+                if (patronizer.Patronize is not null && DateTime.Now - DateTime.ParseExact(patronizer.Patronize.Split(":")[1], "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture) < TimeSpan.FromDays(5))
                     await Program.SendEmbed(context.Channel, "Sorry...", "You'll have to wait five days from the date of the gift (" + patronizer.Patronize.Split(":")[1] + ") to remove it!");
                 else
                 {
@@ -1485,7 +1484,7 @@ namespace Palantir
                     PalantirDbContext db = new PalantirDbContext();
                     string login = BubbleWallet.GetLoginOfMember(context.User.Id.ToString());
                     MemberEntity patronizer = db.Members.FirstOrDefault(member => member.Login == login);
-                    if(DateTime.Now - DateTime.ParseExact(patronizer.Patronize.Split(":")[1], "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture) < TimeSpan.FromDays(5))
+                    if(patronizer.Patronize is not null && DateTime.Now - DateTime.ParseExact(patronizer.Patronize.Split(":")[1], "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture) < TimeSpan.FromDays(5))
                         await Program.SendEmbed(context.Channel, "Sorry...", "You'll have to wait five days from the date of the gift (" + patronizer.Patronize.Split(":")[1] + ") to change the receiver!");
                     else
                     {
