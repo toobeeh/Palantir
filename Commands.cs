@@ -1464,7 +1464,7 @@ namespace Palantir
                 PalantirDbContext db = new PalantirDbContext();
                 string login = BubbleWallet.GetLoginOfMember(context.User.Id.ToString());
                 MemberEntity patronizer = db.Members.FirstOrDefault(member => member.Login == login);
-                if (patronizer.Patronize is not null && DateTime.Now - DateTime.ParseExact(patronizer.Patronize.Split(":")[1], "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture) < TimeSpan.FromDays(5))
+                if (patronizer.Patronize is not null && DateTime.Now - DateTime.ParseExact(patronizer.Patronize.Split("#")[1], "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture) < TimeSpan.FromDays(5))
                     await Program.SendEmbed(context.Channel, "Sorry...", "You'll have to wait five days from the date of the gift (" + patronizer.Patronize.Split(":")[1] + ") to remove it!");
                 else
                 {
@@ -1484,7 +1484,7 @@ namespace Palantir
                     PalantirDbContext db = new PalantirDbContext();
                     string login = BubbleWallet.GetLoginOfMember(context.User.Id.ToString());
                     MemberEntity patronizer = db.Members.FirstOrDefault(member => member.Login == login);
-                    if(patronizer.Patronize is not null && DateTime.Now - DateTime.ParseExact(patronizer.Patronize.Split(":")[1], "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture) < TimeSpan.FromDays(5))
+                    if(patronizer.Patronize is not null && DateTime.Now - DateTime.ParseExact(patronizer.Patronize.Split("#")[1], "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture) < TimeSpan.FromDays(5))
                         await Program.SendEmbed(context.Channel, "Sorry...", "You'll have to wait five days from the date of the gift (" + patronizer.Patronize.Split(":")[1] + ") to change the receiver!");
                     else
                     {
