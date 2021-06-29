@@ -1489,7 +1489,7 @@ namespace Palantir
                     else
                     {
                         patronizer.Patronize = gift_id + "#" + DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss");
-                        await Program.SendEmbed(context.Channel, "You're awesome!!", "You just gifted " + patronized.Username + " patron perks as long as you have the patronizer subscription!");
+                        await Program.SendEmbed(context.Channel, "You're awesome!!", "You just gifted " + patronized.Username + " patron perks as long as you have the patronizer subscription!\nAfter a cooldown of five days, you can change the receiver with the same command or revoke it with `>patronize none`.");
                     }
                     db.SaveChanges();
                     db.Dispose();
