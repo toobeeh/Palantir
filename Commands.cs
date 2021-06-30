@@ -555,10 +555,9 @@ namespace Palantir
                     spritebatches.Skip(1).Concat(spritebatches.Take(1)) :
                     Enumerable.TakeLast(spritebatches, 1).Concat(Enumerable.SkipLast(spritebatches, 1));
 
-                List<List<string>> SplitListIntoEqualSized(int listcount, IEnumerable<string> source) 
+                List<string>[] SplitListIntoEqualSized(int listcount, IEnumerable<string> source) 
                 {
-                    List<List<string>> ret = new();
-                    for (int i = listcount; i > 0; i--) ret.Add(new());
+                    List<string>[] ret = new List<string>[listcount];
                     ret[0] = source.ToList();
                     for(int i = 1; i < listcount; i++)
                     {
@@ -568,7 +567,7 @@ namespace Palantir
                     return ret;
                 }
                 var firstbatch = spritebatches.Count() > 0 ? spritebatches.First() : Enumerable.Empty<string>();
-                List<List<string>> fielded = SplitListIntoEqualSized(3, firstbatch);
+                List<string>[] fielded = SplitListIntoEqualSized(3, firstbatch);
                 sleft.Value = fielded[0].Count() > 0 ? fielded[0].ToDelimitedString("\n") : "\u200b ";
                 smiddle.Value = fielded[1].Count() > 0 ? fielded[1].ToDelimitedString("\n") : "\u200b ";
                 sright.Value = fielded[2].Count() > 0 ? fielded[2].ToDelimitedString("\n") : "\u200b ";
