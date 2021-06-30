@@ -550,19 +550,37 @@ namespace Palantir
             int direction = 0;
             do
             {
-                // rotate batch so relevant is always first index
+                // rotate batch so relevant is always first index 1 2 3 4 5 6 7 8 9 10 11 
                 spritebatches = direction == 0 ? spritebatches : direction > 0 ?
                     spritebatches.Skip(1).Concat(spritebatches.Take(1)) :
                     Enumerable.TakeLast(spritebatches, 1).Concat(Enumerable.SkipLast(spritebatches, 1));
-                
+
+                List<List<string>> SplitListIntoEqualSized(int listcount, IEnumerable<string> source) 
+                {
+                    List<List<string>> ret = new List<List<string>>();
+                    for (int i = listcount; i > 0; i++) ret.Add(new List<string>());
+                    ret[0] = source.ToList();
+                    for(int i = 1; i < listcount; i++)
+                    {
+                        ret[i] = (List<string>)Enumerable.TakeLast(ret[i - 1], source.Count() / listcount);
+                        ret[i-1] = (List<string>)Enumerable.SkipLast(ret[i - 1], source.Count() / listcount);
+                    }
+                    return ret;
+                }
                 var firstbatch = spritebatches.Count() > 0 ? spritebatches.First() : Enumerable.Empty<string>();
-                int size = firstbatch.Count();
-                sleft.Value = size > 0 ? firstbatch.Take(size < 3 ? size : size / 3).ToDelimitedString("\n") : "\u200b ";
-                smiddle.Value = size > size / 3 ? 
-                    firstbatch.Skip(size/3).Take(size/3).ToDelimitedString("\n") : "\u200b ";
-                sright.Value = size > 2 * (size / 3) ? 
-                    firstbatch.Skip(2 * (size / 3)).ToDelimitedString("\n") : "\u200b ";
-                nav.Label = "Navigate Sprites (" + size + "/" + spritebatches.Flatten().Count() + ")";
+                List<List<string>> fielded = SplitListIntoEqualSized(3, firstbatch);
+                sleft.Value = fielded[0].Count() > 0 ? fielded[0].ToDelimitedString("\n") : "\u200b ";
+                smiddle.Value = fielded[1].Count() > 0 ? fielded[1].ToDelimitedString("\n") : "\u200b ";
+                sright.Value = fielded[2].Count() > 0 ? fielded[2].ToDelimitedString("\n") : "\u200b ";
+
+                //var firstbatch = spritebatches.Count() > 0 ? spritebatches.First() : Enumerable.Empty<string>();
+                //int size = firstbatch.Count();
+                //sleft.Value = size > 0 ? firstbatch.Take(size / 3).ToDelimitedString("\n") : "\u200b ";
+                //smiddle.Value = size > size / 3 ? 
+                //    firstbatch.Skip(size/3).Take(size/3).ToDelimitedString("\n") : "\u200b ";
+                //sright.Value = size > 2 * (size / 3) ? 
+                //    firstbatch.Skip(2 * (size / 3)).ToDelimitedString("\n") : "\u200b ";
+                nav.Label = "Navigate Sprites (" + firstbatch.Count() + "/" + spritebatches.Flatten().Count() + ")";
                 response.Embed = embed.Build();
                 sent = sent is null ? await response.SendAsync(context.Channel) : await sent.ModifyAsync(response);
                 result = await Program.Interactivity.WaitForButtonAsync(sent, context.User, TimeSpan.FromMinutes(2));
