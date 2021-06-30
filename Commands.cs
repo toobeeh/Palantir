@@ -558,7 +558,7 @@ namespace Palantir
                 List<List<string>> SplitListIntoEqualSized(int listcount, IEnumerable<string> source) 
                 {
                     List<List<string>> ret = new List<List<string>>();
-                    for (int i = listcount; i > 0; i++) ret.Add(new List<string>());
+                    for (int i = listcount; i > 0; i--) ret.Add(new List<string>());
                     ret[0] = source.ToList();
                     for(int i = 1; i < listcount; i++)
                     {
