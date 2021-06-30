@@ -509,11 +509,11 @@ namespace Palantir
 
             PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
             string flags = "";
-            if (perm.BubbleFarming) flags += "`🚩 Bubble Farming.`\n";
-            if (perm.BotAdmin) flags += "`✔️ Verified cool guy aka Admin.`\n";
-            if (perm.Moderator) flags += "`🛠️ Palantir Moderator.`\n";
-            if (perm.CloudUnlimited || perm.Patron) flags += "`📦 Unlimited cloud storage.`\n";
-            if (BubbleWallet.IsEarlyUser(login)) flags += "`💎 Early User.`\n";
+            if (perm.BubbleFarming) flags += "`🚩 Bubble Farming`\n";
+            if (perm.BotAdmin) flags += "`✔️ Verified cool guy aka Admin`\n";
+            if (perm.Moderator) flags += "`🛠️ Palantir Moderator`\n";
+            if (perm.CloudUnlimited || perm.Patron) flags += "`📦 Unlimited cloud storage`\n";
+            if (BubbleWallet.IsEarlyUser(login)) flags += "`💎 Early User`\n";
             if (perm.Patron) flags += "`💖️ Patreon Subscriber`\n";
             if (perm.Patronizer) flags += "`🎁 Patronizer`\n";
             if(flags.Length > 0) embed.AddField("Flags:", flags);
@@ -557,11 +557,11 @@ namespace Palantir
                 
                 var firstbatch = spritebatches.Count() > 0 ? spritebatches.First() : Enumerable.Empty<string>();
                 int size = firstbatch.Count();
-                sleft.Value = size > 0 ? firstbatch.Take(size / 3).ToDelimitedString("\n") : "\u200b ";
+                sleft.Value = size > 0 ? firstbatch.Take(size < 3 ? size : size / 3).ToDelimitedString("\n") : "\u200b ";
                 smiddle.Value = size > size / 3 ? 
                     firstbatch.Skip(size/3).Take(size/3).ToDelimitedString("\n") : "\u200b ";
                 sright.Value = size > 2 * (size / 3) ? 
-                    spritebatches.First().Skip(2 * (size / 3)).ToDelimitedString("\n") : "\u200b ";
+                    firstbatch.Skip(2 * (size / 3)).ToDelimitedString("\n") : "\u200b ";
                 nav.Label = "Navigate Sprites (" + size + "/" + spritebatches.Flatten().Count() + ")";
                 response.Embed = embed.Build();
                 sent = sent is null ? await response.SendAsync(context.Channel) : await sent.ModifyAsync(response);
@@ -858,7 +858,7 @@ namespace Palantir
                     {
                         embed.AddField("\u200b", "**`🚩` - " + name + "**\n `This player has been flagged as *bubble farming*`.", true);
                     }
-                    else embed.AddField("\u200b", "**#" + (ranks.IndexOf(member.Login) +1) + " - " + name + "**" + (perm.BotAdmin ? " \n` Admin` " : "") + (perm.Patron ? " \n` 🎖️ Patron` " : "") + (perm.Patronizer ? " \n` 🎁 Patronizer` " : "") + "\n🔮 " + BubbleWallet.GetBubbles(member.Login).ToString() + " Bubbles\n💧 " + BubbleWallet.GetDrops(member.Login).ToString() + " Drops", true);
+                    else embed.AddField("\u200b", "**#" + (ranks.IndexOf(member.Login) +1) + " - " + name + "**" + (perm.BotAdmin ? " \n`Admin` " : "") + (perm.Patron ? " \n`🎖️ Patron` " : "") + (perm.Patronizer ? " \n`🎁 Patronizer` " : "") + "\n🔮 " + BubbleWallet.GetBubbles(member.Login).ToString() + " Bubbles\n💧 " + BubbleWallet.GetDrops(member.Login).ToString() + " Drops", true);
                 }
                 embed.WithFooter(context.Member.DisplayName + " can react within 2 mins to show the next page.");
 
