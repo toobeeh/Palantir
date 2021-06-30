@@ -555,17 +555,6 @@ namespace Palantir
                     spritebatches.Skip(1).Concat(spritebatches.Take(1)) :
                     Enumerable.TakeLast(spritebatches, 1).Concat(Enumerable.SkipLast(spritebatches, 1));
 
-                //List<string>[] SplitListIntoEqualSized(int listcount, IEnumerable<string> source) 
-                //{
-                //    List<string>[] ret = new List<string>[listcount];
-                //    ret[0] = source.ToList();
-                //    for(int i = 1; i < listcount; i++)
-                //    {
-                //        ret[i] = (List<string>)Enumerable.TakeLast(ret[i - 1], source.Count() / listcount);
-                //        ret[i-1] = (List<string>)Enumerable.SkipLast(ret[i - 1], source.Count() / listcount);
-                //    }
-                //    return ret;
-                //}
                 var firstbatch = spritebatches.Count() > 0 ? spritebatches.First() : Enumerable.Empty<string>();
                 List<string>[] fielded = new List<string>[3];
                 fielded[0] = firstbatch.ToList();
@@ -578,13 +567,6 @@ namespace Palantir
                 smiddle.Value = fielded[1].Count() > 0 ? fielded[1].ToDelimitedString("\n") : "\u200b ";
                 sright.Value = fielded[2].Count() > 0 ? fielded[2].ToDelimitedString("\n") : "\u200b ";
 
-                //var firstbatch = spritebatches.Count() > 0 ? spritebatches.First() : Enumerable.Empty<string>();
-                //int size = firstbatch.Count();
-                //sleft.Value = size > 0 ? firstbatch.Take(size / 3).ToDelimitedString("\n") : "\u200b ";
-                //smiddle.Value = size > size / 3 ? 
-                //    firstbatch.Skip(size/3).Take(size/3).ToDelimitedString("\n") : "\u200b ";
-                //sright.Value = size > 2 * (size / 3) ? 
-                //    firstbatch.Skip(2 * (size / 3)).ToDelimitedString("\n") : "\u200b ";
                 nav.Label = "Navigate Sprites (" + firstbatch.Count() + "/" + spritebatches.Flatten().Count() + ")";
                 response.Embed = embed.Build();
                 sent = sent is null ? await response.SendAsync(context.Channel) : await sent.ModifyAsync(response);
