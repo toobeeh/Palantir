@@ -555,19 +555,25 @@ namespace Palantir
                     spritebatches.Skip(1).Concat(spritebatches.Take(1)) :
                     Enumerable.TakeLast(spritebatches, 1).Concat(Enumerable.SkipLast(spritebatches, 1));
 
-                List<string>[] SplitListIntoEqualSized(int listcount, IEnumerable<string> source) 
-                {
-                    List<string>[] ret = new List<string>[listcount];
-                    ret[0] = source.ToList();
-                    for(int i = 1; i < listcount; i++)
-                    {
-                        ret[i] = (List<string>)Enumerable.TakeLast(ret[i - 1], source.Count() / listcount);
-                        ret[i-1] = (List<string>)Enumerable.SkipLast(ret[i - 1], source.Count() / listcount);
-                    }
-                    return ret;
-                }
+                //List<string>[] SplitListIntoEqualSized(int listcount, IEnumerable<string> source) 
+                //{
+                //    List<string>[] ret = new List<string>[listcount];
+                //    ret[0] = source.ToList();
+                //    for(int i = 1; i < listcount; i++)
+                //    {
+                //        ret[i] = (List<string>)Enumerable.TakeLast(ret[i - 1], source.Count() / listcount);
+                //        ret[i-1] = (List<string>)Enumerable.SkipLast(ret[i - 1], source.Count() / listcount);
+                //    }
+                //    return ret;
+                //}
                 var firstbatch = spritebatches.Count() > 0 ? spritebatches.First() : Enumerable.Empty<string>();
-                List<string>[] fielded = SplitListIntoEqualSized(3, firstbatch);
+                List<string>[] fielded = new List<string>[3];
+                fielded[0] = firstbatch.ToList();
+                for (int i = 1; i < 3; i++)
+                {
+                    fielded[i] = (List<string>)Enumerable.TakeLast(fielded[i - 1], firstbatch.Count() / 3);
+                    fielded[i - 1] = (List<string>)Enumerable.SkipLast(fielded[i - 1], firstbatch.Count() / 3);
+                }
                 sleft.Value = fielded[0].Count() > 0 ? fielded[0].ToDelimitedString("\n") : "\u200b ";
                 smiddle.Value = fielded[1].Count() > 0 ? fielded[1].ToDelimitedString("\n") : "\u200b ";
                 sright.Value = fielded[2].Count() > 0 ? fielded[2].ToDelimitedString("\n") : "\u200b ";
