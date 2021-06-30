@@ -572,7 +572,7 @@ namespace Palantir
                 for (int i = 1; i < 3; i++)
                 {
                     fielded[i] = Enumerable.Skip(fielded[i - 1], firstbatch.Count() / 3).ToList();
-                    fielded[i - 1] = fielded[i].Take(fielded[i - 1].Count() - fielded[i].Count()).ToList();
+                    fielded[i - 1] = fielded[i-1].Take(fielded[i - 1].Count() - fielded[i].Count()).ToList();
                 }
                 sleft.Value = fielded[0].Count() > 0 ? fielded[0].ToDelimitedString("\n") : "\u200b ";
                 smiddle.Value = fielded[1].Count() > 0 ? fielded[1].ToDelimitedString("\n") : "\u200b ";
