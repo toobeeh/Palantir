@@ -1479,9 +1479,17 @@ namespace Palantir
                 for(int i = 0; i < codepoints.Count; i++)
                 {
                     int codepoint = codepoints[i];
-                    if (i > 0 && emojis.Last().Last() is 8205 or >= 127995 and <= 127999)
-                        emojis.Last().Add(codepoint);
-                    else emojis.Add((new int[] { codepoint }).ToList());
+                    if (codepoint is 8205 or >= 127995 and <= 127999)
+                    {
+                        if (i > 0) emojis.Last().Add(codepoint);
+                        else emojis.Add((new int[] { codepoint }).ToList());
+                    }
+                    else
+                    {
+                        if (i > 0 && emojis.Last().Last() is 8205 or >= 127995 and <= 127999)
+                            emojis.Last().Add(codepoint);
+                        else emojis.Add((new int[] { codepoint }).ToList());
+                    }
                 }
 
                 return emojis;
