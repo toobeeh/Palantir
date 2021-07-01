@@ -1466,13 +1466,8 @@ namespace Palantir
                 List<string> glyphs = new List<string>();
                 for (int i = 0; i < input.Length; i++)
                 {
-                    string glyph = "";
-                    do
-                    {
-                        glyph += Convert.ToChar((int)input[i]);
-                        if ((int)input[i] < 53248) break;
-                    }
-                    while (++i < input.Length);
+                    string glyph = Convert.ToChar((int)input[i]).ToString();
+                    if((int)input[i+1] is > 55295 and < 57344) glyph += Convert.ToChar((int)input[++i]);
                     glyphs.Add(glyph);
                 }
                 return glyphs;
@@ -1484,8 +1479,8 @@ namespace Palantir
             List<string> emojiGlyphs = StringToGlyphs(emoji).Where(e => Regex.Match(e, regexEmoji).Success).ToList();
             result += "Detected Emoji Glyphs: " + emojiGlyphs.ConvertAll(glyph => "[" + glyph + "]").ToDelimitedString("-") + "\n";
             result += "Consisting of Codepoints: " + emojiGlyphs.ConvertAll(
-                glyph => "[" + glyph.ToCharArray().ToList().ConvertAll(codept => ((int)codept).ToString("X")).ToDelimitedString(",") + "]")
-                .ToDelimitedString("-") + "\n";
+                glyph => "[" + glyph.ToCharArray().ToList().ConvertAll(codept => ((int)codept).ToString("X")).ToDelimitedString(", ") + "]")
+                .ToDelimitedString(" - ") + "\n";
 
 
             //Match emojimatch = Regex.Match(emoji, regexEmoji);
