@@ -1473,15 +1473,33 @@ namespace Palantir
                 return glyphs;
             }
 
+            List<List<int>> SplitCodepointsToEmojis(List<int> codepoints)
+            {
+                List<List<int>> emojis = new List<List<int>>();
+                for(int i = 0; i < codepoints.Count; i++)
+                {
+                    int codepoint = codepoints[i];
+                    if (i > 0 && emojis.Last().Last() is 8205 or >= 127995 and <= 127999)
+                        emojis.Last().Add(codepoint);
+                    else emojis.Add((new int[] { codepoint }).ToList());
+                }
+
+                return emojis;
+            }
+
             string result = emoji + " - length: " + emoji.Length + "\n";
             string regexEmoji = "(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])";
 
             List<string> emojiGlyphs = StringToGlyphs(emoji).Where(e => Regex.Match(e, regexEmoji).Success).ToList();
-            result += "Detected Emoji Glyphs: " + emojiGlyphs.ConvertAll(glyph => "[`" + glyph + "`]").ToDelimitedString("-") + "\n";
-            result += "Consisting of Codepoints: " + emojiGlyphs.ConvertAll(
+            result += "Detected emoji glyphs: " + emojiGlyphs.ConvertAll(glyph => "[`" + glyph + "`]").ToDelimitedString("-") + "\n";
+            result += "Consisting of codepoints: " + emojiGlyphs.ConvertAll(
                 glyph => "[" + glyph.ToCharArray().ToList().ConvertAll(codept => ((int)codept).ToString("X")).ToDelimitedString(", ") + "]")
                 .ToDelimitedString(" - ") + "\n";
-
+            List<List<int>> cpByEmojis = SplitCodepointsToEmojis(
+                emojiGlyphs.ConvertAll(glyph => glyph.ToList().ConvertAll(point => (int)point)).SelectMany(points => points).ToList());
+            result += "Independend emojis from codepoints: " + cpByEmojis
+                .ConvertAll(emojiCodepoints => "[" + emojiCodepoints.ToDelimitedString(", ") + "]").ToDelimitedString(" - ") + "\n";
+            
 
             //Match emojimatch = Regex.Match(emoji, regexEmoji);
             //List<string> matches = new List<string>();
