@@ -1490,10 +1490,10 @@ namespace Palantir
                             emojis.Last().AddRange(codepoints);
                         else
                         {
-                            List<int> lastemoji = emojis[^0];
+                            List<int> lastemoji = emojis.Last();
                             int count = lastemoji.Count;
-                            if ((lastemoji.Count >= 1 && lastemoji[^0] == 8205) // if last emoji has ZWJ or STM as last glyph, add to last emoji
-                                || (lastemoji.Count >= 2 && lastemoji[^1] == 55356 && lastemoji[^0] is >= 57339 and <= 57344))
+                            if ((lastemoji.Count == 1 && lastemoji[0] == 8205) // if last emoji has ZWJ or STM as last glyph, add to last emoji
+                                || (lastemoji.Count == 2 && lastemoji[0] == 55356 && lastemoji[1] is >= 57339 and <= 57344))
                                 emojis.Last().AddRange(codepoints);
                             else emojis.Add(codepoints); // else it's a new emoji
                         }
