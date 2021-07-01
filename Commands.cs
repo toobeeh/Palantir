@@ -1467,7 +1467,7 @@ namespace Palantir
                 for (int i = 0; i < input.Length; i++)
                 {
                     string glyph = Convert.ToChar((int)input[i]).ToString();
-                    if((int)input[i+1] is > 55295 and < 57344) glyph += Convert.ToChar((int)input[++i]);
+                    if(i+1 < input.Length && (int)input[i+1] is > 55295 and < 57344) glyph += Convert.ToChar((int)input[++i]);
                     glyphs.Add(glyph);
                 }
                 return glyphs;
