@@ -1514,23 +1514,7 @@ namespace Palantir
             result += "Independend emojis from codepoints: " + cpByEmojis
                 .ConvertAll(emojiCodepoints => "[" + emojiCodepoints.ToDelimitedString(", ") + "]").ToDelimitedString(" - ") + "\n";
             
-
-            //Match emojimatch = Regex.Match(emoji, regexEmoji);
-            //List<string> matches = new List<string>();
-            //foreach(Match match in Regex.Matches(emoji, regexEmoji))
-            //{
-            //    matches.Add(match.Value);
-            //    result += match.Value + " - " + matches.ToDelimitedString("") + DiscordEmoji.IsValidUnicode(matches.ToDelimitedString("")).ToString() + "\n";
-            //    //result += " ind 0:" + (int)emoji[match.Index] + " ind 1:" + (int)emoji[match.Index+1] + " ind 2:" + (int)emoji[match.Index + 2] + "\n"; 
-            //    if (emoji.Length-1 < match.Index + 2 || (int)emoji[match.Index+2] != 8205) break; // if next is not zero with joiner
-            //};
-
-            //result += "Parsed first emoji:" + matches.ToDelimitedString("") + "\n";
-            //result += "All Unicode code points: " + emoji.ToList().ConvertAll(e => (int)e).ToDelimitedString(" - ") + "\n";
-            //result += "All matched as emoji code points: " + Regex.Matches(emoji, regexEmoji).ToList().ConvertAll(match => "[Length: " + match.Value.Length + " - " + (int)match.Value[0]).ToDelimitedString(", ") + "\n";
-            //result += "UTF32 matched as emoji code points: " + Regex.Matches(
-            //    System.Text.Encoding.UTF32.GetString(
-            //        System.Text.Encoding emoji), regexEmoji).ToList().ConvertAll(match => "[Length: " + match.Value.Length + " - " + (int)match.Value[0]).ToDelimitedString(", ") + "\n";
+            
             await Program.SendEmbed(context.Channel, "Emoji Parse Analysis", result);
         }
         [Description("Gift patronage to a friend")]
