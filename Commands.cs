@@ -1449,7 +1449,7 @@ namespace Palantir
                 Program.StringToGlyphs(emoji).Where(e => Regex.Match(e, regexEmoji).Success).ToList()
                 .ConvertAll(glyph => glyph.ToCharArray().ToList().ConvertAll(character => (int)character).ToList()));
             string matchedEmoji = cpByEmojis.Count == 0 ? ""
-                : cpByEmojis.ConvertAll(point => Convert.ToChar(point)).ToDelimitedString("");
+                : cpByEmojis[0].ConvertAll(point => Convert.ToChar(point)).ToDelimitedString("");
             db.Members.FirstOrDefault(member => member.Login == login).Emoji = matchedEmoji;
             db.SaveChanges();
             db.Dispose();
