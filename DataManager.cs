@@ -231,7 +231,7 @@ namespace Palantir
                 }
                 else flag.Patronizer = false;
                 string emoji = String.IsNullOrEmpty(member.Emoji) ? "" : member.Emoji;
-                if(flag.Patron) emojis.Add(member.Login, emoji);
+                if(flag.Patron || flag.BotAdmin) emojis.Add(member.Login, emoji);
                 member.Flag = flag.CalculateFlag();
             });
             // set flags of patronized members
