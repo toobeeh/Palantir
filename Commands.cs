@@ -1457,7 +1457,7 @@ namespace Palantir
             db.Dispose();
             await Program.SendEmbed(context.Channel, "Emoji set to: `" + matchedEmoji + "`", "Disable it with the same command without emoji.");
         }
-        [Description("Set your patron emoji")]
+        [Description("HAHAH some nerd stuff, shows EXACTLY what the emoji(s) consist of & how they're bound together")]
         [Command("parsemoji")]
         public async Task Parsemoji(CommandContext context, string emoji)
         {
@@ -1513,7 +1513,7 @@ namespace Palantir
                 emojiGlyphs.ConvertAll(glyph => glyph.ToCharArray().ToList().ConvertAll(character => (int)character).ToList()));
             result += "Independend emojis from codepoints: " + cpByEmojis
                 .ConvertAll(emojiCodepoints => "[" + emojiCodepoints.ToDelimitedString(", ") + "]").ToDelimitedString(" - ") + "\n";
-            
+            result += "\nFirst complete emoji: " + cpByEmojis.Last().ConvertAll(point => Convert.ToChar(point)).ToDelimitedString("");
             
             await Program.SendEmbed(context.Channel, "Emoji Parse Analysis", result);
         }
