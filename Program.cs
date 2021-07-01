@@ -197,6 +197,46 @@ namespace Palantir
             
         }
 
+        public static List<string> StringToGlyphs(string input)
+        {
+            List<string> glyphs = new List<string>();
+            for (int i = 0; i < input.Length; i++)
+            {
+                string glyph = Convert.ToChar((int)input[i]).ToString();
+                if (i + 1 < input.Length && (int)input[i] is > 55295 and < 57344) glyph += Convert.ToChar((int)input[++i]);
+                glyphs.Add(glyph);
+            }
+            return glyphs;
+        }
+
+        public static List<List<int>> SplitCodepointsToEmojis(List<List<int>> glyphs)
+        {
+            List<List<int>> emojis = new List<List<int>>();
+            for (int i = 0; i < glyphs.Count; i++)
+            {
+                List<int> codepoints = glyphs[i]; // codepoints of next glyph
+                if (i == 0) // if no emojis yet, MUST be a new emoji
+                {
+                    emojis.Add(codepoints);
+                }
+                else
+                {
+                    if ((codepoints.Count == 1 && codepoints[0] == 8205) // if glyph is ZWJ or Skin Tone Mod, add to last emoji
+                        || (codepoints.Count == 2 && codepoints[0] == 55356 && codepoints[1] is >= 57339 and <= 57344))
+                        emojis.Last().AddRange(codepoints);
+                    else
+                    {
+                        List<int> prevglyph = glyphs[i - 1];
+                        if ((prevglyph.Count == 1 && prevglyph[0] == 8205) // if last emoji has ZWJ or STM as last glyph, add to last emoji
+                            || (prevglyph.Count == 2 && prevglyph[0] == 55356 && prevglyph[1] is >= 57339 and <= 57344))
+                            emojis.Last().AddRange(codepoints);
+                        else emojis.Add(codepoints); // else it's a new emoji
+                    }
+                }
+            }
+            return emojis;
+        }
+
     }
 
     public class PermissionFlag
@@ -269,4 +309,5 @@ namespace Palantir
             return result;
         }
     }
+    
 }
