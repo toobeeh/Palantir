@@ -1464,7 +1464,8 @@ namespace Palantir
             {
                 matches.Add(match.Value);
                 result += match.Value + " - " + matches.ToDelimitedString("") + DiscordEmoji.IsValidUnicode(matches.ToDelimitedString("")).ToString() + "\n";
-                if (emoji[match.Index+1] != '‍') break; // if next is not zero with joiner
+                result += " ind 0:" + (int)emoji[match.Index] + " ind 1:" + (int)emoji[match.Index+1] + " ind 2:" + (int)emoji[match.Index + 2] + "\n";
+                //if (emoji[match.Index+1] != '‍') break; // if next is not zero with joiner
             };
             
             await Program.SendEmbed(context.Channel, "result", result);
