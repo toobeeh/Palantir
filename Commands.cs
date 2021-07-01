@@ -1481,9 +1481,9 @@ namespace Palantir
             string result = emoji + " - length: " + emoji.Length + "\n";
             string regexEmoji = "(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])";
 
-            List<string> emojiGlyphs = StringToGlyphs(emoji).Where(e => Regex.Match(e, regexEmoji).Success).ToList();
-            result += "Detected Emoji Glyphs: " + emojiGlyphs.ConvertAll(glyph => "[" + glyph + "]").ToDelimitedString("-") + "\n";
-            result += "Consisting of Codepoints: " + emojiGlyphs.ConvertAll(
+            List<string> glyphs = StringToGlyphs(emoji).ToList();
+            result += "Detected Emoji Glyphs: " + glyphs.ConvertAll(glyph => "[" + glyph + "]").ToDelimitedString("-") + "\n";
+            result += "Consisting of Codepoints: " + glyphs.ConvertAll(
                 glyph => "[" + glyph.Split().ToList().ConvertAll(codept => ((int)codept[0]).ToString("X")).ToDelimitedString(",")) + "]"
                 .ToDelimitedString("-") + "\n";
 
