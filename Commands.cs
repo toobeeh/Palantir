@@ -1459,7 +1459,8 @@ namespace Palantir
             //Match emojimatch = Regex.Match(emoji, regexEmoji);
             DiscordEmoji match;
             int position = 1;
-            string result = emoji + " - length: " + emoji.Length + "\n";
+            string result = Regex.Unescape(emoji) + " - length: " + emoji.Length + "\n";
+            
             while(DiscordEmoji.TryFromUnicode(emoji.Substring(0,position), out match) && position <= emoji.Length) {
                 result += "pos: " + position + " " + (match is null ? "none" : emoji.Substring(0, position) + match.Name) + "\n";
             }
