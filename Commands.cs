@@ -1484,7 +1484,7 @@ namespace Palantir
             List<string> emojiGlyphs = StringToGlyphs(emoji).Where(e => Regex.Match(e, regexEmoji).Success).ToList();
             result += "Detected Emoji Glyphs: " + emojiGlyphs.ConvertAll(glyph => "[" + glyph + "]").ToDelimitedString("-") + "\n";
             result += "Consisting of Codepoints: " + emojiGlyphs.ConvertAll(
-                glyph => "[" + glyph.Split().ToList().ConvertAll(codept => ((int)codept[0]).ToString("X")).ToDelimitedString(",")) + "]"
+                glyph => "[" + glyph.ToCharArray().ToList().ConvertAll(codept => ((int)codept).ToString("X")).ToDelimitedString(",")) + "]"
                 .ToDelimitedString("-") + "\n";
 
 
@@ -1590,7 +1590,7 @@ namespace Palantir
             int members = cont.Members.Count();
             cont.Dispose();
             embed.AddField("`👥` ", "**" +  members + " ** people have registered on Palantir.");
-            embed.AddField("`❤️` ", "**" + Program.Feanor.PatronEmojis.Count + " ** Patrons are supporting Typo on Patreon.");
+            embed.AddField("`❤️` ", "**" + Program.Feanor.PatronCount + " ** Patrons are supporting Typo on Patreon.");
             await context.RespondAsync(embed: embed);
         }
         [Description("Creates a new theme ticket which can be used by anyone to add a new theme to typo.")]

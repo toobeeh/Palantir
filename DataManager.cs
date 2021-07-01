@@ -15,6 +15,7 @@ namespace Palantir
         public List<Tether> PalantirTethers;
         public List<Member> PalantirMembers;
         public Dictionary<string, string> PatronEmojis = new Dictionary<string, string>();
+        public int PatronCount = 0;
 
         public DataManager()
         {
@@ -218,6 +219,7 @@ namespace Palantir
                 if (member.Roles.Any(role => role.Id == 832744566905241610)) patrons.Add(member.Id.ToString());
                 if (member.Roles.Any(role => role.Id == 859100010184572938)) patronizer.Add(member.Id.ToString());
             };
+            PatronCount = patrons.Count();
             PalantirDbContext db = new PalantirDbContext();
             // iterate through palantir members and set flags
             await db.Members.ForEachAsync(member =>
