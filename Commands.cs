@@ -17,7 +17,7 @@ namespace Palantir
 {
     public class Commands : BaseCommandModule
     {
-        
+
         [Command("manual")]
         [Description("Show the manual for bot usage")]
         public async Task Manual(CommandContext context)
@@ -81,7 +81,7 @@ namespace Palantir
         {
             Program.Feanor.ValidateGuildPalantir(context.Guild.Id.ToString());
             Tether target = Program.Feanor.PalantirTethers.FirstOrDefault(t => t.PalantirEndpoint.GuildID == context.Guild.Id.ToString());
-            if (target.PalantirEndpoint.Webhooks is null)target.PalantirEndpoint.Webhooks = new List<Webhook>();
+            if (target.PalantirEndpoint.Webhooks is null) target.PalantirEndpoint.Webhooks = new List<Webhook>();
             target.PalantirEndpoint.Webhooks.Add(new Webhook
             {
                 Guild = target.PalantirEndpoint.GuildName,
@@ -214,7 +214,7 @@ namespace Palantir
         [RequireGuild()]
         public async Task Observe(CommandContext context, [Description("Target channel (eg #channel)")] string channel)
         {
-            if (context.Message.MentionedChannels.Count <1) { await context.Message.RespondAsync("Invalid channel!"); return; }
+            if (context.Message.MentionedChannels.Count < 1) { await context.Message.RespondAsync("Invalid channel!"); return; }
 
             // Create message in specified channel which later will be the static message to be continuously edited
             DiscordMessage msg = await context.Message.MentionedChannels[0].SendMessageAsync("Initializing...");
@@ -240,7 +240,7 @@ namespace Palantir
         [Description("Set a channel where lobbies will be observed.")]
         [RequireUserPermissions(DSharpPlus.Permissions.Administrator)]
         [RequireGuild()]
-        public async Task Switch(CommandContext context, [Description("Target channel (#channel)")]string channel)
+        public async Task Switch(CommandContext context, [Description("Target channel (#channel)")] string channel)
         {
             Program.Feanor.ValidateGuildPalantir(context.Guild.Id.ToString());
             if (context.Message.MentionedChannels.Count < 1) { await context.Message.RespondAsync("Invalid channel!"); return; }
@@ -264,21 +264,21 @@ namespace Palantir
             bool valid = true;
             string oldToken = "";
 
-            Program.Feanor.PalantirTethers.ForEach((t) => {if (t.PalantirEndpoint.GuildID == guild.GuildID) oldToken = t.PalantirEndpoint.ObserveToken;});
+            Program.Feanor.PalantirTethers.ForEach((t) => { if (t.PalantirEndpoint.GuildID == guild.GuildID) oldToken = t.PalantirEndpoint.ObserveToken; });
             if (oldToken == "") valid = false;
-            else { 
+            else {
                 token = oldToken;
                 guild.ObserveToken = token;
             }
 
             if (valid)
             {
-                await context.Message.RespondAsync("The channel is now set to  " + context.Message.MentionedChannels[0].Mention + ".\nUsers won't need to re-enter their token." );
+                await context.Message.RespondAsync("The channel is now set to  " + context.Message.MentionedChannels[0].Mention + ".\nUsers won't need to re-enter their token.");
                 // save observed
                 Program.Feanor.SavePalantiri(guild);
             }
             else await context.Message.RespondAsync("There is no existing token.\nCheck >help for help.");
-            
+
         }
 
         [Description("Get your login data to connect the extension.")]
@@ -312,7 +312,7 @@ namespace Palantir
 
         [Description("Get a list of all sprites in the store.")]
         [Command("sprites")]
-        [Aliases("spt","sprite")]
+        [Aliases("spt", "sprite")]
         public async Task Sprites(CommandContext context, [Description("The id of the sprite (eg '15')")] int sprite = 0)
         {
             List<Sprite> sprites = BubbleWallet.GetAvailableSprites();
@@ -358,12 +358,12 @@ namespace Palantir
                         int indOfActive = id.ToString().LastIndexOf(".");
                         id = id.Substring(indOfActive < 0 ? 0 : indOfActive + 1);
                         int spriteid = 0;
-                        if(Int32.TryParse(id, out spriteid))
+                        if (Int32.TryParse(id, out spriteid))
                         {
                             joined.Add(new SpriteProperty("", "", 0, spriteid, false, 0, "", indOfActive >= 0, 0));
                         }
                     });
-                });            
+                });
                 db.Dispose();
                 // calculate scores
                 Dictionary<int, int[]> spriteScores = new Dictionary<int, int[]>();
@@ -400,7 +400,7 @@ namespace Palantir
             {
                 inventory = BubbleWallet.GetInventory(login);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 await Program.SendEmbed(context.Channel, "Error executing command", e.ToString());
                 return;
@@ -411,29 +411,29 @@ namespace Palantir
             embed.Title = "🔮  " + context.Message.Author.Username + "s Inventory";
 
             List<SpriteProperty> active = new List<SpriteProperty>();
-            
-            if(inventory.Count > 20)
+
+            if (inventory.Count > 20)
             {
-                string invList = ""; 
+                string invList = "";
                 inventory.OrderBy(s => s.ID).ToList().ForEach(s =>
                 {
                     invList += "**#" + s.ID + "** - " + s.Name + " " + (s.Special ? ":sparkles:" : "") + "\n";
                     if (s.Activated) active.Add(s);
                 });
-                if(invList.Length < 1024) embed.AddField("All Sprites:", invList);
+                if (invList.Length < 1024) embed.AddField("All Sprites:", invList);
                 else
                 {
                     List<string> lines = invList.Split("\n").ToList();
                     lines.Batch(5).ForEach(b =>
                     {
                         string batch = b.ToDelimitedString("\n");
-                        if(!String.IsNullOrWhiteSpace(batch)) embed.AddField("\u200b ", batch, true);
+                        if (!String.IsNullOrWhiteSpace(batch)) embed.AddField("\u200b ", batch, true);
                     });
                 }
             }
             else inventory.OrderBy(s => s.ID).ToList().ForEach(s =>
             {
-                embed.AddField("**" + s.Name + "** " ,  "#" + s.ID + " |  Worth " + s.Cost + (s.EventDropID > 0 ? " Event Drops" : " Bubbles") + (s.Special ? " :sparkles: " : ""),true);
+                embed.AddField("**" + s.Name + "** ", "#" + s.ID + " |  Worth " + s.Cost + (s.EventDropID > 0 ? " Event Drops" : " Bubbles") + (s.Special ? " :sparkles: " : ""), true);
                 if (s.Activated) active.Add(s);
             });
 
@@ -451,7 +451,7 @@ namespace Palantir
             active.OrderBy(slot => slot.Slot).ForEach(sprite =>
             {
                 spriteIDs.Add(sprite.ID);
-                if(active.Count <= 1)
+                if (active.Count <= 1)
                 {
                     desc += "\n**Selected sprite:** " + sprite.Name;
                 }
@@ -460,7 +460,7 @@ namespace Palantir
                     desc += "\n**Slot " + sprite.Slot + ":** " + sprite.Name;
                 }
             });
-            if(spriteIDs.Count > 0)
+            if (spriteIDs.Count > 0)
             {
                 string path = SpriteComboImage.GenerateImage(SpriteComboImage.GetSpriteSources(spriteIDs.ToArray()), "/home/pi/Webroot/files/combos/")
                     .Replace(@"/home/pi/Webroot/", "https://tobeh.host/");
@@ -469,15 +469,15 @@ namespace Palantir
 
             int drops = BubbleWallet.GetDrops(login);
             if (inventory.Count <= 0) desc = "You haven't unlocked any sprites yet!";
-            desc += "\n\n🔮 **" + BubbleWallet.CalculateCredit(login) + "** of "+ BubbleWallet.GetBubbles(login) + " collected Bubbles available.";
+            desc += "\n\n🔮 **" + BubbleWallet.CalculateCredit(login) + "** of " + BubbleWallet.GetBubbles(login) + " collected Bubbles available.";
             desc += "\n\n💧 **" + drops + "** Drops collected.";
-            if(drops >= 1000 || perm.BotAdmin || perm.Patron) desc += "\n\n<a:chest:810521425156636682> **" + (perm.BotAdmin ? "Infinite" : (drops / 1000 + 1 + (perm.Patron ? 1 : 0)).ToString()) + " ** Sprite slots available.";
+            if (drops >= 1000 || perm.BotAdmin || perm.Patron) desc += "\n\n<a:chest:810521425156636682> **" + (perm.BotAdmin ? "Infinite" : (drops / 1000 + 1 + (perm.Patron ? 1 : 0)).ToString()) + " ** Sprite slots available.";
 
             embed.AddField("\u200b ", desc);
 
-            if(inventory.Count < 5) embed.AddField("\u200b ", "Use `>use [id]` to select your Sprite!\n`>use 0` will set no Sprite.\nBuy a Sprite with `>buy [id]`.\nSpecial Sprites :sparkles: replace your whole avatar! ");
+            if (inventory.Count < 5) embed.AddField("\u200b ", "Use `>use [id]` to select your Sprite!\n`>use 0` will set no Sprite.\nBuy a Sprite with `>buy [id]`.\nSpecial Sprites :sparkles: replace your whole avatar! ");
             embed.AddField("\u200b", "[View all Sprites](https://typo.rip/#sprites)");
-            await context.Channel.SendMessageAsync(embed:embed);          
+            await context.Channel.SendMessageAsync(embed: embed);
         }
 
         [Description("Get a overview of your inventory.")]
@@ -516,7 +516,7 @@ namespace Palantir
             if (BubbleWallet.IsEarlyUser(login)) flags += "`💎 Early User`\n";
             if (perm.Patron) flags += "`💖️ Patreon Subscriber`\n";
             if (perm.Patronizer) flags += "`🎁 Patronizer`\n";
-            if(flags.Length > 0) embed.AddField("Flags:", flags);
+            if (flags.Length > 0) embed.AddField("Flags:", flags);
 
             string selected = "";
             inventory.Where(spt => spt.Activated).OrderBy(slot => slot.Slot).ForEach(sprite =>
@@ -526,18 +526,18 @@ namespace Palantir
             if (drops >= 1000 || perm.BotAdmin || perm.Patron) selected += "\n<a:chest:810521425156636682> **" + (perm.BotAdmin ? "Infinite" : (drops / 1000 + 1 + (perm.Patron ? 1 : 0)).ToString()) + " ** Sprite slots available.";
             embed.AddField("Selected Sprites:", selected.Length > 0 ? selected : "None");
 
-            if (inventory.Where(spt => spt.Activated).Count() == 1) 
+            if (inventory.Where(spt => spt.Activated).Count() == 1)
                 embed.ImageUrl = inventory.FirstOrDefault(s => s.Activated).URL;
             if (inventory.Where(spt => spt.Activated).Count() > 1)
                 embed.ImageUrl = SpriteComboImage.GenerateImage(SpriteComboImage.GetSpriteSources(
-                    inventory.Where(s=>s.Activated).OrderBy(s=>s.Slot).Select(s=>s.ID).ToArray()), "/home/pi/Webroot/files/combos/")
+                    inventory.Where(s => s.Activated).OrderBy(s => s.Slot).Select(s => s.ID).ToArray()), "/home/pi/Webroot/files/combos/")
                     .Replace(@"/home/pi/Webroot/", "https://tobeh.host/");
 
             DiscordEmbedField sleft = embed.AddField("\u200b ", "\u200b ", true).Fields.Last();
             DiscordEmbedField smiddle = embed.AddField("\u200b ", "\u200b ", true).Fields.Last();
             DiscordEmbedField sright = embed.AddField("\u200b ", "\u200b ", true).Fields.Last();
             var spritebatches = sprites.Batch(batchsize * 3);
-            
+
             if (inventory.Count < 5) embed.AddField("Command help: ", "Use `>use [id]` to select your Sprite!\n`>use 0` will set no Sprite.\nBuy a Sprite with `>buy [id]`.\nSpecial Sprites :sparkles: replace your whole avatar! ");
             embed.AddField("\u200b", "[View all Sprites](https://typo.rip/#sprites)");
             DiscordMessageBuilder response = new DiscordMessageBuilder();
@@ -561,7 +561,7 @@ namespace Palantir
                 for (int i = 1; i < 3; i++)
                 {
                     fielded[i] = Enumerable.Skip(fielded[i - 1], firstbatch.Count() / 3).ToList();
-                    fielded[i - 1] = fielded[i-1].Take(fielded[i - 1].Count() - fielded[i].Count()).ToList();
+                    fielded[i - 1] = fielded[i - 1].Take(fielded[i - 1].Count() - fielded[i].Count()).ToList();
                 }
                 sleft.Value = fielded[0].Count() > 0 ? fielded[0].ToDelimitedString("\n") : "\u200b ";
                 smiddle.Value = fielded[1].Count() > 0 ? fielded[1].ToDelimitedString("\n") : "\u200b ";
@@ -577,7 +577,7 @@ namespace Palantir
                     direction = result.Result.Id == "next" ? 1 : -1;
                 }
             }
-            while(!result.TimedOut);
+            while (!result.TimedOut);
             prev.Disabled = next.Disabled = true;
             await sent.ModifyAsync(response);
         }
@@ -594,7 +594,7 @@ namespace Palantir
             string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
             List<SpriteProperty> inventory;
             inventory = BubbleWallet.GetInventory(login);
-            if (sprite !=0 && !inventory.Any(s=>s.ID == sprite))
+            if (sprite != 0 && !inventory.Any(s => s.ID == sprite))
             {
                 await Program.SendEmbed(context.Channel, "Hold on!", "You don't own that. \nGet it first with `>buy " + sprite + "`.");
                 return;
@@ -619,7 +619,7 @@ namespace Palantir
                 return;
             }
 
-            if (BubbleWallet.GetSpriteByID(sprite).Special && inventory.Any(active => active.Activated && active.Special && active.Slot != slot)){
+            if (BubbleWallet.GetSpriteByID(sprite).Special && inventory.Any(active => active.Activated && active.Special && active.Slot != slot)) {
                 await Program.SendEmbed(context.Channel, "Too overpowered!!", "Only one of your sprite slots may have a special sprite.");
                 return;
             }
@@ -627,7 +627,7 @@ namespace Palantir
             inventory.ForEach(i => {
                 if (i.ID == sprite && i.Activated) i.Slot = slot; // if sprite is already activated, activate on other slot
                 else if (i.ID == sprite && !i.Activated) { i.Activated = true; i.Slot = slot; } // if sprite is not activated, activate on slot
-                else if (!(i.Activated && i.ID != sprite && i.Slot != slot)) {i.Activated = false; i.Slot = -1; } 
+                else if (!(i.Activated && i.ID != sprite && i.Slot != slot)) { i.Activated = false; i.Slot = -1; }
                 // if sprite ist not desired not activated on slot deactivate
             });
             BubbleWallet.SetInventory(inventory, login);
@@ -696,7 +696,7 @@ namespace Palantir
 
         [Description("Buy a sprite.")]
         [Command("buy")]
-        public async Task Buy(CommandContext context, [Description("The id of the sprite (eg '15')")]int sprite)
+        public async Task Buy(CommandContext context, [Description("The id of the sprite (eg '15')")] int sprite)
         {
             string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
             MemberEntity member = Program.Feanor.GetMemberByLogin(login);
@@ -727,7 +727,7 @@ namespace Palantir
             Sprite target = available.FirstOrDefault(s => s.ID == sprite);
             int credit = BubbleWallet.CalculateCredit(login);
             PermissionFlag perm = new PermissionFlag((byte)member.Flag);
-            if(target.ID == 1003)
+            if (target.ID == 1003)
             {
                 if (!perm.Patron)
                 {
@@ -757,7 +757,7 @@ namespace Palantir
 
             DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
             embed.Title = "Whee!";
-            embed.Description = "You unlocked **" + target.Name + "**!\nActivate it with `>use " + target.ID + "`" ;
+            embed.Description = "You unlocked **" + target.Name + "**!\nActivate it with `>use " + target.ID + "`";
             embed.Color = DiscordColor.Magenta;
             embed.ImageUrl = target.URL;
             await context.Channel.SendMessageAsync(embed: embed);
@@ -780,7 +780,7 @@ namespace Palantir
             //}
             DiscordMessage leaderboard = await context.RespondAsync("`⏱️` Loading members of `" + context.Guild.Name + "`...");
             var interactivity = context.Client.GetInteractivity();
-            List<MemberEntity> members = Program.Feanor.GetGuildMembers(context.Guild.Id.ToString()).OrderByDescending(m=>(mode == "drops" ? m.Drops : m.Bubbles)).Where(m=>m.Bubbles > 0).ToList();
+            List<MemberEntity> members = Program.Feanor.GetGuildMembers(context.Guild.Id.ToString()).OrderByDescending(m => (mode == "drops" ? m.Drops : m.Bubbles)).Where(m => m.Bubbles > 0).ToList();
             List<IEnumerable<MemberEntity>> memberBatches = members.Batch(9).ToList();
             int unranked = 0;
 
@@ -792,7 +792,7 @@ namespace Palantir
                 {
                     await leaderboard.DeleteAllReactionsAsync();
                 }
-                catch(Exception e) {}
+                catch (Exception e) { }
                 try
                 {
                     await leaderboard.CreateReactionAsync(down);
@@ -809,7 +809,7 @@ namespace Palantir
                     if (perm.BubbleFarming)
                     {
                         unranked++;
-                        embed.AddField("\u200b", "**`🚩` - " + name + "**\n `This player has been flagged as *bubble farming*`.",true);
+                        embed.AddField("\u200b", "**`🚩` - " + name + "**\n `This player has been flagged as *bubble farming*`.", true);
                     }
                     else embed.AddField("\u200b", "**#" + (members.IndexOf(member) + 1 - unranked).ToString() + " - " + name + "**" + (perm.BotAdmin ? " ` Admin` " : "") + (perm.Patron ? " ` 🎖️ Patron` " : "") + "\n🔮 " + BubbleWallet.GetBubbles(member.Login).ToString() + " Bubbles\n💧 " + BubbleWallet.GetDrops(member.Login).ToString() + " Drops", true);
                 }
@@ -863,7 +863,7 @@ namespace Palantir
                     {
                         embed.AddField("\u200b", "**`🚩` - " + name + "**\n `This player has been flagged as *bubble farming*`.", true);
                     }
-                    else embed.AddField("\u200b", "**#" + (ranks.IndexOf(member.Login) +1) + " - " + name + "**" + (perm.BotAdmin ? " \n`Admin` " : "") + (perm.Patron ? " \n`🎖️ Patron` " : "") + (perm.Patronizer ? " \n`🎁 Patronizer` " : "") + "\n🔮 " + BubbleWallet.GetBubbles(member.Login).ToString() + " Bubbles\n💧 " + BubbleWallet.GetDrops(member.Login).ToString() + " Drops", true);
+                    else embed.AddField("\u200b", "**#" + (ranks.IndexOf(member.Login) + 1) + " - " + name + "**" + (perm.BotAdmin ? " \n`Admin` " : "") + (perm.Patron ? " \n`🎖️ Patron` " : "") + (perm.Patronizer ? " \n`🎁 Patronizer` " : "") + "\n🔮 " + BubbleWallet.GetBubbles(member.Login).ToString() + " Bubbles\n💧 " + BubbleWallet.GetDrops(member.Login).ToString() + " Drops", true);
                 }
                 embed.WithFooter(context.Member.DisplayName + " can react within 2 mins to show the next page.");
 
@@ -903,44 +903,44 @@ namespace Palantir
 
         [Description("Show bubble gain statistics")]
         [Command("stat")]
-        public async Task Stat(CommandContext context, [Description("Time span mode: 'day', 'week' or 'month'.")]string mode = "day")
+        public async Task Stat(CommandContext context, [Description("Time span mode: 'day', 'week' or 'month'.")] string mode = "day")
         {
             CultureInfo iv = CultureInfo.InvariantCulture;
             string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
             string msg = "```css\n";
             QuartzJobs.BubbleTrace trace;
-            if (mode == "week") 
-            { 
-                trace = new QuartzJobs.BubbleTrace(login, 7 * 10); 
+            if (mode == "week")
+            {
+                trace = new QuartzJobs.BubbleTrace(login, 7 * 10);
                 trace.History = trace.History.Where(
                     t => t.Key.DayOfWeek == DayOfWeek.Monday || t.Key == trace.History.Keys.Min() || t.Key == trace.History.Keys.Max()
-                    ).ToDictionary(); 
+                    ).ToDictionary();
                 msg += " Weekly"; }
-            else if (mode == "month") 
-            { 
-                trace = new QuartzJobs.BubbleTrace(login); 
+            else if (mode == "month")
+            {
+                trace = new QuartzJobs.BubbleTrace(login);
                 trace.History = trace.History.Where(
                      t => t.Key.Day == 1 || t.Key == trace.History.Keys.Min() || t.Key == trace.History.Keys.Max()
                      ).ToDictionary();
-                msg += " Monthly"; 
+                msg += " Monthly";
             }
-            else 
-            { 
-                trace = new QuartzJobs.BubbleTrace(login, 30); 
-                msg += " Daily"; 
+            else
+            {
+                trace = new QuartzJobs.BubbleTrace(login, 30);
+                msg += " Daily";
             }
 
             msg += " Bubble-Gain from " + Convert.ToDateTime(trace.History.Keys.Min()).ToString("M", iv) + " to " + Convert.ToDateTime(trace.History.Keys.Max()).ToString("M", iv) + "\n\n";
             double offs = trace.History.Values.Min() * 0.8;
-            double res = (trace.History.Values.Max()-offs) / 45;
+            double res = (trace.History.Values.Max() - offs) / 45;
             int prev = trace.History.Values.Min();
 
             trace.History.ForEach(t =>
             {
-                msg += (Convert.ToDateTime(t.Key)).ToString("dd.MM") + " " +  
-                new string('█', (int)Math.Round((t.Value-offs) / res, 0)) + 
-                (t.Value - prev > 0 ? "    +" + (t.Value - prev) : "") + 
-                ( trace.History.Keys.ToList().IndexOf(t.Key) == 0 || trace.History.Keys.ToList().IndexOf(t.Key) == trace.History.Count - 1 ? "    @" + t.Value : "") +
+                msg += (Convert.ToDateTime(t.Key)).ToString("dd.MM") + " " +
+                new string('█', (int)Math.Round((t.Value - offs) / res, 0)) +
+                (t.Value - prev > 0 ? "    +" + (t.Value - prev) : "") +
+                (trace.History.Keys.ToList().IndexOf(t.Key) == 0 || trace.History.Keys.ToList().IndexOf(t.Key) == trace.History.Count - 1 ? "    @" + t.Value : "") +
                 "\n";
                 prev = t.Value;
             });
@@ -948,7 +948,7 @@ namespace Palantir
             int diff = trace.History.Values.Max() - trace.History.Values.Min();
             int diffDays = (trace.History.Keys.Max() - trace.History.Keys.Min()).Days;
             msg += "> ➜ Total gained: `" + diff + " Bubbles` \n";
-            double hours  = (double)diff / 360;
+            double hours = (double)diff / 360;
             msg += "> ➜ Equals `" + (TimeSpan.FromHours(hours).Days * 24 + TimeSpan.FromHours(hours).Hours).ToString() + "h "
                 + TimeSpan.FromHours(hours).Minutes.ToString() + "min "
                 + TimeSpan.FromHours(hours).Seconds.ToString() + "s` on skribbl.io\n";
@@ -959,7 +959,7 @@ namespace Palantir
 
         [Description("Fancy calculation stuff")]
         [Command("calc")]
-        public async Task Calc(CommandContext context, [Description("Calc mode: bubbles, rank or sprite")]string mode="", [Description("Whatever fits your mode.")] double target=0)
+        public async Task Calc(CommandContext context, [Description("Calc mode: bubbles, rank or sprite")] string mode = "", [Description("Whatever fits your mode.")] double target = 0)
         {
             double hours = 0;
 
@@ -969,12 +969,12 @@ namespace Palantir
                 case "sprite":
                     List<Sprite> available = BubbleWallet.GetAvailableSprites();
                     Sprite sprite = available.FirstOrDefault(s => (ulong)s.ID == target);
-                    if(sprite.EventDropID > 0) { await Program.SendEmbed(context.Channel, "This is an event sprite!", "It can only be bought with event drops."); return; }
+                    if (sprite.EventDropID > 0) { await Program.SendEmbed(context.Channel, "This is an event sprite!", "It can only be bought with event drops."); return; }
                     hours = ((double)sprite.Cost - BubbleWallet.CalculateCredit(login)) / 360;
-                    await Program.SendEmbed(context.Channel, "🔮  Time to get " + sprite.Name + ":", 
-                        (TimeSpan.FromHours(hours).Days * 24 + TimeSpan.FromHours(hours).Hours).ToString() + "h " 
+                    await Program.SendEmbed(context.Channel, "🔮  Time to get " + sprite.Name + ":",
+                        (TimeSpan.FromHours(hours).Days * 24 + TimeSpan.FromHours(hours).Hours).ToString() + "h "
                         + TimeSpan.FromHours(hours).Minutes.ToString() + "min "
-                        + TimeSpan.FromHours(hours).Seconds.ToString() + "s on skribbl.io left.") ;
+                        + TimeSpan.FromHours(hours).Seconds.ToString() + "s on skribbl.io left.");
                     break;
                 case "bubbles":
                     hours = (double)target / 360;
@@ -999,7 +999,7 @@ namespace Palantir
 
         [Description("Create a new seasonal event")]
         [Command("newevent")]
-        public async Task CreateEvent(CommandContext context, [Description("The event name")] string name, [Description("The duration of the event in days")]int duration, [Description("The count of days when the event will start")]int validInDays, [Description("The event description")]params string[] description)
+        public async Task CreateEvent(CommandContext context, [Description("The event name")] string name, [Description("The duration of the event in days")] int duration, [Description("The count of days when the event will start")] int validInDays, [Description("The event description")] params string[] description)
         {
             PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
             if (!perm.Moderator && !perm.BotAdmin)
@@ -1008,10 +1008,10 @@ namespace Palantir
                 return;
             }
 
-            PalantirDbContext dbcontext = new PalantirDbContext(); 
+            PalantirDbContext dbcontext = new PalantirDbContext();
 
             EventEntity newEvent = new EventEntity();
-            newEvent.EventName = name.Replace("_"," ");
+            newEvent.EventName = name.Replace("_", " ");
             newEvent.DayLength = duration;
             newEvent.ValidFrom = DateTime.Now.AddDays(validInDays).ToShortDateString();
             newEvent.Description = description.ToDelimitedString(" ");
@@ -1054,7 +1054,7 @@ namespace Palantir
 
             PalantirDbContext dbcontext = new PalantirDbContext();
 
-            if(!dbcontext.Events.Any(e=>e.EventID == eventID))
+            if (!dbcontext.Events.Any(e => e.EventID == eventID))
             {
                 await Program.SendEmbed(context.Channel, "Hmm...", "There's no event with that id.\nCheck `>upcoming`");
                 return;
@@ -1067,7 +1067,7 @@ namespace Palantir
 
             EventDropEntity newDrop = new EventDropEntity();
             newDrop.EventID = eventID;
-            newDrop.Name = name.Replace("_"," ");
+            newDrop.Name = name.Replace("_", " ");
             newDrop.URL = context.Message.Attachments[0].Url;
             if (dbcontext.EventDrops.Count() <= 0) newDrop.EventDropID = 0;
             else newDrop.EventDropID = dbcontext.EventDrops.Max(e => e.EventDropID) + 1;
@@ -1076,7 +1076,7 @@ namespace Palantir
             dbcontext.SaveChanges();
 
             DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
-            embed.Title = ":champagne:  Drop added to " + dbcontext.Events.FirstOrDefault(e=>e.EventID == eventID).EventName + ": **" + newDrop.Name + "**";
+            embed.Title = ":champagne:  Drop added to " + dbcontext.Events.FirstOrDefault(e => e.EventID == eventID).EventName + ": **" + newDrop.Name + "**";
             embed.Color = DiscordColor.Magenta;
             embed.WithThumbnail(newDrop.URL);
             embed.WithDescription("The ID of the Drop is  " + newDrop.EventDropID + ".\nAdd a seasonal Sprite which can be bought with the event drops to make your event complete:\n" +
@@ -1158,7 +1158,7 @@ namespace Palantir
                     dropList += "➜ **" + sprite.Name + "** (#" + sprite.ID + ")\n" + BubbleWallet.GetEventCredit(login, sprite.EventDropID) + " / " + sprite.Cost + " " + eventdrops.FirstOrDefault(drop => drop.EventDropID == sprite.EventDropID).Name + " Drops " + (inv.Any(s => s.ID == sprite.ID) ? ":package:" : "") + "\n\n";
                 });
                 embed.AddField("Event Sprites", dropList == "" ? "No drops added yet." : dropList);
-                embed.AddField("\u200b","Use `>sprite [id]` to see the event drop and sprite!");
+                embed.AddField("\u200b", "Use `>sprite [id]` to see the event drop and sprite!");
             }
             else
             {
@@ -1176,9 +1176,9 @@ namespace Palantir
         public async Task Loss(CommandContext context, [Description("The amount of a single gift")] int amount, [Description("The total drop amount with repeated gifts of before specified amount")] int total = 0)
         {
             int sum = 0;
-            for(int i = 0; i<100; i++) sum += (new Random()).Next(0, amount / 3 + 1);
+            for (int i = 0; i < 100; i++) sum += (new Random()).Next(0, amount / 3 + 1);
             string totalres = "";
-            if(total > amount)
+            if (total > amount)
             {
                 int times = total / amount + (total % amount > 0 ? 1 : 0);
                 totalres = "\nTo gift a total of " + total + " Drops " + times + " gifts of each " + amount + " Drops are required, which equals a loss of " + Math.Round((sum * times) / 100.0, 2) + " Drops.";
@@ -1196,7 +1196,7 @@ namespace Palantir
                 return;
             }
             List<Sprite> sprites = BubbleWallet.GetAvailableSprites();
-            if(!sprites.Any(s=>s.ID == eventSpriteID && s.EventDropID != 0))
+            if (!sprites.Any(s => s.ID == eventSpriteID && s.EventDropID != 0))
             {
                 await Program.SendEmbed(context.Channel, "Hmmm...", "That sprite doesn't exist or is no event sprite.");
                 return;
@@ -1222,7 +1222,7 @@ namespace Palantir
             int lost = amount >= 3 ? (new Random()).Next(0, amount / 3 + 1) : (new Random()).Next(0, 2);
             string targetLogin = BubbleWallet.GetLoginOfMember(target.Id.ToString());
 
-            if(BubbleWallet.ChangeEventDropCredit(targetLogin, eventDropID, amount - lost))
+            if (BubbleWallet.ChangeEventDropCredit(targetLogin, eventDropID, amount - lost))
                 BubbleWallet.ChangeEventDropCredit(login, eventDropID, -amount);
 
             DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
@@ -1233,7 +1233,7 @@ namespace Palantir
 
         [Description("Add a seasonal sprite to an event")]
         [Command("eventsprite")]
-        public async Task CreateEventSprite(CommandContext context, [Description("The id of the event drop for the sprite")] int eventDropID, [Description("The name of the sprite")] string name, [Description("The event drop price")] int price, [Description("Any string except '-' if the sprite should replace the avatar")]string special = "", [Description("Any string except '-' to set the sprite artist")]string artist = "")
+        public async Task CreateEventSprite(CommandContext context, [Description("The id of the event drop for the sprite")] int eventDropID, [Description("The name of the sprite")] string name, [Description("The event drop price")] int price, [Description("Any string except '-' if the sprite should replace the avatar")] string special = "", [Description("Any string except '-' to set the sprite artist")] string artist = "")
         {
             PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
             if (!perm.Moderator && !perm.BotAdmin)
@@ -1270,13 +1270,13 @@ namespace Palantir
             client.DownloadFile(context.Message.Attachments[0].Url, "/home/pi/Webroot/eventsprites/evd" + eventDropID + name.Replace("'", "-") + ".gif");
 
             Sprite eventsprite = new Sprite(
-                name.Replace("_"," "), 
-                "https://tobeh.host/eventsprites/evd" + eventDropID + name.Replace("'", "-") + ".gif", 
-                price, 
-                dbcontext.Sprites.Where(s => s.ID < 1000).Max(s => s.ID) + 1, 
-                special != "-" && special != "", 
-                eventDropID, 
-                artist == "" || artist == "-" ? null : artist 
+                name.Replace("_", " "),
+                "https://tobeh.host/eventsprites/evd" + eventDropID + name.Replace("'", "-") + ".gif",
+                price,
+                dbcontext.Sprites.Where(s => s.ID < 1000).Max(s => s.ID) + 1,
+                special != "-" && special != "",
+                eventDropID,
+                artist == "" || artist == "-" ? null : artist
             );
             BubbleWallet.AddSprite(eventsprite);
 
@@ -1292,7 +1292,7 @@ namespace Palantir
 
         [Description("Add a sprite")]
         [Command("addsprite")]
-        public async Task AddSprite(CommandContext context, [Description("The name of the sprite")] string name, [Description("The bubble price")] int price, [Description("Any string except '-' if the sprite should replace the avatar")]string special = "", [Description("Any string except '-' to set the sprite artist")]string artist = "")
+        public async Task AddSprite(CommandContext context, [Description("The name of the sprite")] string name, [Description("The bubble price")] int price, [Description("Any string except '-' if the sprite should replace the avatar")] string special = "", [Description("Any string except '-' to set the sprite artist")] string artist = "")
         {
             PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
             if (!perm.Moderator && !perm.BotAdmin)
@@ -1347,7 +1347,7 @@ namespace Palantir
         [Command("flag")]
         public async Task Flag(CommandContext context, [Description("The id of the member to flag")] ulong id, [Description("The new flag")] int flag = -1)
         {
-            if(flag == -1)
+            if (flag == -1)
             {
                 DiscordUser target = await Program.Client.GetUserAsync(id);
                 PermissionFlag getperm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(target));
@@ -1355,12 +1355,12 @@ namespace Palantir
                     + getperm.BubbleFarming + "\nFlag[1] Bot Admin - "
                     + getperm.BotAdmin + "\nFlag[2] Moderator - "
                     + getperm.Moderator + "\nFlag[3] Unlimited Cloud - "
-                    + getperm.CloudUnlimited + "\nFlag[4] Patron - " 
+                    + getperm.CloudUnlimited + "\nFlag[4] Patron - "
                     + getperm.Patron + "\nFlag[5] Permanent Ban - "
                     + getperm.Permanban + "\nFlag[6] Drop Ban - "
                     + getperm.Dropban + "\nFlag[7] Patronizer - "
                     + getperm.Patronizer;
-                await Program.SendEmbed(context.Channel, "The flags of " + target.Username,getDesc);
+                await Program.SendEmbed(context.Channel, "The flags of " + target.Username, getDesc);
                 return;
             }
             PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
@@ -1381,7 +1381,7 @@ namespace Palantir
                     + newFlag.Permanban + "\nFlag[6] Drop Ban - "
                     + newFlag.Dropban + "\nFlag[7] Patronizer - "
                     + newFlag.Patronizer;
-            await Program.SendEmbed(context.Channel, "*magic happened*","The flag of " + name + " was set to " + flag + "\n" + desc);
+            await Program.SendEmbed(context.Channel, "*magic happened*", "The flag of " + name + " was set to " + flag + "\n" + desc);
         }
 
         [Description("Reboots the bot & pulls from git.")]
@@ -1397,7 +1397,7 @@ namespace Palantir
 
             string upd = "git -C /home/pi/Palantir pull".Bash();
             upd += "\n\n Latest commit: " + ("git log --oneline -1".Bash());
-            await Program.SendEmbed(context.Channel, "[literally dies...]", "You made me do this!!!\n\n**Update result:**\n"+upd);
+            await Program.SendEmbed(context.Channel, "[literally dies...]", "You made me do this!!!\n\n**Update result:**\n" + upd);
             string op = "sudo service palantir restart".Bash();
             Environment.Exit(0);
         }
@@ -1414,7 +1414,7 @@ namespace Palantir
             }
             string commandDelimited = command.ToDelimitedString(" ");
             string res = ("cd /home/pi/ && " + commandDelimited).Bash();
-            await Program.SendEmbed(context.Channel, "**pi@raspberrypi: ~ $** " +  commandDelimited, res != "" ? res : "Error.");
+            await Program.SendEmbed(context.Channel, "**pi@raspberrypi: ~ $** " + commandDelimited, res != "" ? res : "Error.");
         }
 
         [Description("Execute a sql command in the palantir database")]
@@ -1467,31 +1467,37 @@ namespace Palantir
                 for (int i = 0; i < input.Length; i++)
                 {
                     string glyph = Convert.ToChar((int)input[i]).ToString();
-                    if(i+1 < input.Length && (int)input[i] is > 55295 and < 57344) glyph += Convert.ToChar((int)input[++i]);
+                    if (i + 1 < input.Length && (int)input[i] is > 55295 and < 57344) glyph += Convert.ToChar((int)input[++i]);
                     glyphs.Add(glyph);
                 }
                 return glyphs;
             }
 
-            List<List<int>> SplitCodepointsToEmojis(List<int> codepoints)
+            List<List<int>> SplitCodepointsToEmojis(List<List<int>> glyphs)
             {
                 List<List<int>> emojis = new List<List<int>>();
-                for(int i = 0; i < codepoints.Count; i++)
+                for (int i = 0; i < glyphs.Count; i++)
                 {
-                    int codepoint = codepoints[i];
-                    if (codepoint is 8205 or >= 127995 and <= 127999)
+                    List<int> codepoints = glyphs[i]; // codepoints of next glyph
+                    if (i == 0) // if no emojis yet, MUST be a new emoji
                     {
-                        if (i > 0) emojis.Last().Add(codepoint);
-                        else emojis.Add((new int[] { codepoint }).ToList());
+                        emojis.Add(codepoints);
                     }
                     else
                     {
-                        if (i > 0 && emojis.Last().Last() is 8205 or >= 127995 and <= 127999)
-                            emojis.Last().Add(codepoint);
-                        else emojis.Add((new int[] { codepoint }).ToList());
+                        if ((codepoints.Count == 1 && codepoints[0] == 8205) // if glyph is ZWJ or Skin Tone Mod, add to last emoji
+                            || (codepoints.Count == 2 && codepoints[0] == 55356 && codepoints[1] is >= 57339 and <= 57344))
+                            emojis.Last().AddRange(codepoints);
+                        else
+                        {
+                            List<int> lastemoji = emojis.Last();
+                            if (lastemoji.Count >= 1 && lastemoji[^0] == 8205 // if last emoji has ZWJ or STM as last glyph, add to last emoji
+                                || lastemoji.Count >= 2 && lastemoji[^1] == 55356 && lastemoji[^0] is >= 57339 and <= 57344)
+                                emojis.Last().AddRange(codepoints);
+                            else emojis.Add(codepoints); // else it's a new emoji
+                        }
                     }
                 }
-
                 return emojis;
             }
 
@@ -1504,7 +1510,7 @@ namespace Palantir
                 glyph => "[" + glyph.ToCharArray().ToList().ConvertAll(codept => ((int)codept).ToString("X")).ToDelimitedString(", ") + "]")
                 .ToDelimitedString(" - ") + "\n";
             List<List<int>> cpByEmojis = SplitCodepointsToEmojis(
-                emojiGlyphs.ConvertAll(glyph => glyph.ToList().ConvertAll(point => (int)point)).SelectMany(points => points).ToList());
+                emojiGlyphs.ConvertAll(glyph => glyph.ToCharArray().ToList().ConvertAll(character => (int)character).ToList()));
             result += "Independend emojis from codepoints: " + cpByEmojis
                 .ConvertAll(emojiCodepoints => "[" + emojiCodepoints.ToDelimitedString(", ") + "]").ToDelimitedString(" - ") + "\n";
             
