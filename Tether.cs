@@ -148,13 +148,19 @@ namespace Palantir
             }
 
             int notFound = 0;
-
+            string lastContent = "";
             while (!abort)
             {
                 try
                 {
                     // try to build lobby message
-                    string content = BuildLobbyContent();   
+                    string content = BuildLobbyContent();
+                    if (content == lastContent)
+                    {
+                        Thread.Sleep(4000);
+                        continue;
+                    }
+                    else lastContent = content;
                     DiscordMessage split;
                     try
                     {
@@ -224,7 +230,7 @@ namespace Palantir
 
         private string BuildLobbyContent()
         {
-            return "```Discord lobbies are currently under maintenance. \nThis can take up to 48 hours.\nSorry & see ya!```";
+            //return "```Discord lobbies are currently under maintenance. \nThis can take up to 48 hours.\nSorry & see ya!```";
             string message = "";
             PalantirDbContext Database = new PalantirDbContext();
 
