@@ -280,7 +280,7 @@ namespace Palantir
             else message += "```arm\n" + events[0].EventName + ": \n"+ events[0].Description + "\nView details with '>event'!```\n";
 
             message += PalantirSettings.Header + "\n";
-            if (PalantirSettings.ShowRefreshed) message += "Refreshed: <t:" + DateTimeOffset.UtcNow.ToUnixTimeSeconds() + ":R>";//+ DateTime.UtcNow.AddHours(PalantirSettings.Timezone).ToShortTimeString() + " (UTC " + PalantirSettings.Timezone.ToString("+0;-#") + ")\n"; 
+            if (PalantirSettings.ShowRefreshed) message += "Refreshed: <t:" + DateTimeOffset.UtcNow.ToUnixTimeSeconds() + ":R> \n";//+ DateTime.UtcNow.AddHours(PalantirSettings.Timezone).ToShortTimeString() + " (UTC " + PalantirSettings.Timezone.ToString("+0;-#") + ")\n"; 
             if(PalantirSettings.ShowToken) message += "Server token: `"+ PalantirEndpoint.ObserveToken + "`\n";
 
             message += "\n";
