@@ -30,7 +30,8 @@ namespace Palantir
             Client = new DiscordClient(new DiscordConfiguration
             {
                 Token = File.ReadAllText("/home/pi/palantirToken.txt"),
-                TokenType = TokenType.Bot
+                TokenType = TokenType.Bot,
+                MinimumLogLevel = Microsoft.Extensions.Logging.LogLevel.Debug
             });
             Commands = Client.UseCommandsNext(new CommandsNextConfiguration
             {

@@ -253,7 +253,6 @@ namespace Palantir
                 {
                     try
                     {
-                        //Console.WriteLine("Found status: " + p.Status);
                         OnlinePlayers.Add(JsonConvert.DeserializeObject<PlayerStatus>(p.Status));
                     }
                     catch (Exception e) { Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > Couldnt read status file: " + e); };
@@ -266,7 +265,6 @@ namespace Palantir
                 if (l.GuildID.ToString() == PalantirEndpoint.GuildID && l.ObserveToken == PalantirEndpoint.ObserveToken)
                 {
                     GuildLobbies.Add(l);
-                    //Console.WriteLine("Lobby for guild " + PalantirEndpoint.GuildName + " was found: " + l.ID);
                 }
             });
 
