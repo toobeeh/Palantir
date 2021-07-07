@@ -157,6 +157,7 @@ namespace Palantir
                     string content = BuildLobbyContent();
                     if (content == lastContent)
                     {
+                        await TargetChannel.TriggerTypingAsync();
                         Thread.Sleep(4000);
                         continue;
                     }
