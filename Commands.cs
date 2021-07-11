@@ -898,8 +898,8 @@ namespace Palantir
                     else if (press.Result.Interaction.Data.Values[0].StartsWith("page")) page = Convert.ToInt32(press.Result.Interaction.Data.Values[0].Substring(2));
                     if (page >= memberBatches.Count) page = 0;
                     else if (page < 0) page = memberBatches.Count - 1;
-                    selectIndex = generateSelectWithDefault(page);
                     await press.Result.Interaction.CreateResponseAsync(DSharpPlus.InteractionResponseType.UpdateMessage);
+                    selectIndex = generateSelectWithDefault(page);
                 }
             }
             while (!press.TimedOut);
