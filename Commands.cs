@@ -886,7 +886,7 @@ namespace Palantir
 
                 //press = await interactivity.WaitForButtonAsync(msg, context.Message.Author, TimeSpan.FromMinutes(2));
                 press = await interactivity.WaitForEventArgsAsync<DSharpPlus.EventArgs.ComponentInteractionCreateEventArgs>(
-                    args => args.Message == context.Message && args.User == context.User, TimeSpan.FromMinutes(2));
+                    args => args.Message.Id == context.Message.Id && args.User.Id == context.User.Id, TimeSpan.FromMinutes(2));
                 if (!press.TimedOut)
                 {
                     if (press.Result.Id == "lbdprev") page--;
