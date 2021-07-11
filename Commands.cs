@@ -843,19 +843,23 @@ namespace Palantir
 
             DiscordMessageBuilder leaderboard = new DiscordMessageBuilder();
             DiscordButtonComponent btnnext, btnprev;
-            DiscordSelectComponent selectIndex = new DiscordSelectComponent
+            DiscordSelectComponent generateSelectWithDefault(int selected = 0)
             {
-                CustomId = "lbdselect",
-                MaximumSelectedValues = 1,
-                MinimumSelectedValues = 1,
-                Placeholder = "Select Page",
-                Options = memberBatches.ConvertAll(batch => new DiscordSelectComponentOption(
-                        "Page " + (memberBatches.IndexOf(batch) + 1).ToString(),
-                        "page" + memberBatches.IndexOf(batch).ToString(),
-                        "",
-                        memberBatches.IndexOf(batch) == 0
-                    )).ToArray()
-            };
+                return new DiscordSelectComponent
+                {
+                    CustomId = "lbdselect",
+                    MaximumSelectedValues = 1,
+                    MinimumSelectedValues = 1,
+                    Placeholder = "Select Page",
+                    Options = memberBatches.ConvertAll(batch => new DiscordSelectComponentOption(
+                            "Page " + (memberBatches.IndexOf(batch) + 1).ToString(),
+                            "page" + memberBatches.IndexOf(batch).ToString(),
+                            "",
+                            memberBatches.IndexOf(batch) == selected
+                        )).ToArray()
+                };
+            }
+            DiscordSelectComponent selectIndex = generateSelectWithDefault();
             btnnext = new DiscordButtonComponent(ButtonStyle.Primary, "lbdnext", "Next Page");
             btnprev = new DiscordButtonComponent(ButtonStyle.Secondary, "lbdprev", "Previous Page");
             leaderboard.WithContent("`⏱️` Loading members of `" + context.Guild.Name + "`...").AddComponents(btnnext,btnprev).AddComponents(selectIndex);
@@ -891,9 +895,10 @@ namespace Palantir
                 {
                     if (press.Result.Id == "lbdprev") page--;
                     else if (press.Result.Id == "lbdnext") page++;
-                    else if (press.Result.Id.StartsWith("page")) page = Convert.ToInt32(press.Result.Id.Substring(2));
+                    else if (press.Result.Interaction.Data.Values[0].StartsWith("page")) page = Convert.ToInt32(press.Result.Interaction.Data.Values[0].Substring(2));
                     if (page >= memberBatches.Count) page = 0;
                     else if (page < 0) page = memberBatches.Count - 1;
+                    selectIndex = generateSelectWithDefault(page);
                     await press.Result.Interaction.CreateResponseAsync(DSharpPlus.InteractionResponseType.UpdateMessage);
                 }
             }
