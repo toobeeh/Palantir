@@ -886,16 +886,15 @@ namespace Palantir
 
                 leaderboard.Embed = embed.Build();
                 leaderboard.Content = "";
-                await leaderboard.ModifyAsync(msg);
+                await msg.ModifyAsync(leaderboard);
 
-                //press = await interactivity.WaitForButtonAsync(msg, context.Message.Author, TimeSpan.FromMinutes(2));
                 press = await interactivity.WaitForEventArgsAsync<DSharpPlus.EventArgs.ComponentInteractionCreateEventArgs>(
                     args => args.Message.Id == msg.Id && args.User.Id == context.User.Id, TimeSpan.FromMinutes(2));
                 if (!press.TimedOut)
                 {
                     if (press.Result.Id == "lbdprev") page--;
                     else if (press.Result.Id == "lbdnext") page++;
-                    else if (press.Result.Interaction.Data.Values[0].StartsWith("page")) page = Convert.ToInt32(press.Result.Interaction.Data.Values[0].Substring(2));
+                    else if (press.Result.Interaction.Data.Values[0].StartsWith("page")) page = Convert.ToInt32(press.Result.Interaction.Data.Values[0].Replace("page",""));
                     if (page >= memberBatches.Count) page = 0;
                     else if (page < 0) page = memberBatches.Count - 1;
                     await press.Result.Interaction.CreateResponseAsync(DSharpPlus.InteractionResponseType.UpdateMessage);
