@@ -843,9 +843,22 @@ namespace Palantir
 
             DiscordMessageBuilder leaderboard = new DiscordMessageBuilder();
             DiscordButtonComponent btnnext, btnprev;
+            DiscordSelectComponent selectIndex = new DiscordSelectComponent
+            {
+                CustomId = "lbdselect",
+                MaximumSelectedValues = 1,
+                MinimumSelectedValues = 1,
+                Placeholder = "Select Page",
+                Options = memberBatches.ConvertAll(batch => new DiscordSelectComponentOption(
+                        memberBatches.IndexOf(batch).ToString(),
+                        memberBatches.IndexOf(batch).ToString(),
+                        "",
+                        memberBatches.IndexOf(batch) == 0
+                    )).ToArray()
+            };
             btnnext = new DiscordButtonComponent(ButtonStyle.Primary, "lbdnext", "Next Page");
             btnprev = new DiscordButtonComponent(ButtonStyle.Secondary, "lbdprev", "Previous Page");
-            leaderboard.WithContent("`⏱️` Loading members of `" + context.Guild.Name + "`...").AddComponents(btnprev, btnnext);
+            leaderboard.WithContent("`⏱️` Loading members of `" + context.Guild.Name + "`...").AddComponents(btnprev, selectIndex, btnnext);
             DiscordMessage msg = await leaderboard.SendAsync(context.Channel);
 
             InteractivityResult<DSharpPlus.EventArgs.ComponentInteractionCreateEventArgs> press;
@@ -871,7 +884,9 @@ namespace Palantir
                 leaderboard.Content = "";
                 await leaderboard.ModifyAsync(msg);
 
-                press = await interactivity.WaitForButtonAsync(msg, context.Message.Author, TimeSpan.FromMinutes(2));
+                //press = await interactivity.WaitForButtonAsync(msg, context.Message.Author, TimeSpan.FromMinutes(2));
+                press = await interactivity.WaitForEventArgsAsync<DSharpPlus.EventArgs.ComponentInteractionCreateEventArgs>(
+                    args => args.Message == context.Message && args.User == context.User, TimeSpan.FromMinutes(2));
                 if (!press.TimedOut)
                 {
                     if (press.Result.Id == "lbdprev") page--;
