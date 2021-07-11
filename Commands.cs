@@ -850,8 +850,8 @@ namespace Palantir
                 MinimumSelectedValues = 1,
                 Placeholder = "Select Page",
                 Options = memberBatches.ConvertAll(batch => new DiscordSelectComponentOption(
-                        memberBatches.IndexOf(batch).ToString(),
-                        memberBatches.IndexOf(batch).ToString(),
+                        "Page " + (memberBatches.IndexOf(batch) + 1).ToString(),
+                        "page" + memberBatches.IndexOf(batch).ToString(),
                         "",
                         memberBatches.IndexOf(batch) == 0
                     )).ToArray()
@@ -891,6 +891,7 @@ namespace Palantir
                 {
                     if (press.Result.Id == "lbdprev") page--;
                     else if (press.Result.Id == "lbdnext") page++;
+                    else if (press.Result.Id.StartsWith("page")) page = Convert.ToInt32(press.Result.Id.Substring(2));
                     if (page >= memberBatches.Count) page = 0;
                     else if (page < 0) page = memberBatches.Count - 1;
                     await press.Result.Interaction.CreateResponseAsync(DSharpPlus.InteractionResponseType.UpdateMessage);
