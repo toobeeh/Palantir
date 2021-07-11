@@ -858,7 +858,7 @@ namespace Palantir
             };
             btnnext = new DiscordButtonComponent(ButtonStyle.Primary, "lbdnext", "Next Page");
             btnprev = new DiscordButtonComponent(ButtonStyle.Secondary, "lbdprev", "Previous Page");
-            leaderboard.WithContent("`⏱️` Loading members of `" + context.Guild.Name + "`...").AddComponents(btnprev, selectIndex, btnnext);
+            leaderboard.WithContent("`⏱️` Loading members of `" + context.Guild.Name + "`...").AddComponents(selectIndex);
             DiscordMessage msg = await leaderboard.SendAsync(context.Channel);
 
             InteractivityResult<DSharpPlus.EventArgs.ComponentInteractionCreateEventArgs> press;
