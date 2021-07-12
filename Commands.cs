@@ -880,7 +880,7 @@ namespace Palantir
                     }
                     else embed.AddField("\u200b", "**#" + (ranks.IndexOf(member.Login) + 1) + " - " + name + "**" + (perm.BotAdmin ? " \n`Admin` " : "") + (perm.Patron ? " \n`🎖️ Patron` " : "") + (perm.Patronizer ? " \n`🎁 Patronizer` " : "") + "\n🔮 " + BubbleWallet.GetBubbles(member.Login).ToString() + " Bubbles\n💧 " + BubbleWallet.GetDrops(member.Login).ToString() + " Drops", true);
                 }
-                embed.WithFooter(context.Member.DisplayName + " can react within 2 mins to show the next page.");
+                embed.WithFooter(context.Member.DisplayName + " can react within 10 mins to show the next page.");
 
                 leaderboard.Embed = embed.Build();
                 leaderboard.Content = "";
@@ -893,11 +893,11 @@ namespace Palantir
                         {
                             args.Interaction.CreateResponseAsync(DSharpPlus.InteractionResponseType.UpdateMessage);
                             args.Interaction.CreateFollowupMessageAsync(
-                                new DiscordFollowupMessageBuilder().WithContent("Hands off!\nThat's not your interaction ;)")
+                                new DiscordFollowupMessageBuilder().WithContent("Hands off!\nThat's not your interaction ;)").AsEphemeral(true)
                             );
                         }
                         return args.Message.Id == msg.Id && args.User.Id == context.User.Id;
-                        }, TimeSpan.FromMinutes(2));
+                        }, TimeSpan.FromMinutes(10));
                 if (!press.TimedOut)
                 {
                     if (press.Result.Id == "lbdprev") page--;
