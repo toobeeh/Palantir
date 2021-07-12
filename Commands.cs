@@ -854,8 +854,8 @@ namespace Palantir
                     Options = memberBatches.ConvertAll(batch => new DiscordSelectComponentOption(
                             "Page " + (memberBatches.IndexOf(batch) + 1).ToString(),
                             "page" + memberBatches.IndexOf(batch).ToString(),
-                            "",
-                            memberBatches.IndexOf(batch) == selected
+                            ""
+                            
                         )).ToArray()
                 };
             }
