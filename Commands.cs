@@ -913,9 +913,8 @@ namespace Palantir
 
             btnnext.Disabled = true;
             btnprev.Disabled = true;
-            selectIndex = generateSelectWithDefault(page, true);
             leaderboard.Clear();
-            leaderboard.AddComponents(btnprev, btnnext).AddComponents(generateSelectWithDefault(page));
+            leaderboard.AddComponents(btnprev, btnnext).AddComponents(generateSelectWithDefault(page, true));
             await msg.ModifyAsync(leaderboard);
         }
 
