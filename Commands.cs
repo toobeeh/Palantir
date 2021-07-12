@@ -888,7 +888,6 @@ namespace Palantir
                 leaderboard.Content = "";
                 leaderboard.AddComponents(btnprev, btnnext).AddComponents(generateSelectWithDefault(page));
                 await msg.ModifyAsync(leaderboard);
-                leaderboard.Clear();
 
                 press = await interactivity.WaitForEventArgsAsync<DSharpPlus.EventArgs.ComponentInteractionCreateEventArgs>(
                     args => args.Message.Id == msg.Id && args.User.Id == context.User.Id, TimeSpan.FromMinutes(2));
@@ -900,6 +899,7 @@ namespace Palantir
                     if (page >= memberBatches.Count) page = 0;
                     else if (page < 0) page = memberBatches.Count - 1;
                     await press.Result.Interaction.CreateResponseAsync(DSharpPlus.InteractionResponseType.UpdateMessage);
+                    leaderboard.Clear();
                 }
             }
             while (!press.TimedOut);
