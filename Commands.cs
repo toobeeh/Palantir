@@ -891,6 +891,7 @@ namespace Palantir
                     args => {
                         if(args.User.Id != context.User.Id)
                         {
+                            args.Interaction.CreateResponseAsync(DSharpPlus.InteractionResponseType.UpdateMessage);
                             args.Interaction.CreateFollowupMessageAsync(
                                 new DiscordFollowupMessageBuilder().WithContent("Hands off!\nThat's not your interaction ;)")
                             );
