@@ -541,9 +541,9 @@ namespace Palantir
             if (inventory.Count < 5) embed.AddField("Command help: ", "Use `>use [id]` to select your Sprite!\n`>use 0` will set no Sprite.\nBuy a Sprite with `>buy [id]`.\nSpecial Sprites :sparkles: replace your whole avatar! ");
             embed.AddField("\u200b", "[View all Sprites](https://typo.rip/#sprites)");
             DiscordMessageBuilder response = new DiscordMessageBuilder();
-            DiscordButtonComponent prev = new DiscordButtonComponent(ButtonStyle.Secondary, "last", "Previous");
-            DiscordButtonComponent next = new DiscordButtonComponent(ButtonStyle.Primary, "next", "Next");
-            DiscordButtonComponent nav = new DiscordButtonComponent(ButtonStyle.Secondary, "nav", "Navigate Sprites", true);
+            DiscordButtonComponent prev = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Secondary, "last", "Previous");
+            DiscordButtonComponent next = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Primary, "next", "Next");
+            DiscordButtonComponent nav = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Secondary, "nav", "Navigate Sprites", true);
             response.AddComponents(prev, nav, next);
             DiscordMessage sent = null;
             DSharpPlus.Interactivity.InteractivityResult<DSharpPlus.EventArgs.ComponentInteractionCreateEventArgs> result;
@@ -843,25 +843,23 @@ namespace Palantir
 
             DiscordMessageBuilder leaderboard = new DiscordMessageBuilder();
             DiscordButtonComponent btnnext, btnprev;
-            DiscordSelectComponent generateSelectWithDefault(int selected = 0)
+            DiscordSelectComponent generateSelectWithDefault(int selected = 0, bool disabled = false)
             {
-                return new DiscordSelectComponent
-                {
-                    CustomId = "lbdselect",
-                    MaximumSelectedValues = 1,
-                    MinimumSelectedValues = 1,
-                    Placeholder = "Select Page",
-                    Options = memberBatches.ConvertAll(batch => new DiscordSelectComponentOption(
+                return new DiscordSelectComponent(
+                    "lbdselect",
+                    "Select Page",
+                    memberBatches.ConvertAll(batch => new DiscordSelectComponentOption(
                             "Page " + (memberBatches.IndexOf(batch) + 1).ToString(),
                             "page" + memberBatches.IndexOf(batch).ToString(),
                             "",
                             memberBatches.IndexOf(batch) == selected
-                        )).ToArray()
-                };
+                        )).ToArray(),
+                    disabled
+                );
             }
             DiscordSelectComponent selectIndex = generateSelectWithDefault();
-            btnnext = new DiscordButtonComponent(ButtonStyle.Primary, "lbdnext", "Next Page");
-            btnprev = new DiscordButtonComponent(ButtonStyle.Secondary, "lbdprev", "Previous Page");
+            btnnext = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Primary, "lbdnext", "Next Page");
+            btnprev = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Secondary, "lbdprev", "Previous Page");
             leaderboard.WithContent("`⏱️` Loading members of `" + context.Guild.Name + "`...");
             DiscordMessage msg = await leaderboard.SendAsync(context.Channel);
 
@@ -890,7 +888,15 @@ namespace Palantir
                 await msg.ModifyAsync(leaderboard);
 
                 press = await interactivity.WaitForEventArgsAsync<DSharpPlus.EventArgs.ComponentInteractionCreateEventArgs>(
-                    args => args.Message.Id == msg.Id && args.User.Id == context.User.Id, TimeSpan.FromMinutes(2));
+                    args => {
+                        if(args.User.Id != context.User.Id)
+                        {
+                            args.Interaction.CreateFollowupMessageAsync(
+                                new DiscordFollowupMessageBuilder().WithContent("Hands off!\nThat's not your interaction ;)").AsEphemeral(true)
+                            );
+                        }
+                        return args.Message.Id == msg.Id && args.User.Id == context.User.Id;
+                        }, TimeSpan.FromMinutes(2));
                 if (!press.TimedOut)
                 {
                     if (press.Result.Id == "lbdprev") page--;
@@ -906,6 +912,7 @@ namespace Palantir
 
             btnnext.Disabled = true;
             btnprev.Disabled = true;
+            selectIndex = generateSelectWithDefault(page, true);
             await leaderboard.ModifyAsync(msg);
         }
 

@@ -18,9 +18,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="DSharpPlus" Version="4.1.0-nightly-00892" />
-    <PackageReference Include="DSharpPlus.CommandsNext" Version="4.1.0-nightly-00892" />
-    <PackageReference Include="DSharpPlus.Interactivity" Version="4.1.0-nightly-00892" />
+    <PackageReference Include="DSharpPlus" Version="4.1.0-nightly-00917" />
+    <PackageReference Include="DSharpPlus.CommandsNext" Version="4.1.0-nightly-00917" />
+    <PackageReference Include="DSharpPlus.Interactivity" Version="4.1.0-nightly-00917" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.4" />
     <PackageReference Include="morelinq" Version="3.3.2" />
     <PackageReference Include="MoreLinq.Source.MoreEnumerable.Batch" Version="1.0.2">
