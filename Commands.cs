@@ -892,7 +892,7 @@ namespace Palantir
                         if(args.User.Id != context.User.Id)
                         {
                             args.Interaction.CreateFollowupMessageAsync(
-                                new DiscordFollowupMessageBuilder().WithContent("Hands off!\nThat's not your interaction ;)").AsEphemeral(true)
+                                new DiscordFollowupMessageBuilder().WithContent("Hands off!\nThat's not your interaction ;)")
                             );
                         }
                         return args.Message.Id == msg.Id && args.User.Id == context.User.Id;
@@ -913,7 +913,9 @@ namespace Palantir
             btnnext.Disabled = true;
             btnprev.Disabled = true;
             selectIndex = generateSelectWithDefault(page, true);
-            await leaderboard.ModifyAsync(msg);
+            leaderboard.Clear();
+            leaderboard.AddComponents(btnprev, btnnext).AddComponents(generateSelectWithDefault(page));
+            await msg.ModifyAsync(leaderboard);
         }
 
         [Description("Manual on how to use Bubbles")]
