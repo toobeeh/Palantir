@@ -886,7 +886,7 @@ namespace Palantir
 
                 leaderboard.Embed = embed.Build();
                 leaderboard.Content = "";
-                leaderboard.AddComponents(btnnext, btnprev).AddComponents(generateSelectWithDefault(page));
+                leaderboard.AddComponents(btnprev, btnnext).AddComponents(generateSelectWithDefault(page));
                 await msg.ModifyAsync(leaderboard);
                 leaderboard.Clear();
 
