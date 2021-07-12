@@ -854,15 +854,15 @@ namespace Palantir
                     Options = memberBatches.ConvertAll(batch => new DiscordSelectComponentOption(
                             "Page " + (memberBatches.IndexOf(batch) + 1).ToString(),
                             "page" + memberBatches.IndexOf(batch).ToString(),
-                            ""
-                            
+                            "",
+                            memberBatches.IndexOf(batch) == selected
                         )).ToArray()
                 };
             }
             DiscordSelectComponent selectIndex = generateSelectWithDefault();
             btnnext = new DiscordButtonComponent(ButtonStyle.Primary, "lbdnext", "Next Page");
             btnprev = new DiscordButtonComponent(ButtonStyle.Secondary, "lbdprev", "Previous Page");
-            leaderboard.WithContent("`⏱️` Loading members of `" + context.Guild.Name + "`...").AddComponents(btnnext,btnprev).AddComponents(selectIndex);
+            leaderboard.WithContent("`⏱️` Loading members of `" + context.Guild.Name + "`...");
             DiscordMessage msg = await leaderboard.SendAsync(context.Channel);
 
             InteractivityResult<DSharpPlus.EventArgs.ComponentInteractionCreateEventArgs> press;
@@ -886,7 +886,9 @@ namespace Palantir
 
                 leaderboard.Embed = embed.Build();
                 leaderboard.Content = "";
+                leaderboard.AddComponents(btnnext, btnprev).AddComponents(generateSelectWithDefault(page));
                 await msg.ModifyAsync(leaderboard);
+                leaderboard.Clear();
 
                 press = await interactivity.WaitForEventArgsAsync<DSharpPlus.EventArgs.ComponentInteractionCreateEventArgs>(
                     args => args.Message.Id == msg.Id && args.User.Id == context.User.Id, TimeSpan.FromMinutes(2));
@@ -898,7 +900,6 @@ namespace Palantir
                     if (page >= memberBatches.Count) page = 0;
                     else if (page < 0) page = memberBatches.Count - 1;
                     await press.Result.Interaction.CreateResponseAsync(DSharpPlus.InteractionResponseType.UpdateMessage);
-                    selectIndex = generateSelectWithDefault(page);
                 }
             }
             while (!press.TimedOut);
