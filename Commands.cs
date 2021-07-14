@@ -1707,7 +1707,22 @@ namespace Palantir
             }
         }
 
-        [Description("Generates a card of your profile")]
+        [Description("See the trend of ppl using Palantir")]
+        [Command("card")]
+        public async Task ActiveUsers(CommandContext context)
+        {
+            string graph = "";
+            PalantirDbContext db = new PalantirDbContext();
+            List<BubbleTraceEntity> traces = db.BubbleTraces.ToList();
+            db.Dispose();
+            List<BubbleTraceEntity> dailyChangedTraces = traces.DistinctBy(t => new { t.Bubbles, t.Login }).ToList();
+            var x = traces.Select(trace => trace.Date).Distinct().ToList().ConvertAll(
+                date => date + ": " + dailyChangedTraces.Where(trace => trace.Date == date).Count());
+            graph = x.ToDelimitedString("\n");
+            await context.Channel.SendPaginatedMessageAsync(context.User, new[] { new Page(graph) });
+        }
+
+            [Description("Generates a card of your profile")]
         [Command("card")]
         public async Task Combopng(CommandContext context, string color = "black")
         {
