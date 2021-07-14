@@ -1717,7 +1717,11 @@ namespace Palantir
             db.Dispose();
             List<BubbleTraceEntity> dailyChangedTraces = traces.DistinctBy(t => new { t.Bubbles, t.Login }).ToList();
             var x = traces.Select(trace => trace.Date).Distinct().ToList().ConvertAll(
-                date => date + ": " + dailyChangedTraces.Where(trace => trace.Date == date).Count());
+                date => {
+                    int daily = dailyChangedTraces.Where(trace => trace.Date == date).Count();
+                    return (date.Substring(0,2) == "01" ? date + "\n" : "") + "█".Repeat(daily / 10).ToDelimitedString("") + "▌".Repeat((daily % 10) / 5).ToDelimitedString("");
+                }
+                );
             graph = x.ToDelimitedString("\n");
             var pages = context.Client.GetInteractivity().GeneratePagesInContent(graph);
             pages.ForEach(pg => context.RespondAsync(pg.Content));
