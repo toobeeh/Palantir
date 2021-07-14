@@ -1716,25 +1716,16 @@ namespace Palantir
             List<BubbleTraceEntity> traces = db.BubbleTraces.ToList();
             db.Dispose();
             List<BubbleTraceEntity> dailyChangedTraces = traces.DistinctBy(t => new { t.Bubbles, t.Login }).ToList();
-            //var x = traces.Select(trace => trace.Date).Distinct().ToList().ConvertAll(
-            //    date => {
-            //        int daily = dailyChangedTraces.Where(trace => trace.Date == date).Count();
-            //        return (date.Substring(0,2) == "01" ? date + "\n" : "") + "█".Repeat(daily / 10).ToDelimitedString("") + "▌".Repeat((daily % 10) / 5).ToDelimitedString("");
-            //    }
-            //    );
             var x = traces.Select(trace => trace.Date).Distinct().ToList().ConvertAll(
                 date => date + "," + dailyChangedTraces.Where(trace => trace.Date == date).Count()
                 );
             graph = x.ToDelimitedString("\n");
             var pages = context.Client.GetInteractivity().GeneratePagesInContent(graph);
             pages.ForEach(pg => context.RespondAsync(pg.Content));
-            //var strm = new System.IO.MemoryStream();
-            //var writer = new System.IO.StreamWriter(strm);
-            //writer.Write(graph);
-            //writer.Flush();
-            //strm.Position = 0;
-            //var msg = new DiscordMessageBuilder().WithFile(strm);
-            //context.Channel.sen
+            System.IO.File.WriteAllText("/home/pi/graph.csv", graph);
+            var msg = new DiscordMessageBuilder().WithFile(System.IO.File.OpenRead("/home/pi/graph.csv"));
+            await context.RespondAsync(msg);
+            System.IO.File.Delete("/home/pi/graph.csv");
         }
 
         [Description("Generates a card of your profile")]
