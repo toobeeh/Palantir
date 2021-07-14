@@ -1708,7 +1708,7 @@ namespace Palantir
         }
 
         [Description("See the trend of ppl using Palantir")]
-        [Command("card")]
+        [Command("trend")]
         public async Task ActiveUsers(CommandContext context)
         {
             string graph = "";
@@ -1719,7 +1719,7 @@ namespace Palantir
             var x = traces.Select(trace => trace.Date).Distinct().ToList().ConvertAll(
                 date => date + ": " + dailyChangedTraces.Where(trace => trace.Date == date).Count());
             graph = x.ToDelimitedString("\n");
-            await context.Channel.SendPaginatedMessageAsync(context.User, new[] { new Page(graph) });
+            await context.Channel.SendPaginatedMessageAsync(context.User, Program.Interactivity.GeneratePagesInContent(graph));
         }
 
             [Description("Generates a card of your profile")]
