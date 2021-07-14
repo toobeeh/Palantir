@@ -1719,7 +1719,7 @@ namespace Palantir
             var x = traces.Select(trace => trace.Date).Distinct().ToList().ConvertAll(
                 date => date + ": " + dailyChangedTraces.Where(trace => trace.Date == date).Count());
             graph = x.ToDelimitedString("\n");
-            await context.Channel.SendPaginatedMessageAsync(context.User, Program.Interactivity.GeneratePagesInContent(graph));
+            await context.Channel.SendPaginatedMessageAsync(context.User, context.Client.GetInteractivity().GeneratePagesInContent(graph));
         }
 
             [Description("Generates a card of your profile")]
