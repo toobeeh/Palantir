@@ -1720,7 +1720,7 @@ namespace Palantir
                 date => date + ": " + dailyChangedTraces.Where(trace => trace.Date == date).Count());
             graph = x.ToDelimitedString("\n");
             var pages = context.Client.GetInteractivity().GeneratePagesInContent(graph);
-            await Program.Interactivity.SendPaginatedMessageAsync(context.Channel, context.User, pages);
+            pages.ForEach(pg => context.RespondAsync(pg.Content));
         }
 
             [Description("Generates a card of your profile")]
