@@ -1719,7 +1719,8 @@ namespace Palantir
             var x = traces.Select(trace => trace.Date).Distinct().ToList().ConvertAll(
                 date => date + ": " + dailyChangedTraces.Where(trace => trace.Date == date).Count());
             graph = x.ToDelimitedString("\n");
-            await context.Channel.SendPaginatedMessageAsync(context.User, context.Client.GetInteractivity().GeneratePagesInContent(graph));
+            var pages = context.Client.GetInteractivity().GeneratePagesInContent(graph);
+            await Program.Interactivity.SendPaginatedMessageAsync(context.Channel, context.User, pages);
         }
 
             [Description("Generates a card of your profile")]
