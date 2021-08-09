@@ -1181,12 +1181,12 @@ namespace Palantir
                 eventdrops.ForEach(e =>
                 {
                     List<SpritesEntity> sprites = Events.GetEventSprites(e.EventDropID);
-                    dropList += "**" + e.Name + "**  (" + BubbleWallet.GetEventCredit(login, e.EventDropID) + " caught)\n";
+                    dropList += "\n**" + e.Name + "**  (" + BubbleWallet.GetEventCredit(login, e.EventDropID) + " caught)\n";
                     int spent = inv.Where(spt => sprites.Any(eventsprite => eventsprite.ID == spt.ID)).Sum(spt => spt.Cost);
                     sprites.OrderBy(sprite => sprite.ID).ForEach( sprite => 
-                        dropList += "> ➜ **" + sprite.Name + "** (#" + sprite.ID + ")\n> " 
-                         + (inv.Any(s => s.ID == sprite.ID) ? ":package:" : (BubbleWallet.GetEventCredit(login, sprite.EventDropID) - spent + " / ")) 
-                         + sprite.Cost + " " + e.Name + " Drops " +  "\n> \n"
+                        dropList += "\n> ‎ > ➜ **" + sprite.Name + "** (#" + sprite.ID + ")\n> " 
+                         + (inv.Any(s => s.ID == sprite.ID) ? ":package: " : (BubbleWallet.GetEventCredit(login, sprite.EventDropID) - spent + " / ")) 
+                         + sprite.Cost + " " + e.Name + " Drops " 
                     );
                     dropList += "\n";
                 });
