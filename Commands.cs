@@ -1181,12 +1181,19 @@ namespace Palantir
                 eventdrops.ForEach(e =>
                 {
                     List<SpritesEntity> sprites = Events.GetEventSprites(e.EventDropID);
-                    sprites.OrderBy(sprite => sprite.ID).ForEach(sprite => eventsprites.Add(sprite));
+                    dropList += "***" + e.Name + "*** (" + BubbleWallet.GetEventCredit(login, e.EventDropID) + " caught)\n";
+                    int spent = inv.Where(spt => sprites.Any(eventsprite => eventsprite.ID == spt.ID)).Sum(spt => spt.Cost);
+                    sprites.OrderBy(sprite => sprite.ID).ForEach( sprite => 
+                        dropList += "➜ **" + sprite.Name + "** (#" + sprite.ID + ")\n" 
+                         + (inv.Any(s => s.ID == sprite.ID) ? ":package:" : (BubbleWallet.GetEventCredit(login, sprite.EventDropID) - spent + " / ")) 
+                         + sprite.Cost + " " + e.Name + " Drops " +  "\n\n"
+                    );
+                    dropList += "\n";
                 });
-                eventsprites.OrderBy(sprite => sprite.ID).ForEach(sprite =>
-                {
-                    dropList += "➜ **" + sprite.Name + "** (#" + sprite.ID + ")\n" + BubbleWallet.GetEventCredit(login, sprite.EventDropID) + " / " + sprite.Cost + " " + eventdrops.FirstOrDefault(drop => drop.EventDropID == sprite.EventDropID).Name + " Drops " + (inv.Any(s => s.ID == sprite.ID) ? ":package:" : "") + "\n\n";
-                });
+                //eventsprites.OrderBy(sprite => sprite.ID).ForEach(sprite =>
+                //{
+                //    dropList += "➜ **" + sprite.Name + "** (#" + sprite.ID + ")\n" + BubbleWallet.GetEventCredit(login, sprite.EventDropID) + " / " + sprite.Cost + " " + eventdrops.FirstOrDefault(drop => drop.EventDropID == sprite.EventDropID).Name + " Drops " + (inv.Any(s => s.ID == sprite.ID) ? ":package:" : "") + "\n\n";
+                //});
                 embed.AddField("Event Sprites", dropList == "" ? "No drops added yet." : dropList);
                 embed.AddField("\u200b", "Use `>sprite [id]` to see the event drop and sprite!");
             }
@@ -1720,8 +1727,6 @@ namespace Palantir
                 date => date + "," + dailyChangedTraces.Where(trace => trace.Date == date).Count()
                 );
             graph = x.ToDelimitedString("\n");
-            var pages = context.Client.GetInteractivity().GeneratePagesInContent(graph);
-            pages.ForEach(pg => context.RespondAsync(pg.Content));
             System.IO.File.WriteAllText("/home/pi/graph.csv", graph);
             var msg = new DiscordMessageBuilder().WithFile(System.IO.File.OpenRead("/home/pi/graph.csv"));
             await context.RespondAsync(msg);
