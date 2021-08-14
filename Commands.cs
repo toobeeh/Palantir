@@ -1770,7 +1770,7 @@ namespace Palantir
             System.IO.File.Delete(combopath);
 
             int caughtEventdrops = BubbleWallet.CaughtEventdrops(dUser.Id.ToString());
-            double ratio = Math.Round(((double)member.Drops + caughtEventdrops) / (member.Bubbles / 1000), 2);
+            double ratio = Math.Round(((double)member.Drops + caughtEventdrops) / (member.Bubbles / 1000), 1);
             if (!double.IsFinite(ratio)) ratio = 0;
             SpriteComboImage.FillPlaceholders(ref content, profilebase64, spritebase64, color, dMember is not null ? dMember.DisplayName : dUser.Username, member.Bubbles.ToString(), member.Drops.ToString(), ratio,
                 BubbleWallet.FirstTrace(login), BubbleWallet.GetInventory(login).Count.ToString(), BubbleWallet.ParticipatedEvents(login).Count.ToString() + " (" + caughtEventdrops + " Drops)", Math.Round((double)member.Bubbles * 10 / 3600).ToString(),

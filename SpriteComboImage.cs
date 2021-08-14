@@ -52,7 +52,7 @@ namespace Palantir
             svg = svg.Replace("$username$", username)
                 .Replace("$bubbles$", bubbles + " Bubbles")
                 .Replace("$drops$", drops + " Drops")
-                .Replace("$dropratio$", " " + dropratio + " (" + rationame + ")")
+                .Replace("$dropratio$", " " + dropratio + "- " + rationame)
                 .Replace("$firstseen$", firstseen)
                 .Replace("$sprites$", " " + sprites + " bought")
                 .Replace("$events$", events)
