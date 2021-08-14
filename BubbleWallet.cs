@@ -209,6 +209,13 @@ namespace Palantir
             context.Dispose();
             return events;
         }
+        public static int CaughtEventdrops(string discordID)
+        {
+            PalantirDbContext context = new PalantirDbContext();
+            int caught = context.PastDrops.Where(drop => drop.CaughtLobbyPlayerID == discordID).Count();
+            context.Dispose();
+            return caught;
+        }
 
         public static int GlobalRanking(string login, bool drops = false)
         {

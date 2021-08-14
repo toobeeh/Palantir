@@ -20,6 +20,7 @@ namespace Palantir
         public DbSet<OnlineSpritesEntity> OnlineSprites { get; set; }
         public DbSet<SpritesEntity> Sprites { get; set; }
         public DbSet<DropEntity> Drop { get; set; }
+        public DbSet<PastDropEntity> PastDrops { get; set; }
         public DbSet<BubbleTraceEntity> BubbleTraces { get; set; }
         public DbSet<EventEntity> Events { get; set; }
         public DbSet<EventDropEntity> EventDrops { get; set; }
@@ -112,6 +113,15 @@ namespace Palantir
     }
 
     public class DropEntity
+    {
+        [Key]
+        public string DropID { get; set; }
+        public string CaughtLobbyPlayerID { get; set; }
+        public string CaughtLobbyKey { get; set; }
+        public string ValidFrom { get; set; }
+        public int EventDropID { get; set; }
+    }
+    public class PastDropEntity
     {
         [Key]
         public string DropID { get; set; }
