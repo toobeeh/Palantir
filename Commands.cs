@@ -1815,7 +1815,7 @@ namespace Palantir
             string profilebase64 = Convert.ToBase64String(client.DownloadData(dUser.AvatarUrl));
             byte[] bgbytes = client.DownloadData(backgroundUrl);
             SixLabors.ImageSharp.Image bg = SixLabors.ImageSharp.Image.Load(new System.IO.MemoryStream(bgbytes));
-            double bgratio = bg.Width / bg.Height * 100;
+            double bgheight = bg.Height / bg.Width * 489.98;
             string background64 = Convert.ToBase64String(bgbytes);
             string combopath = SpriteComboImage.GenerateImage(SpriteComboImage.GetSpriteSources(sprites), "/home/pi/tmpGen/");
             string spritebase64 = Convert.ToBase64String(System.IO.File.ReadAllBytes(combopath));
@@ -1824,7 +1824,7 @@ namespace Palantir
             int caughtEventdrops = BubbleWallet.CaughtEventdrops(dUser.Id.ToString());
             double ratio = Math.Round(((double)member.Drops + caughtEventdrops) / (member.Bubbles / 1000), 1);
             if (!double.IsFinite(ratio)) ratio = 0;
-            SpriteComboImage.FillPlaceholdersBG(ref content, profilebase64, spritebase64,background64, backgroundOpacity.ToString(), bgratio.ToString(), color, dMember is not null ? dMember.DisplayName : dUser.Username, member.Bubbles.ToString(), member.Drops.ToString(), ratio,
+            SpriteComboImage.FillPlaceholdersBG(ref content, profilebase64, spritebase64,background64, backgroundOpacity.ToString(), bgheight.ToString(), color, dMember is not null ? dMember.DisplayName : dUser.Username, member.Bubbles.ToString(), member.Drops.ToString(), ratio,
                 BubbleWallet.FirstTrace(login), BubbleWallet.GetInventory(login).Count.ToString(), BubbleWallet.ParticipatedEvents(login).Count.ToString() + " (" + caughtEventdrops + " Drops)", Math.Round((double)member.Bubbles * 10 / 3600).ToString(),
                 BubbleWallet.GlobalRanking(login).ToString(), BubbleWallet.GlobalRanking(login, true).ToString(), memberDetail.Guilds.Count.ToString(), perm.Patron, BubbleWallet.IsEarlyUser(login), perm.Moderator);
 
