@@ -1827,9 +1827,12 @@ namespace Palantir
             SpriteComboImage.FillPlaceholdersBG(ref content, profilebase64, spritebase64,background64, backgroundOpacity.ToString(), bgheight.ToString(), color, dMember is not null ? dMember.DisplayName : dUser.Username, member.Bubbles.ToString(), member.Drops.ToString(), ratio,
                 BubbleWallet.FirstTrace(login), BubbleWallet.GetInventory(login).Count.ToString(), BubbleWallet.ParticipatedEvents(login).Count.ToString() + " (" + caughtEventdrops + " Drops)", Math.Round((double)member.Bubbles * 10 / 3600).ToString(),
                 BubbleWallet.GlobalRanking(login).ToString(), BubbleWallet.GlobalRanking(login, true).ToString(), memberDetail.Guilds.Count.ToString(), perm.Patron, BubbleWallet.IsEarlyUser(login), perm.Moderator);
-
-            string path = SpriteComboImage.SVGtoPNG(content, "/home/pi/Webroot/files/combos/");
-            await response.ModifyAsync(content: path.Replace(@"/home/pi/Webroot/", "https://tobeh.host/"));
+            System.IO.File.WriteAllText("/home/pi/graph.csv", content);
+            var msg = new DiscordMessageBuilder().WithFile(System.IO.File.OpenRead("/home/pi/card.svg"));
+            await context.RespondAsync(msg);
+            System.IO.File.Delete("/home/pi/card.svg");
+            //string path = SpriteComboImage.SVGtoPNG(content, "/home/pi/Webroot/files/combos/");
+            //await response.ModifyAsync(content: path.Replace(@"/home/pi/Webroot/", "https://tobeh.host/"));
 
         }
 
