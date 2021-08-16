@@ -12,6 +12,9 @@ using Newtonsoft.Json;
 using DSharpPlus.Interactivity;
 using DSharpPlus.Interactivity.Extensions;
 using System.Globalization;
+using SixLabors.ImageSharp.Processing;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Formats;
 
 namespace Palantir
 {
@@ -1748,7 +1751,7 @@ namespace Palantir
             PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
             if (!perm.BotAdmin && !perm.Patron)
             {
-                await Program.SendEmbed(context.Channel, "Ha, PAYWALL!", "This command is only available for Patreon Subscriber.\nLet's join them! \nhttps://www.patreon.com/skribbltypo");
+                await Program.SendEmbed(context.Channel, "Ha, PAYWALL!", "This command is only available for Patreon Subscriber.\nWant to join? <3 \nhttps://www.patreon.com/skribbltypo");
                 return;
             }
             perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(dUser));
@@ -1758,9 +1761,7 @@ namespace Palantir
             MemberEntity member = Program.Feanor.GetMemberByLogin(login);
             Member memberDetail = JsonConvert.DeserializeObject<Member>(member.Member);
 
-            //string url = context.Message.Attachments[0].Url;
             System.Net.WebClient client = new System.Net.WebClient();
-            //string content = client.DownloadString(url);
             string content = Palantir.Properties.Resources.SVGcardBG;
 
             int[] sprites = BubbleWallet.GetInventory(login).Where(spt => spt.Activated).OrderBy(spt => spt.Slot).Select(spt => spt.ID).ToArray();
@@ -1771,9 +1772,13 @@ namespace Palantir
             if(backgroundUrl != "")
             {
                 byte[] bgbytes = client.DownloadData("https://i.imgur.com/" + backgroundUrl);
-                SixLabors.ImageSharp.Image bg = SixLabors.ImageSharp.Image.Load(new System.IO.MemoryStream(bgbytes));
-                bgheight = (double)bg.Height / bg.Width * 489.98;
-                background64 = Convert.ToBase64String(bgbytes);
+                Image bg = Image.Load(new System.IO.MemoryStream(bgbytes));
+                double cropX, cropY, height, width;
+                const double cardRatio = 489.98 / 328.09;
+                SpriteComboImage.GetCropPosition(bg.Width, bg.Height, cardRatio, out cropX, out cropY, out height, out width);
+                bg.Mutate(img => img.Crop(new Rectangle((int)cropX, (int)cropY, (int)width, (int)height)));
+                background64 = bg.ToBase64String(SixLabors.ImageSharp.Formats.Png.PngFormat.Instance);
+                bgheight = height;
             }
             string combopath = SpriteComboImage.GenerateImage(SpriteComboImage.GetSpriteSources(sprites), "/home/pi/tmpGen/");
             string spritebase64 = Convert.ToBase64String(System.IO.File.ReadAllBytes(combopath));
