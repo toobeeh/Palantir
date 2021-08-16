@@ -1780,6 +1780,58 @@ namespace Palantir
             await response.ModifyAsync(content: path.Replace(@"/home/pi/Webroot/", "https://tobeh.host/"));
             
         }
+        [Description("Generates a card of your profile")]
+        [Command("cardbg")]
+        public async Task Card(CommandContext context, string color = "black", string backgroundUrl = "", double backgroundOpacity = 0.5)
+        {
+            DiscordMember dMember = context.Member;
+            DiscordUser dUser = context.User;
+            if (context.Message.ReferencedMessage is not null)
+            {
+                dUser = context.Message.ReferencedMessage.Author;
+                dMember = null;
+            }
+
+            PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
+            if (!perm.BotAdmin && !perm.Patron)
+            {
+                await Program.SendEmbed(context.Channel, "Ha, PAYWALL!", "This command is only available for Patreon Subscriber.\nLet's join them! \nhttps://www.patreon.com/skribbltypo");
+                return;
+            }
+            perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(dUser));
+
+            DiscordMessage response = await context.RespondAsync(">  \n>  \n>   <a:working:857610439588053023> **Building your card afap!!**\n> _ _ \n> _ _ ");
+            string login = BubbleWallet.GetLoginOfMember(dUser.Id.ToString());
+            MemberEntity member = Program.Feanor.GetMemberByLogin(login);
+            Member memberDetail = JsonConvert.DeserializeObject<Member>(member.Member);
+
+            //string url = context.Message.Attachments[0].Url;
+            System.Net.WebClient client = new System.Net.WebClient();
+            //string content = client.DownloadString(url);
+            string content = Palantir.Properties.Resources.SVGcardBG;
+
+            int[] sprites = BubbleWallet.GetInventory(login).Where(spt => spt.Activated).OrderBy(spt => spt.Slot).Select(spt => spt.ID).ToArray();
+
+            string profilebase64 = Convert.ToBase64String(client.DownloadData(dUser.AvatarUrl));
+            byte[] bgbytes = client.DownloadData(backgroundUrl);
+            System.Drawing.Image bg = System.Drawing.Image.FromStream(new System.IO.MemoryStream(bgbytes));
+            double bgratio = bg.Width / bg.Height * 100;
+            string background64 = Convert.ToBase64String(bgbytes);
+            string combopath = SpriteComboImage.GenerateImage(SpriteComboImage.GetSpriteSources(sprites), "/home/pi/tmpGen/");
+            string spritebase64 = Convert.ToBase64String(System.IO.File.ReadAllBytes(combopath));
+            System.IO.File.Delete(combopath);
+
+            int caughtEventdrops = BubbleWallet.CaughtEventdrops(dUser.Id.ToString());
+            double ratio = Math.Round(((double)member.Drops + caughtEventdrops) / (member.Bubbles / 1000), 1);
+            if (!double.IsFinite(ratio)) ratio = 0;
+            SpriteComboImage.FillPlaceholdersBG(ref content, profilebase64, spritebase64,background64, backgroundOpacity.ToString(), bgratio.ToString(), color, dMember is not null ? dMember.DisplayName : dUser.Username, member.Bubbles.ToString(), member.Drops.ToString(), ratio,
+                BubbleWallet.FirstTrace(login), BubbleWallet.GetInventory(login).Count.ToString(), BubbleWallet.ParticipatedEvents(login).Count.ToString() + " (" + caughtEventdrops + " Drops)", Math.Round((double)member.Bubbles * 10 / 3600).ToString(),
+                BubbleWallet.GlobalRanking(login).ToString(), BubbleWallet.GlobalRanking(login, true).ToString(), memberDetail.Guilds.Count.ToString(), perm.Patron, BubbleWallet.IsEarlyUser(login), perm.Moderator);
+
+            string path = SpriteComboImage.SVGtoPNG(content, "/home/pi/Webroot/files/combos/");
+            await response.ModifyAsync(content: path.Replace(@"/home/pi/Webroot/", "https://tobeh.host/"));
+
+        }
 
     }
 }
