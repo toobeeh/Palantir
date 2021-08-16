@@ -199,6 +199,84 @@
 &lt;/svg&gt;</value>
   </data>
   <data name="SVGcardBG" xml:space="preserve">
-    <value>&lt;svg id="Ebene_1" data-name="Ebene 1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 489.98 328.09"&gt;&lt;defs&gt;&lt;style&gt;.cls-1,.cls-21{fill:none;}.cls-2{fill:#18191c;}.cls-3{clip-path:url(#clip-path);}.cls-4{clip-path:url(#clip-path-2);}.cls-5,.cls-8{fill:#36a9e1;}.cls-21,.cls-5,.cls-8{stroke:#36a9e1;}.cls-5{stroke-linecap:square;}.cls-19,.cls-20,.cls-21,.cls-5,.cls-8{stroke-miterlimit:10;}.cls-21,.cls-5{stroke-width:8px;}.cls-12,.cls-13,.cls-14,.cls-6,.cls-7{isolation:isolate;}.cls-6{font-size:25px;}.cls-14,.cls-6{fill:#fff;}.cls-14,.cls-6,.cls-7{font-family:Arial-BoldMT, Arial;font-weight:700;}.cls-7{font-size:14px;fill:#dadada;}.cls-9{fill:#821350;}.cls-10{fill:#ad126b;}.cls-11{fill:#e6007e;}.cls-12,.cls-13,.cls-14{font-size:13px;}.cls-12{fill:#575756;}.cls-12,.cls-13{font-family:ArialMT, Arial;}.cls-13{fill:#9d9d9c;}.cls-15{fill:#ad1924;}.cls-16{fill:#e30613;}.cls-17{fill:#1d71b8;}.cls-18{fill:#00a19a;}.cls-19{fill:#683c11;stroke:#683c11;}.cls-19,.cls-20,.cls-21{stroke-linecap:round;}.cls-19,.cls-20{stroke-width:2px;}.cls-20{fill:#936037;stroke:#936037;}&lt;/style&gt;&lt;clipPath id="clip-path" &gt;&lt;path class="cls-1" d="M36.23,7.33H464.55A27.4,27.4,0,0,1,492,34.73V320.39a9.14,9.14,0,0,1-9.15,9.15H18a9.16,9.16,0,0,1-9.16-9.16V34.73A27.4,27.4,0,0,1,36.23,7.33Z"/&gt;&lt;/clipPath&gt;&lt;clipPath id="clip-path-2" transform="translate(-4.05 -1.63)"&gt;&lt;path class="cls-1" d="M34.31,6.14H464.55A27.41,27.41,0,0,1,492,33.55h0V301a27.4,27.4,0,0,1-27.4,27.4H34.31A27.41,27.41,0,0,1,6.9,301V33.55A27.41,27.41,0,0,1,34.31,6.14Z"/&gt;&lt;/clipPath&gt;&lt;/defs&gt;&lt;path style="opacity: $bgopacity$" class="cls-2" d="M36.23,7.33H464.55A27.4,27.4,0,0,1,492,34.73V320.39a9.14,9.14,0,0,1-9.15,9.15H18a9.16,9.16,0,0,1-9.16-9.16V34.73A27.4,27.4,0,0,1,36.23,7.33Z" transform="translate(-4.05 -1.63)"/&gt;&lt;g     transform="translate(-4.05, 0)" class="cls-3"&gt;&lt;image id="bg"  xmlns="http://www.w3.org/2000/svg" transform="scale(1.02)" width="489.98" height="$bgheight$"  xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="data:image/png;base64,$bgbase64$"/&gt;&lt;/g&gt;&lt;g class="cls-4"&gt;&lt;path id="header" class="cls-5" d="M490,5.63H8.84V74.09c72.38.23,81.2-.23,153.59,0,11.1-.1,51.81,0,60,0,41,0,48.22,15,69.91,27.54,17.76,10.28,26.74,12.49,46.72,13,52.55,0,99.28.51,151,0Z" transform="translate(-4.05 -1.63)"/&gt;&lt;/g&gt;&lt;text id="username" class="cls-6" transform="translate(91.16 49.22)"&gt;$username$&lt;/text&gt;&lt;text class="cls-7" transform="translate(80.65 121.94)"&gt;$bubbles$&lt;/text&gt;&lt;text class="cls-7" transform="translate(79.86 158.24)"&gt;$drops$&lt;/text&gt;&lt;path class="cls-8" d="M53.54,145.47q-2.9,6.42-6.31,13l0,0a7.43,7.43,0,0,0-.1,6.82A7.69,7.69,0,0,0,51,169c3.77,1.46,8-.89,9.64-4.35l0,0a6.25,6.25,0,0,0-.13-5.36Z" transform="translate(-4.05 -1.63)"/&gt;&lt;circle class="cls-9" cx="47.3" cy="123.13" r="6.94"/&gt;&lt;circle class="cls-10" cx="54.53" cy="114.03" r="7.23"/&gt;&lt;circle class="cls-11" cx="43.69" cy="113.54" r="6.02"/&gt;&lt;text class="cls-12" transform="translate(242.62 159.93)"&gt;Drop-Bubble-ratio:&lt;/text&gt;&lt;text id="dropratio" class="cls-13" transform="translate(361.53 160.42)"&gt;$dropratio$&lt;/text&gt;&lt;text class="cls-12" transform="translate(242.62 203.95)"&gt;Sprite inventory:&lt;/text&gt;&lt;text id="sprites" class="cls-13" transform="translate(352.51 203.95)"&gt;$sprites$&lt;/text&gt;&lt;text class="cls-12" transform="translate(242.62 224.89)"&gt;Participated events:&lt;/text&gt;&lt;text id="participated" class="cls-13" transform="translate(375.95 224.97)"&gt;$events$&lt;/text&gt;&lt;text class="cls-12" transform="translate(242.62 245.82)"&gt;Hours spent on skribbl:&lt;/text&gt;&lt;text id="hours" class="cls-13" transform="translate(393.54 245.82)"&gt;$hours$&lt;/text&gt;&lt;text class="cls-12" transform="translate(242.62 266.76)"&gt;Global Bubble ranking:&lt;/text&gt;&lt;text id="globbubble" class="cls-13" transform="translate(394.62 266.84)"&gt;$brank$&lt;/text&gt;&lt;rect class="cls-1" x="384.53" y="270.48" width="54.32" height="20.94"/&gt;&lt;rect class="cls-1" x="381.33" y="279.96" width="54.32" height="20.94"/&gt;&lt;text class="cls-12" transform="translate(242.62 287.69)"&gt;Global Drop ranking:&lt;/text&gt;&lt;text class="cls-12" transform="translate(242.62 308.47)"&gt;Connected servers:&lt;/text&gt;&lt;text id="globdrop" class="cls-13" transform="translate(384.4 289.26)"&gt;$drank$&lt;/text&gt;&lt;text id="connserver" class="cls-13" transform="translate(377.97 308.47)"&gt;$servers$&lt;/text&gt;&lt;text class="cls-12" transform="translate(242.62 181.98)"&gt;First seen:&lt;/text&gt;&lt;text id="firstseen" class="cls-13" transform="translate(316.57 182.06)"&gt;$firstseen$&lt;/text&gt;&lt;g id="patron"&gt;&lt;text class="cls-14" transform="translate(392.54 37.86)"&gt;Patron&lt;/text&gt;&lt;path class="cls-15" d="M375.12,29.63c-1.12-2.68-2.54-4.14-5-4.31s-4.34.67-4.9,3.48c-.74,3.69,2.5,9.15,9.91,13.09" transform="translate(-4.05 -1.63)"/&gt;&lt;path class="cls-16" d="M375.12,29.63c1.12-2.68,2.54-4.14,5-4.31s4.34.67,4.9,3.48c.74,3.69-2.5,9.15-9.91,13.09" transform="translate(-4.05 -1.63)"/&gt;&lt;/g&gt;&lt;g id="early"&gt;&lt;text class="cls-14" transform="translate(393.17 97.04)"&gt;Early User&lt;/text&gt;&lt;polyline class="cls-17" points="362.54 90.61 371.07 99.64 371.07 90.61 371.07 86.89 367.92 86.89 364.9 86.89"/&gt;&lt;polyline class="cls-18" points="379.61 90.61 371.07 99.64 371.07 90.61 371.07 86.89 374.22 86.89 377.24 86.89"/&gt;&lt;/g&gt;&lt;g id="moderator"&gt;&lt;text class="cls-14" transform="translate(392.52 68.16)"&gt;Moderator&lt;/text&gt;&lt;polygon class="cls-19" points="370.08 60.7 370.08 71.27 362.95 66.84 362.95 56.59 370.08 60.7"/&gt;&lt;polygon class="cls-20" points="372.07 60.7 372.07 71.27 379.2 66.84 379.2 56.59 372.07 60.7"/&gt;&lt;/g&gt;&lt;path id="border" class="cls-21" d="M8.05,283.43V33a27.4,27.4,0,0,1,27.4-27.4H230.58" transform="translate(-4.05 -1.63)"/&gt;&lt;/svg&gt;</value>
+    <value>&lt;svg id="Ebene_1" data-name="Ebene 1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="500" height="333.46809" viewBox="0 0 500 333.46809"&gt;
+   &lt;defs&gt;
+      &lt;style&gt;$customstyle$ .{}.bgpath{clip-path: url(#bgpath);}.cls-1, .cls-21{fill: none;}.cls-2{fill: #18191c;}.cls-3{clip-path: url(#clip-path);}.cls-4, .cls-7{fill: #36a9e1;}.cls-21, .cls-4, .cls-7{stroke: #36a9e1;}.cls-4{stroke-linecap: square;}.cls-18, .cls-19, .cls-21, .cls-4, .cls-7{stroke-miterlimit: 10;}.cls-21, .cls-4{stroke-width: 8px;}.cls-5{font-size: 25px;}.cls-13, .cls-5{fill: #fff;}.cls-13, .cls-5, .cls-6{font-family: Arial-BoldMT, Arial; font-weight: 700;}.cls-6{font-size: 14px; fill: #dadada;}.cls-8{fill: #821350;}.cls-9{fill: #ad126b;}.cls-10{fill: #e6007e;}.cls-11, .cls-12, .cls-13{font-size: 13px;}.cls-11{fill: #575756;}.cls-11, .cls-12{font-family: ArialMT, Arial;}.cls-12{fill: #9d9d9c;}.cls-14{fill: #ad1924;}.cls-15{fill: #e30613;}.cls-16{fill: #1d71b8;}.cls-17{fill: #00a19a;}.cls-18{fill: #683c11; stroke: #683c11;}.cls-18, .cls-19, .cls-21{stroke-linecap: round;}.cls-18, .cls-19{stroke-width: 2px;}.cls-19{fill: #936037; stroke: #936037;}.cls-20{clip-path: url(#clip-path-2);}&lt;/style&gt;
+      &lt;clipPath id="clip-path"&gt;
+         &lt;path class="cls-1" d="M34.30763,6.141H464.54847a27.40426,27.40426,0,0,1,27.40426,27.40426V300.94947a27.40425,27.40425,0,0,1-27.40425,27.40425H34.30763A27.40427,27.40427,0,0,1,6.90336,300.94945V33.54522A27.40427,27.40427,0,0,1,34.30763,6.141Z"/&gt;
+      &lt;/clipPath&gt;
+      &lt;clipPath id="clip-path-2"&gt;
+         &lt;circle class="cls-1" cx="51.50121" cy="39.4873" r="26.12877"/&gt;
+      &lt;/clipPath&gt;
+      &lt;clipPath id="bgpath" &gt;
+         &lt;path class="cls-1" d="M36.23,7.33H464.55A27.4,27.4,0,0,1,492,34.73V320.39a9.14,9.14,0,0,1-9.15,9.15H18a9.16,9.16,0,0,1-9.16-9.16V34.73A27.4,27.4,0,0,1,36.23,7.33Z"/&gt;
+      &lt;/clipPath&gt;
+   &lt;/defs&gt;
+   
+   &lt;g     class="bgpath"&gt;
+      &lt;image id="bg"  xmlns="http://www.w3.org/2000/svg" transform="scale(1.02)" width="489.98" height="$bgheight$"  xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="data:image/png;base64,$bgbase64$"/&gt;
+   &lt;/g&gt;
+   &lt;path style="opacity: $bgopacity$" class="cls-2" d="M36.23,7.33H464.55A27.4,27.4,0,0,1,492,34.73V320.39a9.14,9.14,0,0,1-9.15,9.15H18a9.16,9.16,0,0,1-9.16-9.16V34.73A27.4,27.4,0,0,1,36.23,7.33Z" /&gt;
+   &lt;g class="cls-3"&gt;
+      &lt;path id="header" class="cls-4" d="M490.01954,5.62766H8.83655V74.092c72.387.23142,81.20239-.23141,153.58934,0,11.10793-.10185,51.81695,0,59.9828,0,41.01388,0,48.22046,14.978,69.91482,27.54189,17.75234,10.281,26.73444,12.48814,46.71839,12.97641,52.549,0,99.28223.51064,150.98234,0Z"/&gt;
+   &lt;/g&gt;
+   &lt;text id="username" class="cls-5" transform="translate(95.2032 50.84337)"&gt;$username$&lt;/text&gt;
+   &lt;g&gt;
+      &lt;text class="cls-6" transform="translate(84.69502 123.56841)"&gt;$bubbles$&lt;/text&gt;
+      &lt;text class="cls-6" transform="translate(83.90401 159.86723)"&gt;$drops$&lt;/text&gt;
+      &lt;path class="cls-7" d="M53.53765,145.46969q-2.89515,6.42174-6.3125,13.02827l-.02247.04325a7.421,7.421,0,0,0-.10315,6.81981,7.70851,7.70851,0,0,0,3.89444,3.58463c3.76964,1.46851,7.99485-.88236,9.63306-4.34319l.01865-.03967a6.22734,6.22734,0,0,0-.12859-5.36362Z"/&gt;
+      &lt;g&gt;
+         &lt;circle class="cls-8" cx="51.34454" cy="124.75352" r="6.93896"/&gt;
+         &lt;circle class="cls-9" cx="58.57707" cy="115.65281" r="7.23253"/&gt;
+         &lt;circle class="cls-10" cx="47.73437" cy="115.16517" r="6.02058"/&gt;
+      &lt;/g&gt;
+   &lt;/g&gt;
+   &lt;g&gt;
+      &lt;text class="cls-11" transform="translate(246.67178 161.55362)"&gt;Drop-Bubble-ratio:&lt;/text&gt;
+      &lt;text id="dropratio" class="cls-12" transform="translate(365.57562 162.04767)"&gt;$dropratio$&lt;/text&gt;
+      &lt;text class="cls-11" transform="translate(246.67178 205.57802)"&gt;Sprite inventory: &lt;/text&gt;
+      &lt;text id="sprites" class="cls-12" transform="translate(356.55534 205.57802)"&gt;$sprites$&lt;/text&gt;
+      &lt;text class="cls-11" transform="translate(246.67178 226.51468)"&gt;Participated events: &lt;/text&gt;
+      &lt;text id="participated" class="cls-12" transform="translate(379.99638 226.59865)"&gt;$events$&lt;/text&gt;
+      &lt;text class="cls-11" transform="translate(246.67178 247.45036)"&gt;Hours spent on skribbl: &lt;/text&gt;
+      &lt;text id="hours" class="cls-12" transform="translate(397.59181 247.45085)"&gt;$hours$&lt;/text&gt;
+      &lt;text class="cls-11" transform="translate(246.67178 268.38654)"&gt;Global Bubble ranking: &lt;/text&gt;
+      &lt;text id="globbubble" class="cls-12" transform="translate(398.67139 268.4705)"&gt;$brank$&lt;/text&gt;
+      &lt;rect class="cls-1" x="388.58164" y="272.10706" width="54.31648" height="20.93617"/&gt;
+      &lt;rect class="cls-1" x="385.37503" y="281.58412" width="54.31648" height="20.93617"/&gt;
+      &lt;text class="cls-11" transform="translate(246.67178 289.32222)"&gt;Global Drop ranking: &lt;/text&gt;
+      &lt;text class="cls-11" transform="translate(246.67178 310.09435)"&gt;Connected servers:&lt;/text&gt;
+      &lt;text id="globdrop" class="cls-12" transform="translate(388.45176 290.89124)"&gt;$drank$&lt;/text&gt;
+      &lt;text id="connserver" class="cls-12" transform="translate(382.01904 310.09436)"&gt;$servers$&lt;/text&gt;
+      &lt;text class="cls-11" transform="translate(246.67178 183.60859)"&gt;First seen: &lt;/text&gt;
+      &lt;text id="firstseen" class="cls-12" transform="translate(320.61987 183.69256)"&gt;$firstseen$&lt;/text&gt;
+   &lt;/g&gt;
+   &lt;g id="patron"&gt;
+      &lt;text class="cls-13" transform="translate(396.59133 39.48753)"&gt;Patron&lt;/text&gt;
+      &lt;g&gt;
+         &lt;path class="cls-14" d="M375.12058,29.63131c-1.12348-2.68229-2.53683-4.14267-5.00755-4.311-2.59457-.17679-4.34111.66547-4.90484,3.48249-.73855,3.69053,2.50028,9.14782,9.91239,13.09084"/&gt;
+         &lt;path class="cls-15" d="M375.12058,29.63131c1.12348-2.68229,2.53682-4.14267,5.00754-4.311,2.59457-.17679,4.34111.66547,4.90485,3.48249.73854,3.69053-2.50029,9.14782-9.91239,13.09084"/&gt;
+      &lt;/g&gt;
+   &lt;/g&gt;
+   &lt;g id="early"&gt;
+      &lt;text class="cls-13" transform="translate(397.21887 98.67004)"&gt;Early User&lt;/text&gt;
+      &lt;g&gt;
+         &lt;polyline class="cls-16" points="366.587 92.234 375.121 101.272 375.121 92.234 375.121 88.514 371.97 88.514 368.95 88.514"/&gt;
+         &lt;polyline class="cls-17" points="383.654 92.234 375.121 101.272 375.121 92.234 375.121 88.514 378.271 88.514 381.291 88.514"/&gt;
+      &lt;/g&gt;
+   &lt;/g&gt;
+   &lt;g id="moderator"&gt;
+      &lt;text class="cls-13" transform="translate(396.57182 69.7862)"&gt;Moderator&lt;/text&gt;
+      &lt;g&gt;
+         &lt;polygon class="cls-18" points="374.124 62.324 374.124 72.896 366.993 68.468 366.993 58.215 374.124 62.324"/&gt;
+         &lt;polygon class="cls-19" points="376.117 62.324 376.117 72.896 383.248 68.468 383.248 58.215 376.117 62.324"/&gt;
+      &lt;/g&gt;
+   &lt;/g&gt;
+   &lt;g class="cls-20"&gt;
+      &lt;image id="profilepicture" width="1000" height="1000" transform="translate(25.37244 13.35853) scale(0.05226 0.05226)" xlink:href="data:image/png;base64,$profilebase64$"/&gt;
+   &lt;/g&gt;
+   &lt;path id="border" class="cls-21" d="M8.04727,283.42554V33.03191A27.40425,27.40425,0,0,1,35.45153,5.62766H230.58316"/&gt;
+   &lt;image id="sprite" width="80" height="80" transform="translate(51.50121 186.09539) scale(1.69535)" xlink:href="data:image/png;base64,$spritebase64$"/&gt;
+&lt;/svg&gt;</value>
   </data>
 </root>

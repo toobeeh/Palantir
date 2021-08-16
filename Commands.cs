@@ -1815,7 +1815,7 @@ namespace Palantir
             string profilebase64 = Convert.ToBase64String(client.DownloadData(dUser.AvatarUrl));
             byte[] bgbytes = client.DownloadData(backgroundUrl);
             SixLabors.ImageSharp.Image bg = SixLabors.ImageSharp.Image.Load(new System.IO.MemoryStream(bgbytes));
-            double bgheight = bg.Height / bg.Width * 489.98;
+            double bgheight = (double)bg.Height / bg.Width * 489.98;
             string background64 = Convert.ToBase64String(bgbytes);
             string combopath = SpriteComboImage.GenerateImage(SpriteComboImage.GetSpriteSources(sprites), "/home/pi/tmpGen/");
             string spritebase64 = Convert.ToBase64String(System.IO.File.ReadAllBytes(combopath));
@@ -1831,8 +1831,8 @@ namespace Palantir
             var msg = new DiscordMessageBuilder().WithFile(System.IO.File.OpenRead("/home/pi/card.svg"));
             await context.RespondAsync(msg);
             System.IO.File.Delete("/home/pi/card.svg");
-            //string path = SpriteComboImage.SVGtoPNG(content, "/home/pi/Webroot/files/combos/");
-            //await response.ModifyAsync(content: path.Replace(@"/home/pi/Webroot/", "https://tobeh.host/"));
+            string path = SpriteComboImage.SVGtoPNG(content, "/home/pi/Webroot/files/combos/");
+            await response.ModifyAsync(content: path.Replace(@"/home/pi/Webroot/", "https://tobeh.host/"));
 
         }
 
