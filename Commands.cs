@@ -1776,11 +1776,9 @@ namespace Palantir
                 double cropX, cropY, height, width;
                 const double cardRatio = 489.98 / 328.09;
                 SpriteComboImage.GetCropPosition(bg.Width, bg.Height, cardRatio, out cropX, out cropY, out height, out width);
-                //bg.Mutate(img => img.Crop(new Rectangle((int)cropX, (int)cropY, (int)width, (int)height)));
-                bg.Mutate(img => img.Crop(Rectangle.FromLTRB((int)cropX,(int)cropY, (int)(cropX+width),(int)(cropY + height))));
-                //bg.Mutate(img => img.Crop(Rectangle.
+                bg.Mutate(img => img.Crop(new Rectangle((int)cropX, (int)cropY, (int)width, (int)height)));
                 background64 = bg.ToBase64String(SixLabors.ImageSharp.Formats.Png.PngFormat.Instance).Replace("data:image/png;base64,","");
-                bgheight = height;
+                bgheight = 328;
             }
             string combopath = SpriteComboImage.GenerateImage(SpriteComboImage.GetSpriteSources(sprites), "/home/pi/tmpGen/");
             string spritebase64 = Convert.ToBase64String(System.IO.File.ReadAllBytes(combopath));
