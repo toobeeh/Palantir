@@ -74,7 +74,7 @@ namespace Palantir.Properties {
         /// <summary>
         ///   Looks up a localized string similar to &lt;svg id=&quot;Ebene_1&quot; data-name=&quot;Ebene 1&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot; xmlns:xlink=&quot;http://www.w3.org/1999/xlink&quot; width=&quot;500&quot; height=&quot;333.46809&quot; viewBox=&quot;0 0 500 333.46809&quot;&gt;
         ///   &lt;defs&gt;
-        ///      &lt;style&gt;.{}.bgpath{clip-path: url(#bgpath);}.cls-1, .cls-21{fill: none;}.cls-2{fill: #18191c;}.cls-3{clip-path: url(#clip-path);}.cls-4, .cls-7{fill: #36a9e1;}.cls-21, .cls-4, .cls-7{stroke: #36a9e1;}.cls-4{stroke-linecap: square;}.cls-18, .cls-19, .cls-21, .cls-4, .cls-7{stroke-miterlimit: 10;}.cls-21, .cls-4{stroke- [rest of string was truncated]&quot;;.
+        ///      &lt;style&gt;$customstyle$.{}.bgpath{clip-path: url(#bgpath);}.cls-1, .cls-21{fill: none;}.cls-2{fill: #18191c;}.cls-3{clip-path: url(#clip-path);}.cls-4, .cls-7{fill: #36a9e1;}.cls-21, .cls-4, .cls-7{stroke: #36a9e1;}.cls-4{stroke-linecap: square;}.cls-18, .cls-19, .cls-21, .cls-4, .cls-7{stroke-miterlimit: 10;}.cls-21, . [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string SVGcardBG {
             get {
