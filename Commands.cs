@@ -1738,7 +1738,7 @@ namespace Palantir
 
         [Description("Generates a card of your profile")]
         [Command("card")]
-        public async Task Card(CommandContext context, [Description("The color theme (color name or color code)")]  string color = "black", [Description("The URL of the background - only the filename on imgur, eg: '7pnIfgB.png'")] string backgroundUrl = "", [Description("The opacity of the background (0-1)")] double backgroundOpacity = 0.7)
+        public async Task Card(CommandContext context, [Description("The color theme (color name or color code)")]  string color = "black", [Description("The URL of the background - only the filename on imgur, eg: '7pnIfgB.png'")] string backgroundUrl = "", [Description("The opacity of the background (0-1)")] double backgroundOpacity = 0.7, [Description("The opacity of the background (0-1)")] double headerOpacity = 1)
         {
             DiscordMember dMember = context.Member;
             DiscordUser dUser = context.User;
@@ -1787,15 +1787,15 @@ namespace Palantir
             int caughtEventdrops = BubbleWallet.CaughtEventdrops(dUser.Id.ToString());
             double ratio = Math.Round(((double)member.Drops + caughtEventdrops) / (member.Bubbles / 1000), 1);
             if (!double.IsFinite(ratio)) ratio = 0;
-            SpriteComboImage.FillPlaceholdersBG(ref content, profilebase64, spritebase64,background64, backgroundOpacity, bgheight.ToString(), color, dMember is not null ? dMember.DisplayName : dUser.Username, member.Bubbles.ToString(), member.Drops.ToString(), ratio,
+            SpriteComboImage.FillPlaceholdersBG(ref content, profilebase64, spritebase64,background64, backgroundOpacity, headerOpacity, bgheight.ToString(), color, dMember is not null ? dMember.DisplayName : dUser.Username, member.Bubbles.ToString(), member.Drops.ToString(), ratio,
                 BubbleWallet.FirstTrace(login), BubbleWallet.GetInventory(login).Count.ToString(), BubbleWallet.ParticipatedEvents(login).Count.ToString() + " (" + caughtEventdrops + " Drops)", Math.Round((double)member.Bubbles * 10 / 3600).ToString(),
                 BubbleWallet.GlobalRanking(login).ToString(), BubbleWallet.GlobalRanking(login, true).ToString(), memberDetail.Guilds.Count.ToString(), perm.Patron, BubbleWallet.IsEarlyUser(login), perm.Moderator);
             string path = SpriteComboImage.SVGtoPNG(content, "/home/pi/Webroot/files/combos/");
             await response.ModifyAsync(content: path.Replace(@"/home/pi/Webroot/", "https://tobeh.host/"));
-            System.IO.File.WriteAllText("/home/pi/graph.svg", content);
-            var msg = new DiscordMessageBuilder().WithFile(System.IO.File.OpenRead("/home/pi/graph.svg"));
-            await context.RespondAsync(msg);
-            System.IO.File.Delete("/home/pi/graph.svg");
+            //System.IO.File.WriteAllText("/home/pi/graph.svg", content);
+            //var msg = new DiscordMessageBuilder().WithFile(System.IO.File.OpenRead("/home/pi/graph.svg"));
+            //await context.RespondAsync(msg);
+            //System.IO.File.Delete("/home/pi/graph.svg");
         }
 
     }
