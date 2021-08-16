@@ -1814,7 +1814,7 @@ namespace Palantir
 
             string profilebase64 = Convert.ToBase64String(client.DownloadData(dUser.AvatarUrl));
             byte[] bgbytes = client.DownloadData(backgroundUrl);
-            System.Drawing.Image bg = System.Drawing.Image.FromStream(new System.IO.MemoryStream(bgbytes));
+            SixLabors.ImageSharp.Image bg = SixLabors.ImageSharp.Image.Load(new System.IO.MemoryStream(bgbytes));
             double bgratio = bg.Width / bg.Height * 100;
             string background64 = Convert.ToBase64String(bgbytes);
             string combopath = SpriteComboImage.GenerateImage(SpriteComboImage.GetSpriteSources(sprites), "/home/pi/tmpGen/");
