@@ -212,7 +212,7 @@ namespace Palantir
         public static int CaughtEventdrops(string discordID)
         {
             PalantirDbContext context = new PalantirDbContext();
-            int caught = context.PastDrops.Where(drop => drop.CaughtLobbyPlayerID == discordID).Count();
+            int caught = context.PastDrops.Where(drop => drop.CaughtLobbyPlayerID == discordID && drop.EventDropID > 0).Count();
             context.Dispose();
             return caught;
         }
