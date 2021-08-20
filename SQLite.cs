@@ -49,6 +49,7 @@ namespace Palantir
         public int Flag { get; set; }
         public string Emoji { get; set; }
         public string Patronize { get; set; }
+        public string Customcard { get; set; }
     }
     public class PalantirEntity
     {

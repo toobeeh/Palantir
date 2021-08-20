@@ -80,4 +80,13 @@ namespace Palantir
         public bool ShowToken { get; set; }
         public bool ShowAnimatedEmojis { get; set; }
     }
+    public class CustomCard
+    {
+        public string HeaderColor { get; set; }
+        public double HeaderOpacity { get; set; }
+        public double BackgroundOpacity { get; set; }
+        public string BackgroundImage { get; set; }
+        public string LightTextColor { get; set; }
+        public string DarkTextColor { get; set; }
+    }
 }

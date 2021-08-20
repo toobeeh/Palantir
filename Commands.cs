@@ -1798,5 +1798,37 @@ namespace Palantir
             //System.IO.File.Delete("/home/pi/graph.svg");
         }
 
+        [Description("Generates a card of your profile")]
+        [Command("customcard")]
+        public async Task Customcard(CommandContext context, [Description("The color theme (color name or color code)")] string color = "black", [Description("Primary information color")] string lightcolor = "white", [Description("Secondary information color")] string darkcolor = "grey", [Description("The URL of the background - only the filename on imgur, eg: '7pnIfgB.png'")] string backgroundUrl = "", [Description("The opacity of the background (0-1)")] double backgroundOpacity = 0.7, [Description("The opacity of the background (0-1)")] double headerOpacity = 1)
+        {
+            PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
+            if (!perm.BotAdmin && !perm.Patron)
+            {
+                await Program.SendEmbed(context.Channel, "Ha, PAYWALL!", "This command is only available for Patreon Subscriber.\nWant to join? <3 \nhttps://www.patreon.com/skribbltypo");
+                return;
+            }
+            DiscordMessage response = await context.RespondAsync(">  \n>  \n>   <a:working:857610439588053023> **Building your card afap!!**\n> _ _ \n> _ _ ");
+            string login = BubbleWallet.GetLoginOfMember(context.User.Id.ToString());
+
+            System.Net.WebClient client = new System.Net.WebClient();
+            byte[] bgbytes = client.DownloadData("https://i.imgur.com/" + backgroundUrl);
+            System.IO.File.WriteAllBytes("/home/pi/cardassets/imgur_" + backgroundUrl + ".bgb", bgbytes);
+            PalantirDbContext db = new PalantirDbContext();
+            db.Members.FirstOrDefault(member => member.Login == login).Customcard = JsonConvert.SerializeObject(new CustomCard
+            {
+                BackgroundImage = backgroundUrl,
+                BackgroundOpacity = backgroundOpacity,
+                HeaderOpacity = headerOpacity,
+                HeaderColor = color,
+                LightTextColor = lightcolor,
+                DarkTextColor = darkcolor
+            });
+            db.SaveChanges();
+            db.Dispose();
+
+            await response.ModifyAsync(content: "Updated your card settings!");
+        }
+
     }
 }
