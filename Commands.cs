@@ -343,7 +343,7 @@ namespace Palantir
                     embed.WithThumbnail(drop.URL);
                 }
                 int[] score = BubbleWallet.SpriteScoreboard().FirstOrDefault(score => score.Key == s.ID).Value;
-                embed.WithFooter("Active: " + score[0] + " | Bought: " + score[1]);
+                embed.WithFooter("Bought: " + score[0] + " | Active: " + score[1]);
                 embed.AddField("\u200b", "[View all Sprites](https://typo.rip/#sprites)\n[Try out the sprite](https://tobeh.host/Orthanc/sprites/cabin/?sprite=" + sprite + ")");
                 await context.Channel.SendMessageAsync(embed: embed);
             }
