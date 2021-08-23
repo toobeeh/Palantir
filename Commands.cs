@@ -1747,7 +1747,7 @@ namespace Palantir
                 BackgroundImage = "",
                 BackgroundOpacity = 0.7,
                 HeaderColor = "black",
-                DarkTextColor = "darkslategrey",
+                DarkTextColor = "white",
                 LightTextColor = "white",
                 HeaderOpacity = 1
             };
