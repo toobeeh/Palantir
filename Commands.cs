@@ -1763,6 +1763,16 @@ namespace Palantir
 
             int[] sprites = BubbleWallet.GetInventory(login).Where(spt => spt.Activated).OrderBy(spt => spt.Slot).Select(spt => spt.ID).ToArray();
 
+            await context.Message.RespondAsync(content: dUser.AvatarUrl);
+            try
+            {
+
+                string base64 = Convert.ToBase64String(client.DownloadData(dUser.AvatarUrl));
+            }
+            catch (Exception e)
+            {
+                await context.Message.RespondAsync(content: e.ToString());
+            }
             string profilebase64 = Convert.ToBase64String(client.DownloadData(dUser.AvatarUrl));
             double bgheight = 0;
             string background64 = "";
