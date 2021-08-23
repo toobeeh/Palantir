@@ -1829,7 +1829,7 @@ namespace Palantir
                 await Program.SendEmbed(context.Channel, "Ha, PAYWALL!", "This command is only available for Patreon Subscriber.\nWant to join? <3 \nhttps://www.patreon.com/skribbltypo");
                 return;
             }
-            DiscordMessage response = await context.RespondAsync(">  \n>  \n>   <a:working:857610439588053023> **Building your card afap!!**\n> _ _ \n> _ _ ");
+            DiscordMessage response = await context.RespondAsync("\n>   <a:working:857610439588053023> **Updating your settings...**\n");
             string login = BubbleWallet.GetLoginOfMember(context.User.Id.ToString());
 
             System.Net.WebClient client = new System.Net.WebClient();
@@ -1853,6 +1853,7 @@ namespace Palantir
                 properties += p.Name + ": `" + p.GetValue(settings).ToString() + "`\n";
             }
             await response.ModifyAsync(content: "**Updated your card settings!**\n\n" + properties);
+            if(context.Message.ReferencedMessage is null) await Card(context);
         }
 
     }
