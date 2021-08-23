@@ -1757,19 +1757,7 @@ namespace Palantir
                 dUser = context.Message.ReferencedMessage.Author;
                 dMember = null;
             }
-            // else try load preferred color scheme
-            else {
-                string originalLogin = BubbleWallet.GetLoginOfMember(context.User.Id.ToString());
-                PalantirDbContext db = new PalantirDbContext();
-                try
-                {
-                    CustomCard preferences = JsonConvert.DeserializeObject<CustomCard>(db.Members.FirstOrDefault(member => member.Login == originalLogin).Customcard);
-                    cardsettings = preferences;
-                }
-                catch { }
-                
-                db.Dispose();
-            }
+            
             PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
             if (!perm.BotAdmin && !perm.Patron)
             {
@@ -1777,9 +1765,22 @@ namespace Palantir
                 return;
             }
             perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(dUser));
+            string login = BubbleWallet.GetLoginOfMember(dUser.Id.ToString());
+
+            // if target user is patron, load color scheme
+            if (perm.Patron)
+            {
+                PalantirDbContext db = new PalantirDbContext();
+                try
+                {
+                    CustomCard preferences = JsonConvert.DeserializeObject<CustomCard>(db.Members.FirstOrDefault(member => member.Login == login).Customcard);
+                    cardsettings = preferences;
+                }
+                catch { }
+                db.Dispose();
+            }
 
             DiscordMessage response = await context.RespondAsync(">  \n>  \n>   <a:working:857610439588053023> **Building your card afap!!**\n> _ _ \n> _ _ ");
-            string login = BubbleWallet.GetLoginOfMember(dUser.Id.ToString());
             MemberEntity member = Program.Feanor.GetMemberByLogin(login);
             Member memberDetail = JsonConvert.DeserializeObject<Member>(member.Member);
 
