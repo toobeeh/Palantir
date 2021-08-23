@@ -343,7 +343,7 @@ namespace Palantir
                     embed.WithThumbnail(drop.URL);
                 }
                 int[] score = BubbleWallet.SpriteScoreboard().FirstOrDefault(score => score.Key == s.ID).Value;
-                embed.WithFooter("Bought: " + score[2] + " | Active: " + score[1]);
+                embed.WithFooter("Bought: " + (score[2] + score[1]) + " | Active: " + score[1]);
                 embed.AddField("\u200b", "[View all Sprites](https://typo.rip/#sprites)\n[Try out the sprite](https://tobeh.host/Orthanc/sprites/cabin/?sprite=" + sprite + ")");
                 await context.Channel.SendMessageAsync(embed: embed);
             }
@@ -358,7 +358,7 @@ namespace Palantir
                 spriteScores.ForEach(score =>
                 {
                     Sprite spt = sprites.First(sprite => sprite.ID == score.Key);
-                    list.AddField("**#" + rank + ": " + spt.Name + "** ", "ID: " + spt.ID + (spt.Special ? " :sparkles: " : "") + " - Active: " + score.Value[1] + ", Bought: " + score.Value[2]);
+                    list.AddField("**#" + rank + ": " + spt.Name + "** ", "ID: " + spt.ID + (spt.Special ? " :sparkles: " : "") + " - Active: " + score.Value[1] + ", Bought: " + (score.Value[2] + score.Value[1]));
                     rank++;
                 });
                 list.AddField("\u200b", "[View all Sprites](https://typo.rip/#sprites)");
