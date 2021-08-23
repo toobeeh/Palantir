@@ -1758,22 +1758,14 @@ namespace Palantir
             MemberEntity member = Program.Feanor.GetMemberByLogin(login);
             Member memberDetail = JsonConvert.DeserializeObject<Member>(member.Member);
 
-            System.Net.WebClient client = new System.Net.WebClient();
             string content = Palantir.Properties.Resources.SVGcardBG;
 
             int[] sprites = BubbleWallet.GetInventory(login).Where(spt => spt.Activated).OrderBy(spt => spt.Slot).Select(spt => spt.ID).ToArray();
 
-            await context.Message.RespondAsync(content: dUser.AvatarUrl);
-            try
-            {
-
-                string base64 = Convert.ToBase64String(client.DownloadData(dUser.AvatarUrl));
-            }
-            catch (Exception e)
-            {
-                await context.Message.RespondAsync(content: e.ToString());
-            }
-            string profilebase64 = Convert.ToBase64String(client.DownloadData(dUser.AvatarUrl));
+            System.Net.WebClient client = new System.Net.WebClient();
+            System.IO.MemoryStream data = new();
+            client.OpenRead(dUser.AvatarUrl).CopyTo(data);
+            string profilebase64 = Convert.ToBase64String(data.ToArray());
             double bgheight = 0;
             string background64 = "";
             if(cardsettings.BackgroundImage != "")
