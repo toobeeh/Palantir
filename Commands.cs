@@ -1738,16 +1738,38 @@ namespace Palantir
 
         [Description("Generates a card of your profile")]
         [Command("card")]
-        public async Task Card(CommandContext context, [Description("The color theme (color name or color code)")] string color = "black", [Description("Primary information color")] string lightcolor = "white", [Description("Secondary information color")] string darkcolor = "darkgrey", [Description("The URL of the background - only the filename on imgur, eg: '7pnIfgB.png'")] string backgroundUrl = "", [Description("The opacity of the background (0-1)")] double backgroundOpacity = 0.7, [Description("The opacity of the background (0-1)")] double headerOpacity = 1)
+        public async Task Card(CommandContext context)
         {
             DiscordMember dMember = context.Member;
             DiscordUser dUser = context.User;
+            CustomCard cardsettings = new CustomCard
+            {
+                BackgroundImage = "",
+                BackgroundOpacity = 0.7,
+                HeaderColor = "black",
+                DarkTextColor = "darkslategrey",
+                LightTextColor = "white",
+                HeaderOpacity = 1
+            };
+            // if other user is referenced for called card, set user
             if (context.Message.ReferencedMessage is not null)
             {
                 dUser = context.Message.ReferencedMessage.Author;
                 dMember = null;
             }
-
+            // else try load preferred color scheme
+            else {
+                string originalLogin = BubbleWallet.GetLoginOfMember(context.User.Id.ToString());
+                PalantirDbContext db = new PalantirDbContext();
+                try
+                {
+                    CustomCard preferences = JsonConvert.DeserializeObject<CustomCard>(db.Members.FirstOrDefault(member => member.Login == originalLogin).Customcard);
+                    cardsettings = preferences;
+                }
+                catch { }
+                
+                db.Dispose();
+            }
             PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
             if (!perm.BotAdmin && !perm.Patron)
             {
@@ -1769,10 +1791,9 @@ namespace Palantir
             string profilebase64 = Convert.ToBase64String(client.DownloadData(dUser.AvatarUrl));
             double bgheight = 0;
             string background64 = "";
-            if(backgroundUrl != "")
+            if(cardsettings.BackgroundImage != "")
             {
-                byte[] bgbytes = client.DownloadData("https://i.imgur.com/" + backgroundUrl);
-                Image bg = Image.Load(new System.IO.MemoryStream(bgbytes));
+                Image bg = Image.Load(System.IO.File.OpenRead("/home/pi/cardassets/imgur_" + cardsettings.BackgroundImage + ".bgb"));
                 double cropX, cropY, height, width;
                 const double cardRatio = 489.98 / 328.09;
                 SpriteComboImage.GetCropPosition(bg.Width, bg.Height, cardRatio, out cropX, out cropY, out height, out width);
@@ -1787,7 +1808,7 @@ namespace Palantir
             int caughtEventdrops = BubbleWallet.CaughtEventdrops(dUser.Id.ToString());
             double ratio = Math.Round(((double)member.Drops + caughtEventdrops) / (member.Bubbles / 1000), 1);
             if (!double.IsFinite(ratio)) ratio = 0;
-            SpriteComboImage.FillPlaceholdersBG(ref content, profilebase64, spritebase64,background64, backgroundOpacity, headerOpacity, bgheight.ToString(), color, lightcolor, darkcolor, dMember is not null ? dMember.DisplayName : dUser.Username, member.Bubbles.ToString(), member.Drops.ToString(), ratio,
+            SpriteComboImage.FillPlaceholdersBG(ref content, profilebase64, spritebase64,background64, cardsettings.BackgroundOpacity, cardsettings.HeaderOpacity, bgheight.ToString(), cardsettings.HeaderColor, cardsettings.LightTextColor, cardsettings.DarkTextColor, dMember is not null ? dMember.DisplayName : dUser.Username, member.Bubbles.ToString(), member.Drops.ToString(), ratio,
                 BubbleWallet.FirstTrace(login), BubbleWallet.GetInventory(login).Count.ToString(), BubbleWallet.ParticipatedEvents(login).Count.ToString() + " (" + caughtEventdrops + " Drops)", Math.Round((double)member.Bubbles * 10 / 3600).ToString(),
                 BubbleWallet.GlobalRanking(login).ToString(), BubbleWallet.GlobalRanking(login, true).ToString(), memberDetail.Guilds.Count.ToString(), perm.Patron, BubbleWallet.IsEarlyUser(login), perm.Moderator);
             string path = SpriteComboImage.SVGtoPNG(content, "/home/pi/Webroot/files/combos/");
