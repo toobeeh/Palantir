@@ -1763,9 +1763,8 @@ namespace Palantir
             int[] sprites = BubbleWallet.GetInventory(login).Where(spt => spt.Activated).OrderBy(spt => spt.Slot).Select(spt => spt.ID).ToArray();
 
             System.Net.WebClient client = new System.Net.WebClient();
-            System.IO.MemoryStream data = new();
-            client.OpenRead(dUser.AvatarUrl).CopyTo(data);
-            string profilebase64 = Convert.ToBase64String(data.ToArray());
+            client.Headers.Add("User-Agent: Other");
+            string profilebase64 = Convert.ToBase64String(client.DownloadData(dUser.AvatarUrl));
             double bgheight = 0;
             string background64 = "";
             if(cardsettings.BackgroundImage != "")
