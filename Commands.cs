@@ -1821,7 +1821,7 @@ namespace Palantir
 
         [Description("Generates a card of your profile")]
         [Command("customcard")]
-        public async Task Customcard(CommandContext context, [Description("The color theme (color name or color code)")] string color = "black", [Description("Primary information color")] string lightcolor = "white", [Description("Secondary information color")] string darkcolor = "grey", [Description("The URL of the background - only the filename on imgur, eg: '7pnIfgB.png'")] string backgroundUrl = "", [Description("The opacity of the background (0-1)")] double backgroundOpacity = 0.7, [Description("The opacity of the background (0-1)")] double headerOpacity = 1)
+        public async Task Customcard(CommandContext context, [Description("The color theme (color name or color code)")] string color = "black", [Description("Primary information color")] string lightcolor = "white", [Description("Secondary information color")] string darkcolor = "white", [Description("The URL of the background - only the filename on imgur, eg: '7pnIfgB.png'")] string backgroundUrl = "", [Description("The opacity of the background (0-1)")] double backgroundOpacity = 0.7, [Description("The opacity of the background (0-1)")] double headerOpacity = 1)
         {
             PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
             if (!perm.BotAdmin && !perm.Patron)
