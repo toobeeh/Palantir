@@ -339,7 +339,9 @@ namespace Palantir
                 else
                 {
                     EventDropEntity drop = Events.GetEventDrops().FirstOrDefault(d => d.EventDropID == s.EventDropID);
-                    embed.Description += "**Event Drop Price:** " + s.Cost + " " + drop.Name + "\n\n**ID**: " + s.ID + (s.Special ? " :sparkles: " : "");
+                    embed.Description += "**Event Drop Price:** " + s.Cost + " " + drop.Name + "\n**ID**: " + s.ID + (s.Special ? " :sparkles: " : "");
+                    int[] score = BubbleWallet.SpriteScoreboard().FirstOrDefault(score => score.Key == s.ID).Value;
+                    embed.WithFooter("Active: " + score[0] + " | Bought: " + score[1]);
                     embed.WithThumbnail(drop.URL);
                 }
                 embed.AddField("\u200b", "[View all Sprites](https://typo.rip/#sprites)\n[Try out the sprite](https://tobeh.host/Orthanc/sprites/cabin/?sprite=" + sprite + ")");
@@ -351,35 +353,7 @@ namespace Palantir
                 list.Color = DiscordColor.Magenta;
                 list.Title = "🔮 Top 10 Popular Sprites";
                 list.Description = "Show one of the available Sprites with `>sprites [id]`";
-                // get all bought sprites
-                List<SpriteProperty> joined = new List<SpriteProperty>();
-                PalantirDbContext db = new PalantirDbContext();
-                db.Members.ForEach(member => {
-                    string[] sprites = member.Sprites.Split(",");
-                    sprites.ForEach(id =>
-                    {
-                        int indOfActive = id.ToString().LastIndexOf(".");
-                        id = id.Substring(indOfActive < 0 ? 0 : indOfActive + 1);
-                        int spriteid = 0;
-                        if (Int32.TryParse(id, out spriteid))
-                        {
-                            joined.Add(new SpriteProperty("", "", 0, spriteid, false, 0, "", indOfActive >= 0, 0));
-                        }
-                    });
-                });
-                db.Dispose();
-                // calculate scores
-                Dictionary<int, int[]> spriteScores = new Dictionary<int, int[]>();
-                sprites.ForEach(sprite =>
-                {
-                    int score = 0;
-                    int active = joined.Where(spriteprop => spriteprop.ID == sprite.ID && spriteprop.Activated).ToList().Count;
-                    int bought = joined.Where(spriteprop => spriteprop.ID == sprite.ID && !spriteprop.Activated).ToList().Count;
-                    score = active * 10 + bought;
-                    int[] value = { score, active, bought };
-                    spriteScores.Add(sprite.ID, value);
-                });
-                spriteScores = spriteScores.OrderByDescending(score => score.Value[0]).Slice(0, 10).ToDictionary();
+                Dictionary<int, int[]> spriteScores = BubbleWallet.SpriteScoreboard().Slice(0, 10).ToDictionary();
                 int rank = 1;
                 spriteScores.ForEach(score =>
                 {

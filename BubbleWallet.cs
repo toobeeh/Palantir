@@ -6,6 +6,7 @@ using System.Globalization;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
 using Quartz;
+using MoreLinq;
 
 namespace Palantir
 {
@@ -223,6 +224,41 @@ namespace Palantir
             int index = context.Members.ToList().Where(member=> !(new PermissionFlag((byte)member.Flag).BubbleFarming)).OrderByDescending(member => drops ? member.Drops : member.Bubbles).Select(member => member.Login).ToList().IndexOf(login) + 1;
             context.Dispose();
             return index;
+        }
+
+        public static Dictionary<int, int[]> SpriteScoreboard()
+        {
+            List<Sprite> sprites = BubbleWallet.GetAvailableSprites();
+            // get all bought sprites
+            List<SpriteProperty> joined = new List<SpriteProperty>();
+            PalantirDbContext db = new PalantirDbContext();
+            db.Members.ForEach(member => {
+                string[] sprites = member.Sprites.Split(",");
+                sprites.ForEach(id =>
+                {
+                    int indOfActive = id.ToString().LastIndexOf(".");
+                    id = id.Substring(indOfActive < 0 ? 0 : indOfActive + 1);
+                    int spriteid = 0;
+                    if (Int32.TryParse(id, out spriteid))
+                    {
+                        joined.Add(new SpriteProperty("", "", 0, spriteid, false, 0, "", indOfActive >= 0, 0));
+                    }
+                });
+            });
+            db.Dispose();
+            // calculate scores
+            Dictionary<int, int[]> spriteScores = new Dictionary<int, int[]>();
+            sprites.ForEach(sprite =>
+            {
+                int score = 0;
+                int active = joined.Where(spriteprop => spriteprop.ID == sprite.ID && spriteprop.Activated).ToList().Count;
+                int bought = joined.Where(spriteprop => spriteprop.ID == sprite.ID && !spriteprop.Activated).ToList().Count;
+                score = active * 10 + bought;
+                int[] value = { score, active, bought };
+                spriteScores.Add(sprite.ID, value);
+            });
+            spriteScores = spriteScores.OrderByDescending(score => score.Value[0]).ToDictionary();
+            return spriteScores;
         }
 
         public static string GetLoginOfMember(string id)
