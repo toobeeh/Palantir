@@ -1836,7 +1836,7 @@ namespace Palantir
             byte[] bgbytes = client.DownloadData("https://i.imgur.com/" + backgroundUrl);
             System.IO.File.WriteAllBytes("/home/pi/cardassets/imgur_" + backgroundUrl + ".bgb", bgbytes);
             PalantirDbContext db = new PalantirDbContext();
-            db.Members.FirstOrDefault(member => member.Login == login).Customcard = JsonConvert.SerializeObject(new CustomCard
+            CustomCard settings = new CustomCard
             {
                 BackgroundImage = backgroundUrl,
                 BackgroundOpacity = backgroundOpacity,
@@ -1844,11 +1844,15 @@ namespace Palantir
                 HeaderColor = color,
                 LightTextColor = lightcolor,
                 DarkTextColor = darkcolor
-            });
+            };
+            db.Members.FirstOrDefault(member => member.Login == login).Customcard = JsonConvert.SerializeObject(settings);
             db.SaveChanges();
             db.Dispose();
-
-            await response.ModifyAsync(content: "Updated your card settings!");
+            string properties = "";
+            foreach(System.ComponentModel.PropertyDescriptor p in System.ComponentModel.TypeDescriptor.GetProperties(settings)){
+                properties += p.Name + ": `" + p.GetValue(settings).ToString() + "`\n";
+            }
+            await response.ModifyAsync(content: "**Updated your card settings!**\n\n" + properties);
         }
 
     }
