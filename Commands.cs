@@ -1768,7 +1768,7 @@ namespace Palantir
             string login = BubbleWallet.GetLoginOfMember(dUser.Id.ToString());
 
             // if target user is patron, load color scheme
-            if (perm.Patron)
+            if (perm.Patron || perm.BotAdmin)
             {
                 PalantirDbContext db = new PalantirDbContext();
                 try
