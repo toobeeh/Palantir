@@ -1763,7 +1763,7 @@ namespace Palantir
             int[] sprites = BubbleWallet.GetInventory(login).Where(spt => spt.Activated).OrderBy(spt => spt.Slot).Select(spt => spt.ID).ToArray();
 
             System.Net.WebClient client = new System.Net.WebClient();
-            client.Headers.Add("User-Agent: Other");
+            client.Headers.Add("User-Agent: Palantir#8352_by_tobeh#7437");
             string profilebase64 = Convert.ToBase64String(client.DownloadData(dUser.AvatarUrl));
             double bgheight = 0;
             string background64 = "";
@@ -1782,7 +1782,7 @@ namespace Palantir
             System.IO.File.Delete(combopath);
 
             int caughtEventdrops = BubbleWallet.CaughtEventdrops(dUser.Id.ToString());
-            double ratio = Math.Round(((double)member.Drops + caughtEventdrops) / (member.Bubbles / 1000), 1);
+            double ratio = Math.Round(((double)member.Drops + caughtEventdrops) / ((double)member.Bubbles / 1000), 1);
             if (!double.IsFinite(ratio)) ratio = 0;
             SpriteComboImage.FillPlaceholdersBG(ref content, profilebase64, spritebase64,background64, cardsettings.BackgroundOpacity, cardsettings.HeaderOpacity, bgheight.ToString(), cardsettings.HeaderColor, cardsettings.LightTextColor, cardsettings.DarkTextColor, dMember is not null ? dMember.DisplayName : dUser.Username, member.Bubbles.ToString(), member.Drops.ToString(), ratio,
                 BubbleWallet.FirstTrace(login), BubbleWallet.GetInventory(login).Count.ToString(), BubbleWallet.ParticipatedEvents(login).Count.ToString() + " (" + caughtEventdrops + " Drops)", Math.Round((double)member.Bubbles * 10 / 3600).ToString(),
