@@ -18,9 +18,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="DSharpPlus" Version="4.1.0-nightly-00917" />
-    <PackageReference Include="DSharpPlus.CommandsNext" Version="4.1.0-nightly-00917" />
-    <PackageReference Include="DSharpPlus.Interactivity" Version="4.1.0-nightly-00917" />
+    <PackageReference Include="DSharpPlus" Version="4.2.0-nightly-00981" />
+    <PackageReference Include="DSharpPlus.CommandsNext" Version="4.2.0-nightly-00981" />
+    <PackageReference Include="DSharpPlus.Interactivity" Version="4.2.0-nightly-00981" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.4" />
     <PackageReference Include="morelinq" Version="3.3.2" />
     <PackageReference Include="MoreLinq.Source.MoreEnumerable.Batch" Version="1.0.2">
@@ -28,11 +28,11 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="Quartz" Version="3.3.2" />
+    <PackageReference Include="Quartz" Version="3.3.3" />
     <PackageReference Include="SixLabors.ImageSharp" Version="1.0.3" />
-    <PackageReference Include="SkiaSharp" Version="2.80.3-preview.40" />
-    <PackageReference Include="SkiaSharp.NativeAssets.Linux" Version="2.80.3-preview.40" />
-    <PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="2.80.3-preview.40" />
+    <PackageReference Include="SkiaSharp" Version="2.88.0-preview.127" />
+    <PackageReference Include="SkiaSharp.NativeAssets.Linux" Version="2.88.0-preview.127" />
+    <PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="2.88.0-preview.127" />
     <PackageReference Include="SkiaSharp.Svg" Version="1.60.0" />
   </ItemGroup>
 

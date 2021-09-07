@@ -518,13 +518,19 @@ namespace Palantir
             if (inventory.Count < 5) embed.AddField("Command help: ", "Use `>use [id]` to select your Sprite!\n`>use 0` will set no Sprite.\nBuy a Sprite with `>buy [id]`.\nSpecial Sprites :sparkles: replace your whole avatar! ");
             embed.AddField("\u200b", "[View all Sprites](https://typo.rip/#sprites)");
             DiscordMessageBuilder response = new DiscordMessageBuilder();
-            DiscordButtonComponent prev = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Secondary, "last", "Previous");
-            DiscordButtonComponent next = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Primary, "next", "Next");
-            DiscordButtonComponent nav = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Secondary, "nav", "Navigate Sprites", true);
-            response.AddComponents(prev, nav, next);
+
+            Action<string, bool> setComponents = (string navText, bool disabled) =>
+            {
+                response.ClearComponents();
+                response.AddComponents(new DiscordButtonComponent(DSharpPlus.ButtonStyle.Secondary, "last", "Previous", disabled),
+                    new DiscordButtonComponent(DSharpPlus.ButtonStyle.Primary, "next", "Next", disabled),
+                    new DiscordButtonComponent(DSharpPlus.ButtonStyle.Secondary, "nav", navText, true));
+            };
+            setComponents("Navigate Sprites", false);
             DiscordMessage sent = null;
             DSharpPlus.Interactivity.InteractivityResult<DSharpPlus.EventArgs.ComponentInteractionCreateEventArgs> result;
             int direction = 0;
+            IEnumerable<string> firstbatch;
             do
             {
                 // rotate batch so relevant is always first index 1 2 3 4 5 6 7 8 9 10 11 
@@ -532,7 +538,7 @@ namespace Palantir
                     spritebatches.Skip(1).Concat(spritebatches.Take(1)) :
                     Enumerable.TakeLast(spritebatches, 1).Concat(Enumerable.SkipLast(spritebatches, 1));
 
-                var firstbatch = spritebatches.Count() > 0 ? spritebatches.First() : Enumerable.Empty<string>();
+                firstbatch = spritebatches.Count() > 0 ? spritebatches.First() : Enumerable.Empty<string>();
                 List<string>[] fielded = new List<string>[3];
                 fielded[0] = firstbatch.ToList();
                 for (int i = 1; i < 3; i++)
@@ -544,7 +550,7 @@ namespace Palantir
                 smiddle.Value = fielded[1].Count() > 0 ? fielded[1].ToDelimitedString("\n") : "\u200b ";
                 sright.Value = fielded[2].Count() > 0 ? fielded[2].ToDelimitedString("\n") : "\u200b ";
 
-                nav.Label = "Navigate Sprites (" + firstbatch.Count() + "/" + spritebatches.Flatten().Count() + ")";
+                setComponents("Navigate Sprites (" + firstbatch.Count() + "/" + spritebatches.Flatten().Count() + ")", false);
                 response.Embed = embed.Build();
                 sent = sent is null ? await response.SendAsync(context.Channel) : await sent.ModifyAsync(response);
                 result = await Program.Interactivity.WaitForButtonAsync(sent, context.User, TimeSpan.FromMinutes(2));
@@ -555,7 +561,7 @@ namespace Palantir
                 }
             }
             while (!result.TimedOut);
-            prev.Disabled = next.Disabled = true;
+            setComponents("Navigate Sprites (" + firstbatch.Count() + "/" + spritebatches.Flatten().Count() + ")", true);
             await sent.ModifyAsync(response);
         }
 
@@ -888,10 +894,7 @@ namespace Palantir
             }
             while (!press.TimedOut);
 
-            btnnext.Disabled = true;
-            btnprev.Disabled = true;
-            leaderboard.Clear();
-            leaderboard.AddComponents(btnprev, btnnext).AddComponents(generateSelectWithDefault(page, true));
+            leaderboard.ClearComponents();
             await msg.ModifyAsync(leaderboard);
         }
 
