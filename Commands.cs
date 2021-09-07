@@ -523,8 +523,8 @@ namespace Palantir
             {
                 response.ClearComponents();
                 response.AddComponents(new DiscordButtonComponent(DSharpPlus.ButtonStyle.Secondary, "last", "Previous", disabled),
-                    new DiscordButtonComponent(DSharpPlus.ButtonStyle.Primary, "next", "Next", disabled),
-                    new DiscordButtonComponent(DSharpPlus.ButtonStyle.Secondary, "nav", navText, true));
+                    new DiscordButtonComponent(DSharpPlus.ButtonStyle.Secondary, "nav", navText, true),
+                    new DiscordButtonComponent(DSharpPlus.ButtonStyle.Primary, "next", "Next", disabled));
             };
             setComponents("Navigate Sprites", false);
             DiscordMessage sent = null;
@@ -748,8 +748,8 @@ namespace Palantir
             return;
         }
 
-        [Description("See who's got the most bubbles.")]
-        [Command("Old-Leaderboard")]
+        [Description("See who's got the most bubbles. (old layout)")]
+        [Command("oldleaderboard")]
         [Aliases("oldlbd", "oldldb")]
         public async Task Leaderboard(CommandContext context, string mode = "bubbles")
         {
@@ -1711,6 +1711,16 @@ namespace Palantir
             var msg = new DiscordMessageBuilder().WithFile(System.IO.File.OpenRead("/home/pi/graph.csv"));
             await context.RespondAsync(msg);
             System.IO.File.Delete("/home/pi/graph.csv");
+        }
+
+        [Description("Get the average drop frequency")]
+        [Command("droprate")]
+        public async Task Droprate(CommandContext context)
+        {
+            const int attempts = 100;
+            double average = 0;
+            for (int i = 0; i < attempts; i++) average += Drops.CalculateDropTimeoutSeconds() / attempts;
+            await context.RespondAsync("Currently, drops appear in an average frequency of about " + Math.Round(average,0) + "s");
         }
 
         [Description("Generates a card of your profile")]

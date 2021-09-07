@@ -89,7 +89,7 @@ namespace Palantir
             }
         }
 
-        private static int CalculateDropTimeoutSeconds()
+        public static int CalculateDropTimeoutSeconds()
         {
             PalantirDbContext context = new PalantirDbContext();
 
