@@ -1728,11 +1728,10 @@ namespace Palantir
                 boosts = boostlist.ConvertAll(
                 boost => " x" + boost.Factor
                 + " (" + (Math.Round((boost.StartUTCS + boost.DurationS - now)/60000,1) + "min left)")).ToDelimitedString("\n");
-                boosts += "\n=============\n x" + boostlist.ConvertAll(boost => boost.Factor).Aggregate((a, s) => a * s).ToString() + " Boost active";
+                boosts += "\n=============\n **x" + boostlist.ConvertAll(boost => boost.Factor).Aggregate((a, s) => a * s).ToString() + " Boost active**";
             }
             else boosts = "No Drop Boosts active :(";
-            
-            await context.RespondAsync("Currently, drops appear in an average frequency of about " + Math.Round(average,0) + "s, considering following Drop Boosts:\n\n" + boosts);
+            await Program.SendEmbed(context.Channel, "Current Drop Rate", "ATM, drops appear in an average frequency of about " + Math.Round(average, 0) + "s\n\nThis includes following boosts:\n" + boosts + "\n\nYou can boost once a week with `>dropboost`.");
         }
         [Description("Boost the drop frequency. You can do this once a week.")]
         [Command("dropboost")]
@@ -1749,9 +1748,9 @@ namespace Palantir
             {
                 double now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
                 string left = TimeSpan.FromMilliseconds(Convert.ToInt32(TimeSpan.FromDays(7).TotalMilliseconds - (now - boost.StartUTCS))).ToString(@"dd\d\ hh\h\ mm\m\ ss\s");
-                await Program.SendEmbed(context.Channel, "Take your time...", "You can't boost yet!\nWait " + left);
+                await Program.SendEmbed(context.Channel, "Take your time...", "The cooldown after a drop boost is one week.\nYou can't boost yet!\nWait " + left);
             }
-            else await Program.SendEmbed(context.Channel, "Wooohoo!", "You boosted drops for one hour by the factor " + boost.Factor + "!\nCheck boosts with `>droprate`!" + (!perm.Patron ? "\n\nBecome a Typo Patron to boost by 1.5!\nhttps://patreon.com/skribbltypo" : ""));
+            else await Program.SendEmbed(context.Channel, "Wooohoo!", "You boosted drops for one hour by the factor " + boost.Factor + "!\nCheck boosts with `>droprate`, you can boost again in **one week**." + (!perm.Patron ? "\n\nBecome a Typo Patron to boost by 1.5!\nhttps://patreon.com/skribbltypo" : ""));
         }
 
 
