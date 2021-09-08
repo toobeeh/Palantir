@@ -112,7 +112,7 @@ namespace Palantir
 
         public static List<BoostEntity> GetActiveBoosts()
         {
-             int utcms = (int)DateTime.UtcNow.Ticks;
+            int utcms = (int)DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
             PalantirDbContext db = new();
             db.DropBoosts.RemoveRange(db.DropBoosts.Where(boost => boost.StartUTCMs + boost.DurationMs < utcms).ToArray());
             db.SaveChanges();

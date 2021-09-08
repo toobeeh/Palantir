@@ -1718,7 +1718,7 @@ namespace Palantir
         public async Task Droprate(CommandContext context)
         {
             const int attempts = 100;
-            double ms = DateTime.Now.Ticks;
+            double ms = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
             double average = 0;
             for (int i = 0; i < attempts; i++) average += Drops.CalculateDropTimeoutSeconds() / attempts;
             List<BoostEntity> boostlist = Drops.GetActiveBoosts();
