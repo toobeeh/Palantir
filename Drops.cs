@@ -123,7 +123,7 @@ namespace Palantir
             double now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
             PalantirDbContext db = new();
             // free up boosts that have expired one week, enabling boosting again
-            db.DropBoosts.RemoveRange(db.DropBoosts.Where(boost => boost.StartUTCS + TimeSpan.FromDays(7).TotalSeconds < now).ToArray());
+            db.DropBoosts.RemoveRange(db.DropBoosts.Where(boost => boost.StartUTCS + TimeSpan.FromDays(7).TotalMilliseconds < now).ToArray());
             db.SaveChanges();
             // get all active boosts
             List<BoostEntity> boosts = db.DropBoosts.Where(boost => boost.DurationS + boost.StartUTCS > now).ToList();
@@ -137,7 +137,7 @@ namespace Palantir
             {
                 Login = login,
                 Factor = factor,
-                DurationS = duration,
+                DurationS = duration * 1000,
                 StartUTCS = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()
             };
             bool inserted = false;

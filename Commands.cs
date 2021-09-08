@@ -1727,7 +1727,7 @@ namespace Palantir
             {
                 boosts = boostlist.ConvertAll(
                 boost => " x" + boost.Factor
-                + " (" + (boost.StartUTCS + boost.DurationS - now) + "s left)").ToDelimitedString("\n");
+                + " (" + (Math.Round((boost.StartUTCS + boost.DurationS - now)/1000,0) + "s left)")).ToDelimitedString("\n");
                 boosts += "\n=============\n x" + boostlist.ConvertAll(boost => boost.Factor).Aggregate((a, s) => a * s).ToString() + " Boost active";
             }
             else boosts = "No Drop Boosts active :(";
@@ -1748,7 +1748,7 @@ namespace Palantir
             if (!boosted)
             {
                 double now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-                string left = TimeSpan.FromSeconds(Convert.ToInt32(TimeSpan.FromDays(7).TotalSeconds - (now - boost.StartUTCS))).ToString(@"dd\.hh\:mm\:ss");
+                string left = TimeSpan.FromMilliseconds(Convert.ToInt32(TimeSpan.FromDays(7).TotalMilliseconds - (now - boost.StartUTCS))).ToString(@"dd\.hh\:mm\:ss");
                 await Program.SendEmbed(context.Channel, "Take your time...", "You can't boost yet!\nWait " + left);
             }
             else await Program.SendEmbed(context.Channel, "Wooohoo!", "You boosted drops for one hour by the factor " + boost.Factor + "!\nCheck boosts with `>droprate`!" + (!perm.Patron ? "\n\nBecome a Typo Patron to boost by 1.5!\nhttps://patreon.com/skribbltypo" : ""));
