@@ -145,9 +145,9 @@ namespace Palantir
     {
         [Key]
         public int Login { get; set; }
-        public int StartUTCMs { get; set; }
-        public int DurationMs { get; set; }
-        public int Factor { get; set; }
+        public int StartUTCS { get; set; }
+        public int DurationS { get; set; }
+        public double Factor { get; set; }
     }
 
     public class EventEntity

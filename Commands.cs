@@ -1715,10 +1715,10 @@ namespace Palantir
 
         [Description("Get the average drop frequency")]
         [Command("droprate")]
-        public async Task Droprate(CommandContext context)
+        public async Task DropRate(CommandContext context)
         {
             const int attempts = 100;
-            double ms = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+            double now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
             double average = 0;
             for (int i = 0; i < attempts; i++) average += Drops.CalculateDropTimeoutSeconds() / attempts;
             List<BoostEntity> boostlist = Drops.GetActiveBoosts();
@@ -1727,23 +1727,33 @@ namespace Palantir
             {
                 boosts = boostlist.ConvertAll(
                 boost => " x" + boost.Factor
-                + " (-" + Math.Round((ms - boost.StartUTCMs + boost.DurationMs) / 1000).ToString() + "s)").ToDelimitedString("\n");
-                boosts += "_________\n x" + boostlist.ConvertAll(boost => boost.Factor).Aggregate((a, s) => a * s).ToString() + " Boost active";
+                + " (" + (boost.StartUTCS + boost.DurationS - now) + "s left)").ToDelimitedString("\n");
+                boosts += "\n=============\n x" + boostlist.ConvertAll(boost => boost.Factor).Aggregate((a, s) => a * s).ToString() + " Boost active";
             }
             else boosts = "No Drop Boosts active :(";
             
             await context.RespondAsync("Currently, drops appear in an average frequency of about " + Math.Round(average,0) + "s, considering following Drop Boosts:\n\n" + boosts);
         }
-
-        [Description("Get the average drop frequency")]
-        [Command("boost")]
+        [Description("Boost the drop frequency. You can do this once a week.")]
+        [Command("dropboost")]
         public async Task DropBoost(CommandContext context)
         {
-            const int attempts = 100;
-            double average = 0;
-            for (int i = 0; i < attempts; i++) average += Drops.CalculateDropTimeoutSeconds() / attempts;
-            await context.RespondAsync("Currently, drops appear in an average frequency of about " + Math.Round(average, 0) + "s");
+            PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
+            int login = Convert.ToInt32(BubbleWallet.GetLoginOfMember(context.User.Id.ToString()));
+            double factor = 1.1;
+            if (perm.Patron) factor = 1.5;
+            if (perm.Patronizer) factor = 1.8;
+            BoostEntity boost;
+            bool boosted = Drops.AddBoost(login, factor, 60 * 60, out boost);
+            if (!boosted)
+            {
+                double now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+                string left = TimeSpan.FromSeconds(Convert.ToInt32(TimeSpan.FromDays(7).TotalSeconds - (now - boost.StartUTCS))).ToString(@"dd\.hh\:mm\:ss");
+                await Program.SendEmbed(context.Channel, "Take your time...", "You can't boost yet!\nWait " + left);
+            }
+            else await Program.SendEmbed(context.Channel, "Take your time...Wooohoo!", "You boosted drops for one hour by the factor " + boost.Factor + "!\nCheck boosts with `>droprate`!" + (!perm.Patron ? "\n\nBecome a Typo Patron to boost by 1.5!\nhttps://patreon.com/skribbltypo" : ""));
         }
+
 
         [Description("Generates a card of your profile")]
         [Command("card")]

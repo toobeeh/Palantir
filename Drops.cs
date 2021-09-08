@@ -107,18 +107,46 @@ namespace Palantir
             int min = 600 / count;
             if (min < 30) min = 30;
 
+            // modify by boosts
+            double boost = GetActiveBoosts().ConvertAll(boost => boost.Factor).Aggregate((a, x) => a * x);
+            min = Convert.ToInt32(Math.Round(min / boost, 0));
+
             return (new Random()).Next(min, 4 * min);
         }
 
         public static List<BoostEntity> GetActiveBoosts()
         {
-            int utcms = (int)DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+            int now = (int)DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
             PalantirDbContext db = new();
-            db.DropBoosts.RemoveRange(db.DropBoosts.Where(boost => boost.StartUTCMs + boost.DurationMs < utcms).ToArray());
+            // free up boosts that have expired one week, enabling boosting again
+            db.DropBoosts.RemoveRange(db.DropBoosts.Where(boost => boost.StartUTCS + 60 * 60 * 24 * 7 < now).ToArray());
             db.SaveChanges();
-            List<BoostEntity> boosts = db.DropBoosts.ToList();
+            // get all active boosts
+            List<BoostEntity> boosts = db.DropBoosts.Where(boost => boost.DurationS + boost.StartUTCS < now && boost.StartUTCS > now).ToList();
             db.Dispose();
             return boosts;
+        }
+
+        public static bool AddBoost(int login, double factor, int duration, out BoostEntity currentBoost)
+        {
+            BoostEntity boost = new()
+            {
+                Login = login,
+                Factor = factor,
+                DurationS = duration,
+                StartUTCS = (int)DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()
+            };
+            bool inserted = false;
+            PalantirDbContext db = new();
+            if(!db.DropBoosts.Any(boost => boost.Login == login))
+            {
+                db.DropBoosts.Add(boost);
+                db.SaveChanges();
+                inserted = true;
+            }
+            currentBoost = db.DropBoosts.FirstOrDefault(boost => boost.Login == login);
+            db.Dispose();
+            return inserted;
         }
     }
 }
