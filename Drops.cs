@@ -138,7 +138,7 @@ namespace Palantir
                 Login = login,
                 Factor = factor,
                 DurationS = duration,
-                StartUTCS = (int)DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()
+                StartUTCS = Convert.ToInt32(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds())
             };
             bool inserted = false;
             PalantirDbContext db = new();
