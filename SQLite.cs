@@ -26,7 +26,7 @@ namespace Palantir
         public DbSet<EventDropEntity> EventDrops { get; set; }
         public DbSet<EventCreditEntity> EventCredits { get; set; }
         public DbSet<TypoThemeEntity> Themes { get; set; }
-        public DbSet<BoostEntity> Boosts { get; set; }
+        public DbSet<BoostEntity> DropBoosts { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder options)
             => options.UseSqlite("Data Source=/home/pi/Database/palantir.db");
         protected override void OnModelCreating(ModelBuilder modelBuilder)

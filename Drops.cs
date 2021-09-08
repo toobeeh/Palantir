@@ -114,9 +114,9 @@ namespace Palantir
         {
              int utcms = (int)DateTime.UtcNow.Ticks;
             PalantirDbContext db = new();
-            db.Boosts.RemoveRange(db.Boosts.Where(boost => boost.StartUTCMs + boost.DurationMs < utcms).ToArray());
+            db.DropBoosts.RemoveRange(db.DropBoosts.Where(boost => boost.StartUTCMs + boost.DurationMs < utcms).ToArray());
             db.SaveChanges();
-            List<BoostEntity> boosts = db.Boosts.ToList();
+            List<BoostEntity> boosts = db.DropBoosts.ToList();
             db.Dispose();
             return boosts;
         }
