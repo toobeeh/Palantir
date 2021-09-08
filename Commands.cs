@@ -1718,9 +1718,31 @@ namespace Palantir
         public async Task Droprate(CommandContext context)
         {
             const int attempts = 100;
+            double ms = DateTime.Now.Ticks;
             double average = 0;
             for (int i = 0; i < attempts; i++) average += Drops.CalculateDropTimeoutSeconds() / attempts;
-            await context.RespondAsync("Currently, drops appear in an average frequency of about " + Math.Round(average,0) + "s");
+            List<BoostEntity> boostlist = Drops.GetActiveBoosts();
+            string boosts;
+            if (boostlist.Count > 0)
+            {
+                boosts = boostlist.ConvertAll(
+                boost => " x" + boost.Factor
+                + " (-" + Math.Round((ms - boost.StartUTCMs + boost.DurationMs) / 1000).ToString() + "s)").ToDelimitedString("\n");
+                boosts += "_________\n x" + boostlist.ConvertAll(boost => boost.Factor).Aggregate((a, s) => a * s).ToString() + " Boost active";
+            }
+            else boosts = "No Drop Boosts active :(";
+            
+            await context.RespondAsync("Currently, drops appear in an average frequency of about " + Math.Round(average,0) + "s, considering following Drop Boosts:\n\n" + boosts);
+        }
+
+        [Description("Get the average drop frequency")]
+        [Command("boost")]
+        public async Task DropBoost(CommandContext context)
+        {
+            const int attempts = 100;
+            double average = 0;
+            for (int i = 0; i < attempts; i++) average += Drops.CalculateDropTimeoutSeconds() / attempts;
+            await context.RespondAsync("Currently, drops appear in an average frequency of about " + Math.Round(average, 0) + "s");
         }
 
         [Description("Generates a card of your profile")]

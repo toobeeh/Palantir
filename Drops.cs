@@ -109,5 +109,16 @@ namespace Palantir
 
             return (new Random()).Next(min, 4 * min);
         }
+
+        public static List<BoostEntity> GetActiveBoosts()
+        {
+             int utcms = (int)DateTime.UtcNow.Ticks;
+            PalantirDbContext db = new();
+            db.Boosts.RemoveRange(db.Boosts.Where(boost => boost.StartUTCMs + boost.DurationMs < utcms).ToArray());
+            db.SaveChanges();
+            List<BoostEntity> boosts = db.Boosts.ToList();
+            db.Dispose();
+            return boosts;
+        }
     }
 }
