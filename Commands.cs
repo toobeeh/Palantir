@@ -1748,7 +1748,7 @@ namespace Palantir
             if (!boosted)
             {
                 double now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-                string left = TimeSpan.FromMilliseconds(Convert.ToInt32(TimeSpan.FromDays(7).TotalMilliseconds - (now - boost.StartUTCS))).ToString(@"dd\.hh\:mm\:ss");
+                string left = TimeSpan.FromMilliseconds(Convert.ToInt32(TimeSpan.FromDays(7).TotalMilliseconds - (now - boost.StartUTCS))).ToString(@"dd\dhh\hmm\mss\s");
                 await Program.SendEmbed(context.Channel, "Take your time...", "You can't boost yet!\nWait " + left);
             }
             else await Program.SendEmbed(context.Channel, "Wooohoo!", "You boosted drops for one hour by the factor " + boost.Factor + "!\nCheck boosts with `>droprate`!" + (!perm.Patron ? "\n\nBecome a Typo Patron to boost by 1.5!\nhttps://patreon.com/skribbltypo" : ""));
