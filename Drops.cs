@@ -109,7 +109,7 @@ namespace Palantir
 
             // modify by boosts
             double boost = GetActiveBoosts().ConvertAll(boost => boost.Factor).Aggregate((a, x) => a * x);
-            if(boost > 1) min = Convert.ToInt32(Math.Round(min / boost, 0));
+            //if(boost > 1) min = Convert.ToInt32(Math.Round(min / boost, 0));
 
             return (new Random()).Next(min, 4 * min);
         }
