@@ -159,5 +159,15 @@ namespace Palantir
             db.Dispose();
             return inserted;
         }
+
+        public static TimeSpan BoostCooldown(int login)
+        {
+            TimeSpan cooldown = new();
+            PalantirDbContext db = new();
+            if (!db.DropBoosts.Any(boost => boost.Login == login)) cooldown = TimeSpan.FromSeconds(0);
+            else cooldown = TimeSpan.FromMilliseconds(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - db.DropBoosts.FirstOrDefault(boost => boost.Login == login).StartUTCS);
+            db.Dispose();
+            return cooldown;
+        }
     }
 }

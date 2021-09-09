@@ -480,9 +480,11 @@ namespace Palantir
                     + (s.Special ? " :sparkles: " : ""));
             });
 
+            TimeSpan boostCooldown = Drops.BoostCooldown(Convert.ToInt32(login));
             embed.AddField("\u200b ",
-                "🔮 **" + credit + " ** / " + bubbles + " Bubbles\n"
-                + "💧 **" + drops + "** Drops caught");
+                "`🔮` **" + credit + " ** / " + bubbles + " Bubbles\n"
+                + "`💧` **" + drops + "** Drops caught\n"
+                + "`🔥` " + (boostCooldown.TotalSeconds > 0 ? "Next `>dropboost` in " + boostCooldown.ToString(@"dd\d\ hh\h\ mm\m\ ss\s") : "`>dropboost` available!"));
 
             PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
             string flags = "";
