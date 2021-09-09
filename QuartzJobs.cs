@@ -62,7 +62,9 @@ namespace Palantir.QuartzJobs
             });
             int count = onlineIDs.Count();
             dbcontext.Dispose();
-            await Program.Client.UpdateStatusAsync(new DiscordActivity(" " + count + " ppl on skribbl.io", ActivityType.Watching));
+            double boost = Math.Round(Drops.GetCurrentFactor(), 1);
+            string status = " " + count + " ppl " + (boost <= 1 ? "on skribbl.io" : "(x" + boost + " Boost)");
+            await Program.Client.UpdateStatusAsync(new DiscordActivity(status, ActivityType.Watching));
             await Program.Feanor.UpdatePatrons();
         }
     }

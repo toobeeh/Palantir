@@ -108,14 +108,21 @@ namespace Palantir
             if (min < 30) min = 30;
 
             // modify by boosts
-            List<BoostEntity> boosts = GetActiveBoosts();
-            if(boosts.Count > 0)
-            {
-                double factor = 1 + GetActiveBoosts().ConvertAll(boost => boost.Factor).Aggregate((a, x) => (a-1) + x);
-                if (factor > 1) min = Convert.ToInt32(Math.Round(min / factor, 0));
-            }
+            min = Convert.ToInt32(Math.Round(min / GetCurrentFactor(), 0));
             
             return (new Random()).Next(min, 4 * min);
+        }
+
+        public static double GetCurrentFactor()
+        {
+            List<BoostEntity> boosts = GetActiveBoosts();
+            if (boosts.Count > 0)
+            {
+                double factor = 1 + GetActiveBoosts().ConvertAll(boost => boost.Factor).Aggregate((a, x) => (a - 1) + x);
+                if (factor > 1) return factor;
+                else return 1;
+            }
+            else return 1;
         }
 
         public static List<BoostEntity> GetActiveBoosts()
