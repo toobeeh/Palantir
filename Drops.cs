@@ -118,7 +118,7 @@ namespace Palantir
             List<BoostEntity> boosts = GetActiveBoosts();
             if (boosts.Count > 0)
             {
-                double factor = 1 + GetActiveBoosts().ConvertAll(boost => boost.Factor).Aggregate((a, x) => (a - 1) + x);
+                double factor = GetActiveBoosts().ConvertAll(boost => boost.Factor).Aggregate((a, x) => (a - 1) + x);
                 if (factor > 1) return factor;
                 else return 1;
             }
