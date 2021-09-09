@@ -1728,7 +1728,7 @@ namespace Palantir
                 boosts = boostlist.ConvertAll(
                 boost => " x" + boost.Factor
                 + " (" + (Math.Round((boost.StartUTCS + boost.DurationS - now)/60000,1) + "min left)")).ToDelimitedString("\n");
-                boosts += "\n=============\n **x" + boostlist.ConvertAll(boost => boost.Factor).Aggregate((a, s) => a * s).ToString() + " Boost active**";
+                boosts += "\n=============\n **x" + boostlist.ConvertAll(boost => boost.Factor).Aggregate((a, s) => a + s).ToString() + " Boost active**";
             }
             else boosts = "No Drop Boosts active :(";
             await Program.SendEmbed(context.Channel, "Current Drop Rate", "ATM, drops appear in an average frequency of about " + Math.Round(average, 0) + "s\n\nThis includes following boosts:\n" + boosts + "\n\nYou can boost once a week with `>dropboost`.");
