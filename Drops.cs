@@ -165,7 +165,7 @@ namespace Palantir
             TimeSpan cooldown = new();
             PalantirDbContext db = new();
             if (!db.DropBoosts.Any(boost => boost.Login == login)) cooldown = TimeSpan.FromSeconds(0);
-            else cooldown = TimeSpan.FromMilliseconds(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - db.DropBoosts.FirstOrDefault(boost => boost.Login == login).StartUTCS);
+            else cooldown = TimeSpan.FromMilliseconds(db.DropBoosts.FirstOrDefault(boost => boost.Login == login).StartUTCS + TimeSpan.FromDays(7).TotalMilliseconds - DateTimeOffset.UtcNow.ToUnixTimeMilliseconds());
             db.Dispose();
             return cooldown;
         }

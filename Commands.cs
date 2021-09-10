@@ -1748,8 +1748,7 @@ namespace Palantir
             bool boosted = Drops.AddBoost(login, factor, 60 * 60, out boost);
             if (!boosted)
             {
-                double now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-                string left = TimeSpan.FromMilliseconds(Convert.ToInt32(TimeSpan.FromDays(7).TotalMilliseconds - (now - boost.StartUTCS))).ToString(@"dd\d\ hh\h\ mm\m\ ss\s");
+                string left = Drops.BoostCooldown(login).ToString(@"dd\d\ hh\h\ mm\m\ ss\s");
                 await Program.SendEmbed(context.Channel, "Take your time...", "The cooldown after a drop boost is one week.\nYou can't boost yet!\nWait " + left);
             }
             else await Program.SendEmbed(context.Channel, "Wooohoo!", "You boosted drops for one hour by the factor " + boost.Factor + "!\nCheck boosts with `>droprate`, you can boost again in **one week**." + (!perm.Patron ? "\n\nBecome a Typo Patron to boost by 1.5!\nhttps://patreon.com/skribbltypo" : ""));
