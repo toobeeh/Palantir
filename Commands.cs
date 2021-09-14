@@ -874,7 +874,7 @@ namespace Palantir
 
                 press = await interactivity.WaitForEventArgsAsync<DSharpPlus.EventArgs.ComponentInteractionCreateEventArgs>(
                     args => {
-                        if(args.User.Id != context.User.Id)
+                        if(args.Message.Id == msg.Id && args.User.Id != context.User.Id)
                         {
                             args.Interaction.CreateResponseAsync(DSharpPlus.InteractionResponseType.UpdateMessage);
                             args.Interaction.CreateFollowupMessageAsync(
