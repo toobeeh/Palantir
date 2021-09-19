@@ -1812,7 +1812,7 @@ namespace Palantir
             string profilebase64 = Convert.ToBase64String(client.DownloadData(dUser.AvatarUrl));
             double bgheight = 0;
             string background64 = "";
-            if(cardsettings.BackgroundImage != "")
+            if(cardsettings.BackgroundImage != "-")
             {
                 Image bg = Image.Load(System.IO.File.OpenRead("/home/pi/cardassets/imgur_" + cardsettings.BackgroundImage + ".bgb"));
                 double cropX, cropY, height, width;
