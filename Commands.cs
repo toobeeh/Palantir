@@ -1763,7 +1763,7 @@ namespace Palantir
             DiscordUser dUser = context.User;
             CustomCard cardsettings = new CustomCard
             {
-                BackgroundImage = "",
+                BackgroundImage = "-",
                 BackgroundOpacity = 0.7,
                 HeaderColor = "black",
                 DarkTextColor = "white",
