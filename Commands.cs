@@ -1740,6 +1740,11 @@ namespace Palantir
         public async Task DropBoost(CommandContext context)
         {
             PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
+            if (perm.Permanban)
+            {
+                await Program.SendEmbed(context.Channel, "So... you're one of the bad guys, huh?", "Users with a permanban obviously cant boost, lol");
+                return;
+            }
             int login = Convert.ToInt32(BubbleWallet.GetLoginOfMember(context.User.Id.ToString()));
             double factor = 1.1;
             if (perm.Patron) factor = 1.5;
