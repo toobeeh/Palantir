@@ -1257,7 +1257,7 @@ namespace Palantir
             PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
             if (!perm.Moderator && !perm.BotAdmin)
             {
-                await Program.SendEmbed(context.Channel, "Ts ts...", "This command is only available for higher beings.\n||Some call them Bot-Admins ;))||");
+                await Program.SendEmbed(context.Channel, "Ts ts...", "This command is only available for higher beings.\n||Some call them Bot-Mods ;))||");
                 return;
             }
 
@@ -1316,7 +1316,7 @@ namespace Palantir
             PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
             if (!perm.Moderator && !perm.BotAdmin)
             {
-                await Program.SendEmbed(context.Channel, "Ts ts...", "This command is only available for higher beings.\n||Some call them Bot-Admins ;))||");
+                await Program.SendEmbed(context.Channel, "Ts ts...", "This command is only available for higher beings.\n||Some call them Bot-Moderators ;))||");
                 return;
             }
 
@@ -1502,11 +1502,11 @@ namespace Palantir
             PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
             if (!perm.Patronizer)
             {
-                await Program.SendEmbed(context.Channel, "Gifts are beautiful!", "Looking to get Palantir & Typo Patron perks, but however can't pay a Patreon patronge?\n\nAsk a friend with the `Patronizer Package` subscription on Patreon to patronize you!\nYour friend just has to use the command `>patronize " + context.User.Id + "`.");
+                await Program.SendEmbed(context.Channel, "Gifts are beautiful!", "Looking to get Palantir & Typo Patron perks, but however can't pay a Patreon patronage?\n\nAsk a friend with the `Patronizer Package` subscription on Patreon to patronize you!\nYour friend just has to use the command `>patronize " + context.User.Id + "`.");
             }
             else if (gift_id == "")
             {
-                await Program.SendEmbed(context.Channel, "Oh, a patronizer! :o", "To gift patreon perks to a friend, use the command `>patronize id`, where id is the User-ID of your friend.\nYour friend can use `>patronize` to get their id!");
+                await Program.SendEmbed(context.Channel, "Oh, a patronizer! :o", "To gift Patreon perks to a friend, use the command `>patronize id`, where id is the User-ID of your friend.\nYour friend can use `>patronize` to get their id!");
             }
             else if(gift_id == "none")
             {
@@ -1756,7 +1756,7 @@ namespace Palantir
                 string left = Drops.BoostCooldown(login).ToString(@"dd\d\ hh\h\ mm\m\ ss\s");
                 await Program.SendEmbed(context.Channel, "Take your time...", "The cooldown after a drop boost is one week.\nYou can't boost yet!\nWait " + left);
             }
-            else await Program.SendEmbed(context.Channel, "Wooohoo!", "You boosted drops for one hour by the factor " + boost.Factor + "!\nCheck boosts with `>droprate`, you can boost again in **one week**." + (!perm.Patron ? "\n\nBecome a Typo Patron to boost by 1.5!\nhttps://patreon.com/skribbltypo" : ""));
+            else await Program.SendEmbed(context.Channel, "Wooohoo!", "You " + (perm.Patron ? "used Patron perks and " : "") + "boosted drops for one hour by the factor " + boost.Factor + "!\nCheck boosts with `>droprate`, you can boost again in **one week**.");
         }
 
 
