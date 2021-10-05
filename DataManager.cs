@@ -31,10 +31,21 @@ namespace Palantir
             {
                 Tether tether;
                 ObservedGuild guild = JsonConvert.DeserializeObject<ObservedGuild>(palantirEntity.Palantir);
-                if(Database.GuildSettings.Any(s => s.GuildID == guild.GuildID)) 
-                    tether = new Tether(guild, JsonConvert.DeserializeObject<GuildSettings>(Database.GuildSettings.FirstOrDefault(s=>s.GuildID == guild.GuildID).Settings));
-                else tether = new Tether(guild);
-                PalantirTethers.Add(tether);
+                // if more than one member connected
+                if(Database.Members.Count(
+                    member => JsonConvert.DeserializeObject<Member>(member.Member).Guilds.Any(
+                        added => added.GuildID == guild.GuildID)) > 1)
+                {
+                    if (Database.GuildSettings.Any(s => s.GuildID == guild.GuildID))
+                        tether = new Tether(guild, JsonConvert.DeserializeObject<GuildSettings>(Database.GuildSettings.FirstOrDefault(s => s.GuildID == guild.GuildID).Settings));
+                    else tether = new Tether(guild);
+                    PalantirTethers.Add(tether);
+                }
+                else
+                {
+                    Console.WriteLine("Didn't add guild " + guild.GuildName);
+                }
+
             }
 
             PalantirMembers = new List<Member>();
