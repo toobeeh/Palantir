@@ -4,6 +4,17 @@ using System.Text;
 
 namespace Palantir
 {
+    public class ImageMeta
+    {
+        public string name { get; set; }
+        public string author { get; set; }
+        public bool own { get; set; }
+        public string language { get; set; }
+        public string thumbnail { get; set; }
+        public string date { get; set; }
+        public string login { get; set; }
+        public string save { get; set; }
+    }
     public class Lobby
     {
         public string ID { get; set; }

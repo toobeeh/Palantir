@@ -1715,6 +1715,19 @@ namespace Palantir
             System.IO.File.Delete("/home/pi/graph.csv");
         }
 
+        [Description("Search the image cloud for an image")]
+        [Command("cloudsearch")]
+        public async Task Cloudsearch(CommandContext context, string name, string artist)
+        {
+            string login = BubbleWallet.GetLoginOfMember(context.User.Id.ToString());
+            ImageDbContext idb = new ImageDbContext("/home/pi/Webroot/rippro/userdb/udb" + login + ".db");
+            DrawingEntity[] drawings = idb.Drawings.Where(drawing =>
+                JsonConvert.DeserializeObject<ImageMeta>(drawing.meta).name == name 
+                && JsonConvert.DeserializeObject<ImageMeta>(drawing.meta).author == artist).ToArray();
+            ImageMeta meta = JsonConvert.DeserializeObject<ImageMeta>(drawings[0].meta);
+            await Program.SendEmbed(context.Channel, "**" + meta.name + ":** " + meta.author, meta.date);
+        }
+
         [Description("Get the average drop frequency")]
         [Command("droprate")]
         public async Task DropRate(CommandContext context)

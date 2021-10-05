@@ -8,6 +8,46 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Palantir
 {
+    public class ImageDbContext : DbContext
+    {
+        public DbSet<DrawCommandsEntity> DrawCommands { get; set; }
+        public DbSet<ImageBaseUriEntity> ImageURIs { get; set; }
+        public DbSet<DrawingEntity> Drawings { get; set; }
+
+        private string Path;
+
+        public ImageDbContext(string path)
+        {
+            Path = path;
+        }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder options)
+            => options.UseSqlite("Data Source=" + Path);
+    }
+
+    public class DrawCommandsEntity
+    {
+        [Key]
+        public string id { get; set; }
+        public string commands { get; set; }
+
+    }
+    public class ImageBaseUriEntity
+    {
+        [Key]
+        public string id { get; set; }
+        public string uri { get; set; }
+
+    }
+    public class DrawingEntity
+    {
+        public string login { get; set; }
+        [Key]
+        public string id { get; set; }
+        public string meta { get; set; }
+    }
+
+
     public class PalantirDbContext : DbContext
     {
         public DbSet<MemberEntity> Members { get; set; }
