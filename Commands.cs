@@ -1717,15 +1717,12 @@ namespace Palantir
 
         [Description("Search the image cloud for an image")]
         [Command("cloudsearch")]
-        public async Task Cloudsearch(CommandContext context, string name, string artist)
+        public async Task Cloudsearch(CommandContext context)
         {
             string login = BubbleWallet.GetLoginOfMember(context.User.Id.ToString());
             ImageDbContext idb = new ImageDbContext("/home/pi/Webroot/rippro/userdb/udb" + login + ".db");
-            DrawingEntity[] drawings = idb.Drawings.ToList().Where(drawing =>
-                JsonConvert.DeserializeObject<ImageMeta>(drawing.meta).name == name 
-                && JsonConvert.DeserializeObject<ImageMeta>(drawing.meta).author == artist).ToArray();
-            ImageMeta meta = JsonConvert.DeserializeObject<ImageMeta>(drawings[0].meta);
-            await Program.SendEmbed(context.Channel, "**" + meta.name + ":** " + meta.author, meta.date);
+            int count = idb.Drawings.Count();
+            await Program.SendEmbed(context.Channel,count.ToString(), "");
         }
 
         [Description("Get the average drop frequency")]
