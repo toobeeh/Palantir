@@ -33,7 +33,7 @@ namespace Palantir
                 ObservedGuild guild = JsonConvert.DeserializeObject<ObservedGuild>(palantirEntity.Palantir);
                 // if more than one member connected
                 if(Database.Members.Count(
-                    member => member.Member.Contains(guild.GuildID.ToString())) > 1)
+                    member => member.Member.Contains(guild.GuildID.ToString())) > 0)
                 {
                     if (Database.GuildSettings.Any(s => s.GuildID == guild.GuildID))
                         tether = new Tether(guild, JsonConvert.DeserializeObject<GuildSettings>(Database.GuildSettings.FirstOrDefault(s => s.GuildID == guild.GuildID).Settings));
