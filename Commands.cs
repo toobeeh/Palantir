@@ -1721,7 +1721,7 @@ namespace Palantir
         {
             string login = BubbleWallet.GetLoginOfMember(context.User.Id.ToString());
             ImageDbContext idb = new ImageDbContext("/home/pi/Webroot/rippro/userdb/udb" + login + ".db");
-            DrawingEntity[] drawings = idb.Drawings.Where(drawing =>
+            DrawingEntity[] drawings = idb.Drawings.ToList().Where(drawing =>
                 JsonConvert.DeserializeObject<ImageMeta>(drawing.meta).name == name 
                 && JsonConvert.DeserializeObject<ImageMeta>(drawing.meta).author == artist).ToArray();
             ImageMeta meta = JsonConvert.DeserializeObject<ImageMeta>(drawings[0].meta);
