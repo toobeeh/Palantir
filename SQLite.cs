@@ -59,6 +59,7 @@ namespace Palantir
         public DbSet<StatusEntity> Status { get; set; }
         public DbSet<OnlineSpritesEntity> OnlineSprites { get; set; }
         public DbSet<SpritesEntity> Sprites { get; set; }
+        public DbSet<SceneEntity> Scenes { get; set; }
         public DbSet<DropEntity> Drop { get; set; }
         public DbSet<PastDropEntity> PastDrops { get; set; }
         public DbSet<BubbleTraceEntity> BubbleTraces { get; set; }
@@ -91,6 +92,7 @@ namespace Palantir
         public string Emoji { get; set; }
         public string Patronize { get; set; }
         public string Customcard { get; set; }
+        public string Scenes { get; set; }
     }
     public class PalantirEntity
     {
@@ -107,6 +109,15 @@ namespace Palantir
         public int Cost { get; set; }
         public bool Special { get; set; }
         public int EventDropID { get; set; }
+        public string Artist { get; set; }
+    }
+    public class SceneEntity
+    {
+        [Key]
+        public int ID { get; set; }
+        public string Name { get; set; }
+        public string URL { get; set; }
+        public string Color { get; set; }
         public string Artist { get; set; }
     }
     public class ReportEntity

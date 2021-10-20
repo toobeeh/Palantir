@@ -151,6 +151,24 @@ namespace Palantir
             context.Dispose();
         }
 
+        public static SceneEntity AddScene(string name, string color, string artist, string url)
+        {
+            PalantirDbContext context = new PalantirDbContext();
+            int id = context.Scenes.Count() > 0 ? context.Scenes.Select(s => s.ID).Max() + 1 : 1;
+            SceneEntity scene = new SceneEntity()
+            {
+                Artist = artist,
+                Color = color,
+                URL = url,
+                Name = name,
+                ID = id
+            };
+            context.Scenes.Add(scene);
+            context.SaveChanges();
+            context.Dispose();
+            return scene;
+        }
+
         public static int CalculateCredit(string login)
         {
             int total = GetBubbles(login);
@@ -181,6 +199,18 @@ namespace Palantir
             string inventoryString = context.Members.FirstOrDefault(m => m.Login == login).Sprites;
             context.Dispose();
             return ParseSpriteInventory(inventoryString);
+        }
+
+        public static List<SceneEntity> GetSceneInventory(string login, bool onlyActive = false)
+        {
+            PalantirDbContext context = new PalantirDbContext();
+            string inventoryString = context.Members.FirstOrDefault(m => m.Login == login).Scenes;
+            context.Dispose();
+            List <SceneEntity> inv = inventoryString.Split(",")
+                .Where(id => !onlyActive || onlyActive && id.Contains("."))
+                .ToList()
+                .ConvertAll(id => context.Scenes.FirstOrDefault(scene => scene.ID.ToString() == id.Replace(".", "")));
+            return inv;
         }
 
         public static bool IsEarlyUser(string login)

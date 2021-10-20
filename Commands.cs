@@ -15,6 +15,7 @@ using System.Globalization;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats;
+using Microsoft.EntityFrameworkCore;
 
 namespace Palantir
 {
@@ -1362,6 +1363,70 @@ namespace Palantir
             await context.Channel.SendMessageAsync(embed: embed);
         }
 
+        [Description("Add a scene")]
+        [Command("addscene")]
+        public async Task AddScene(CommandContext context, [Description("The name of the scene")] string name, [Description("A color string (hex, rgb, name..)")] string color, [Description("Any string except '-' to set the sprite artist")] string artist = "")
+        {
+            PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
+            if (!perm.Moderator && !perm.BotAdmin)
+            {
+                await Program.SendEmbed(context.Channel, "Ts ts...", "This command is only available for higher beings.\n||Some call them Bot-Moderators ;))||");
+                return;
+            }
+
+            PalantirDbContext dbcontext = new PalantirDbContext();
+            if (context.Message.Attachments.Count <= 0 || !context.Message.Attachments[0].FileName.EndsWith(".gif"))
+            {
+                await Program.SendEmbed(context.Channel, "Hmm...", "There's no valid scene image attached. Scenes need to be a gif.");
+                return;
+            }
+            if (String.IsNullOrWhiteSpace(name))
+            {
+                await Program.SendEmbed(context.Channel, "Hmm...", "Something went wrong with the scene name.");
+                return;
+            }
+
+            // download scene
+            System.Net.WebClient client = new System.Net.WebClient();
+            client.DownloadFile(context.Message.Attachments[0].Url, "/home/pi/Webroot/scenes/scene" + name.Replace("'", "-") + ".gif");
+
+            string url = "https://tobeh.host/scenes/scene" + name.Replace("'", "-") + ".gif";
+            if (artist == "-") artist = "";
+            SceneEntity scene = BubbleWallet.AddScene(name.Replace("_"," "), color, artist, url);
+
+            DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
+            embed.Title = ":champagne:  Scene **" + name + "** with ID " + scene.ID + " was added!";
+            embed.Color = DiscordColor.Magenta;
+            embed.WithDescription("ID: " + scene.ID + "\nBuy the scene with `>paint [scene id]`\nUse a scene with `>show [scene id]`");
+            embed.WithThumbnail(scene.URL);
+
+            dbcontext.Dispose();
+            await context.Channel.SendMessageAsync(embed: embed);
+        }
+
+        [Description("View a scene")]
+        [Command("scene")]
+        public async Task ViewScene(CommandContext context, [Description("The ID of the scene")] int id)
+        {
+            PalantirDbContext db = new PalantirDbContext();
+            SceneEntity scene = db.Scenes.FirstOrDefault(scene => scene.ID == id);
+            if(scene is not null)
+            {
+                DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
+                embed.Title = ":park: **" + scene.Name + "**";
+                embed.Color = DiscordColor.Magenta;
+                embed.AddField("Costs:", "Your current scene price is **" + 20000 + "** bubbles.");
+                embed.WithDescription("**ID:** " + scene.ID + "\n" + (scene.Artist != "" ? "**Artist:** " + scene.Artist + "\n": "") + "**Font color: **" + scene.Color + "\n\nBuy ìt: `>paint " + id + "`, use it: `>show " + id + "´");
+                embed.WithThumbnail(scene.URL);
+                await context.Channel.SendMessageAsync(embed: embed);
+            }
+            else
+            {
+                await Program.SendEmbed(context.Channel, "That's no scene :(", "Nothing found for the scene id " + id);
+            }
+            db.Dispose();
+        }
+
         [Description("Set a member flag.")]
         [Command("flag")]
         public async Task Flag(CommandContext context, [Description("The id of the member to flag")] ulong id, [Description("The new flag")] int flag = -1)
@@ -1722,6 +1787,7 @@ namespace Palantir
             string login = BubbleWallet.GetLoginOfMember(context.User.Id.ToString());
             ImageDbContext idb = new ImageDbContext("/home/pi/Webroot/rippro/userdb/udb" + login + ".db");
             int count = idb.Drawings.Count();
+            //idb.Drawings.FromSqlInterpolated("select * from drawings where ")
             await Program.SendEmbed(context.Channel,count.ToString(), "");
         }
 
