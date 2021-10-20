@@ -347,6 +347,7 @@ namespace Palantir
 
         public static void SetOnlineSprite(string login, string lobbyKey, string lobbyPlayerID){
             List<SpriteProperty> playersprites = GetInventory(login).Where(i => i.Activated).ToList();
+            List<SceneProperty> scenes = GetSceneInventory(login, true);
             PalantirDbContext context = new PalantirDbContext();
 
             context.OnlineSprites.RemoveRange(context.OnlineSprites.Where(o => o.LobbyKey == lobbyKey && lobbyPlayerID == o.LobbyPlayerID));
@@ -356,6 +357,20 @@ namespace Palantir
             }
             catch (Exception e) { //Console.WriteLine("Error deleting sprite:\n" + e); 
             }
+
+            if(scenes.Count() > 0)
+            {
+                OnlineSpritesEntity sceneEntity = new OnlineSpritesEntity()
+                {
+                    LobbyKey = lobbyKey,
+                    LobbyPlayerID = lobbyPlayerID,
+                    Date = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss"),
+                    Slot = -1,
+                    ID = scenes[0].ID.ToString(),
+                };
+                context.OnlineSprites.Add(sceneEntity);
+            }
+
             foreach(SpriteProperty slot in playersprites)
             {
                 OnlineSpritesEntity newsprite = new OnlineSpritesEntity();

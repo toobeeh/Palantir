@@ -233,13 +233,13 @@ namespace Palantir
         {
             //return "```Discord lobbies are currently under maintenance. \nThis can take up to 48 hours.\nSorry & see ya!```";
             string message = "";
-            PalantirDbContext Database = new PalantirDbContext();
+            PalantirDbContext database = new PalantirDbContext();
 
             List<Lobby> Lobbies = new List<Lobby>();
-            List<ReportEntity> reports = Database.Reports.Distinct().Where(r=>r.ObserveToken == PalantirEndpoint.ObserveToken).ToList();
+            List<ReportEntity> reports = database.Reports.Distinct().Where(r=>r.ObserveToken == PalantirEndpoint.ObserveToken).ToList();
 
             List<PlayerStatus> OnlinePlayers = new List<PlayerStatus>();
-            List<StatusEntity> playerstatus = Database.Status.Distinct().ToList();
+            List<StatusEntity> playerstatus = database.Status.Distinct().ToList();
 
             reports.ForEach((r) =>
             {
@@ -266,12 +266,12 @@ namespace Palantir
                 }
             });
 
-            List<Lobby> GuildLobbies = new List<Lobby>();
+            List<Lobby> guildLobbies = new List<Lobby>();
             Lobbies.ForEach((l) =>
             {
                 if (l.GuildID.ToString() == PalantirEndpoint.GuildID && l.ObserveToken == PalantirEndpoint.ObserveToken)
                 {
-                    GuildLobbies.Add(l);
+                    guildLobbies.Add(l);
                 }
             });
 
@@ -285,7 +285,7 @@ namespace Palantir
 
             message += "\n";
             
-            GuildLobbies.ForEach((l) =>
+            guildLobbies.ForEach((l) =>
             {
                 string lobby = "";
                 string lobbyUniqueID = l.ID;
@@ -293,7 +293,6 @@ namespace Palantir
                 List<short> scores = new List<short>();
                 foreach(Player p in l.Players) { if (!scores.Contains(p.Score)) scores.Add(p.Score); }
                 scores.Sort((a, b) => b.CompareTo(a));
-
 
                 // get description if private
                 string lobbyDescription = "";
@@ -303,7 +302,7 @@ namespace Palantir
                     string json = "";
                     try
                     {
-                        json = Database.Lobbies.FirstOrDefault(lobbyEntity => lobbyEntity.LobbyID == l.ID).Lobby;
+                        json = database.Lobbies.FirstOrDefault(lobbyEntity => lobbyEntity.LobbyID == l.ID).Lobby;
                         ProvidedLobby lobbyraw = JsonConvert.DeserializeObject<ProvidedLobby>(json);
                         d = lobbyraw.Description;
                         if (d.Length > 100) d = d.Substring(0, 100);
@@ -311,8 +310,7 @@ namespace Palantir
                         if (lobbyraw.Restriction == "restricted") { l.Link = "Restricted Private Game"; }
                         else if (lobbyraw.Restriction != "unrestricted" && PalantirEndpoint.GuildID != lobbyraw.Restriction) { l.Link = "Server-Restricted Private Game"; }
                     }
-                    catch (Exception e) { 
-                        //Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > Cant parse description: " + json);
+                    catch { 
                         d = "";
                     };
 
@@ -320,7 +318,7 @@ namespace Palantir
                 }
 
                 // set id to index
-                l.ID = Convert.ToString(GuildLobbies.IndexOf(l)+1);
+                l.ID = Convert.ToString(guildLobbies.IndexOf(l) + 1);
                 lobby += "> **#" + l.ID + "**    " + (PalantirSettings.ShowAnimatedEmojis ? Emojis[(new Random()).Next(Emojis.Count-1)] : "") + "     " + l.Host + "   **|**  " + l.Language + "   **|**   Round " + l.Round + "   **|**   " + (l.Host == "skribbl.io" ? (l.Private ? "Private " + "\n> <" + l.Link + ">" : "Public") : "<" + l.Link + ">")  + "\n> " + l.Players.Count  + " Players \n";
                 
                 if (lobbyDescription != "") lobby += lobbyDescription.Replace("\\", "");
@@ -366,7 +364,7 @@ namespace Palantir
                             }
                             catch (Exception e)
                             {
-                                Console.WriteLine("Unhandled error setting Sprite for login " + login);
+                                Console.WriteLine("Unhandled error setting Sprite / Scene for login " + login);
                             }
                         }
                             
@@ -423,38 +421,37 @@ namespace Palantir
             });
 
             string searching = "";
-            foreach (PlayerStatus p in OnlinePlayers.Where(o => o.Status == "searching" && o.PlayerMember.Guilds.Any(g=>g.GuildID == PalantirEndpoint.GuildID) && !GuildLobbies.Any(l => l.Players.Any(p => p.ID == o.PlayerMember.UserID)))){
+            foreach (PlayerStatus p in OnlinePlayers.Where(o => o.Status == "searching" && o.PlayerMember.Guilds.Any(g=>g.GuildID == PalantirEndpoint.GuildID) && !guildLobbies.Any(l => l.Players.Any(p => p.ID == o.PlayerMember.UserID)))){
                 try { searching += Formatter.Sanitize(p.PlayerMember.UserName) + ", "; } catch {}
             }
 
             string waiting = "";
-            foreach (PlayerStatus p in OnlinePlayers.Where(o => o.Status == "waiting" && o.PlayerMember.Guilds.Any(g => g.GuildID == PalantirEndpoint.GuildID) && !GuildLobbies.Any(l => l.Players.Any(p => p.ID == o.PlayerMember.UserID))))
+            foreach (PlayerStatus p in OnlinePlayers.Where(o => o.Status == "waiting" && o.PlayerMember.Guilds.Any(g => g.GuildID == PalantirEndpoint.GuildID) && !guildLobbies.Any(l => l.Players.Any(p => p.ID == o.PlayerMember.UserID))))
             {
                 try { waiting += Formatter.Sanitize(p.PlayerMember.UserName) + ", "; } catch {}
             }
 
             if (searching.Length > 0) message += "<a:onmyway:718807079305084939>   " + searching[0..^2];
-            if (waiting.Length > 0 && GuildLobbies.Count > 0) message += "\n\n:octagonal_sign:   " + waiting[0..^2];
-            if (PalantirSettings.ShowAnimatedEmojis && GuildLobbies.Count == 0 && searching.Length == 0) message += "\n <a:alone:718807079434846238>\n";
-            if (GuildLobbies.Count == 0 && searching.Length == 0) message += PalantirSettings.IdleMessage;
+            if (waiting.Length > 0 && guildLobbies.Count > 0) message += "\n\n:octagonal_sign:   " + waiting[0..^2];
+            if (PalantirSettings.ShowAnimatedEmojis && guildLobbies.Count == 0 && searching.Length == 0) message += "\n <a:alone:718807079434846238>\n";
+            if (guildLobbies.Count == 0 && searching.Length == 0) message += PalantirSettings.IdleMessage;
 
-            GuildLobbiesEntity entity = Database.GuildLobbies.FirstOrDefault(g => g.GuildID == PalantirEndpoint.GuildID);
+            GuildLobbiesEntity entity = database.GuildLobbies.FirstOrDefault(g => g.GuildID == PalantirEndpoint.GuildID);
 
             if (entity != null)
             {
-                entity.Lobbies = JsonConvert.SerializeObject(GuildLobbies);
-                Database.SaveChanges();
+                entity.Lobbies = JsonConvert.SerializeObject(guildLobbies);
+                database.SaveChanges();
             }
             else
             {
                 entity = new GuildLobbiesEntity();
                 entity.GuildID = PalantirEndpoint.GuildID;
-                entity.Lobbies = JsonConvert.SerializeObject(GuildLobbies);
-                Database.GuildLobbies.Add(entity);
-                Database.SaveChanges();
+                entity.Lobbies = JsonConvert.SerializeObject(guildLobbies);
+                database.GuildLobbies.Add(entity);
+                database.SaveChanges();
             }
-            Database.Dispose();
-            //message += "```fix\nVote NOW for the next Palantir profile picture!\n```https://tobeh.host/profile-contest/ ";
+            database.Dispose();
             return message;
         }
     }
