@@ -1472,39 +1472,39 @@ namespace Palantir
             }
         }
 
-        //[Description("Use a scene")]
-        //[Command("show")]
-        //public async Task UseScene(CommandContext context, [Description("The ID of the scene")] int id)
-        //{
-        //    string login = BubbleWallet.GetLoginOfMember(context.Member.Id.ToString());
-        //    PermissionFlag flags = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.Member));
-        //    if (flags.BotAdmin)
-        //    {
-        //        List<SceneProperty> inventory = BubbleWallet.GetSceneInventory(login);
+        [Description("Use a scene")]
+        [Command("show")]
+        public async Task UseScene(CommandContext context, [Description("The ID of the scene")] int id)
+        {
+            string login = BubbleWallet.GetLoginOfMember(context.Member.Id.ToString());
+            PermissionFlag flags = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.Member));
+            if (flags.BotAdmin)
+            {
+                List<SceneProperty> inventory = BubbleWallet.GetSceneInventory(login);
 
-        //        if (!inventory.Any(scene => scene.ID == id))
-        //        {
-        //            await Program.SendEmbed(context.Channel, "Yeet!", "You don't own that scene - yet!");
-        //        }
-        //        else
-        //        {
-        //            inventory.ForEach(scene => scene.Activated = scene.ID == id);
-        //            BubbleWallet.SetSceneInventory(login, inventory);
+                if (!inventory.Any(scene => scene.ID == id))
+                {
+                    await Program.SendEmbed(context.Channel, "Yeet!", "You don't own that scene - yet!");
+                }
+                else
+                {
+                    inventory.ForEach(scene => scene.Activated = scene.ID == id);
+                    BubbleWallet.SetSceneInventory(login, inventory);
 
-        //            DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
-        //            SceneProperty scene = inventory.FirstOrDefault(scene => scene.ID == id);
-        //            embed.Title = "So pretty!";
-        //            embed.Color = DiscordColor.Magenta;
-        //            embed.WithDescription("Your skribbl scene is now ** " + scene.Name + "**!");
-        //            embed.WithImageUrl(scene.URL);
-        //            await context.Channel.SendMessageAsync(embed: embed);
-        //        }
-        //    }
-        //    else
-        //    {
-        //        await Program.SendEmbed(context.Channel, "In production..", "Not allowed to use this yet.");
-        //    }
-        //}
+                    DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
+                    SceneProperty scene = inventory.FirstOrDefault(scene => scene.ID == id);
+                    embed.Title = "So pretty!";
+                    embed.Color = DiscordColor.Magenta;
+                    embed.WithDescription("Your skribbl scene is now ** " + scene.Name + "**!");
+                    embed.WithImageUrl(scene.URL);
+                    await context.Channel.SendMessageAsync(embed: embed);
+                }
+            }
+            else
+            {
+                await Program.SendEmbed(context.Channel, "In production..", "Not allowed to use this yet.");
+            }
+        }
 
         [Description("Set a member flag.")]
         [Command("flag")]
