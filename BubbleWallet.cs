@@ -202,7 +202,7 @@ namespace Palantir
         {
             PalantirDbContext db = new();
             db.Members.FirstOrDefault(member => member.Login == login).Scenes = inv
-                .ConvertAll(scene => scene.Activated ? "." : "" + scene.ID)
+                .ConvertAll(scene => (scene.Activated ? "." : "") + scene.ID.ToString())
                 .ToDelimitedString(",");
             db.SaveChanges();
             db.Dispose();
