@@ -1427,54 +1427,53 @@ namespace Palantir
             db.Dispose();
         }
 
-        //[Description("Buy a scene")]
-        //[Command("paint")]
-        //[Aliases("buyscene, bs")]
-        //public async Task BuyScene(CommandContext context, [Description("The ID of the scene")] int id)
-        //{
-        //    string login = BubbleWallet.GetLoginOfMember(context.Member.Id.ToString());
-        //    PermissionFlag flags = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.Member));
-        //    if (flags.BotAdmin)
-        //    {
-        //        List<SceneEntity> available = BubbleWallet.GetAvailableScenes();
-        //        List<SceneProperty> inventory = BubbleWallet.GetSceneInventory(login);
-        //        int credit = flags.BotAdmin ? int.MaxValue : BubbleWallet.CalculateCredit(login);
-        //        int sceneCost = 30000;
-        //        inventory.ForEach(scene => sceneCost *= 2);
+        [Description("Buy a scene")]
+        [Command("paint")]
+        public async Task BuyScene(CommandContext context, [Description("The ID of the scene")] int id)
+        {
+            string login = BubbleWallet.GetLoginOfMember(context.Member.Id.ToString());
+            PermissionFlag flags = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.Member));
+            if (flags.BotAdmin)
+            {
+                List<SceneEntity> available = BubbleWallet.GetAvailableScenes();
+                List<SceneProperty> inventory = BubbleWallet.GetSceneInventory(login);
+                int credit = flags.BotAdmin ? int.MaxValue : BubbleWallet.CalculateCredit(login);
+                int sceneCost = 30000;
+                inventory.ForEach(scene => sceneCost *= 2);
 
-        //        if (!available.Any(scene => scene.ID == id)){
-        //            await Program.SendEmbed(context.Channel, "Uhm..", "I don't know that scene :(\nCheck the ID!");
-        //        }
-        //        else if(inventory.Any(scene => scene.ID == id))
-        //        {
-        //            await Program.SendEmbed(context.Channel, ":o", "You already own this scene!");
-        //        }
-        //        else if(credit < sceneCost)
-        //        {
-        //            await Program.SendEmbed(context.Channel, "👀", "You need at least " + sceneCost + " to buy a scene!\nScene cost increases by *2 with every scene you buy.");
-        //        }
-        //        else
-        //        {
-        //            BubbleWallet.BuyScene(login, id);
-        //            SceneEntity scene = available.FirstOrDefault(scene => scene.ID == id);
+                if (!available.Any(scene => scene.ID == id))
+                {
+                    await Program.SendEmbed(context.Channel, "Uhm..", "I don't know that scene :(\nCheck the ID!");
+                }
+                else if (inventory.Any(scene => scene.ID == id))
+                {
+                    await Program.SendEmbed(context.Channel, ":o", "You already own this scene!");
+                }
+                else if (credit < sceneCost)
+                {
+                    await Program.SendEmbed(context.Channel, "👀", "You need at least " + sceneCost + " to buy a scene!\nScene cost increases by *2 with every scene you buy.");
+                }
+                else
+                {
+                    BubbleWallet.BuyScene(login, id);
+                    SceneEntity scene = available.FirstOrDefault(scene => scene.ID == id);
 
-        //            DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
-        //            embed.Title = "Hypeeee!";
-        //            embed.Color = DiscordColor.Magenta;
-        //            embed.WithDescription("You unlocked ** " + scene.Name + "**!\n" + "Use it with: `>show " + id + "`");
-        //            embed.WithImageUrl(scene.URL);
-        //            await context.Channel.SendMessageAsync(embed: embed);
-        //        }
-        //    }
-        //    else
-        //    {
-        //        await Program.SendEmbed(context.Channel, "In production..", "Not allowed to use this yet.");
-        //    }
-        //}
+                    DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
+                    embed.Title = "Hypeeee!";
+                    embed.Color = DiscordColor.Magenta;
+                    embed.WithDescription("You unlocked ** " + scene.Name + "**!\n" + "Use it with: `>show " + id + "`");
+                    embed.WithImageUrl(scene.URL);
+                    await context.Channel.SendMessageAsync(embed: embed);
+                }
+            }
+            else
+            {
+                await Program.SendEmbed(context.Channel, "In production..", "Not allowed to use this yet.");
+            }
+        }
 
         //[Description("Use a scene")]
         //[Command("show")]
-        //[Aliases("usescene, us")]
         //public async Task UseScene(CommandContext context, [Description("The ID of the scene")] int id)
         //{
         //    string login = BubbleWallet.GetLoginOfMember(context.Member.Id.ToString());
