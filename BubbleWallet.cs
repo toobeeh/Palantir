@@ -366,7 +366,8 @@ namespace Palantir
                     LobbyPlayerID = lobbyPlayerID,
                     Date = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss"),
                     Slot = -1,
-                    ID = scenes[0].ID.ToString(),
+                    ID = lobbyKey + lobbyPlayerID + "scene",
+                    Sprite = scenes[0].ID.ToString(),
                 };
                 context.OnlineSprites.Add(sceneEntity);
             }
