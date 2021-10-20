@@ -177,7 +177,35 @@ namespace Palantir
                 if(s.EventDropID <= 0) total -= s.Cost;
             });
             total += GetDrops(login) * 50;
+            total += GetSceneInventory(login, false).Count();
+            int nextPrice = 30000;
+            foreach(SceneEntity scene in GetSceneInventory(login, false))
+            {
+                total -= nextPrice;
+                nextPrice *= 2;
+            }
             return total;
+        }
+
+        public static void BuyScene(string login, int id)
+        {
+            PalantirDbContext db = new();
+            MemberEntity member = db.Members.FirstOrDefault(member => member.Login == login);
+            string sceneInv = GetSceneInventory(login).ConvertAll(scene => scene.Activated ? "." : "" + scene.ID.ToString()).ToDelimitedString(",");
+            sceneInv += id.ToString();
+            member.Scenes = sceneInv;
+            db.SaveChanges();
+            db.Dispose();
+        }
+
+        public static void SetSceneInventory(string login, List<SceneProperty> inv)
+        {
+            PalantirDbContext db = new();
+            db.Members.FirstOrDefault(member => member.Login == login).Scenes = inv
+                .ConvertAll(scene => scene.Activated ? "." : "" + scene.ID)
+                .ToDelimitedString(",");
+            db.SaveChanges();
+            db.Dispose();
         }
 
         public static int GetEventCredit(string login, int eventDropID)
@@ -192,6 +220,13 @@ namespace Palantir
             context.Dispose();
             return credit;
         }
+        public static List<SceneEntity> GetAvailableScenes()
+        {
+            PalantirDbContext db = new PalantirDbContext();
+            List<SceneEntity> scenes = db.Scenes.ToList();
+            db.Dispose();
+            return scenes;
+        }
 
         public static List<SpriteProperty> GetInventory(string login)
         {
@@ -201,15 +236,17 @@ namespace Palantir
             return ParseSpriteInventory(inventoryString);
         }
 
-        public static List<SceneEntity> GetSceneInventory(string login, bool onlyActive = false)
+        public static List<SceneProperty> GetSceneInventory(string login, bool onlyActive = false)
         {
             PalantirDbContext context = new PalantirDbContext();
             string inventoryString = context.Members.FirstOrDefault(m => m.Login == login).Scenes;
             context.Dispose();
-            List <SceneEntity> inv = inventoryString.Split(",")
+            List <SceneProperty> inv = inventoryString.Split(",")
                 .Where(id => !onlyActive || onlyActive && id.Contains("."))
                 .ToList()
-                .ConvertAll(id => context.Scenes.FirstOrDefault(scene => scene.ID.ToString() == id.Replace(".", "")));
+                .ConvertAll(id => GetSceneProperty(
+                    context.Scenes.FirstOrDefault(scene => scene.ID.ToString() == id.Replace(".", "")), id.Contains('.')
+                    ));
             return inv;
         }
 
@@ -399,6 +436,19 @@ namespace Palantir
             return true;
         }
 
+        public static SceneProperty GetSceneProperty(SceneEntity scene, bool activated)
+        {
+            return new SceneProperty()
+            {
+                Activated = activated,
+                Artist = scene.Artist,
+                Color = scene.Color,
+                ID = scene.ID,
+                Name = scene.Name,
+                URL = scene.URL
+            };
+        }
+
     }
 
     public class Sprite
@@ -431,5 +481,10 @@ namespace Palantir
             Activated = activated;
             Slot = activated ? slot : -1;
         }
+    }
+
+    public class SceneProperty : SceneEntity
+    {
+        public bool Activated;
     }
 }
