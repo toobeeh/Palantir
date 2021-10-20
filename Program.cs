@@ -89,7 +89,7 @@ namespace Palantir
                 .WithIdentity("Picture Updater")
                 .Build();
             ITrigger pictureTrigger = TriggerBuilder.Create()
-                .StartNow().WithCronSchedule("0 0 8,20 ? * * *")
+                .StartNow().WithCronSchedule("0 8,20 * * *")
                 .Build();
             IJobDetail bubbleCounter = JobBuilder.Create<BubbleCounter>()
                 .WithIdentity("Bubble Counter")
