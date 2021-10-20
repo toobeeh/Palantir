@@ -498,6 +498,12 @@ namespace Palantir
             if (perm.Patronizer) flags += "`🎁 Patronizer`\n";
             if (flags.Length > 0) embed.AddField("Flags:", flags);
 
+            List<SceneProperty> sceneInv = BubbleWallet.GetSceneInventory(login);
+            if(sceneInv.Count > 0)
+            {
+                embed.AddField("Scenes:", sceneInv.ConvertAll(scene => "#" + scene.ID + " - " + scene.Name).ToDelimitedString("\n"));
+            }
+
             string selected = "";
             inventory.Where(spt => spt.Activated).OrderBy(slot => slot.Slot).ForEach(sprite =>
             {
