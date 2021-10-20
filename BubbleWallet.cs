@@ -245,7 +245,7 @@ namespace Palantir
                 .Where(id => !onlyActive || onlyActive && id.Contains("."))
                 .ToList()
                 .ConvertAll(id => GetSceneProperty(
-                    context.Scenes.FirstOrDefault(scene => scene.ID.ToString() == id.Replace(".", "")), id.Contains('.')
+                    context.Scenes.ToList().FirstOrDefault(scene => scene.ID.ToString() == id.Replace(".", "")), id.Contains('.')
                     ));
             context.Dispose();
             return inv;
