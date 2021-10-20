@@ -240,7 +240,6 @@ namespace Palantir
         {
             PalantirDbContext context = new PalantirDbContext();
             string inventoryString = context.Members.FirstOrDefault(m => m.Login == login).Scenes;
-            context.Dispose();
             if (String.IsNullOrEmpty(inventoryString)) return new List<SceneProperty>();
             List<SceneProperty> inv = inventoryString.Split(",")
                 .Where(id => !onlyActive || onlyActive && id.Contains("."))
@@ -248,6 +247,7 @@ namespace Palantir
                 .ConvertAll(id => GetSceneProperty(
                     context.Scenes.FirstOrDefault(scene => scene.ID.ToString() == id.Replace(".", "")), id.Contains('.')
                     ));
+            context.Dispose();
             return inv;
         }
 
