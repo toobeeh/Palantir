@@ -1482,7 +1482,7 @@ namespace Palantir
             {
                 List<SceneProperty> inventory = BubbleWallet.GetSceneInventory(login);
 
-                if (!inventory.Any(scene => scene.ID == id))
+                if (!inventory.Any(scene => scene.ID == id) && id != 0)
                 {
                     await Program.SendEmbed(context.Channel, "Yeet!", "You don't own that scene - yet!");
                 }
@@ -1493,10 +1493,10 @@ namespace Palantir
 
                     DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
                     SceneProperty scene = inventory.FirstOrDefault(scene => scene.ID == id);
-                    embed.Title = "So pretty!";
+                    embed.Title = id == 0 ? "Ok then" : "So pretty!";
                     embed.Color = DiscordColor.Magenta;
-                    embed.WithDescription("Your skribbl scene is now ** " + scene.Name + "**!");
-                    embed.WithImageUrl(scene.URL);
+                    embed.WithDescription(id == 0 ? "Unset your skribbl scene." : "Your skribbl scene is now ** " + scene.Name + "**!");
+                    if(id != 0) embed.WithImageUrl(scene.URL);
                     await context.Channel.SendMessageAsync(embed: embed);
                 }
             }
