@@ -1412,10 +1412,14 @@ namespace Palantir
             SceneEntity scene = db.Scenes.FirstOrDefault(scene => scene.ID == id);
             if(scene is not null)
             {
+                List<SceneProperty> inventory = BubbleWallet.GetSceneInventory(BubbleWallet.GetLoginOfMember(context.User.Id.ToString()));
+                int sceneCost = 30000;
+                inventory.ForEach(scene => sceneCost *= 2);
+
                 DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
                 embed.Title = ":park: **" + scene.Name + "**";
                 embed.Color = DiscordColor.Magenta;
-                embed.AddField("Costs:", "Your current scene price is **" + 20000 + "** bubbles.");
+                embed.AddField("Costs:", "Your current scene price is **" + sceneCost + "** bubbles.");
                 embed.WithDescription("**ID:** " + scene.ID + "\n" + (scene.Artist != "" ? "**Artist:** " + scene.Artist + "\n": "") + "**Font color: **" + scene.Color + "\n\nBuy it: `>paint " + id + "`, use it: `>show " + id + "`");
                 embed.WithImageUrl(scene.URL);
                 await context.Channel.SendMessageAsync(embed: embed);
