@@ -241,7 +241,8 @@ namespace Palantir
             PalantirDbContext context = new PalantirDbContext();
             string inventoryString = context.Members.FirstOrDefault(m => m.Login == login).Scenes;
             context.Dispose();
-            List <SceneProperty> inv = inventoryString.Split(",")
+            if (String.IsNullOrEmpty(inventoryString)) return new List<SceneProperty>();
+            List<SceneProperty> inv = inventoryString.Split(",")
                 .Where(id => !onlyActive || onlyActive && id.Contains("."))
                 .ToList()
                 .ConvertAll(id => GetSceneProperty(
