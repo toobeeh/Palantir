@@ -19,6 +19,7 @@ namespace Palantir
     class Program
     {
         public static DataManager Feanor;
+        public static DiscordGuild TypoTestground;
         public static DiscordClient Client { get; private set; }
         public static CommandsNextExtension Commands { get; private set; }
         public static InteractivityExtension Interactivity;
@@ -121,6 +122,8 @@ namespace Palantir
 
             Drops.StartDropping();
             Console.WriteLine("Started dropping cool stuff!");
+
+            TypoTestground = await Client.GetGuildAsync(779435254225698827);
 
             Console.WriteLine("All done!");
             await Task.Delay(-1);
@@ -309,5 +312,22 @@ namespace Palantir
             return result;
         }
     }
-    
+
+    public sealed class RequireBeta : DSharpPlus.CommandsNext.Attributes.CheckBaseAttribute
+    {
+        //
+        // Zusammenfassung:
+        //     Defines that this command is only usable within a guild.
+        public RequireBeta()
+        {
+        }
+
+        public override Task<bool> ExecuteCheckAsync(CommandContext ctx, bool help)
+        {
+            return Task.FromResult(
+                Program.TypoTestground.GetMemberAsync(ctx.User.Id).GetAwaiter().GetResult().Roles.Any(role => role.Id == 817758652274311168)
+            );
+        }
+    }
+
 }

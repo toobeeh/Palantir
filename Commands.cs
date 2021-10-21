@@ -1412,6 +1412,7 @@ namespace Palantir
 
         [Description("View a scene")]
         [Command("scene")]
+        [RequireBeta()]
         public async Task ViewScene(CommandContext context, [Description("The ID of the scene")] int id)
         {
             PalantirDbContext db = new PalantirDbContext();
