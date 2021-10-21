@@ -291,7 +291,7 @@ namespace Palantir.Commands
         public async Task BuyScene(CommandContext context, [Description("The ID of the scene")] int id)
         {
             string login = BubbleWallet.GetLoginOfMember(context.Member.Id.ToString());
-            PermissionFlag flags = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.Member));
+            PermissionFlag flags = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
             List<SceneEntity> available = BubbleWallet.GetAvailableScenes();
             List<SceneProperty> inventory = BubbleWallet.GetSceneInventory(login);
             int credit = flags.BotAdmin ? int.MaxValue : BubbleWallet.CalculateCredit(login);
@@ -330,7 +330,7 @@ namespace Palantir.Commands
         public async Task UseScene(CommandContext context, [Description("The ID of the scene")] int id)
         {
             string login = BubbleWallet.GetLoginOfMember(context.Member.Id.ToString());
-            PermissionFlag flags = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.Member));
+            PermissionFlag flags = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
             List<SceneProperty> inventory = BubbleWallet.GetSceneInventory(login);
 
             if (!inventory.Any(scene => scene.ID == id) && id != 0)
