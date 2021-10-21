@@ -101,7 +101,7 @@ namespace Palantir
                 .WithIdentity("Picture Updater")
                 .Build();
             ITrigger pictureTrigger = TriggerBuilder.Create()
-                .StartNow().WithCronSchedule("0 0 8,20 * * *")
+                .StartNow().WithCronSchedule("0 0 8,20 ? * * *")
                 .Build();
             IJobDetail bubbleCounter = JobBuilder.Create<BubbleCounter>()
                 .WithIdentity("Bubble Counter")
@@ -345,7 +345,8 @@ namespace Palantir
 
         public override Task<bool> ExecuteCheckAsync(CommandContext ctx, bool help)
         {
-            bool isBetaTester = Program.TypoTestground.GetMemberAsync(ctx.User.Id).GetAwaiter().GetResult().Roles.Any(role => role.Id == 817758652274311168);
+            bool isBetaTester = Program.TypoTestground.GetMemberAsync(ctx.User.Id).GetAwaiter().GetResult().Roles.Any(role => role.Id == 817758652274311168)
+                || ctx.User.Id == 334048043638849536;
             if (!isBetaTester) 
                 Program.SendEmbed(ctx.Channel, "Woah, fragile!", "This command is under development and only available for beta testers.").GetAwaiter();
             return Task.FromResult(isBetaTester);
