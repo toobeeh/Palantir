@@ -1371,6 +1371,7 @@ namespace Palantir
 
         [Description("Add a scene")]
         [Command("addscene")]
+        [RequirePermissionFlag((byte) 16)] // 2 -> admin
         public async Task AddScene(CommandContext context, [Description("The name of the scene")] string name, [Description("A color string (hex, rgb, name..)")] string color, [Description("Any string except '-' to set the sprite artist")] string artist = "")
         {
             PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
@@ -1440,80 +1441,68 @@ namespace Palantir
 
         [Description("Buy a scene")]
         [Command("paint")]
+        [RequireBeta()]
         public async Task BuyScene(CommandContext context, [Description("The ID of the scene")] int id)
         {
             string login = BubbleWallet.GetLoginOfMember(context.Member.Id.ToString());
             PermissionFlag flags = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.Member));
-            if (flags.BotAdmin)
+            List<SceneEntity> available = BubbleWallet.GetAvailableScenes();
+            List<SceneProperty> inventory = BubbleWallet.GetSceneInventory(login);
+            int credit = flags.BotAdmin ? int.MaxValue : BubbleWallet.CalculateCredit(login);
+            int sceneCost = 30000;
+            inventory.ForEach(scene => sceneCost *= 2);
+
+            if (!available.Any(scene => scene.ID == id))
             {
-                List<SceneEntity> available = BubbleWallet.GetAvailableScenes();
-                List<SceneProperty> inventory = BubbleWallet.GetSceneInventory(login);
-                int credit = flags.BotAdmin ? int.MaxValue : BubbleWallet.CalculateCredit(login);
-                int sceneCost = 30000;
-                inventory.ForEach(scene => sceneCost *= 2);
-
-                if (!available.Any(scene => scene.ID == id))
-                {
-                    await Program.SendEmbed(context.Channel, "Uhm..", "I don't know that scene :(\nCheck the ID!");
-                }
-                else if (inventory.Any(scene => scene.ID == id))
-                {
-                    await Program.SendEmbed(context.Channel, ":o", "You already own this scene!");
-                }
-                else if (credit < sceneCost)
-                {
-                    await Program.SendEmbed(context.Channel, "👀", "You need at least " + sceneCost + " to buy a scene!\nScene cost increases by *2 with every scene you buy.");
-                }
-                else
-                {
-                    BubbleWallet.BuyScene(login, id);
-                    SceneEntity scene = available.FirstOrDefault(scene => scene.ID == id);
-
-                    DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
-                    embed.Title = "Hypeeee!";
-                    embed.Color = DiscordColor.Magenta;
-                    embed.WithDescription("You unlocked ** " + scene.Name + "**!\n" + "Use it with: `>show " + id + "`");
-                    embed.WithImageUrl(scene.URL);
-                    await context.Channel.SendMessageAsync(embed: embed);
-                }
+                await Program.SendEmbed(context.Channel, "Uhm..", "I don't know that scene :(\nCheck the ID!");
+            }
+            else if (inventory.Any(scene => scene.ID == id))
+            {
+                await Program.SendEmbed(context.Channel, ":o", "You already own this scene!");
+            }
+            else if (credit < sceneCost)
+            {
+                await Program.SendEmbed(context.Channel, "👀", "You need at least " + sceneCost + " to buy a scene!\nScene cost increases by *2 with every scene you buy.");
             }
             else
             {
-                await Program.SendEmbed(context.Channel, "In production..", "Not allowed to use this yet.");
+                BubbleWallet.BuyScene(login, id);
+                SceneEntity scene = available.FirstOrDefault(scene => scene.ID == id);
+
+                DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
+                embed.Title = "Hypeeee!";
+                embed.Color = DiscordColor.Magenta;
+                embed.WithDescription("You unlocked ** " + scene.Name + "**!\n" + "Use it with: `>show " + id + "`");
+                embed.WithImageUrl(scene.URL);
+                await context.Channel.SendMessageAsync(embed: embed);
             }
         }
 
         [Description("Use a scene")]
         [Command("show")]
+        [RequireBeta()]
         public async Task UseScene(CommandContext context, [Description("The ID of the scene")] int id)
         {
             string login = BubbleWallet.GetLoginOfMember(context.Member.Id.ToString());
             PermissionFlag flags = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.Member));
-            if (flags.BotAdmin)
+            List<SceneProperty> inventory = BubbleWallet.GetSceneInventory(login);
+
+            if (!inventory.Any(scene => scene.ID == id) && id != 0)
             {
-                List<SceneProperty> inventory = BubbleWallet.GetSceneInventory(login);
-
-                if (!inventory.Any(scene => scene.ID == id) && id != 0)
-                {
-                    await Program.SendEmbed(context.Channel, "Yeet!", "You don't own that scene - yet!");
-                }
-                else
-                {
-                    inventory.ForEach(scene => scene.Activated = scene.ID == id);
-                    BubbleWallet.SetSceneInventory(login, inventory);
-
-                    DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
-                    SceneProperty scene = inventory.FirstOrDefault(scene => scene.ID == id);
-                    embed.Title = id == 0 ? "Ok then" : "So pretty!";
-                    embed.Color = DiscordColor.Magenta;
-                    embed.WithDescription(id == 0 ? "Unset your skribbl scene." : "Your skribbl scene is now ** " + scene.Name + "**!");
-                    if(id != 0) embed.WithImageUrl(scene.URL);
-                    await context.Channel.SendMessageAsync(embed: embed);
-                }
+                await Program.SendEmbed(context.Channel, "Yeet!", "You don't own that scene - yet!");
             }
             else
             {
-                await Program.SendEmbed(context.Channel, "In production..", "Not allowed to use this yet.");
+                inventory.ForEach(scene => scene.Activated = scene.ID == id);
+                BubbleWallet.SetSceneInventory(login, inventory);
+
+                DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
+                SceneProperty scene = inventory.FirstOrDefault(scene => scene.ID == id);
+                embed.Title = id == 0 ? "Ok then" : "So pretty!";
+                embed.Color = DiscordColor.Magenta;
+                embed.WithDescription(id == 0 ? "Unset your skribbl scene." : "Your skribbl scene is now ** " + scene.Name + "**!");
+                if(id != 0) embed.WithImageUrl(scene.URL);
+                await context.Channel.SendMessageAsync(embed: embed);
             }
         }
 

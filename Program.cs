@@ -286,6 +286,18 @@ namespace Palantir
                 + (Dropban ? 64 : 0)
                 +(Patronizer ? 128 : 0);
         }
+
+        public bool CheckForPermissionByte(byte permission)
+        {
+            BitArray presentFlags = new BitArray(new byte[] { (byte)CalculateFlag() });
+            BitArray checkFlags = new BitArray(new byte[] { permission });
+            bool allMatch = true;
+            for(int flagIndex = 0; flagIndex < checkFlags.Length; flagIndex++)
+            {
+                if (checkFlags[flagIndex] && (presentFlags.Length - 1 < flagIndex || !presentFlags[flagIndex])) allMatch = false;
+            }
+            return allMatch;
+        }
     }
 
     // credits: https://loune.net/2017/06/running-shell-bash-commands-in-net-core/
@@ -315,9 +327,6 @@ namespace Palantir
 
     public sealed class RequireBeta : DSharpPlus.CommandsNext.Attributes.CheckBaseAttribute
     {
-        //
-        // Zusammenfassung:
-        //     Defines that this command is only usable within a guild.
         public RequireBeta()
         {
         }
@@ -326,6 +335,21 @@ namespace Palantir
         {
             return Task.FromResult(
                 Program.TypoTestground.GetMemberAsync(ctx.User.Id).GetAwaiter().GetResult().Roles.Any(role => role.Id == 817758652274311168)
+            );
+        }
+    }
+    public sealed class RequirePermissionFlag : DSharpPlus.CommandsNext.Attributes.CheckBaseAttribute
+    {
+        private byte FlagToCheck;
+        public  RequirePermissionFlag(byte flagToCheck)
+        {
+            FlagToCheck = flagToCheck;
+        }
+
+        public override Task<bool> ExecuteCheckAsync(CommandContext ctx, bool help)
+        {
+            return Task.FromResult(
+               (new PermissionFlag((byte)Program.Feanor.GetFlagByMember(ctx.User))).CheckForPermissionByte(FlagToCheck)
             );
         }
     }
