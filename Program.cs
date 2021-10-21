@@ -40,19 +40,30 @@ namespace Palantir
                 IgnoreExtraArguments = true,
                 CaseSensitive = false
             });
-            //Program.Client.UpdateCurrentUserAsync(avatar:)
+
             Console.WriteLine("Creating interactivity\n...");
             Interactivity = Client.UseInteractivity();
+
             Console.WriteLine("Adding handlers\n...");
             Client.GuildCreated += onjoin;
             Commands.CommandErrored += OnCommandErrored;
+
             Console.WriteLine("Registering commands\n...");
-            Commands.RegisterCommands<Commands>();
+            Commands.RegisterCommands<Palantir.Commands.MiscCommands>();
+            Commands.RegisterCommands<Palantir.Commands.EventCommands>();
+            Commands.RegisterCommands<Palantir.Commands.ManagementCommands>();
+            Commands.RegisterCommands<Palantir.Commands.PatronCommands>();
+            Commands.RegisterCommands<Palantir.Commands.SetupCommands>();
+            Commands.RegisterCommands<Palantir.Commands.SpriteCommands>();
+
             Console.Write("Connecting Client...");
             await Client.ConnectAsync();
+
             Console.WriteLine("Initializig Connections...");
             Feanor = new DataManager();
+
             Console.WriteLine("Palantir ready. Do not uncover it.");
+
             Console.WriteLine("Stored guilds:");
             Feanor.PalantirTethers.ForEach((t) => { Console.WriteLine("- " + t.PalantirEndpoint.GuildID + " / " + t.PalantirEndpoint.GuildName); });
             //Console.WriteLine("Stored members:");
@@ -357,7 +368,7 @@ namespace Palantir
             {
                 // Send responses if permissions dont match
                 if (requiredFlag.Patron && !userFlag.Patron) 
-                    Program.SendEmbed(ctx.Channel, "HA, Paywall!!", "This command is only available for Typo Patrons :/").GetAwaiter();
+                    Program.SendEmbed(ctx.Channel, "HA, Paywall!!", "This command is only available for Typo Patrons :/\nhttps://patreon.com/skribbltypo").GetAwaiter();
                 else if(requiredFlag.BotAdmin && !userFlag.BotAdmin)
                     Program.SendEmbed(ctx.Channel, "Hands off there :o", "Only Bot Admins may use this command.").GetAwaiter();
                 else if (requiredFlag.Moderator && !userFlag.Moderator)
