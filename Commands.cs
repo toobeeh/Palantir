@@ -1371,7 +1371,7 @@ namespace Palantir
 
         [Description("Add a scene")]
         [Command("addscene")]
-        [RequirePermissionFlag((byte) 16)] // 2 -> admin
+        [RequirePermissionFlag((byte) 2)] // 2 -> admin
         public async Task AddScene(CommandContext context, [Description("The name of the scene")] string name, [Description("A color string (hex, rgb, name..)")] string color, [Description("Any string except '-' to set the sprite artist")] string artist = "")
         {
             PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
