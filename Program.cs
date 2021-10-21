@@ -45,7 +45,7 @@ namespace Palantir
             Interactivity = Client.UseInteractivity();
             Console.WriteLine("Adding handlers\n...");
             Client.GuildCreated += onjoin;
-            Commands.CommandErrored += onCommandErrored;
+            Commands.CommandErrored += OnCommandErrored;
             Console.WriteLine("Registering commands\n...");
             Commands.RegisterCommands<Commands>();
             Console.Write("Connecting Client...");
@@ -148,14 +148,15 @@ namespace Palantir
             }
         }
 
-        private static async Task onCommandErrored(CommandsNextExtension commands, CommandErrorEventArgs e)
+        private static async Task OnCommandErrored(CommandsNextExtension commands, CommandErrorEventArgs e)
         {
             if (e.Exception is DSharpPlus.CommandsNext.Exceptions.CommandNotFoundException) return;
             if (e.Exception is DSharpPlus.CommandsNext.Exceptions.ChecksFailedException) {
                 string checks = "";
-                //((DSharpPlus.CommandsNext.Exceptions.ChecksFailedException)e.Exception).FailedChecks.ToList().ForEach(check => check.)
-                e.Command.ExecutionChecks.ToList().ForEach(attr => checks += attr.GetType());
-                await SendEmbed(e.Context.Channel, e.Command.Name + ": Not allowed", "Some commands require a specific role or being executed in a DM channel. \n\nThis command needs:\n" + checks, "", DiscordColor.Red.Value);
+                e.Command.ExecutionChecks.ToList().ForEach(attr => {
+                    if(!(attr.GetType() == typeof(RequireBeta) || attr.GetType() == typeof(RequirePermissionFlag))) checks += attr.GetType();
+                });
+                if(checks != "") await SendEmbed(e.Context.Channel, e.Command.Name + ": Not allowed", "Some commands require a specific role or being executed in a DM channel. \n\nThis command needs:\n" + checks, "", DiscordColor.Red.Value);
                 return;
             }
             if (e.Exception.ToString().Contains("Could not find a suitable overload for the command"))
@@ -333,9 +334,10 @@ namespace Palantir
 
         public override Task<bool> ExecuteCheckAsync(CommandContext ctx, bool help)
         {
-            return Task.FromResult(
-                Program.TypoTestground.GetMemberAsync(ctx.User.Id).GetAwaiter().GetResult().Roles.Any(role => role.Id == 817758652274311168)
-            );
+            bool isBetaTester = Program.TypoTestground.GetMemberAsync(ctx.User.Id).GetAwaiter().GetResult().Roles.Any(role => role.Id == 817758652274311168);
+            if (!isBetaTester) 
+                Program.SendEmbed(ctx.Channel, "Woah, fragile!", "This command is under development and only available for beta testers.").GetAwaiter();
+            return Task.FromResult(isBetaTester);
         }
     }
     public sealed class RequirePermissionFlag : DSharpPlus.CommandsNext.Attributes.CheckBaseAttribute
@@ -348,9 +350,20 @@ namespace Palantir
 
         public override Task<bool> ExecuteCheckAsync(CommandContext ctx, bool help)
         {
-            return Task.FromResult(
-               (new PermissionFlag((byte)Program.Feanor.GetFlagByMember(ctx.User))).CheckForPermissionByte(FlagToCheck)
-            );
+            PermissionFlag userFlag = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(ctx.User));
+            PermissionFlag requiredFlag = new PermissionFlag(FlagToCheck);
+            bool result = userFlag.BotAdmin || userFlag.CheckForPermissionByte(FlagToCheck);
+            if(!result)
+            {
+                // Send responses if permissions dont match
+                if (requiredFlag.Patron && !userFlag.Patron) 
+                    Program.SendEmbed(ctx.Channel, "HA, Paywall!!", "This command is only available for Typo Patrons :/").GetAwaiter();
+                else if(requiredFlag.BotAdmin && !userFlag.BotAdmin)
+                    Program.SendEmbed(ctx.Channel, "Hands off there :o", "Only Bot Admins may use this command.").GetAwaiter();
+                else if (requiredFlag.Moderator && !userFlag.Moderator)
+                    Program.SendEmbed(ctx.Channel, "Ts ts..", "This command is only available for Bot Moderators.").GetAwaiter();
+            }
+            return Task.FromResult(result);
         }
     }
 
