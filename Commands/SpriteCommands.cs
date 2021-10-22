@@ -267,20 +267,20 @@ namespace Palantir.Commands
             if (scene is not null)
             {
                 List<SceneProperty> inventory = BubbleWallet.GetSceneInventory(BubbleWallet.GetLoginOfMember(context.User.Id.ToString()));
-                int sceneCost = 30000;
-                inventory.ForEach(scene => sceneCost *= 2);
+                int sceneCost = BubbleWallet.SceneStartPrice;
+                inventory.ForEach(scene => sceneCost *= BubbleWallet.ScenePriceFactor);
 
                 DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
-                embed.Title = ":park: **" + scene.Name + "**";
+                embed.Title = "**" + scene.Name + "**";
                 embed.Color = DiscordColor.Magenta;
                 embed.AddField("Costs:", "Your current scene price is **" + sceneCost + "** bubbles.");
-                embed.WithDescription("**ID:** " + scene.ID + "\n" + (scene.Artist != "" ? "**Artist:** " + scene.Artist + "\n" : "") + "**Font color: **" + scene.Color + "\n\nBuy it: `>paint " + id + "`, use it: `>show " + id + "`");
+                embed.WithDescription("**ID:** " + scene.ID + "\n" + (scene.Artist != "" ? "**Artist:** " + scene.Artist + "\n" : "") + "**Font color: **" + scene.Color + " (" + scene.GuessedColor + ")\n\nBuy the scene: `>paint " + id + "`\nUse the scene: `>show " + id + "`");
                 embed.WithImageUrl(scene.URL);
                 await context.Channel.SendMessageAsync(embed: embed);
             }
             else
             {
-                await Program.SendEmbed(context.Channel, "That's no scene :(", "Nothing found for the scene id " + id);
+                await Program.SendEmbed(context.Channel, "That's no scene :(", "Nothing found for the scene ID " + id);
             }
             db.Dispose();
         }
@@ -295,8 +295,8 @@ namespace Palantir.Commands
             List<SceneEntity> available = BubbleWallet.GetAvailableScenes();
             List<SceneProperty> inventory = BubbleWallet.GetSceneInventory(login);
             int credit = flags.BotAdmin ? int.MaxValue : BubbleWallet.CalculateCredit(login);
-            int sceneCost = 30000;
-            inventory.ForEach(scene => sceneCost *= 2);
+            int sceneCost = BubbleWallet.SceneStartPrice;
+            inventory.ForEach(scene => sceneCost *= BubbleWallet.ScenePriceFactor);
 
             if (!available.Any(scene => scene.ID == id))
             {
@@ -304,11 +304,11 @@ namespace Palantir.Commands
             }
             else if (inventory.Any(scene => scene.ID == id))
             {
-                await Program.SendEmbed(context.Channel, ":o", "You already own this scene!");
+                await Program.SendEmbed(context.Channel, "Waiiit :o", "You already own this scene!");
             }
             else if (credit < sceneCost)
             {
-                await Program.SendEmbed(context.Channel, "👀", "You need at least " + sceneCost + " to buy a scene!\nScene cost increases by *2 with every scene you buy.");
+                await Program.SendEmbed(context.Channel, "I see you 👀", "You need at least " + sceneCost + " to buy a scene!\nScene cost increases by *2 with every scene you buy.");
             }
             else
             {
@@ -402,7 +402,7 @@ namespace Palantir.Commands
         [Description("Add a scene")]
         [Command("addscene")]
         [RequirePermissionFlag((byte)2)] // 2 -> admin
-        public async Task AddScene(CommandContext context, [Description("The name of the scene")] string name, [Description("A color string (hex, rgb, name..)")] string color, [Description("Any string except '-' to set the sprite artist")] string artist = "")
+        public async Task AddScene(CommandContext context, [Description("The name of the scene")] string name, [Description("A color string (hex, rgb, name..)")] string color, [Description("A color when the player has guessed the word")] string guessedColor, [Description("Any string except '-' to set the sprite artist")] string artist = "")
         {
             PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
             if (!perm.Moderator && !perm.BotAdmin)
@@ -429,7 +429,7 @@ namespace Palantir.Commands
 
             string url = "https://tobeh.host/scenes/scene" + name.Replace("'", "-") + ".gif";
             if (artist == "-") artist = "";
-            SceneEntity scene = BubbleWallet.AddScene(name.Replace("_", " "), color, artist, url);
+            SceneEntity scene = BubbleWallet.AddScene(name.Replace("_", " "), color, guessedColor, artist, url);
 
             DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
             embed.Title = ":champagne:  Scene **" + name + "** with ID " + scene.ID + " was added!";

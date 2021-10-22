@@ -39,6 +39,8 @@ namespace Palantir
     }
     public static class BubbleWallet
     {
+        public static int SceneStartPrice = 30000;
+        public static int ScenePriceFactor = 2;
         public static List<string> loginBubbleTicks = new List<string>();
         public static Dictionary<string, int> BubbleCache = new Dictionary<string, int>();
         public static void AddBubble(string login)
@@ -151,7 +153,7 @@ namespace Palantir
             context.Dispose();
         }
 
-        public static SceneEntity AddScene(string name, string color, string artist, string url)
+        public static SceneEntity AddScene(string name, string color, string guessedColor, string artist, string url)
         {
             PalantirDbContext context = new PalantirDbContext();
             int id = context.Scenes.Count() > 0 ? context.Scenes.Select(s => s.ID).Max() + 1 : 1;
@@ -159,6 +161,7 @@ namespace Palantir
             {
                 Artist = artist,
                 Color = color,
+                GuessedColor = guessedColor,
                 URL = url,
                 Name = name,
                 ID = id
@@ -178,11 +181,11 @@ namespace Palantir
             });
             total += GetDrops(login) * 50;
             total += GetSceneInventory(login, false).Count();
-            int nextPrice = 30000;
+            int nextPrice = SceneStartPrice;
             foreach(SceneEntity scene in GetSceneInventory(login, false))
             {
                 total -= nextPrice;
-                nextPrice *= 2;
+                nextPrice *= ScenePriceFactor;
             }
             return total;
         }
