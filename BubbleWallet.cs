@@ -194,8 +194,8 @@ namespace Palantir
         {
             PalantirDbContext db = new();
             MemberEntity member = db.Members.FirstOrDefault(member => member.Login == login);
-            string sceneInv = GetSceneInventory(login).ConvertAll(scene => scene.Activated ? "." : "" + scene.ID.ToString()).ToDelimitedString(",");
-            sceneInv += id.ToString();
+            string sceneInv = GetSceneInventory(login).ConvertAll(scene => (scene.Activated ? "." : "") + scene.ID.ToString()).ToDelimitedString(",");
+            sceneInv += (sceneInv.Length > 0 ? "," : "") + id.ToString();
             member.Scenes = sceneInv;
             db.SaveChanges();
             db.Dispose();

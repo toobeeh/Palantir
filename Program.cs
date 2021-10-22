@@ -347,7 +347,7 @@ namespace Palantir
         {
             bool isBetaTester = Program.TypoTestground.GetMemberAsync(ctx.User.Id).GetAwaiter().GetResult().Roles.Any(role => role.Id == 817758652274311168)
                 || ctx.User.Id == 334048043638849536;
-            if (!isBetaTester) 
+            if (!isBetaTester && !help) 
                 Program.SendEmbed(ctx.Channel, "Woah, fragile!", "This command is under development and only available for beta testers.").GetAwaiter();
             return Task.FromResult(isBetaTester);
         }
@@ -365,7 +365,7 @@ namespace Palantir
             PermissionFlag userFlag = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(ctx.User));
             PermissionFlag requiredFlag = new PermissionFlag(FlagToCheck);
             bool result = userFlag.BotAdmin || userFlag.CheckForPermissionByte(FlagToCheck);
-            if(!result)
+            if(!result && !help)
             {
                 // Send responses if permissions dont match
                 if (requiredFlag.Patron && !userFlag.Patron) 
