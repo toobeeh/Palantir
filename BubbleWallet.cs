@@ -39,7 +39,7 @@ namespace Palantir
     }
     public static class BubbleWallet
     {
-        public static int SceneStartPrice = 30000;
+        public static int SceneStartPrice = 20000;
         public static int ScenePriceFactor = 2;
         public static List<string> loginBubbleTicks = new List<string>();
         public static Dictionary<string, int> BubbleCache = new Dictionary<string, int>();
