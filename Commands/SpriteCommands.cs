@@ -259,7 +259,6 @@ namespace Palantir.Commands
 
         [Description("View a scene")]
         [Command("scene")]
-        [RequireBeta()]
         public async Task ViewScene(CommandContext context, [Description("The ID of the scene")] int id)
         {
             PalantirDbContext db = new PalantirDbContext();
@@ -287,7 +286,6 @@ namespace Palantir.Commands
 
         [Description("Buy a scene")]
         [Command("paint")]
-        [RequireBeta()]
         public async Task BuyScene(CommandContext context, [Description("The ID of the scene")] int id)
         {
             string login = BubbleWallet.GetLoginOfMember(context.User.Id.ToString());
@@ -326,7 +324,6 @@ namespace Palantir.Commands
 
         [Description("Use a scene")]
         [Command("show")]
-        [RequireBeta()]
         public async Task UseScene(CommandContext context, [Description("The ID of the scene")] int id)
         {
             string login = BubbleWallet.GetLoginOfMember(context.User.Id.ToString());
