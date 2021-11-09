@@ -52,7 +52,7 @@ namespace Palantir.Commands
             {
                 embed.Title = ":champagne: No Event active :(";
                 embed.Color = DiscordColor.Magenta;
-                embed.WithDescription("Check all events with `>upcoming`.\nSee past events with `>passed [id]`.\nGift event drops with `>gift [@person] [amount of drops] [id of the sprite]`.\nBtw - I keep up to 50% of the gift for myself! ;)");
+                embed.WithDescription("Check new events with `>upcoming`.\nSee all past events with `>passed` and a specific with `>event [id]`.\nGift event drops with `>gift [@person] [amount of drops] [id of the sprite]`.\nBtw - I keep up to 50% of the gift for myself! ;)");
             }
 
             await context.Channel.SendMessageAsync(embed: embed);

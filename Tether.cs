@@ -306,9 +306,9 @@ namespace Palantir
                         ProvidedLobby lobbyraw = JsonConvert.DeserializeObject<ProvidedLobby>(json);
                         d = lobbyraw.Description;
                         if (d.Length > 100) d = d.Substring(0, 100);
-                        if (d.Contains("#nojoin")) { l.Link = "Closed Private Game"; }
-                        if (lobbyraw.Restriction == "restricted") { l.Link = "Restricted Private Game"; }
-                        else if (lobbyraw.Restriction != "unrestricted" && PalantirEndpoint.GuildID != lobbyraw.Restriction) { l.Link = "Server-Restricted Private Game"; }
+                        if (d.Contains("#nojoin")) { l.Link = "Closed Private Game"; l.Key = PalantirEndpoint.GuildName + l.Key[-5..]; }
+                        if (lobbyraw.Restriction == "restricted") { l.Link = "Restricted Private Game"; l.Key = PalantirEndpoint.GuildName + l.Key[-5..]; }
+                        else if (lobbyraw.Restriction != "unrestricted" && PalantirEndpoint.GuildID != lobbyraw.Restriction) { l.Link = "Server-Restricted Private Game"; l.Key = PalantirEndpoint.GuildName + l.Key[-5..]; }
                     }
                     catch { 
                         d = "";
