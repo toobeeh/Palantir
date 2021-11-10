@@ -698,11 +698,14 @@ namespace Palantir.Commands
         [Description("List servers.")]
         [Command("serverlist")]
         [RequirePermissionFlag((byte)2)]
-        public async Task Serverlist(CommandContext context)
+        public async Task Serverlist(CommandContext context, int membersBelow)
         {
             string guildlist = "";
+            int count = 0;
             foreach(var guild in Program.Client.Guilds)
             {
+                if (guild.Value.MemberCount >= membersBelow) continue;
+                count++;
                 guildlist += guild.Value.Name + ": " + guild.Value.MemberCount + " "
                     + (Program.Feanor.PalantirTethers.Any(t => t.PalantirEndpoint.GuildID == guild.Key.ToString()) ? "X" : "") + "\n";
                 if (guildlist.Length > 1800)
@@ -711,6 +714,7 @@ namespace Palantir.Commands
                     guildlist = "";
                 }
             }
+            guildlist += "\n Count: " + count;
             if (guildlist.Length > 0) await context.RespondAsync(guildlist);
         }
 
