@@ -216,14 +216,14 @@ namespace Palantir
             context.SaveChanges();
             context.Dispose();
         }
-        public async Task<int> UpdatePatrons()
+        public async Task<int> UpdatePatrons(DSharpPlus.DiscordClient client)
         {
             List<string> patrons = new List<string>();
             List<string> patronizer = new List<string>();
             List<string> patronized = new List<string>();
             Dictionary<string, string> emojis = new Dictionary<string, string>();
             // collect ids of patron members 
-            DiscordGuild typotestground = await Program.Client.GetGuildAsync(779435254225698827);
+            DiscordGuild typotestground = await client.GetGuildAsync(779435254225698827);
             foreach (DiscordMember member in await typotestground.GetAllMembersAsync())
             {
                 if (member.Roles.Any(role => role.Id == 832744566905241610)) patrons.Add(member.Id.ToString());

@@ -65,7 +65,7 @@ namespace Palantir.QuartzJobs
             double boost = Math.Round(Drops.GetCurrentFactor(), 1);
             string status = " " + count + " ppl " + (boost <= 1 ? "on skribbl.io" : "(" + boost + " Boost)");
             await Program.Client.UpdateStatusAsync(new DiscordActivity(status, ActivityType.Watching));
-            await Program.Feanor.UpdatePatrons();
+            await Program.Feanor.UpdatePatrons(Program.Servant);
         }
     }
 

@@ -21,12 +21,21 @@ namespace Palantir
         public static DataManager Feanor;
         public static DiscordGuild TypoTestground;
         public static DiscordClient Client { get; private set; }
+        public static DiscordClient Servant {  get; private set; }
         public static CommandsNextExtension Commands { get; private set; }
         public static InteractivityExtension Interactivity;
         static async Task Main(string[] args)
         {
             //File.WriteAllText("/home/pi/palantirOutput.log", String.Empty);
             Console.WriteLine("Huh, it's " + DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " - lemme sleep!!\n");
+            Console.WriteLine("Initializing servant bot client...\n");
+            Servant = new DiscordClient(new DiscordConfiguration
+            {
+                Token = File.ReadAllText("/home/pi/servantToken.txt"),
+                TokenType = TokenType.Bot
+            });
+            await Servant.ConnectAsync();
+
             Console.WriteLine("Initializing Palantir:\n...");
             Client = new DiscordClient(new DiscordConfiguration
             {
