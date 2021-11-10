@@ -143,7 +143,7 @@ namespace Palantir
             catch(Exception e)
             {
                 Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > Exception: " + e.ToString() + "at Channel:" + PalantirEndpoint.ChannelID + ", Msg: "+PalantirEndpoint.MessageID + ", Guild:" + PalantirEndpoint.GuildName);
-                //RemoveTether();
+                RemoveTether();
                 return;
             }
 
@@ -215,7 +215,7 @@ namespace Palantir
                         Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")
                             + " > Target Message couldnt be edited. Not found incremented to " + notFound + " / " + maxErrorCount
                             + " Error: " + e.ToString());
-                        //RemoveTether();
+                        RemoveTether();
                         return;
                     }
                 }
