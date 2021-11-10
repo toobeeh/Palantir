@@ -701,16 +701,16 @@ namespace Palantir.Commands
         public async Task Serverlist(CommandContext context)
         {
             string guildlist = "";
-            Program.Client.Guilds.ForEach(async guild =>
+            foreach(var guild in Program.Client.Guilds)
             {
                 guildlist += guild.Value.Name + ": " + guild.Value.MemberCount + " "
                     + (Program.Feanor.PalantirTethers.Any(t => t.PalantirEndpoint.GuildID == guild.Key.ToString()) ? "X" : "") + "\n";
-                if (guildlist.Length > 1500)
+                if (guildlist.Length > 1800)
                 {
                     await context.RespondAsync(guildlist);
                     guildlist = "";
                 }
-            });
+            }
             if (guildlist.Length > 0) await context.RespondAsync(guildlist);
         }
 
