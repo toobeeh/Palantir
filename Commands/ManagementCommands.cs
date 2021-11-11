@@ -187,5 +187,54 @@ namespace Palantir.Commands
             Environment.Exit(0);
         }
 
+
+        [Description("List servers with palantir and their stats.")]
+        [Command("serverlist")]
+        [RequirePermissionFlag((byte)2)]
+        public async Task Serverlist(CommandContext context, int membersBelow)
+        {
+            string guildlist = "";
+            int count = 0;
+            foreach (var guild in Program.Client.Guilds)
+            {
+                if (guild.Value.MemberCount >= membersBelow) continue;
+                count++;
+                int connectedMembers = Program.Feanor.GetGuildMembers(guild.Key.ToString()).Count();
+                guildlist += "**" + guild.Value.Name + "**: " + guild.Value.MemberCount + " "
+                    + (Program.Feanor.PalantirTethers.Any(t => t.PalantirEndpoint.GuildID == guild.Key.ToString()) ? " `Palantir active | " + connectedMembers + "`" : "") + "\n";
+                if (guildlist.Length > 1800)
+                {
+                    await context.RespondAsync(guildlist);
+                    guildlist = "";
+                }
+            }
+            guildlist += "\n Count: " + count;
+            if (guildlist.Length > 0) await context.Channel.SendMessageAsync(guildlist);
+        }
+
+        [Description("Remove palantir from servers meeting certain criteria.")]
+        [Command("serverpurge")]
+        [RequirePermissionFlag((byte)2)]
+        public async Task PurgeServers(CommandContext context, int membersBelow, int connectedMembersBelow = 1)
+        {
+            int count = 0;
+            string humanCriteria = "\n> - Minimum member count: " + membersBelow + "\n> - Minimum members connected to palantir: " + connectedMembersBelow;
+            await context.Channel.SendMessageAsync("Starting purge with criteria:" + humanCriteria);
+            foreach (var guild in Program.Client.Guilds)
+            {
+                if (guild.Value.MemberCount < membersBelow)
+                {
+                    int connectedMembers = Program.Feanor.GetGuildMembers(guild.Key.ToString()).Count();
+                    if(connectedMembers < connectedMembersBelow)
+                    {
+                        await guild.Value.GetDefaultChannel().SendMessageAsync("Hi there!\n\nThis server does not meet one of following criteria:" + humanCriteria + "\n\nDue to a server limit, Palantir leaves all servers below that.\nYou can try inviting Palantir again or feel free to use the bot on the Typo server:\nhttps://discord.link/typo");
+                        await guild.Value.LeaveAsync();
+                        count++;
+                    }
+                }
+            }
+            await context.Channel.SendMessageAsync("\n Purge complete, left guilds: " + count);
+        }
+
     }
 }

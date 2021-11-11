@@ -695,28 +695,5 @@ namespace Palantir.Commands
             else await Program.SendEmbed(context.Channel, "Wooohoo!", "You " + (perm.Patron ? "used Patron perks and " : "") + "boosted drops for one hour by the factor " + boost.Factor + "!\nCheck boosts with `>droprate`, you can boost again in **one week**.");
         }
 
-        [Description("List servers.")]
-        [Command("serverlist")]
-        [RequirePermissionFlag((byte)2)]
-        public async Task Serverlist(CommandContext context, int membersBelow)
-        {
-            string guildlist = "";
-            int count = 0;
-            foreach(var guild in Program.Client.Guilds)
-            {
-                if (guild.Value.MemberCount >= membersBelow) continue;
-                count++;
-                guildlist += guild.Value.Name + ": " + guild.Value.MemberCount + " "
-                    + (Program.Feanor.PalantirTethers.Any(t => t.PalantirEndpoint.GuildID == guild.Key.ToString()) ? "X" : "") + "\n";
-                if (guildlist.Length > 1800)
-                {
-                    await context.RespondAsync(guildlist);
-                    guildlist = "";
-                }
-            }
-            guildlist += "\n Count: " + count;
-            if (guildlist.Length > 0) await context.RespondAsync(guildlist);
-        }
-
     }
 }
