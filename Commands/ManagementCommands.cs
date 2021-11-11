@@ -227,9 +227,21 @@ namespace Palantir.Commands
                     int connectedMembers = Program.Feanor.GetGuildMembers(guild.Key.ToString()).Count();
                     if(connectedMembers < connectedMembersBelow)
                     {
-                        await guild.Value.GetDefaultChannel().SendMessageAsync("Hi there!\n\nThis server does not meet one of following criteria:" + humanCriteria + "\n\nDue to a server limit, Palantir leaves all servers below that.\nYou can try inviting Palantir again or feel free to use the bot on the Typo server:\nhttps://discord.link/typo");
-                        await guild.Value.LeaveAsync();
-                        count++;
+                        try{
+                            await guild.Value.GetDefaultChannel().SendMessageAsync("Hi there!\n\nThis server does not meet one of following criteria:" + humanCriteria + "\n\nDue to a server limit, Palantir leaves all servers below that.\nYou can try inviting Palantir again or feel free to use the bot on the Typo server:\nhttps://discord.link/typo");
+                        }
+                        catch (Exception ex) {
+                            await context.Channel.SendMessageAsync("Could not send leave message: " + ex.ToString());
+                        }
+                        try
+                        {
+                            await guild.Value.LeaveAsync();
+                            count++;
+                        }
+                        catch (Exception ex)
+                        {
+                            await context.Channel.SendMessageAsync("Could not leave server: " + ex.ToString());
+                        }
                     }
                 }
             }
