@@ -306,9 +306,9 @@ namespace Palantir
                         ProvidedLobby lobbyraw = JsonConvert.DeserializeObject<ProvidedLobby>(json);
                         d = lobbyraw.Description;
                         if (d.Length > 100) d = d.Substring(0, 100);
-                        if (d.Contains("#nojoin")) { l.Link = "Closed Private Game"; l.Key = PalantirEndpoint.GuildName + l.Key[-5..]; }
-                        if (lobbyraw.Restriction == "restricted") { l.Link = "Restricted Private Game"; l.Key = PalantirEndpoint.GuildName + l.Key[-5..]; }
-                        else if (lobbyraw.Restriction != "unrestricted" && PalantirEndpoint.GuildID != lobbyraw.Restriction) { l.Link = "Server-Restricted Private Game"; l.Key = PalantirEndpoint.GuildName + l.Key[-5..]; }
+                        if (d.Contains("#nojoin")) { l.Link = "Closed Private Game"; l.Key = PalantirEndpoint.GuildName + l.Key[^5..]; }
+                        if (lobbyraw.Restriction == "restricted") { l.Link = "Restricted Private Game"; l.Key = PalantirEndpoint.GuildName + l.Key[^5..]; }
+                        else if (lobbyraw.Restriction != "unrestricted" && PalantirEndpoint.GuildID != lobbyraw.Restriction) { l.Link = "Server-Restricted Private Game"; l.Key = PalantirEndpoint.GuildName + l.Key[^5..]; }
                     }
                     catch { 
                         d = "";
@@ -316,7 +316,7 @@ namespace Palantir
 
                     if (d != "") lobbyDescription = "> `" + DSharpPlus.Formatter.Sanitize(d).Replace("`","").Replace("\n","") + "`\n";
                 }
-
+                string key = l.Key;
                 // set id to index
                 l.ID = Convert.ToString(guildLobbies.IndexOf(l) + 1);
                 lobby += "> **#" + l.ID + "**    " + (PalantirSettings.ShowAnimatedEmojis ? Emojis[(new Random()).Next(Emojis.Count-1)] : "") + "     " + l.Host + "   **|**  " + l.Language + "   **|**   Round " + l.Round + "   **|**   " + (l.Host == "skribbl.io" ? (l.Private ? "Private " + "\n> <" + l.Link + ">" : "Public") : "<" + l.Link + ">")  + "\n> " + l.Players.Count  + " Players \n";
