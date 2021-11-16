@@ -140,10 +140,14 @@ namespace Palantir
                 TargetChannel = await Program.Client.GetChannelAsync(Convert.ToUInt64(PalantirEndpoint.ChannelID));
                 TargetMessage = await TargetChannel.GetMessageAsync(Convert.ToUInt64(PalantirEndpoint.MessageID));
             }
+            catch (DSharpPlus.Exceptions.UnauthorizedException e)
+            {
+                Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > Exception: " + e.ToString() + "at Channel:" + PalantirEndpoint.ChannelID + ", Msg: " + PalantirEndpoint.MessageID + ", Guild:" + PalantirEndpoint.GuildName);
+                RemoveTether();
+            }
             catch(Exception e)
             {
                 Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > Exception: " + e.ToString() + "at Channel:" + PalantirEndpoint.ChannelID + ", Msg: "+PalantirEndpoint.MessageID + ", Guild:" + PalantirEndpoint.GuildName);
-                RemoveTether();
                 return;
             }
 
