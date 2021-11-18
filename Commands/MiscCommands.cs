@@ -331,6 +331,7 @@ namespace Palantir.Commands
         }
 
         [Description("Display the link to connect to this server.")]
+        [RequireGuild()]
         [Command("invite")]
         public async Task Serverinvite(CommandContext context)
         {
@@ -345,7 +346,7 @@ namespace Palantir.Commands
             }
         }
 
-            [Description("See who's got the most bubbles.")]
+        [Description("See who's got the most bubbles.")]
         [Command("Leaderboard")]
         [Aliases("lbd", "ldb")]
         public async Task NewLeaderboard(CommandContext context, string mode = "bubbles")
