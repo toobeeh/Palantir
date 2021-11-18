@@ -330,7 +330,22 @@ namespace Palantir.Commands
             await leaderboard.CreateReactionAsync(DiscordEmoji.FromName(Program.Client, ":no_entry_sign:"));
         }
 
-        [Description("See who's got the most bubbles.")]
+        [Description("Display the link to connect to this server.")]
+        [Command("invite")]
+        public async Task Serverinvite(CommandContext context)
+        {
+            ObservedGuild guild = Program.Feanor.PalantirTethers.FirstOrDefault(g => g.PalantirEndpoint.GuildID == context.Guild.Id.ToString()).PalantirEndpoint;
+            if(guild is null)
+            {
+                await Program.SendEmbed(context.Channel, "Aw, shoot :(", "This server is not using Palantir yet :/\nVisit https://typo.rip#admin to find out how!");
+            }
+            else
+            {
+                await context.RespondAsync("https://typo.rip/i?invite=" + guild.ObserveToken);
+            }
+        }
+
+            [Description("See who's got the most bubbles.")]
         [Command("Leaderboard")]
         [Aliases("lbd", "ldb")]
         public async Task NewLeaderboard(CommandContext context, string mode = "bubbles")
