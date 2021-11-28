@@ -640,7 +640,7 @@ namespace Palantir.Commands
         {
             var embed = new DiscordEmbedBuilder();
             PalantirDbContext db = new();
-            List<TypoThemeEntity> themes = db.Themes.ToList();
+            List<TypoThemeEntity> themes = db.Themes.Where(theme => !String.IsNullOrEmpty(theme.Theme)).ToList();
             db.Dispose();
 
             if(id <= 0 || id > themes.Count)
