@@ -646,7 +646,7 @@ namespace Palantir.Commands
             if(id <= 0 || id > themes.Count)
             {
                 embed.WithTitle("Listing all **Typo Themes**:");
-                embed.WithDescription("Click a link to add the theme or use `>themes [id]` to view theme details!");
+                embed.WithDescription("Click a link to add the theme or use `>themes [id]` to view theme details!\nTo add your own theme, contact a Palantir mod.");
                 themes.ForEach((theme, index) =>
                 {
                     embed.AddField("➜ " + theme.Name, "#" + (index + 1) +" - by `" + theme.Author + "` - https://typo.rip/t?ticket=" + theme.Ticket);
@@ -655,9 +655,9 @@ namespace Palantir.Commands
             else
             {
                 TypoThemeEntity theme = themes[id - 1];
-                embed.WithTitle("Theme **" + theme.Name);
+                embed.WithTitle("Theme **" + theme.Name + "**");
                 embed.WithDescription(theme.Description);
-                embed.AddField("Add the theme:", "`https://typo.rip/t?ticket=" + theme.Ticket);
+                embed.AddField("Add the theme:", "https://typo.rip/t?ticket=" + theme.Ticket);
                 embed.WithFooter("Created by " + theme.Author);
                 embed.WithImageUrl(theme.ThumbnailLanding);
             }
