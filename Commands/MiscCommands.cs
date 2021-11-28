@@ -634,6 +634,36 @@ namespace Palantir.Commands
             }
         }
 
+        [Description("Show available typo themes.")]
+        [Command("themes")]
+        public async Task Themes(CommandContext context, [Description("The id of the theme")] int id = 0)
+        {
+            var embed = new DiscordEmbedBuilder();
+            PalantirDbContext db = new();
+            List<TypoThemeEntity> themes = db.Themes.ToList();
+            db.Dispose();
+
+            if(id <= 0 || id > themes.Count)
+            {
+                embed.WithTitle("Listing all **Typo Themes**:");
+                embed.WithDescription("Click a link to add the theme or use `>themes [id]` to view theme details!");
+                themes.ForEach((theme, index) =>
+                {
+                    embed.AddField("➜ " + theme.Name, "#" + (index + 1) +" - by `" + theme.Author + "` - https://typo.rip/t?ticket=" + theme.Ticket);
+                });
+            }
+            else
+            {
+                TypoThemeEntity theme = themes[id - 1];
+                embed.WithTitle("Theme **" + theme.Name);
+                embed.WithDescription(theme.Description);
+                embed.AddField("Add the theme:", "`https://typo.rip/t?ticket=" + theme.Ticket);
+                embed.WithFooter("Created by " + theme.Author);
+                embed.WithImageUrl(theme.ThumbnailLanding);
+            }
+            await context.RespondAsync(embed);
+        }
+
         [Description("See the trend of ppl using Palantir")]
         [Command("trend")]
         [RequireBeta()]
