@@ -78,14 +78,14 @@ namespace Palantir
             List<BubbleTraceEntity> bubbleTraces = db.BubbleTraces.Where(trace => trace.Login == login).ToList();
             List<int> bubbles = bubbleTraces.Where(trace =>
             {
-                DateTime tracedt = DateTime.Parse(trace.Date, new CultureInfo("en-CA"));
+                DateTime tracedt = Convert.ToDateTime(trace.Date);
                 return tracedt <= end && tracedt >= start;
             }).Select(trace => trace.Bubbles).ToList();
             int timespanStartBubbles = bubbles.Min();
             int timespanEndBubbles = bubbles.Max();
 
             // if for last day isn't a trace existent, use current bubble value 
-            if(!bubbleTraces.Any(trace => DateTime.Parse(trace.Date, new CultureInfo("en-CA")).Date.Equals(end.Date)))
+            if(!bubbleTraces.Any(trace => Convert.ToDateTime(trace.Date).Date.Equals(end.Date)))
             {
                 timespanEndBubbles = BubbleWallet.GetBubbles(login);
             }
