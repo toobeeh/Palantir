@@ -272,8 +272,8 @@ namespace Palantir.Commands
                 DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
                 embed.Title = "**" + scene.Name + "**";
                 embed.Color = DiscordColor.Magenta;
-                embed.AddField("Costs:", "Your current scene price is **" + sceneCost + "** bubbles.");
-                embed.WithDescription("**ID:** " + scene.ID + "\n" + (scene.Artist != "" ? "**Artist:** " + scene.Artist + "\n" : "") + "**Font color: **" + scene.Color + " (" + scene.GuessedColor + ")\n\nBuy the scene: `>paint " + id + "`\nUse the scene: `>show " + id + "`");
+                embed.AddField("Costs:", scene.EventID > 0 ? "This is an event scene - check `>event " + scene.EventID + "`" : "Your current scene price is **" + sceneCost + "** bubbles.");
+                embed.WithDescription("**ID:** " + scene.ID + "\n" + (scene.Artist != "" ? "**Artist:** " + scene.Artist + "\n" : "") + "**Font color: **" + scene.Color + " / " + scene.GuessedColor + "\n\nBuy the scene: `>paint " + id + "`\nUse the scene: `>show " + id + "`");
                 embed.WithImageUrl(scene.URL);
                 await context.Channel.SendMessageAsync(embed: embed);
             }
