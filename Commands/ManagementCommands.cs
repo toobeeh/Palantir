@@ -183,6 +183,7 @@ namespace Palantir.Commands
             string upd = "git -C /home/pi/Palantir pull".Bash();
             upd += "\n\n Latest commit: " + ("git log --oneline -1".Bash());
             await Program.SendEmbed(context.Channel, "[literally dies...]", "You made me do this!!!\n\n**Update result:**\n" + upd);
+            "sudo rm /home/pi/palantirOutput.log".Bash();
             string op = "sudo service palantir restart".Bash();
             Environment.Exit(0);
         }
