@@ -120,6 +120,7 @@ namespace Palantir
         public string Color { get; set; }
         public string GuessedColor { get; set; }
         public string Artist { get; set; }
+        public int EventID { get; set; }
     }
     public class ReportEntity
     {

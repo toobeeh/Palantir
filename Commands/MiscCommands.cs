@@ -42,32 +42,32 @@ namespace Palantir.Commands
         }
 
         [Description("Get your login data to connect the extension.")]
-        [RequireDirectMessage()]
         [Command("login")]
         public async Task Login(CommandContext context)
         {
-            DiscordDmChannel channel = (DiscordDmChannel)context.Channel;
-            Member match = new Member { UserID = "0" };
+            await context.RespondAsync("Check out the new way to create & connect your Palantir account: \nhttps://www.youtube.com/watch?v=R_4GV7zJfy0");
+            //DiscordDmChannel channel = (DiscordDmChannel)context.Channel;
+            //Member match = new Member { UserID = "0" };
 
-            Program.Feanor.PalantirMembers.ForEach((m) =>
-            {
-                if (Convert.ToUInt64(m.UserID) == context.Message.Author.Id) match = m;
-            });
+            //Program.Feanor.PalantirMembers.ForEach((m) =>
+            //{
+            //    if (Convert.ToUInt64(m.UserID) == context.Message.Author.Id) match = m;
+            //});
 
-            if (match.UserID != "0") await channel.SendMessageAsync("Forgot your login? \nHere it is: `" + match.UserLogin + "`");
-            else
-            {
-                Member member = new Member();
-                member.UserID = context.Message.Author.Id.ToString();
-                member.UserName = context.Message.Author.Username;
-                member.Guilds = new List<ObservedGuild>();
-                do member.UserLogin = (new Random()).Next(99999999).ToString();
-                while (Program.Feanor.PalantirMembers.Where(mem => mem.UserLogin == member.UserLogin).ToList().Count > 0);
+            //if (match.UserID != "0") await channel.SendMessageAsync("Forgot your login? \nHere it is: `" + match.UserLogin + "`");
+            //else
+            //{
+            //    Member member = new Member();
+            //    member.UserID = context.Message.Author.Id.ToString();
+            //    member.UserName = context.Message.Author.Username;
+            //    member.Guilds = new List<ObservedGuild>();
+            //    do member.UserLogin = (new Random()).Next(99999999).ToString();
+            //    while (Program.Feanor.PalantirMembers.Where(mem => mem.UserLogin == member.UserLogin).ToList().Count > 0);
 
-                Program.Feanor.AddMember(member);
+            //    Program.Feanor.AddMember(member);
 
-                await channel.SendMessageAsync("Hey " + context.Message.Author.Username + "!\nYou can now login to the bowser extension and use Palantir.\nClick the extension icon in your browser, enter your login and add you discord server's token! \nYour login is: `" + member.UserLogin + "`");
-            }
+            //    await channel.SendMessageAsync("Hey " + context.Message.Author.Username + "!\nYou can now login to the bowser extension and use Palantir.\nClick the extension icon in your browser, enter your login and add you discord server's token! \nYour login is: `" + member.UserLogin + "`");
+            //}
         }
 
         [Description("Get a overview of your inventory. (old layout)")]
@@ -442,10 +442,10 @@ namespace Palantir.Commands
         public async Task Bubbles(CommandContext context)
         {
             DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
-            embed.Title = "🔮  How to Bubble ";
+            embed.Title = "🔮  How to use Bubbles";
             embed.Color = DiscordColor.Magenta;
             embed.AddField("What are Bubbles?", "Bubbles are a fictional currency of the Palantir Bot.\nWhen you're connected to the Bot, you will be rewarded 1 Bubble every 10 seconds.\nBubbles are used to buy Sprites which other users of the Skribbl-Typo extension can see in your Skribbl avatar.\nOnce in a while, on the skribbl canvas will apear a drop icon - the player who clicks it first is rewarded a Drop to their inventory.\nA Drop is worth 50 Bubbles and adds up to your Bubble credit.");
-            embed.AddField("Commands", "➜ `>inventory` List your Sprites and Bubble statistics.\n➜ `>sprites` Show all buyable Sprites.\n➜ `>sprites [id]` Show a specific Sprite.\n➜ `>buy [id]` Buy a Sprite.\n➜ `>use [id]` Select one of your Sprites.\n➜ `>leaderboard` Show your server's leaderboard.\n➜ `>calc` Calculate various things.\n➜ `>event` Show details for the current event.");
+            embed.AddField("Commands", "➜ `>inventory` List your Sprites and Bubble statistics.\n➜ `>sprites` Show top 10 Sprites.\n➜ `>sprites [id]` Show a specific Sprite.\n➜ `>buy [id]` Buy a Sprite.\n➜ `>use [id]` Select one of your Sprites.\n➜ `>leaderboard` Show your server's leaderboard.\n➜ `>calc` Calculate various things.\n➜ `>event` Show details for the current event.");
 
             await context.Channel.SendMessageAsync(embed: embed);
         }

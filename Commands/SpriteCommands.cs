@@ -295,6 +295,7 @@ namespace Palantir.Commands
             int credit = flags.BotAdmin ? int.MaxValue : BubbleWallet.CalculateCredit(login);
             int sceneCost = BubbleWallet.SceneStartPrice;
             inventory.ForEach(scene => sceneCost *= BubbleWallet.ScenePriceFactor);
+            int eventID = available.FirstOrDefault(scene => scene.ID == id).EventID;
 
             if (!available.Any(scene => scene.ID == id))
             {
@@ -304,9 +305,13 @@ namespace Palantir.Commands
             {
                 await Program.SendEmbed(context.Channel, "Waiiit :o", "You already own this scene!");
             }
-            else if (credit < sceneCost)
+            else if (eventID == 0 && credit < sceneCost)
             {
                 await Program.SendEmbed(context.Channel, "I see you 👀", "You need at least " + sceneCost + " to buy a scene!\nScene cost increases by *2 with every scene you buy.");
+            }
+            else if(eventID > 0 && !Events.EligibleForEventScene(login, eventID))
+            {
+                await Program.SendEmbed(context.Channel, "Sorryyy,", "You have not (yet) collected enough bubbles during that event to buy this scene.\nCheck `>event " + eventID + "` to view your event bubbles.");
             }
             else
             {
@@ -399,7 +404,7 @@ namespace Palantir.Commands
         [Description("Add a scene")]
         [Command("addscene")]
         [RequirePermissionFlag((byte)2)] // 2 -> admin
-        public async Task AddScene(CommandContext context, [Description("The name of the scene")] string name, [Description("A color string (hex, rgb, name..)")] string color, [Description("A color when the player has guessed the word")] string guessedColor, [Description("Any string except '-' to set the sprite artist")] string artist = "")
+        public async Task AddScene(CommandContext context, [Description("The name of the scene")] string name, [Description("A color string (hex, rgb, name..)")] string color, [Description("A color when the player has guessed the word")] string guessedColor, [Description("Any string except '-' to set the sprite artist")] string artist = "", [Description("Event ID or '0' to associate to no event")] int eventID = 0)
         {
             PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
             if (!perm.Moderator && !perm.BotAdmin)
@@ -419,6 +424,10 @@ namespace Palantir.Commands
                 await Program.SendEmbed(context.Channel, "Hmm...", "Something went wrong with the scene name.");
                 return;
             }
+            if(eventID != 0 && !Events.GetEvents(false).Any(evt => evt.EventID == eventID))
+            {
+                eventID = 0;
+            }
 
             // download scene
             System.Net.WebClient client = new System.Net.WebClient();
@@ -426,10 +435,10 @@ namespace Palantir.Commands
 
             string url = "https://tobeh.host/scenes/scene" + name.Replace("'", "-") + ".gif";
             if (artist == "-") artist = "";
-            SceneEntity scene = BubbleWallet.AddScene(name.Replace("_", " "), color, guessedColor, artist, url);
+            SceneEntity scene = BubbleWallet.AddScene(name.Replace("_", " "), color, guessedColor, artist, url, eventID);
 
             DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
-            embed.Title = ":champagne:  Scene **" + name + "** with ID " + scene.ID + " was added!";
+            embed.Title = ":champagne:  Scene **" + name + "** with ID " + scene.ID + " was added" + (eventID > 0 ? "to event #" + eventID : "") + "!";
             embed.Color = DiscordColor.Magenta;
             embed.WithDescription("ID: " + scene.ID + "\nView the scene with `>scene [scene id]`\nBuy the scene with `>paint [scene id]`\nUse a scene with `>show [scene id]`");
             embed.WithThumbnail(scene.URL);

@@ -71,6 +71,27 @@ namespace Palantir
             return drops;
         }
 
+        public static int GetCollectedBubblesInTimespan(DateTime start, DateTime end, string login)
+        {
+            start = start.AddDays(-1);
+            PalantirDbContext db = new();
+            List<BubbleTraceEntity> bubbleTraces = db.BubbleTraces.Where(trace => trace.Login == login).ToList();
+            List<int> bubbles = bubbleTraces.Where(trace =>
+            {
+                DateTime tracedt = DateTime.Parse(trace.Date, new CultureInfo("en-CA"));
+                return tracedt <= end && tracedt >= start;
+            }).Select(trace => trace.Bubbles).ToList();
+            int timespanStartBubbles = bubbles.Min();
+            int timespanEndBubbles = bubbles.Max();
+
+            // if for last day isn't a trace existent, use current bubble value 
+            if(!bubbleTraces.Any(trace => DateTime.Parse(trace.Date, new CultureInfo("en-CA")).Date.Equals(end.Date)))
+            {
+                timespanEndBubbles = BubbleWallet.GetBubbles(login);
+            }
+            return timespanEndBubbles - timespanStartBubbles;
+        }
+
         public static List<SpriteProperty> ParseSpriteInventory(string sprites)
         {
             List<Sprite> availableSprites = GetAvailableSprites();
@@ -153,7 +174,7 @@ namespace Palantir
             context.Dispose();
         }
 
-        public static SceneEntity AddScene(string name, string color, string guessedColor, string artist, string url)
+        public static SceneEntity AddScene(string name, string color, string guessedColor, string artist, string url, int eventID)
         {
             PalantirDbContext context = new PalantirDbContext();
             int id = context.Scenes.Count() > 0 ? context.Scenes.Select(s => s.ID).Max() + 1 : 1;
@@ -164,7 +185,8 @@ namespace Palantir
                 GuessedColor = guessedColor,
                 URL = url,
                 Name = name,
-                ID = id
+                ID = id,
+                EventID = eventID
             };
             context.Scenes.Add(scene);
             context.SaveChanges();
@@ -184,8 +206,11 @@ namespace Palantir
             int nextPrice = SceneStartPrice;
             foreach(SceneEntity scene in GetSceneInventory(login, false))
             {
-                total -= nextPrice;
-                nextPrice *= ScenePriceFactor;
+                if(scene.EventID == 0)
+                {
+                    total -= nextPrice;
+                    nextPrice *= ScenePriceFactor;
+                }
             }
             return total;
         }

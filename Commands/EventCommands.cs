@@ -26,9 +26,11 @@ namespace Palantir.Commands
             else evt = events.FirstOrDefault(e => e.EventID == eventID);
             if (evt != null)
             {
+                DateTime eventStart = Convert.ToDateTime(evt.ValidFrom);
+                DateTime eventEnd = eventStart.AddDays(evt.DayLength);
                 embed.Title = ":champagne: " + evt.EventName;
                 embed.Color = DiscordColor.Magenta;
-                embed.WithDescription(evt.Description + "\nLasts until " + Convert.ToDateTime(evt.ValidFrom).AddDays(evt.DayLength).ToString("MMMM dd") + "\n");
+                embed.WithDescription(evt.Description + "\nLasts from " + eventStart.ToString("MMMM dd") + " until " + eventEnd.ToString("MMMM dd") + "\n");
 
                 string dropList = "";
                 List<SpritesEntity> eventsprites = new List<SpritesEntity>();
@@ -47,6 +49,15 @@ namespace Palantir.Commands
                 });
                 embed.AddField("Event Sprites", dropList == "" ? "No drops added yet." : dropList);
                 embed.AddField("\u200b", "Use `>sprite [id]` to see the event drop and sprite!");
+
+                SceneEntity scene = BubbleWallet.GetAvailableScenes().FirstOrDefault(scene => scene.EventID == evt.EventID);
+                if(scene != null)
+                {
+                    int collectedBubbles = BubbleWallet.GetCollectedBubblesInTimespan(eventStart, eventEnd, login);
+                    bool hasScene = BubbleWallet.GetSceneInventory(login).Any(prop => prop.ID == scene.ID);
+                    embed.WithImageUrl(scene.URL);
+                    embed.AddField("Event Scene: **" + scene.Name + "**", (hasScene ? ":package:" : "") + collectedBubbles + " / " + (evt.DayLength * Events.eventSceneDayValue) + " Bubbles collected");
+                }
             }
             else
             {

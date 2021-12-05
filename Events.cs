@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 
@@ -7,6 +8,7 @@ namespace Palantir
 {
     public static class Events
     {
+        public static int eventSceneDayValue = 350;
         public static List<EventEntity> GetEvents(bool active = true)
         {
             PalantirDbContext context = new PalantirDbContext();
@@ -40,6 +42,16 @@ namespace Palantir
             List<SpritesEntity> sprites = context.Sprites.Where(s => s.EventDropID == eventDropID).ToList();
             context.Dispose();
             return sprites;
+        }
+
+        public static bool EligibleForEventScene(string login, int eventID)
+        {
+            EventEntity evt = GetEvents().FirstOrDefault(evt => evt.EventID == eventID);
+            DateTime eventStart = DateTime.Parse(evt.ValidFrom, new CultureInfo("en-CA"));
+            DateTime eventEnd = eventStart.AddDays(evt.DayLength);
+            int bubblesDuringEvent = BubbleWallet.GetCollectedBubblesInTimespan(eventStart, eventEnd, login);
+            int eventSceneValue = evt.DayLength * eventSceneDayValue;
+            return bubblesDuringEvent >= eventSceneValue;
         }
 
 
