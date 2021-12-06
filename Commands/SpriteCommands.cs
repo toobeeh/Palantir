@@ -438,7 +438,7 @@ namespace Palantir.Commands
             SceneEntity scene = BubbleWallet.AddScene(name.Replace("_", " "), color, guessedColor, artist, url, eventID);
 
             DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
-            embed.Title = ":champagne:  Scene **" + name + "** with ID " + scene.ID + " was added" + (eventID > 0 ? "to event #" + eventID : "") + "!";
+            embed.Title = ":champagne:  Scene **" + name + "** with ID " + scene.ID + " was added" + (eventID > 0 ? " to event #" + eventID : "") + "!";
             embed.Color = DiscordColor.Magenta;
             embed.WithDescription("ID: " + scene.ID + "\nView the scene with `>scene [scene id]`\nBuy the scene with `>paint [scene id]`\nUse a scene with `>show [scene id]`");
             embed.WithThumbnail(scene.URL);
