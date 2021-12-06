@@ -8,7 +8,7 @@ namespace Palantir
 {
     public static class Events
     {
-        public static int eventSceneDayValue = 550;
+        public static int eventSceneDayValue = 500;
         public static List<EventEntity> GetEvents(bool active = true)
         {
             PalantirDbContext context = new PalantirDbContext();

@@ -269,6 +269,9 @@ namespace Palantir.Commands
                 int sceneCost = BubbleWallet.SceneStartPrice;
                 inventory.ForEach(scene => sceneCost *= BubbleWallet.ScenePriceFactor);
 
+                if(scene.Color.IndexOf("!") > 0) scene.Color = scene.Color.Substring(0, scene.Color.IndexOf("!"));
+                if (scene.GuessedColor.IndexOf("!") > 0) scene.GuessedColor = scene.GuessedColor.Substring(0, scene.GuessedColor.IndexOf("!"));
+
                 DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
                 embed.Title = "**" + scene.Name + "**";
                 embed.Color = DiscordColor.Magenta;
