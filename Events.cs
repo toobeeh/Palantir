@@ -47,9 +47,9 @@ namespace Palantir
         public static bool EligibleForEventScene(string login, int eventID)
         {
             EventEntity evt = GetEvents().FirstOrDefault(evt => evt.EventID == eventID);
-            DateTime eventStart = DateTime.Parse(evt.ValidFrom, new CultureInfo("en-CA"));
+            DateTime eventStart = Convert.ToDateTime(evt.ValidFrom);
             DateTime eventEnd = eventStart.AddDays(evt.DayLength);
-            int bubblesDuringEvent = BubbleWallet.GetCollectedBubblesInTimespan(eventStart, eventEnd, login);
+            int bubblesDuringEvent = BubbleWallet.GetCollectedBubblesInTimespan(eventStart, eventEnd.AddDays(-1), login);
             int eventSceneValue = evt.DayLength * eventSceneDayValue;
             return bubblesDuringEvent >= eventSceneValue;
         }

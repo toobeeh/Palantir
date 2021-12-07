@@ -206,7 +206,7 @@ namespace Palantir
             int nextPrice = SceneStartPrice;
             foreach(SceneEntity scene in GetSceneInventory(login, false))
             {
-                if(scene.EventID == 0)
+                if(scene.EventID <= 0)
                 {
                     total -= nextPrice;
                     nextPrice *= ScenePriceFactor;
