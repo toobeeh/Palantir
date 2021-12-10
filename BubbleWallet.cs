@@ -202,15 +202,12 @@ namespace Palantir
                 if(s.EventDropID <= 0) total -= s.Cost;
             });
             total += GetDrops(login) * 50;
-            total += GetSceneInventory(login, false).Count();
             int nextPrice = SceneStartPrice;
-            foreach(SceneEntity scene in GetSceneInventory(login, false))
+            List<SceneProperty> regScenes = GetSceneInventory(login, false).Where(s => s.EventID == 0).ToList();
+            foreach (SceneProperty scene in regScenes)
             {
-                if(scene.EventID <= 0)
-                {
-                    total -= nextPrice;
-                    nextPrice *= ScenePriceFactor;
-                }
+                total -= nextPrice;
+                nextPrice *= ScenePriceFactor;
             }
             return total;
         }
