@@ -201,7 +201,7 @@ namespace Palantir.Commands
             if (perm.Patronizer) flags += "`🎁 Patronizer`\n";
             if (flags.Length > 0) embed.AddField("Flags:", flags);
 
-            List<SceneProperty> sceneInv = BubbleWallet.GetSceneInventory(login);
+            List<SceneProperty> sceneInv = BubbleWallet.GetSceneInventory(login, false, false);
             if(sceneInv.Count > 0)
             {
                 embed.AddField("Scenes:", sceneInv.ConvertAll(scene => "#" + scene.ID + " - " + scene.Name + (scene.Activated ? " (active)" : "")).ToDelimitedString("\n"));

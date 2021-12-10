@@ -203,7 +203,7 @@ namespace Palantir
             });
             total += GetDrops(login) * 50;
             int nextPrice = SceneStartPrice;
-            List<SceneProperty> regScenes = GetSceneInventory(login, false).Where(s => s.EventID == 0).ToList();
+            List<SceneProperty> regScenes = GetSceneInventory(login, false, true);
             foreach (SceneProperty scene in regScenes)
             {
                 total -= nextPrice;
@@ -216,7 +216,7 @@ namespace Palantir
         {
             PalantirDbContext db = new();
             MemberEntity member = db.Members.FirstOrDefault(member => member.Login == login);
-            string sceneInv = GetSceneInventory(login).ConvertAll(scene => (scene.Activated ? "." : "") + scene.ID.ToString()).ToDelimitedString(",");
+            string sceneInv = GetSceneInventory(login, false, false).ConvertAll(scene => (scene.Activated ? "." : "") + scene.ID.ToString()).ToDelimitedString(",");
             sceneInv += (sceneInv.Length > 0 ? "," : "") + id.ToString();
             member.Scenes = sceneInv;
             db.SaveChanges();
@@ -261,7 +261,7 @@ namespace Palantir
             return ParseSpriteInventory(inventoryString);
         }
 
-        public static List<SceneProperty> GetSceneInventory(string login, bool onlyActive = false)
+        public static List<SceneProperty> GetSceneInventory(string login, bool onlyActive = false, bool noEventScenes = true)
         {
             PalantirDbContext context = new PalantirDbContext();
             string inventoryString = context.Members.FirstOrDefault(m => m.Login == login).Scenes;
@@ -273,6 +273,7 @@ namespace Palantir
                     context.Scenes.ToList().FirstOrDefault(scene => scene.ID.ToString() == id.Replace(".", "")), id.Contains('.')
                     ));
             context.Dispose();
+            if (noEventScenes) inv = inv.Where(s => s.EventID == 0).ToList();
             return inv;
         }
 
@@ -372,7 +373,7 @@ namespace Palantir
 
         public static void SetOnlineSprite(string login, string lobbyKey, string lobbyPlayerID){
             List<SpriteProperty> playersprites = GetInventory(login).Where(i => i.Activated).ToList();
-            List<SceneProperty> scenes = GetSceneInventory(login, true);
+            List<SceneProperty> scenes = GetSceneInventory(login, true, false);
             PalantirDbContext context = new PalantirDbContext();
 
             context.OnlineSprites.RemoveRange(context.OnlineSprites.Where(o => o.LobbyKey == lobbyKey && lobbyPlayerID == o.LobbyPlayerID));
@@ -487,7 +488,8 @@ namespace Palantir
                 Color = scene.Color,
                 ID = scene.ID,
                 Name = scene.Name,
-                URL = scene.URL
+                URL = scene.URL,
+                EventID = scene.EventID
             };
         }
 

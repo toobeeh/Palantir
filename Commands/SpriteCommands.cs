@@ -265,9 +265,9 @@ namespace Palantir.Commands
             SceneEntity scene = db.Scenes.FirstOrDefault(scene => scene.ID == id);
             if (scene is not null)
             {
-                List<SceneProperty> inventory = BubbleWallet.GetSceneInventory(BubbleWallet.GetLoginOfMember(context.User.Id.ToString()));
+                List<SceneProperty> inventory = BubbleWallet.GetSceneInventory(BubbleWallet.GetLoginOfMember(context.User.Id.ToString()), false, false);
                 int sceneCost = BubbleWallet.SceneStartPrice;
-                inventory.ForEach(scene => sceneCost *= BubbleWallet.ScenePriceFactor);
+                inventory.Where(s => s.EventID == 0).ForEach(scene => sceneCost *= BubbleWallet.ScenePriceFactor);
 
                 if(scene.Color.IndexOf("!") > 0) scene.Color = scene.Color.Substring(0, scene.Color.IndexOf("!"));
                 if (scene.GuessedColor.IndexOf("!") > 0) scene.GuessedColor = scene.GuessedColor.Substring(0, scene.GuessedColor.IndexOf("!"));
@@ -294,10 +294,10 @@ namespace Palantir.Commands
             string login = BubbleWallet.GetLoginOfMember(context.User.Id.ToString());
             PermissionFlag flags = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
             List<SceneEntity> available = BubbleWallet.GetAvailableScenes();
-            List<SceneProperty> inventory = BubbleWallet.GetSceneInventory(login);
+            List<SceneProperty> inventory = BubbleWallet.GetSceneInventory(login, false, false);
             int credit = flags.BotAdmin ? int.MaxValue : BubbleWallet.CalculateCredit(login);
             int sceneCost = BubbleWallet.SceneStartPrice;
-            inventory.ForEach(scene => sceneCost *= BubbleWallet.ScenePriceFactor);
+            inventory.Where(s => s.EventID == 0).ForEach(scene => sceneCost *= BubbleWallet.ScenePriceFactor);
             int eventID = available.FirstOrDefault(scene => scene.ID == id).EventID;
 
             if (!available.Any(scene => scene.ID == id))
@@ -336,7 +336,7 @@ namespace Palantir.Commands
         {
             string login = BubbleWallet.GetLoginOfMember(context.User.Id.ToString());
             PermissionFlag flags = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
-            List<SceneProperty> inventory = BubbleWallet.GetSceneInventory(login);
+            List<SceneProperty> inventory = BubbleWallet.GetSceneInventory(login, false, false);
 
             if (!inventory.Any(scene => scene.ID == id) && id != 0)
             {

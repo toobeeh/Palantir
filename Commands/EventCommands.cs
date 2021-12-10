@@ -54,7 +54,7 @@ namespace Palantir.Commands
                 if(scene != null)
                 {
                     int collectedBubbles = BubbleWallet.GetCollectedBubblesInTimespan(eventStart, eventEnd.AddDays(-1), login);
-                    bool hasScene = BubbleWallet.GetSceneInventory(login).Any(prop => prop.ID == scene.ID);
+                    bool hasScene = BubbleWallet.GetSceneInventory(login, false, false).Any(prop => prop.ID == scene.ID);
                     embed.WithImageUrl(scene.URL);
                     embed.AddField("\n\u200b \nEvent Scene: **" + scene.Name + "**", "> \n> " + (hasScene ? ":package:" : "") + collectedBubbles + " / " + (evt.DayLength * Events.eventSceneDayValue) + " Bubbles collected");
                 }
