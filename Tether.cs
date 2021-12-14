@@ -377,7 +377,7 @@ namespace Palantir
                     if (player.Sender)
                     {
                         string line = "";
-                        line += Formatter.Sanitize(player.Name).Replace("\\","");
+                        line += Formatter.Sanitize(player.Name).Replace("\\","").Replace("´","");
                         line += new string(' ', (20 - player.Name.Length) < 0 ? 0 : (20 - player.Name.Length));
                         line += player.Score + " pts";
                         if (player.Score != 0)
