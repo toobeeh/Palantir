@@ -81,7 +81,7 @@ namespace Palantir
                 }
 
                 context.Dispose();
-                int sleep = CalculateDropTimeoutSeconds() * 1000 + 20000;
+                int sleep = CalculateDropTimeoutSeconds() * 1000;
                 Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > Next drop in " + sleep 
                     + " ms at " + DateTime.Now.AddMilliseconds(sleep).ToString("HH:mm:ss")
                     + " for EventDropID #" + drop.EventDropID);
@@ -106,6 +106,7 @@ namespace Palantir
             if (count <= 0) count = 1;
             int min = 600 / count;
             if (min < 30) min = 30;
+            min += 20; // minimum offset
 
             // modify by boosts
             min = Convert.ToInt32(Math.Round(min / GetCurrentFactor(), 0));
