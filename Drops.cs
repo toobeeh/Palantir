@@ -53,7 +53,7 @@ namespace Palantir
                 drop.CaughtLobbyKey = "";
                 drop.CaughtLobbyPlayerID = "";
                 drop.DropID = (new Random()).Next(1, 99999999).ToString();
-                drop.ValidFrom = DateTime.UtcNow.AddSeconds(20).ToString("yyyy-MM-dd HH:mm:ss");
+                drop.ValidFrom = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss");
                 drop.EventDropID = Events.GetRandomEventDropID();
 
                 try
