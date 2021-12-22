@@ -49,12 +49,18 @@ namespace Palantir
                     continue;
                 }
 
+                int dropTimeout = CalculateDropTimeoutSeconds() * 1000;
+
                 DropEntity drop = new DropEntity();
                 drop.CaughtLobbyKey = "";
                 drop.CaughtLobbyPlayerID = "";
                 drop.DropID = (new Random()).Next(1, 99999999).ToString();
-                drop.ValidFrom = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss");
+                drop.ValidFrom = DateTime.UtcNow.AddMilliseconds(dropTimeout).ToString("yyyy-MM-dd HH:mm:ss");
                 drop.EventDropID = Events.GetRandomEventDropID();
+
+                Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > Next drop in " + dropTimeout
+                    + " ms at " + DateTime.Now.AddMilliseconds(dropTimeout).ToString("HH:mm:ss")
+                    + " for EventDropID #" + drop.EventDropID);
 
                 try
                 {
@@ -81,11 +87,7 @@ namespace Palantir
                 }
 
                 context.Dispose();
-                int sleep = CalculateDropTimeoutSeconds() * 1000;
-                Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > Next drop in " + sleep 
-                    + " ms at " + DateTime.Now.AddMilliseconds(sleep).ToString("HH:mm:ss")
-                    + " for EventDropID #" + drop.EventDropID);
-                Thread.Sleep(sleep);
+                Thread.Sleep(dropTimeout + 1000); // add next drop 1s after old was dispatched
             }
         }
 
