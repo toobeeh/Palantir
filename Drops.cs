@@ -87,11 +87,13 @@ namespace Palantir
                     continue;
                 }
 
-                // poll with 200ms to wait until drop was claimed or 5s passed (timeout)
+                Thread.Sleep(dropTimeout); // wait untli drop was dispatched by ithil server
+
+                // poll with 200ms to wait until drop was claimed or 5s passed (timeout), then continue loop
                 int timeout = 0;
                 int poll = 500;
                 string pollInfo = "";
-                while (timeout < 15000 && context.Drop.Any(drop => drop.CaughtLobbyPlayerID == ""))
+                while (timeout < 10000 && context.Drop.Any(drop => drop.CaughtLobbyPlayerID == ""))
                 {
                     pollInfo += timeout + ":" + DateTime.Now.ToString() + "-" + context.Drop.First().CaughtLobbyPlayerID + "\n";
                     timeout += poll;
@@ -99,7 +101,6 @@ namespace Palantir
                 }
                 Program.Client.SendMessageAsync(Program.Client.GetChannelAsync(923282307723436122).GetAwaiter().GetResult(), "polled " + timeout.ToString() + "-" + pollInfo);
 
-                Thread.Sleep(dropTimeout + 1000); // add next drop 1s after old was claimed
             }
         }
 
