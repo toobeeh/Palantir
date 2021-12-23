@@ -24,13 +24,13 @@ namespace Palantir
         {
             // sync with last drop: get last dispatch time and wait until then
             PalantirDbContext context = new PalantirDbContext();
-            DateTime nextDrop = DateTime.ParseExact(context.Drop.First().ValidFrom, "dd/MM/yyyy HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
-            int syncTime = Convert.ToInt32((nextDrop - DateTime.UtcNow).TotalMilliseconds);
-            if(syncTime > 0)
-            {
-                //Program.Client.SendMessageAsync(Program.Client.GetChannelAsync(923282307723436122).GetAwaiter().GetResult(), timeout.ToString());
-                Thread.Sleep(syncTime + 5000);
-            }
+            //DateTime nextDrop = DateTime.ParseExact(context.Drop.First().ValidFrom, "dd/MM/yyyy HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
+            //int syncTime = Convert.ToInt32((nextDrop - DateTime.UtcNow).TotalMilliseconds);
+            //if(syncTime > 0)
+            //{
+            //    //Program.Client.SendMessageAsync(Program.Client.GetChannelAsync(923282307723436122).GetAwaiter().GetResult(), timeout.ToString());
+            //    Thread.Sleep(syncTime + 5000);
+            //}
 
             while (true)
             {
