@@ -89,7 +89,7 @@ namespace Palantir
                 // poll with 200ms to wait until drop was claimed or 5s passed (timeout)
                 int timeout = 0;
                 int poll = 200;
-                while (timeout < 5000 && context.Drop.Any(drop => drop.CaughtLobbyPlayerID != ""))
+                while (timeout < 5000 && context.Drop.Any(drop => drop.CaughtLobbyPlayerID == ""))
                 {
                     timeout += poll;
                     Thread.Sleep(poll);
