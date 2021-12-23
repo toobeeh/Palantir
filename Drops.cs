@@ -93,7 +93,7 @@ namespace Palantir
                 string pollInfo = "";
                 while (timeout < 15000 && context.Drop.Any(drop => drop.CaughtLobbyPlayerID == ""))
                 {
-                    pollInfo += timeout + ":" + context.Drop.First().CaughtLobbyPlayerID + "\n";
+                    pollInfo += timeout + ":" + DateTime.Now.ToString() + "-" + context.Drop.First().CaughtLobbyPlayerID + "\n";
                     timeout += poll;
                     Thread.Sleep(poll);
                 }
