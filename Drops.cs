@@ -86,8 +86,11 @@ namespace Palantir
                     continue;
                 }
 
+                // poll with 200ms to wait until drop was claimed
+                while (context.Drop.Any(drop => drop.CaughtLobbyPlayerID != "")) Thread.Sleep(200);
+
                 context.Dispose();
-                Thread.Sleep(dropTimeout + 1000); // add next drop 1s after old was dispatched
+                Thread.Sleep(dropTimeout + 1000); // add next drop 1s after old was claimed
             }
         }
 
