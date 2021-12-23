@@ -22,17 +22,9 @@ namespace Palantir
 
         private static void Drop()
         {
-
-            PalantirDbContext context = new PalantirDbContext();
-
-            // sync with previous drop and wait until drop is over (with max. timeout in mind)
-            DateTime dispatchNext = DateTime.ParseExact(context.Drop.First().ValidFrom, "dd/MM/yyyy HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
-            int waitMs = (int)(dispatchNext - DateTime.Now).TotalMilliseconds;
-            Program.Client.SendMessageAsync(Program.Client.GetChannelAsync(923282307723436122).GetAwaiter().GetResult(), waitMs.ToString());
-
-            if (waitMs > 0) Thread.Sleep(waitMs + 5000);
-
-            while (true){
+            while (true)
+            {
+                PalantirDbContext context = new PalantirDbContext();
 
                 try
                 {
