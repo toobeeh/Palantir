@@ -22,8 +22,15 @@ namespace Palantir
 
         private static void Drop()
         {
-            while(true){
-                PalantirDbContext context = new PalantirDbContext();
+
+            PalantirDbContext context = new PalantirDbContext();
+
+            // sync with previous drop and wait until drop is over (with max. timeout in mind)
+            DateTime dispatchNext = DateTime.ParseExact(context.Drop.First().ValidFrom, "dd/MM/yyyy HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
+            int waitMs = (int)(dispatchNext - DateTime.Now).TotalMilliseconds;
+            if (waitMs > 0) Thread.Sleep(waitMs + 5000);
+
+            while (true){
 
                 try
                 {
@@ -88,9 +95,9 @@ namespace Palantir
 
                 // poll with 200ms to wait until drop was claimed or 5s passed (timeout)
                 int timeout = 0;
-                int poll = 200;
+                int poll = 500;
                 string pollInfo = "";
-                while (timeout < 5000 && context.Drop.Any(drop => drop.CaughtLobbyPlayerID == ""))
+                while (timeout < 15000 && context.Drop.Any(drop => drop.CaughtLobbyPlayerID == ""))
                 {
                     pollInfo += timeout + ":" + context.Drop.First().CaughtLobbyPlayerID + "\n";
                     timeout += poll;
@@ -98,7 +105,6 @@ namespace Palantir
                 }
                 Program.Client.SendMessageAsync(Program.Client.GetChannelAsync(923282307723436122).GetAwaiter().GetResult(), "polled " + timeout.ToString() + "-" + pollInfo);
 
-                context.Dispose();
                 Thread.Sleep(dropTimeout + 1000); // add next drop 1s after old was claimed
             }
         }
