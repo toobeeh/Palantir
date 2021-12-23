@@ -22,10 +22,18 @@ namespace Palantir
 
         private static void Drop()
         {
+            // sync with last drop: get last dispatch time and wait until then
+            PalantirDbContext context = new PalantirDbContext();
+            DateTime nextDrop = DateTime.ParseExact(context.Drop.First().ValidFrom, "dd/MM/yyyy HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
+            int syncTime = Convert.ToInt32((nextDrop - DateTime.UtcNow).TotalMilliseconds);
+            if(syncTime > 0)
+            {
+                //Program.Client.SendMessageAsync(Program.Client.GetChannelAsync(923282307723436122).GetAwaiter().GetResult(), timeout.ToString());
+                Thread.Sleep(syncTime + 5000);
+            }
+
             while (true)
             {
-                PalantirDbContext context = new PalantirDbContext();
-
                 try
                 {
                     context.Drop.RemoveRange(context.Drop);
@@ -91,17 +99,15 @@ namespace Palantir
 
                 // poll with 200ms to wait until drop was claimed or 5s passed (timeout), then continue loop
                 int timeout = 0;
-                int poll = 500;
-                string pollInfo = "";
-                while (timeout < 10000 && context.Drop.Any(drop => drop.CaughtLobbyPlayerID == ""))
+                int poll = 200;
+                while (timeout < 5000 && context.Drop.Any(drop => drop.CaughtLobbyPlayerID == ""))
                 {
-                    pollInfo += timeout + ":" + DateTime.Now.ToString() + "-" + context.Drop.First().CaughtLobbyPlayerID + "\n";
                     timeout += poll;
                     Thread.Sleep(poll);
                 }
-                Program.Client.SendMessageAsync(Program.Client.GetChannelAsync(923282307723436122).GetAwaiter().GetResult(), "polled " + timeout.ToString() + "-" + pollInfo);
-
             }
+
+            context.Dispose();
         }
 
         public static int CalculateDropTimeoutSeconds()
