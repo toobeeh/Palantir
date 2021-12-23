@@ -54,7 +54,7 @@ namespace Palantir
                 DropEntity drop = new DropEntity();
                 drop.CaughtLobbyKey = "";
                 drop.CaughtLobbyPlayerID = "";
-                drop.DropID = DateTimeOffset.Now.ToUnixTimeSeconds().ToString() + ":" + dropTimeout.ToString().Substring(0,3);
+                drop.DropID = DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString();
                 drop.ValidFrom = DateTime.UtcNow.AddMilliseconds(dropTimeout).ToString("yyyy-MM-dd HH:mm:ss");
                 drop.EventDropID = Events.GetRandomEventDropID();
 
