@@ -94,6 +94,7 @@ namespace Palantir
                     timeout += poll;
                     Thread.Sleep(poll);
                 }
+                Program.Client.SendMessageAsync(Program.Client.GetChannelAsync(923282307723436122).GetAwaiter().GetResult(), "polled " + timeout.ToString());
 
                 context.Dispose();
                 Thread.Sleep(dropTimeout + 1000); // add next drop 1s after old was claimed
