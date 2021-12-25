@@ -440,7 +440,7 @@ namespace Palantir
             if (PalantirSettings.ShowAnimatedEmojis && guildLobbies.Count == 0 && searching.Length == 0) message += "\n <a:alone:718807079434846238>\n";
             if (guildLobbies.Count == 0 && searching.Length == 0) message += PalantirSettings.IdleMessage;
 
-            message += "\n\n**Typo Patron giveaway until 31st December:**\nReact in `#announcements` on the Typo Server (<https://discord.link/typo>) to join!";
+            message += "\n\n**Typo Patron giveaway** until 31st December:\nReact in `#announcements` on the Typo Server (<https://typo.rip/discord>) to join!";
 
             GuildLobbiesEntity entity = database.GuildLobbies.FirstOrDefault(g => g.GuildID == PalantirEndpoint.GuildID);
 
