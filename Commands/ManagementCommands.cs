@@ -252,14 +252,33 @@ namespace Palantir.Commands
         }
 
         [Description("Start a reaction giveaway.")]
-        [Command("giveaaway")]
+        [Command("giveaway")]
         [RequirePermissionFlag((byte)2)]
-        public async Task StartGiveaway(CommandContext context, ulong channelID, ulong messageID, DiscordEmoji reactionEmoji, string giveawayname)
+        public async Task StartGiveaway(CommandContext context, ulong channelID, ulong messageID, DiscordEmoji reactionEmoji, int timeoutSec, int winners, string giveawayname)
         {
-            var msg = await(await Program.Client.GetChannelAsync(channelID)).GetMessageAsync(messageID);
-            var reactions = await msg.GetReactionsAsync(reactionEmoji);
+            await Program.Servant.SendMessageAsync(context.Channel,
+                "**Starting the " + giveawayname + "!**\n\nPeople will be eliminated all " + (timeoutSec / 60) + "minutes, the last " + winners + " participants are the winners.");
 
-            await Program.Servant.SendMessageAsync(context.Channel, reactions.Select(rc => rc.Mention).ToDelimitedString(";"));
+            var msg = await(await Program.Client.GetChannelAsync(channelID)).GetMessageAsync(messageID);
+            var reactions = await msg.GetReactionsAsync(reactionEmoji, 50);
+
+            while(reactions.Count > winners)
+            {
+                reactions = reactions.Shuffle().ToList();
+                var eliminate = reactions.First();
+                reactions = reactions.Skip(1).ToList();
+
+                var mentions = new System.Collections.Generic.List<IMention>();
+                var eliminateState = new DiscordMessageBuilder()
+                    .WithAllowedMentions(mentions)
+                    .WithContent(eliminate.Mention + "** was eliminated :(** " + reactions.Count + " people left!");
+
+                await Program.Servant.SendMessageAsync(context.Channel, eliminateState);
+
+                await Task.Delay(timeoutSec);
+            }
+
+            await Program.Servant.SendMessageAsync(context.Channel, "**The winners of the " + giveawayname + " are " + reactions.Select(rc => rc.Mention).ToDelimitedString(" and ") + "!**");
         }
     }
 }
