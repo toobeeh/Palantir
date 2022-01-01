@@ -254,10 +254,10 @@ namespace Palantir.Commands
         [Description("Start a reaction giveaway.")]
         [Command("giveaway")]
         [RequirePermissionFlag((byte)2)]
-        public async Task StartGiveaway(CommandContext context, ulong channelID, ulong messageID, DiscordEmoji reactionEmoji, int timeoutSec, int winners, string giveawayname)
+        public async Task StartGiveaway(CommandContext context, ulong channelID, ulong messageID, DiscordEmoji reactionEmoji, int timeoutMilliSec, int winners, string giveawayname)
         {
             await Program.Servant.SendMessageAsync(context.Channel,
-                "**Starting the " + giveawayname + "!**\n\nPeople will be eliminated all " + (timeoutSec / 60) + "minutes, the last " + winners + " participants are the winners.");
+                "**Starting the " + giveawayname + "!**\n\nPeople will be eliminated all " + (timeoutMilliSec / 1000 / 60) + " minutes, the last " + winners + " participants are the winners.");
 
             var msg = await(await Program.Client.GetChannelAsync(channelID)).GetMessageAsync(messageID);
             var reactions = await msg.GetReactionsAsync(reactionEmoji, 50);
@@ -275,7 +275,15 @@ namespace Palantir.Commands
 
                 await Program.Servant.SendMessageAsync(context.Channel, eliminateState);
 
-                await Task.Delay(timeoutSec);
+                if(reactions.Count == 10)
+                {
+                    var pool = new DiscordMessageBuilder()
+                        .WithAllowedMentions(mentions)
+                        .WithContent("The remaining participant pool is: " + reactions.Select(r => r.Mention).ToDelimitedString(";"));
+                    await Program.Servant.SendMessageAsync(context.Channel, pool);
+                }
+
+                await Task.Delay(timeoutMilliSec);
             }
 
             await Program.Servant.SendMessageAsync(context.Channel, "**The winners of the " + giveawayname + " are " + reactions.Select(rc => rc.Mention).ToDelimitedString(" and ") + "!**");
