@@ -257,7 +257,7 @@ namespace Palantir.Commands
         public async Task StartGiveaway(CommandContext context, ulong channelID, ulong messageID, DiscordEmoji reactionEmoji, int timeoutMilliSec, int winners, string giveawayname)
         {
             await Program.Servant.SendMessageAsync(context.Channel,
-                "**Starting the " + giveawayname + "!**\n\nPeople will be eliminated all " + (timeoutMilliSec / 1000 / 60) + " minutes, the last " + winners + " participants are the winners.");
+                "**Starting the " + giveawayname + "!**\n\nPeople will be eliminated once in " + (timeoutMilliSec / 1000 / 60) + " minutes, the last " + winners + " participants are the winners.");
 
             var msg = await(await Program.Client.GetChannelAsync(channelID)).GetMessageAsync(messageID);
             var reactions = await msg.GetReactionsAsync(reactionEmoji, 50);
