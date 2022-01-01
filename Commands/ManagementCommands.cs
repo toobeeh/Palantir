@@ -271,7 +271,7 @@ namespace Palantir.Commands
                 var mentions = new System.Collections.Generic.List<IMention>();
                 var eliminateState = new DiscordMessageBuilder()
                     .WithAllowedMentions(mentions)
-                    .WithContent(eliminate.Mention + "** was eliminated :(** " + reactions.Count + " people left!");
+                    .WithContent(eliminate.Mention + "** was eliminated :(** " + reactions.Count + " people left.");
 
                 await Program.Servant.SendMessageAsync(context.Channel, eliminateState);
 
@@ -279,7 +279,7 @@ namespace Palantir.Commands
                 {
                     var pool = new DiscordMessageBuilder()
                         .WithAllowedMentions(mentions)
-                        .WithContent("The remaining participant pool is: " + reactions.Select(r => r.Mention).ToDelimitedString(";"));
+                        .WithContent("\nThe remaining participant pool is: \n" + reactions.Select(r => r.Mention).ToDelimitedString(";"));
                     await Program.Servant.SendMessageAsync(context.Channel, pool);
                 }
 
