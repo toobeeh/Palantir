@@ -226,12 +226,14 @@ namespace Palantir.Commands
                 if (guild.Value.MemberCount < membersBelow)
                 {
                     int connectedMembers = Program.Feanor.GetGuildMembers(guild.Key.ToString()).Count();
-                    if(connectedMembers < connectedMembersBelow)
+                    if (connectedMembers < connectedMembersBelow)
                     {
-                        try{
+                        try
+                        {
                             await guild.Value.GetDefaultChannel().SendMessageAsync("Hi there!\n\nThis server does not meet one of following criteria:" + humanCriteria + "\n\nDue to a server limit, Palantir leaves all servers below that.\nYou can try inviting Palantir again or feel free to use the bot on the Typo server:\nhttps://discord.link/typo");
                         }
-                        catch (Exception ex) {
+                        catch (Exception ex)
+                        {
                             await context.Channel.SendMessageAsync("Could not send leave message: " + ex.ToString());
                         }
                         try
@@ -249,5 +251,15 @@ namespace Palantir.Commands
             await context.Channel.SendMessageAsync("\n Purge complete, left guilds: " + count);
         }
 
+        [Description("Start a reaction giveaway.")]
+        [Command("giveaaway")]
+        [RequirePermissionFlag((byte)2)]
+        public async Task StartGiveaway(CommandContext context, ulong channelID, ulong messageID, DiscordEmoji reactionEmoji, string giveawayname)
+        {
+            var msg = await(await Program.Client.GetChannelAsync(channelID)).GetMessageAsync(messageID);
+            var reactions = await msg.GetReactionsAsync(reactionEmoji);
+
+            await Program.Servant.SendMessageAsync(context.Channel, reactions.Select(rc => rc.Mention).ToDelimitedString(";"));
+        }
     }
 }
