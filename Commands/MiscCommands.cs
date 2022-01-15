@@ -45,29 +45,7 @@ namespace Palantir.Commands
         [Command("login")]
         public async Task Login(CommandContext context)
         {
-            await context.RespondAsync("Check out the new way to create & connect your Palantir account: \nhttps://www.youtube.com/watch?v=R_4GV7zJfy0");
-            //DiscordDmChannel channel = (DiscordDmChannel)context.Channel;
-            //Member match = new Member { UserID = "0" };
-
-            //Program.Feanor.PalantirMembers.ForEach((m) =>
-            //{
-            //    if (Convert.ToUInt64(m.UserID) == context.Message.Author.Id) match = m;
-            //});
-
-            //if (match.UserID != "0") await channel.SendMessageAsync("Forgot your login? \nHere it is: `" + match.UserLogin + "`");
-            //else
-            //{
-            //    Member member = new Member();
-            //    member.UserID = context.Message.Author.Id.ToString();
-            //    member.UserName = context.Message.Author.Username;
-            //    member.Guilds = new List<ObservedGuild>();
-            //    do member.UserLogin = (new Random()).Next(99999999).ToString();
-            //    while (Program.Feanor.PalantirMembers.Where(mem => mem.UserLogin == member.UserLogin).ToList().Count > 0);
-
-            //    Program.Feanor.AddMember(member);
-
-            //    await channel.SendMessageAsync("Hey " + context.Message.Author.Username + "!\nYou can now login to the bowser extension and use Palantir.\nClick the extension icon in your browser, enter your login and add you discord server's token! \nYour login is: `" + member.UserLogin + "`");
-            //}
+            await context.RespondAsync("Check out the new way to create & connect your Palantir account: \nhttps://youtu.be/Th1sanNw-EY");
         }
 
         [Description("Get a overview of your inventory. (old layout)")]

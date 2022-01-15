@@ -20,7 +20,7 @@ namespace Palantir.Commands
     {
         [Description("Creates a new theme ticket which can be used by anyone to add a new theme to typo.")]
         [Command("themeticket")]
-        [RequirePermissionFlag((byte)4)]
+        [RequirePermissionFlag(PermissionFlag.MOD)]
         public async Task CreateThemeTicket(CommandContext context)
         {
             TypoThemeEntity empty = new TypoThemeEntity();
@@ -116,7 +116,7 @@ namespace Palantir.Commands
 
         [Description("Execute a bash command from the pi root")]
         [Command("bash")]
-        [RequirePermissionFlag((byte)2)]
+        [RequirePermissionFlag(PermissionFlag.ADMIN)]
         public async Task Bash(CommandContext context, params string[] command)
         {
             string commandDelimited = command.ToDelimitedString(" ");
@@ -126,7 +126,7 @@ namespace Palantir.Commands
 
         [Description("Execute a sql command in the palantir database")]
         [Command("sql")]
-        [RequirePermissionFlag((byte)2)]
+        [RequirePermissionFlag(PermissionFlag.ADMIN)]
         public async Task Sql(CommandContext context, params string[] sql)
         {
             string sqlDelimited = sql.ToDelimitedString(" ");
@@ -177,7 +177,7 @@ namespace Palantir.Commands
 
         [Description("Reboots the bot & pulls from git.")]
         [Command("hardreboot")]
-        [RequirePermissionFlag((byte)4)] // 4 -> mod
+        [RequirePermissionFlag(PermissionFlag.MOD)]
         public async Task Reboot(CommandContext context)
         {
             string upd = "git -C /home/pi/Palantir pull".Bash();
@@ -191,7 +191,7 @@ namespace Palantir.Commands
 
         [Description("List servers with palantir and their stats.")]
         [Command("serverlist")]
-        [RequirePermissionFlag((byte)2)]
+        [RequirePermissionFlag(PermissionFlag.ADMIN)]
         public async Task Serverlist(CommandContext context, int membersBelow)
         {
             string guildlist = "";
@@ -215,7 +215,7 @@ namespace Palantir.Commands
 
         [Description("Remove palantir from servers meeting certain criteria.")]
         [Command("serverpurge")]
-        [RequirePermissionFlag((byte)2)]
+        [RequirePermissionFlag(PermissionFlag.ADMIN)]
         public async Task PurgeServers(CommandContext context, int membersBelow, int connectedMembersBelow = 1)
         {
             int count = 0;
@@ -253,7 +253,7 @@ namespace Palantir.Commands
 
         [Description("Start a reaction giveaway.")]
         [Command("giveaway")]
-        [RequirePermissionFlag((byte)2)]
+        [RequirePermissionFlag(PermissionFlag.MOD)]
         public async Task StartGiveaway(CommandContext context, ulong channelID, ulong messageID, DiscordEmoji reactionEmoji, int timeoutMilliSec, int winners, string giveawayname)
         {
             await Program.Servant.SendMessageAsync(context.Channel,

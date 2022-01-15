@@ -21,7 +21,7 @@ namespace Palantir.Commands
     {
         [Description("Generates a card of your profile")]
         [Command("card")]
-        [RequirePermissionFlag((byte)16)]
+        [RequirePermissionFlag(PermissionFlag.PATRON)]
         public async Task Card(CommandContext context)
         {
             DiscordMember dMember = context.Member;
@@ -71,16 +71,17 @@ namespace Palantir.Commands
             string profilebase64 = Convert.ToBase64String(client.DownloadData(dUser.AvatarUrl));
             double bgheight = 0;
             string background64 = "";
+
             if (cardsettings.BackgroundImage != "-")
             {
                 Image bg = Image.Load(System.IO.File.OpenRead("/home/pi/cardassets/imgur_" + cardsettings.BackgroundImage + ".bgb"));
-                double cropX, cropY, height, width;
                 const double cardRatio = 489.98 / 328.09;
-                SpriteComboImage.GetCropPosition(bg.Width, bg.Height, cardRatio, out cropX, out cropY, out height, out width);
+                SpriteComboImage.GetCropPosition(bg.Width, bg.Height, cardRatio, out double cropX, out double cropY, out double height, out double width);
                 bg.Mutate(img => img.Crop(new Rectangle((int)cropX, (int)cropY, (int)width, (int)height)));
                 background64 = bg.ToBase64String(SixLabors.ImageSharp.Formats.Png.PngFormat.Instance).Replace("data:image/png;base64,", "");
                 bgheight = 328;
             }
+
             string combopath = SpriteComboImage.GenerateImage(SpriteComboImage.GetSpriteSources(sprites), "/home/pi/tmpGen/");
             string spritebase64 = Convert.ToBase64String(System.IO.File.ReadAllBytes(combopath));
             System.IO.File.Delete(combopath);
@@ -88,11 +89,14 @@ namespace Palantir.Commands
             int caughtEventdrops = BubbleWallet.CaughtEventdrops(dUser.Id.ToString());
             double ratio = Math.Round(((double)member.Drops + caughtEventdrops) / ((double)member.Bubbles / 1000), 1);
             if (!double.IsFinite(ratio)) ratio = 0;
+
             SpriteComboImage.FillPlaceholdersBG(ref content, profilebase64, spritebase64, background64, cardsettings.BackgroundOpacity, cardsettings.HeaderOpacity, bgheight.ToString(), cardsettings.HeaderColor, cardsettings.LightTextColor, cardsettings.DarkTextColor, dMember is not null ? dMember.DisplayName : dUser.Username, member.Bubbles.ToString(), member.Drops.ToString(), ratio,
                 BubbleWallet.FirstTrace(login), BubbleWallet.GetInventory(login).Count.ToString(), BubbleWallet.ParticipatedEvents(login).Count.ToString() + " (" + caughtEventdrops + " Drops)", Math.Round((double)member.Bubbles * 10 / 3600).ToString(),
                 BubbleWallet.GlobalRanking(login).ToString(), BubbleWallet.GlobalRanking(login, true).ToString(), memberDetail.Guilds.Count.ToString(), perm.Patron, BubbleWallet.IsEarlyUser(login), perm.Moderator);
+            
             string path = SpriteComboImage.SVGtoPNG(content, "/home/pi/Webroot/files/combos/");
             await response.ModifyAsync(content: path.Replace(@"/home/pi/Webroot/", "https://tobeh.host/"));
+
             //System.IO.File.WriteAllText("/home/pi/graph.svg", content);
             //var msg = new DiscordMessageBuilder().WithFile(System.IO.File.OpenRead("/home/pi/graph.svg"));
             //await context.RespondAsync(msg);

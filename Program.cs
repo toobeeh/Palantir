@@ -265,6 +265,8 @@ namespace Palantir
 
     public class PermissionFlag
     {
+
+        public const byte BUBBLEFARM = 1, ADMIN = 2, MOD = 4, CLOUD = 8, PATRON = 16, PERMABAN = 32, DROPBAN = 64, PATRONIZER = 128;
         // Flag schema:
         // M... Mod - A... Admin - F... Farming - T... Full Typo Cloud Access
         // F =  P T M A F
