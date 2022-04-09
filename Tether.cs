@@ -97,19 +97,8 @@ namespace Palantir
             Dataflow.Name = "Dataflow GuildID " + guild.GuildID;
         }
 
-        public async void EstablishDataflow()
+        public void EstablishDataflow()
         {
-
-            // get split messages, if available, and check if they are currently used 
-            var messagesAfter = (await TargetChannel.GetMessagesAfterAsync(TargetMessage.Id, 1)).Where(msg => msg.Author.Id == Program.Client.CurrentUser.Id);
-
-            // add split messages to dict
-            splitMessages.Clear();
-            messagesAfter.ToList().ForEach(msg =>
-            {
-                splitMessages.Add(msg, msg.Content == "_ _");
-            });
-
             Dataflow.Start();
         }
 
@@ -162,6 +151,18 @@ namespace Palantir
                 Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > Exception: " + e.ToString() + "at Channel:" + PalantirEndpoint.ChannelID + ", Msg: "+PalantirEndpoint.MessageID + ", Guild:" + PalantirEndpoint.GuildName);
                 return;
             }
+
+
+            // get split messages, if available, and check if they are currently used 
+            var messagesAfter = (await TargetChannel.GetMessagesAfterAsync(TargetMessage.Id, 1)).Where(msg => msg.Author.Id == Program.Client.CurrentUser.Id);
+
+            // add split messages to dict
+            splitMessages.Clear();
+            messagesAfter.ToList().ForEach(msg =>
+            {
+                splitMessages.Add(msg, msg.Content == "_ _");
+            });
+
 
             int notFound = 0;
 
