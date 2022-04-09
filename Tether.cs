@@ -23,7 +23,6 @@ namespace Palantir
         private DiscordMessage TargetMessage;
         private DiscordChannel TargetChannel;
         private const int maxErrorCount = 5;
-        private Dictionary<DiscordMessage, bool> splitMessages = new Dictionary<DiscordMessage, bool>();
         private List<string> Emojis = (new string[]{
             "<a:l9:718816560915021884>",
             "<a:l8:718816560923410452>",
@@ -157,12 +156,11 @@ namespace Palantir
             var messagesAfter = (await TargetChannel.GetMessagesAfterAsync(TargetMessage.Id, 1)).Where(msg => msg.Author.Id == Program.Client.CurrentUser.Id);
 
             // add split messages to dict
-            splitMessages.Clear();
+            Dictionary<DiscordMessage, bool> splitMessages = new Dictionary<DiscordMessage, bool>();
             messagesAfter.ToList().ForEach(msg =>
             {
                 splitMessages.Add(msg, msg.Content == "_ _");
             });
-
 
             int notFound = 0;
 
@@ -182,7 +180,7 @@ namespace Palantir
                     if (content == lastContent)
                     {
                         await TargetChannel.TriggerTypingAsync();
-                        Thread.Sleep(4000);
+                        Thread.Sleep(6000);
                         continue;
                     }
                     lastContent = content;
@@ -216,7 +214,7 @@ namespace Palantir
                     contentSplits.RemoveAt(0);
 
                     // loop through existent & needed breaks
-                    for (int editsplit = 0; editsplit < contentSplits.Count || editsplit < this.splitMessages.Count; editsplit++)
+                    for (int editsplit = 0; editsplit < contentSplits.Count || editsplit < splitMessages.Count; editsplit++)
                     {
                         // if split is needed and message there, edit it
                         if (editsplit < contentSplits.Count && editsplit < splitMessages.Count)
@@ -234,10 +232,10 @@ namespace Palantir
                             var kvp = splitMessages.ElementAt(editsplit);
 
                             // if the message is not empty, clear it
-                            if (kvp.Value)
+                            if (kvp.Value == false)
                             {
                                 await kvp.Key.ModifyAsync("_ _");
-                                splitMessages[kvp.Key] = false;
+                                splitMessages[kvp.Key] = true;
                             }
                         }
 
@@ -246,7 +244,7 @@ namespace Palantir
                         {
                             // create a new message
                             var msg = await TargetChannel.SendMessageAsync(contentSplits.ElementAt(editsplit).Replace(" ", ""));
-                            splitMessages.Add(msg, true);
+                            splitMessages.Add(msg, false);
                         }
                     }
 
