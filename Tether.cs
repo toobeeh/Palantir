@@ -180,7 +180,7 @@ namespace Palantir
                     if (content == lastContent)
                     {
                         await TargetChannel.TriggerTypingAsync();
-                        Thread.Sleep(6000);
+                        Thread.Sleep(400);
                         continue;
                     }
                     lastContent = content;
@@ -280,10 +280,10 @@ namespace Palantir
                 catch (Exception e) // catch other exceptions
                 {
                     Program.LogError("Unhandled exception, 15s timeout", e);
-                    Thread.Sleep(15000);
+                    Thread.Sleep(4000);
                 }
 
-                Thread.Sleep(6000);
+                Thread.Sleep(4000);
             }
         }
 
