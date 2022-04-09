@@ -41,7 +41,7 @@ namespace Palantir
             {
                 Token = File.ReadAllText("/home/pi/palantirToken.txt"),
                 TokenType = TokenType.Bot,
-                MinimumLogLevel = Microsoft.Extensions.Logging.LogLevel.Trace
+                MinimumLogLevel = Microsoft.Extensions.Logging.LogLevel.Error
             });
             Commands = Client.UseCommandsNext(new CommandsNextConfiguration
             {
