@@ -614,6 +614,7 @@ namespace Palantir.Commands
 
         [Description("Show available typo themes.")]
         [Command("themes")]
+        [Aliases("theme")]
         public async Task Themes(CommandContext context, [Description("The id of the theme")] int id = 0)
         {
             var embed = new DiscordEmbedBuilder();

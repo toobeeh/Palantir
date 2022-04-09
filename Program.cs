@@ -26,7 +26,7 @@ namespace Palantir
         public static InteractivityExtension Interactivity;
         static async Task Main(string[] args)
         {
-            //File.WriteAllText("/home/pi/palantirOutput.log", String.Empty);
+            File.WriteAllText("/home/pi/palantirOutput.log", String.Empty);
             Console.WriteLine("Huh, it's " + DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " - lemme sleep!!\n");
             Console.WriteLine("Initializing servant bot client...\n");
             Servant = new DiscordClient(new DiscordConfiguration
@@ -40,7 +40,8 @@ namespace Palantir
             Client = new DiscordClient(new DiscordConfiguration
             {
                 Token = File.ReadAllText("/home/pi/palantirToken.txt"),
-                TokenType = TokenType.Bot
+                TokenType = TokenType.Bot,
+                MinimumLogLevel = Microsoft.Extensions.Logging.LogLevel.Information
             });
             Commands = Client.UseCommandsNext(new CommandsNextConfiguration
             {
@@ -75,8 +76,6 @@ namespace Palantir
 
             Console.WriteLine("Stored guilds:");
             Feanor.PalantirTethers.ForEach((t) => { Console.WriteLine("- " + t.PalantirEndpoint.GuildID + " / " + t.PalantirEndpoint.GuildName); });
-            //Console.WriteLine("Stored members:");
-            //Feanor.PalantirMembers.ForEach((m) => { Console.WriteLine("- " + m.UserName); });
             Feanor.ActivatePalantiri();
             Console.WriteLine("Palantir activated. Fool of a Took!");
 

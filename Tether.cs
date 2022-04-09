@@ -158,7 +158,11 @@ namespace Palantir
                 try
                 {
                     // try to build lobby message
+                    var time = DateTime.Now;
                     string content = BuildLobbyContent();
+                    var end = DateTime.Now - time;
+                    if (this.PalantirEndpoint.ChannelID == "779435556412850186") Console.WriteLine("took " + end.TotalSeconds);
+
                     if (content == lastContent)
                     {
                         await TargetChannel.TriggerTypingAsync();
