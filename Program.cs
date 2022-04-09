@@ -41,7 +41,7 @@ namespace Palantir
             {
                 Token = File.ReadAllText("/home/pi/palantirToken.txt"),
                 TokenType = TokenType.Bot,
-                MinimumLogLevel = Microsoft.Extensions.Logging.LogLevel.Error
+                MinimumLogLevel = Microsoft.Extensions.Logging.LogLevel.Information
             });
             Commands = Client.UseCommandsNext(new CommandsNextConfiguration
             {
@@ -202,6 +202,11 @@ namespace Palantir
             if (footer != "") embedErr.WithFooter(footer);
             await channel.SendMessageAsync(embed: embedErr);
             return;
+        }
+
+        public static void LogError(string message, Exception e)
+        {
+            Client.Logger.Log(Microsoft.Extensions.Logging.LogLevel.Error, -1, message, e, (state, e) =>  state + e.ToString());
         }
 
         public static async Task RefreshPicture()

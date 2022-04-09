@@ -23,6 +23,7 @@ namespace Palantir
         private DiscordMessage TargetMessage;
         private DiscordChannel TargetChannel;
         private const int maxErrorCount = 5;
+        private Dictionary<DiscordMessage, bool> splitMessages = new Dictionary<DiscordMessage, bool>();
         private List<string> Emojis = (new string[]{
             "<a:l9:718816560915021884>",
             "<a:l8:718816560923410452>",
@@ -96,8 +97,19 @@ namespace Palantir
             Dataflow.Name = "Dataflow GuildID " + guild.GuildID;
         }
 
-        public void EstablishDataflow()
+        public async void EstablishDataflow()
         {
+
+            // get split messages, if available, and check if they are currently used 
+            var messagesAfter = (await TargetChannel.GetMessagesAfterAsync(TargetMessage.Id, 1)).Where(msg => msg.Author.Id == Program.Client.CurrentUser.Id);
+
+            // add split messages to dict
+            splitMessages.Clear();
+            messagesAfter.ToList().ForEach(msg =>
+            {
+                splitMessages.Add(msg, msg.Content == "_ _");
+            });
+
             Dataflow.Start();
         }
 
@@ -152,65 +164,93 @@ namespace Palantir
             }
 
             int notFound = 0;
+
+            // the last generated message content 
             string lastContent = "";
             while (!abort)
             {
                 try
                 {
-                    // try to build lobby message
-                    var time = DateTime.Now;
-                    string content = BuildLobbyContent();
-                    var end = DateTime.Now - time;
-                    if (this.PalantirEndpoint.ChannelID == "779435556412850186") Console.WriteLine("took " + end.TotalSeconds);
+                    // show as typing 
+                    await TargetChannel.TriggerTypingAsync();
 
+                    // try to build lobby message
+                    string content = BuildLobbyContent();
+
+                    // if content didnt change, dont edit - else set last content
                     if (content == lastContent)
                     {
                         await TargetChannel.TriggerTypingAsync();
-                        Thread.Sleep(8000);
+                        Thread.Sleep(4000);
                         continue;
                     }
-                    else lastContent = content;
-                    DiscordMessage split;
-                    try
+                    lastContent = content;
+
+                    // get necessary splits for this message 
+                    List<string> contentSplits = new();
+                    while(content.Length > 1900)
                     {
-                        do split = (await TargetChannel.GetMessagesAfterAsync(TargetMessage.Id, 1)).First();
-                        while (split.Author.Id != Program.Client.CurrentUser.Id);
+                        // get last previous lobby break
+                        int lobbybreak = 1900;
+                        while (content[lobbybreak] == ' ') lobbybreak--;
+
+                        contentSplits.Add(content.Substring(0,lobbybreak));
+                        content = content.Substring(lobbybreak);
                     }
-                    catch
+
+                    // set main message
+                    await TargetMessage.ModifyAsync(contentSplits.Take(1).First().Replace(" ", ""));
+
+                    // loop through existent & needed breaks
+                    for (int editsplit = 0; editsplit < contentSplits.Count || editsplit < this.splitMessages.Count; editsplit++)
                     {
-                        // no split message found -> not required yet
-                        split = null;
+                        // if split is needed and message there, edit it
+                        if (editsplit < contentSplits.Count && editsplit < splitMessages.Count)
+                        {
+                            var kvp = splitMessages.ElementAt(editsplit);
+                                await kvp.Key.ModifyAsync(contentSplits[editsplit].Replace(" ", ""));
+                                
+                            splitMessages[kvp.Key] = true;
+
+                        }
+
+                        // else if split is not needed, but message there
+                        else if (editsplit >= contentSplits.Count && editsplit < splitMessages.Count)
+                        {
+                            var kvp = splitMessages.ElementAt(editsplit);
+
+                            // if the message is not empty, clear it
+                            if (kvp.Value)
+                            {
+                                await kvp.Key.ModifyAsync("_ _");
+                                splitMessages[kvp.Key] = false;
+                            }
+                        }
+
+                        // else if the split is needed, but the message missing
+                        else if (editsplit < contentSplits.Count && editsplit >= splitMessages.Count)
+                        {
+                            // create a new message
+                            var msg = await TargetChannel.SendMessageAsync(contentSplits.ElementAt(editsplit).Replace(" ", ""));
+                            splitMessages.Add(msg, true);
+                        }
                     }
-                    if (content.Length <= 1900) {
-                        TargetMessage = await TargetMessage.ModifyAsync(content.Replace(" ", ""));
-                        if(!(split is null)) await split.ModifyAsync("_ _");
-                    }
-                    else
-                    {
-                        int lastLobbyBreak = content.Length > 1900 ? 1900 : content.Length;
-                        while (content[lastLobbyBreak] != ' ' || lastLobbyBreak < 1000) lastLobbyBreak--;
-                        TargetMessage = await TargetMessage.ModifyAsync(content.Substring(0, lastLobbyBreak - 1).Replace(" ", ""));
-                        if(split is null) split = await TargetChannel.SendMessageAsync("_ _"); 
-                        split = await split.ModifyAsync(content.Substring(lastLobbyBreak + 1, content.Length - lastLobbyBreak - 1).Replace(" ", ""));
-                    }
-                    await TargetChannel.TriggerTypingAsync();
+
                     notFound = 0;
                 }
                 catch (Microsoft.Data.Sqlite.SqliteException e) // catch sql exceptions
                 {
                     if(e.SqliteErrorCode == 8)
-                        Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > Locked DB. Skipped writing lobby data for this cycle.");
+                        Program.LogError("Locked DB. Skipped writing lobby data for this cycle.", e);
                     else
-                        Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > DB Error: " + e.SqliteErrorCode + ". Skipped writing lobby data for this cycle.\n" + e.ToString());
+                        Program.LogError("DB Error. Skipped writing lobby data for this cycle.", e);
                 }
                 catch(DSharpPlus.Exceptions.NotFoundException e) // catch Discord api axceptions
                 {
                     notFound++;
                     if (notFound > maxErrorCount)
                     {
-                        Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") 
-                            + " > Target Message couldnt be edited. Not found incremented to " + notFound + " / " + maxErrorCount
-                            + " Error: " + e.ToString());
+                        Program.LogError("Target Message couldnt be edited. Not found incremented to " + notFound + " / " + maxErrorCount, e);
                         RemoveTether();
                         return;
                     }
@@ -220,9 +260,7 @@ namespace Palantir
                     notFound++;
                     if (notFound > maxErrorCount)
                     {
-                        Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")
-                            + " > Target Message couldnt be edited. Not found incremented to " + notFound + " / " + maxErrorCount
-                            + " Error: " + e.ToString());
+                        Program.LogError("Target Message couldnt be edited. Not found incremented to " + notFound + " / " + maxErrorCount, e);
                         RemoveTether();
                         return;
                     }
@@ -230,10 +268,11 @@ namespace Palantir
                 catch (Exception e) // catch other exceptions
                 {
                     int line = new StackTrace(e, true).GetFrame(0).GetFileLineNumber();
-                    Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > Unhandled exception on line " + line + " - Target message couldnt be edited. No removal of tether, just 15s timeout. Error: " + e.ToString());
+                    Program.LogError("Unhandled exception, 15s timeout: " + line, e);
                     Thread.Sleep(15000);
                 }
-                Thread.Sleep(8000);
+
+                Thread.Sleep(6000);
             }
         }
 
