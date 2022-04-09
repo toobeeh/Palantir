@@ -222,7 +222,7 @@ namespace Palantir
                             var kvp = splitMessages.ElementAt(editsplit);
                                 await kvp.Key.ModifyAsync(contentSplits[editsplit].Replace(" ", ""));
                                 
-                            splitMessages[kvp.Key] = true;
+                            splitMessages[kvp.Key] = false;
 
                         }
 
