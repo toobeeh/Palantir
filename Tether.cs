@@ -213,6 +213,7 @@ namespace Palantir
 
                     // set main message
                     await TargetMessage.ModifyAsync(contentSplits.Take(1).First().Replace(" ", ""));
+                    contentSplits.RemoveAt(0);
 
                     // loop through existent & needed breaks
                     for (int editsplit = 0; editsplit < contentSplits.Count || editsplit < this.splitMessages.Count; editsplit++)
