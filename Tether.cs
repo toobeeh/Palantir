@@ -189,15 +189,27 @@ namespace Palantir
 
                     // get necessary splits for this message 
                     List<string> contentSplits = new();
-                    while(content.Length > 1900)
+                    do
                     {
-                        // get last previous lobby break
-                        int lobbybreak = 1900;
-                        while (content[lobbybreak] == ' ') lobbybreak--;
+                        // if remaining content needs to be split
+                        if (content.Length > 1900)
+                        {
+                            // get last previous lobby break
+                            int lobbybreak = 1900;
+                            while (content[lobbybreak] == ' ') lobbybreak--;
 
-                        contentSplits.Add(content.Substring(0,lobbybreak));
-                        content = content.Substring(lobbybreak);
+                            contentSplits.Add(content.Substring(0, lobbybreak));
+                            content = content.Substring(lobbybreak);
+                        }
+
+                        // else put all remaining
+                        else
+                        {
+                            contentSplits.Add(content);
+                            content = "";
+                        }
                     }
+                    while (content != "");
 
                     // set main message
                     await TargetMessage.ModifyAsync(contentSplits.Take(1).First().Replace(" ", ""));
@@ -268,8 +280,7 @@ namespace Palantir
                 }
                 catch (Exception e) // catch other exceptions
                 {
-                    int line = new StackTrace(e, true).GetFrame(0).GetFileLineNumber();
-                    Program.LogError("Unhandled exception, 15s timeout: " + line, e);
+                    Program.LogError("Unhandled exception, 15s timeout", e);
                     Thread.Sleep(15000);
                 }
 

@@ -206,7 +206,8 @@ namespace Palantir
 
         public static void LogError(string message, Exception e)
         {
-            Client.Logger.Log(Microsoft.Extensions.Logging.LogLevel.Error, -1, message, e, (state, e) =>  state + e.ToString());
+            int line = new StackTrace(e, true).GetFrame(0).GetFileLineNumber();
+            Client.Logger.Log(Microsoft.Extensions.Logging.LogLevel.Error, -1, message + " @" + line, e, (state, e) =>  state + e.ToString());
         }
 
         public static async Task RefreshPicture()
