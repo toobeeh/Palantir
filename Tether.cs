@@ -194,7 +194,7 @@ namespace Palantir
                         {
                             // get last previous lobby break
                             int lobbybreak = 1900;
-                            while (content[lobbybreak] == ' ') lobbybreak--;
+                            while (content[lobbybreak] != ' ') lobbybreak--;
 
                             contentSplits.Add(content.Substring(0, lobbybreak));
                             content = content.Substring(lobbybreak);
