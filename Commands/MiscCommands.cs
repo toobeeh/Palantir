@@ -345,6 +345,21 @@ namespace Palantir.Commands
             DiscordButtonComponent btnnext, btnprev;
             DiscordSelectComponent generateSelectWithDefault(int selected = 0, bool disabled = false)
             {
+                var truncBatches = memberBatches;
+                if(truncBatches.Count >= 25)
+                {
+                    int right = selected + 12;
+                    if (right >= truncBatches.Count) right = truncBatches.Count - 1;
+                    int left = right - 25;
+                    if (left < 0)
+                    {
+                        left = 0;
+                        right = 25;
+                    }
+
+                    memberBatches = memberBatches.Skip(left).Take(25).ToList();
+                }
+
                 return new DiscordSelectComponent(
                     "lbdselect",
                     "Select Page",
