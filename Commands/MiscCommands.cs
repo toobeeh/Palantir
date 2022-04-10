@@ -345,11 +345,11 @@ namespace Palantir.Commands
             DiscordButtonComponent btnnext, btnprev;
             DiscordSelectComponent generateSelectWithDefault(int selected = 0, bool disabled = false)
             {
-                var truncBatches = memberBatches;
-                if(truncBatches.Count >= 25)
+                var truncBatches = new List<IEnumerable<MemberEntity>>();
+                if (memberBatches.Count >= 25)
                 {
                     int right = selected + 12;
-                    if (right >= truncBatches.Count) right = truncBatches.Count - 1;
+                    if (right >= memberBatches.Count) right = memberBatches.Count - 1;
                     int left = right - 25;
                     if (left < 0)
                     {
@@ -357,17 +357,18 @@ namespace Palantir.Commands
                         right = 25;
                     }
 
-                    truncBatches = truncBatches.Skip(left).Take(25).ToList();
+                    truncBatches = memberBatches.Skip(left).Take(25).ToList();
                 }
+                else truncBatches = memberBatches;
 
                 return new DiscordSelectComponent(
                     "lbdselect",
                     "Select Page",
                     truncBatches.ConvertAll(batch => new DiscordSelectComponentOption(
-                            "Page " + (truncBatches.IndexOf(batch) + 1).ToString(),
-                            "page" + truncBatches.IndexOf(batch).ToString(),
+                            "Page " + (memberBatches.IndexOf(batch) + 1).ToString(),
+                            "page" + memberBatches.IndexOf(batch).ToString(),
                             "",
-                            truncBatches.IndexOf(batch) == selected
+                            memberBatches.IndexOf(batch) == selected
                         )).ToArray(),
                     disabled
                 );
