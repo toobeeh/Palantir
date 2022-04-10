@@ -357,17 +357,17 @@ namespace Palantir.Commands
                         right = 25;
                     }
 
-                    memberBatches = memberBatches.Skip(left).Take(25).ToList();
+                    truncBatches = truncBatches.Skip(left).Take(25).ToList();
                 }
 
                 return new DiscordSelectComponent(
                     "lbdselect",
                     "Select Page",
-                    memberBatches.ConvertAll(batch => new DiscordSelectComponentOption(
-                            "Page " + (memberBatches.IndexOf(batch) + 1).ToString(),
-                            "page" + memberBatches.IndexOf(batch).ToString(),
+                    truncBatches.ConvertAll(batch => new DiscordSelectComponentOption(
+                            "Page " + (truncBatches.IndexOf(batch) + 1).ToString(),
+                            "page" + truncBatches.IndexOf(batch).ToString(),
                             "",
-                            memberBatches.IndexOf(batch) == selected
+                            truncBatches.IndexOf(batch) == selected
                         )).ToArray(),
                     disabled
                 );
