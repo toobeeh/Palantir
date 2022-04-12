@@ -155,7 +155,7 @@ namespace Palantir
         private static async Task stickyBetaNotes(DiscordClient client, MessageCreateEventArgs e)
         {
             // if channel is beta testing and author not bot
-            if(e.Channel.Id == 857205187445522442 && e.Author.Id != Servant.CurrentUser.Id)
+            if(e.Channel.Id == 963172464467279965 && e.Author.Id != Servant.CurrentUser.Id)
             {
 
                 // get last message from servant
