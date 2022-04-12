@@ -145,7 +145,29 @@ namespace Palantir
             TypoTestground = await Client.GetGuildAsync(779435254225698827);
 
             Console.WriteLine("All done!");
+
+            // let servant listen on beta testing channel and "pin" a sticky message there
+            Servant.MessageCreated += stickyBetaNotes;
+
             await Task.Delay(-1);
+        }
+
+        private static async Task stickyBetaNotes(DiscordClient client, MessageCreateEventArgs e)
+        {
+            // if channel is beta testing
+            if(e.Channel.Id == 857205187445522442)
+            {
+
+                // get last message from servant
+                var lastMsgs = await e.Channel.GetMessagesAsync(100);
+                foreach(var msg in lastMsgs)
+                {
+                    if (msg.Author.Id == Servant.CurrentUser.Id) await msg.DeleteAsync();
+                }
+            }
+
+            // send message with link
+            await e.Channel.SendMessageAsync("Please note any discussed bugs here or check if they already exist: \n<https://newtextdocument.com/editor/e2c3380c04>");
         }
 
         private static async Task onjoin(DiscordClient client, GuildCreateEventArgs e)
