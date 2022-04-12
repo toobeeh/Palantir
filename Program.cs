@@ -164,10 +164,12 @@ namespace Palantir
                 {
                     if (msg.Author.Id == Servant.CurrentUser.Id) await msg.DeleteAsync();
                 }
+
+                // send message with link
+                await e.Channel.SendMessageAsync("Please note any discussed bugs here or check if they already exist: \n<https://newtextdocument.com/editor/e2c3380c04>");
             }
 
-            // send message with link
-            await e.Channel.SendMessageAsync("Please note any discussed bugs here or check if they already exist: \n<https://newtextdocument.com/editor/e2c3380c04>");
+            
         }
 
         private static async Task onjoin(DiscordClient client, GuildCreateEventArgs e)
