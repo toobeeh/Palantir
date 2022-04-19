@@ -156,48 +156,43 @@ namespace Palantir.Commands
         public async Task AddWebhook(CommandContext context, [Description("Name of the webhook")] string name, [Description("URL of the webhook")] string url)
         {
             Program.Feanor.ValidateGuildPalantir(context.Guild.Id.ToString());
-            Tether target = Program.Feanor.PalantirTethers.FirstOrDefault(t => t.PalantirEndpoint.GuildID == context.Guild.Id.ToString());
-            if (target.PalantirEndpoint.Webhooks is null) target.PalantirEndpoint.Webhooks = new List<Webhook>();
-            target.PalantirEndpoint.Webhooks.Add(new Webhook
-            {
-                Guild = target.PalantirEndpoint.GuildName,
-                URL = url,
-                Name = name
-            });
 
-            Program.Feanor.SavePalantiri(target.PalantirEndpoint);
-            Program.Feanor.UpdateMemberGuilds();
-            await context.RespondAsync("Webhook added.");
+            PalantirDbContext db = new PalantirDbContext();
+            db.Webhooks.Add(new WebhookEntity
+            {
+                Name = name,
+                WebhookURL = url,
+                ServerID = context.Guild.Id.ToString()
+            });
+            db.SaveChanges();
+            db.Dispose();
+
+            await context.RespondAsync("Webhook added. See all webhooks with >webhooks");
         }
 
         [Command("webhooks")]
-        [Description("Show all webhooks for this server")]
+        [Description("Show all webhooks for this server - warning, the webhook url is sensitive data and can be abused!")]
         [RequireUserPermissions(DSharpPlus.Permissions.Administrator)]
         [RequireGuild()]
         public async Task Webhooks(CommandContext context, [Description("True if all webhooks should be removed.")] bool clearAll = false)
         {
-            if (!Program.Feanor.PalantirTethers.Any(t => t.PalantirEndpoint.GuildID == context.Guild.Id.ToString()))
-            {
-                await context.Message.RespondAsync("Set a channel before configuring the settings!");
-                return;
-            }
+            Program.Feanor.ValidateGuildPalantir(context.Guild.Id.ToString());
 
-            Tether target = Program.Feanor.PalantirTethers.FirstOrDefault(t => t.PalantirEndpoint.GuildID == context.Guild.Id.ToString());
+            PalantirDbContext db = new PalantirDbContext();
             string hooks = "";
-            if (target.PalantirEndpoint.Webhooks is null || target.PalantirEndpoint.Webhooks.Count < 1) hooks = "No webhooks added.";
-            else target.PalantirEndpoint.Webhooks.ForEach(h =>
+            db.Webhooks.ForEach(h =>
             {
-                hooks += "- " + h.Name + ": " + h.URL + "\n";
+                hooks += "- " + h.Name + ": " + h.WebhookURL + "\n";
             });
             await context.RespondAsync(hooks);
 
             if (clearAll)
             {
-                target.PalantirEndpoint.Webhooks = null;
-                Program.Feanor.SavePalantiri(target.PalantirEndpoint);
-                Program.Feanor.UpdateMemberGuilds();
+                db.Webhooks.RemoveRange(db.Webhooks.Where(w => w.ServerID == context.Guild.Id.ToString()));
                 await context.RespondAsync("Those webhooks were removed.");
             }
+            db.SaveChanges();
+            db.Dispose();
         }
 
         [Command("timezone")]

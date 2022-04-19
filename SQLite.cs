@@ -68,6 +68,7 @@ namespace Palantir
         public DbSet<EventCreditEntity> EventCredits { get; set; }
         public DbSet<TypoThemeEntity> Themes { get; set; }
         public DbSet<BoostEntity> DropBoosts { get; set; }
+        public DbSet<WebhookEntity> Webhooks { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder options)
             => options.UseSqlite("Data Source=/home/pi/Database/palantir.db");
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -238,5 +239,12 @@ namespace Palantir
         public string Name { get; set; }
         public string Author { get; set; }
         public string Description { get; set; }
+    }
+
+    public class WebhookEntity
+    {
+        public string ServerID { get; set; }
+        public string Name { get; set; }
+        public string WebhookURL { get; set; }
     }
 }
