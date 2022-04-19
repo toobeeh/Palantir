@@ -76,7 +76,8 @@ namespace Palantir
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<EventCreditEntity>()
                 .HasKey(e => new { e.Login, e.EventDropID });
-            modelBuilder.Entity<WebhookEntity>().HasNoKey();
+            modelBuilder.Entity<WebhookEntity>()
+                .HasKey(e => new { e.ServerID, e.Name });
         }
 
     }
