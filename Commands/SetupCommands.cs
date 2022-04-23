@@ -180,7 +180,7 @@ namespace Palantir.Commands
 
             PalantirDbContext db = new PalantirDbContext();
             string hooks = "";
-            db.Webhooks.ForEach(h =>
+            db.Webhooks.Where(w => w.ServerID == context.Guild.Id.ToString()).ForEach(h =>
             {
                 hooks += "- " + h.Name + ": " + h.WebhookURL + "\n";
             });
