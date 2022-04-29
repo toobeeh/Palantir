@@ -155,14 +155,19 @@ namespace Palantir.Commands
                 return;
             }
             PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
-            if (!perm.BotAdmin)
+            if (!perm.BotAdmin && !perm.Moderator)
             {
                 await Program.SendEmbed(context.Channel, "o_o", "You can't set other's flags!");
                 return;
             }
-            Program.Feanor.SetFlagByID(id.ToString(), flag);
-            string name = (await Program.Client.GetUserAsync(id)).Mention;
+
             PermissionFlag newFlag = new PermissionFlag((byte)flag);
+            newFlag.BotAdmin = newFlag.BotAdmin && perm.BotAdmin;
+            newFlag.Patronizer = newFlag.Patronizer && perm.BotAdmin;
+            newFlag.Patron = newFlag.Patron && perm.BotAdmin;
+
+            Program.Feanor.SetFlagByID(id.ToString(), newFlag.CalculateFlag());
+            string name = (await Program.Client.GetUserAsync(id)).Mention;
             string desc = "Flag[0] Bubble Farming - "
                     + newFlag.BubbleFarming + "\nFlag[1] Bot Admin - "
                     + newFlag.BotAdmin + "\nFlag[2] Moderator - "
