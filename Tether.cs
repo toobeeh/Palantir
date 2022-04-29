@@ -210,7 +210,8 @@ namespace Palantir
                     while (content != "");
 
                     // set main message
-                    await TargetMessage.ModifyAsync(contentSplits.Take(1).First().Replace(" ", ""));
+                    
+                    await TargetMessage.ModifyAsync(contentSplits.Take(1).First().Replace(" ", "").Replace("<@",""));
                     contentSplits.RemoveAt(0);
 
                     // loop through existent & needed breaks
@@ -220,7 +221,7 @@ namespace Palantir
                         if (editsplit < contentSplits.Count && editsplit < splitMessages.Count)
                         {
                             var kvp = splitMessages.ElementAt(editsplit);
-                                await kvp.Key.ModifyAsync(contentSplits[editsplit].Replace(" ", ""));
+                                await kvp.Key.ModifyAsync(contentSplits[editsplit].Replace(" ", "").Replace("<@", ""));
                                 
                             splitMessages[kvp.Key] = false;
 
@@ -243,7 +244,7 @@ namespace Palantir
                         else if (editsplit < contentSplits.Count && editsplit >= splitMessages.Count)
                         {
                             // create a new message
-                            var msg = await TargetChannel.SendMessageAsync(contentSplits.ElementAt(editsplit).Replace(" ", ""));
+                            var msg = await TargetChannel.SendMessageAsync(contentSplits.ElementAt(editsplit).Replace(" ", "").Replace("<@", ""));
                             splitMessages.Add(msg, false);
                         }
                     }
