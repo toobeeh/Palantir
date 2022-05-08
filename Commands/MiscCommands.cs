@@ -764,7 +764,7 @@ namespace Palantir.Commands
             ctx.Members.FirstOrDefault(m => m.Login == login).Streamcode = code;
 
 
-            await Program.SendEmbed(context.Channel, "Nice one!", code == "" ? "Your code has been reset. You'll be assigned random codes when streaming." : "Your code is now`"+ code + "`. Dont forget to enable it on skribbl!");
+            await Program.SendEmbed(context.Channel, "Nice one!", code == "" ? "Your code has been reset. You'll be assigned random codes when streaming." : "Your code is now `"+ code + "`. Dont forget to enable it on skribbl!");
         }
 
 
