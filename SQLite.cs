@@ -96,6 +96,7 @@ namespace Palantir
         public string Patronize { get; set; }
         public string Customcard { get; set; }
         public string Scenes { get; set; }
+        public string Streamcode { get; set; }
     }
     public class PalantirEntity
     {

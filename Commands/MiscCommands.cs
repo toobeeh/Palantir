@@ -709,7 +709,11 @@ namespace Palantir.Commands
                 boosts += "\n=============\n **x" + Math.Round(Drops.GetCurrentFactor(),1) + " Boost active**";
             }
             else boosts = "No Drop Boosts active :(";
-            await Program.SendEmbed(context.Channel, "Current Drop Rate", "ATM, drops appear in an average frequency of about " + Math.Round(average, 0) + "s\n\nThis includes following boosts:\n" + boosts + "\n\nYou can boost once a week with `>dropboost`.");
+
+            double mins = Math.Floor(average / 60);
+            double secs = Math.Floor(average - mins * 60);
+
+            await Program.SendEmbed(context.Channel, "Current Drop Rate", "ATM, drops appear in an average frequency of about " + mins + "min " + secs + "s.\n\nThis includes following boosts:\n" + boosts + "\n\nYou can boost once a week with `>dropboost`.");
         }
 
         [Description("Boost the drop frequency. You can do this once a week.")]
@@ -735,6 +739,34 @@ namespace Palantir.Commands
             }
             else await Program.SendEmbed(context.Channel, "Wooohoo!", "You " + (perm.Patron ? "used Patron perks and " : "") + "boosted drops for one hour by the factor " + boost.Factor + "!\nCheck boosts with `>droprate`, you can boost again in **one week**.");
         }
+
+        [Description("Set your unique typo lobby stream code.")]
+        [Command("streamcode")]
+        public async Task Streamcode(CommandContext context, string code = "")
+        {
+            PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
+            if (perm.Permanban)
+            {
+                await Program.SendEmbed(context.Channel, "So... you're one of the bad guys, huh?", "You're permabanned.");
+                return;
+            }
+
+            string login = BubbleWallet.GetLoginOfMember(context.User.Id.ToString());
+
+            PalantirDbContext ctx = new();
+
+            if(ctx.Members.Any(m => m.Streamcode == code))
+            {
+                await Program.SendEmbed(context.Channel, ":/", "This code is already being used by someone else, sorry..");
+                return;
+            }
+
+            ctx.Members.FirstOrDefault(m => m.Login == login).Streamcode = code;
+
+
+            await Program.SendEmbed(context.Channel, "Nice one!", code == "" ? "Your code has been reset. You'll be assigned random codes when streaming." : "Your code is now`"+ code + "`. Dont forget to enable it on skribbl!");
+        }
+
 
     }
 }
