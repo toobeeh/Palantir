@@ -753,6 +753,12 @@ namespace Palantir.Commands
 
             string login = BubbleWallet.GetLoginOfMember(context.User.Id.ToString());
 
+            if (code.StartsWith("typoStrm_"))
+            {
+                await Program.SendEmbed(context.Channel, "Sneak over 9000?", "Your code may not start with the random identifier.");
+                return;
+            }
+
             PalantirDbContext ctx = new();
 
             if(ctx.Members.Any(m => m.Streamcode == code))
