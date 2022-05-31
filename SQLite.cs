@@ -69,6 +69,8 @@ namespace Palantir
         public DbSet<TypoThemeEntity> Themes { get; set; }
         public DbSet<BoostEntity> DropBoosts { get; set; }
         public DbSet<WebhookEntity> Webhooks { get; set; }
+        public DbSet<BoostSplitEntity> BoostSplits { get; set; }
+        public DbSet<SplitCreditEntity> SplitCredits { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder options)
             => options.UseSqlite("Data Source=/home/pi/Database/palantir.db");
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -78,6 +80,8 @@ namespace Palantir
                 .HasKey(e => new { e.Login, e.EventDropID });
             modelBuilder.Entity<WebhookEntity>()
                 .HasKey(e => new { e.ServerID, e.Name });
+            modelBuilder.Entity<SplitCreditEntity>()
+                .HasKey(e => new { e.Login, e.Split });
         }
 
     }
@@ -249,5 +253,22 @@ namespace Palantir
         public string ServerID { get; set; }
         public string Name { get; set; }
         public string WebhookURL { get; set; }
+    }
+
+    public class BoostSplitEntity
+    {
+        [Key]
+        public int ID { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public string Date { get; set; }
+        public int Value { get; set; }
+    }
+
+    public class SplitCreditEntity
+    {
+        public int Login { get; set; }
+        public int Split { get; set; }
+        public string RewardDate { get; set; }
     }
 }

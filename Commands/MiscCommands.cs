@@ -740,6 +740,39 @@ namespace Palantir.Commands
             else await Program.SendEmbed(context.Channel, "Wooohoo!", "You " + (perm.Patron ? "used Patron perks and " : "") + "boosted drops for one hour by the factor " + boost.Factor + "!\nCheck boosts with `>droprate`, you can boost again in **one week**.");
         }
 
+        [Description("Show your earned boost splits.")]
+        [Command("splits")]
+        [RequireBeta()]
+        public async Task Splits(CommandContext context)
+        {
+            PermissionFlag flags = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
+            int login = Convert.ToInt32(BubbleWallet.GetLoginOfMember(context.User.Id.ToString()));
+
+            var splits = BubbleWallet.GetBoostSplits();
+            var memberSplits = BubbleWallet.GetMemberSplits(login);
+
+            var message = new DiscordEmbedBuilder();
+            message.WithTitle(context.Message.Author + "s Split Achievements");
+
+            if(memberSplits.Count == 0)
+            {
+                message.WithDescription("You haven't earned any Splits yet :(\n\nSplits are used to make your Drop Boosts more powerful.\nYou get them by occasional giveaways/challenges or by competing in Drop Leagues.");
+            }
+            else
+            {
+                memberSplits.ForEach(split =>
+                {
+                    var source = splits.Find(s => s.ID == split.Split);
+                    message.AddField("➜ " + source.Name, source.Description + "\n Earned " + source.Value + " Splits" + (source.Date != null && source.Date != "" ? "`" + source.Date + "`" : ""));
+                });
+
+                message.WithDescription("You can use your Splits to customize your Drop Boosts.\nChoose the boost intensity, duration or cooldown individually when using `>dropboost`");
+            }
+            
+            await context.Message.RespondAsync(message);
+        }
+
+
         [Description("Set your unique typo lobby stream code.")]
         [Command("streamcode")]
         public async Task Streamcode(CommandContext context, string code = "")

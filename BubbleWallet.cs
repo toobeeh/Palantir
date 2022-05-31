@@ -371,6 +371,22 @@ namespace Palantir
             return login;
         }
 
+        public static List<SplitCreditEntity> GetMemberSplits(int login)
+        {
+            PalantirDbContext context = new PalantirDbContext();
+            List<SplitCreditEntity> splits = context.SplitCredits.Where(s => s.Login == login).ToList();
+            context.Dispose();
+            return splits;
+        }
+
+        public static List<BoostSplitEntity> GetBoostSplits()
+        {
+            PalantirDbContext context = new PalantirDbContext();
+            List<BoostSplitEntity> splits = context.BoostSplits.ToList();
+            context.Dispose();
+            return splits;
+        }
+
         public static void SetOnlineSprite(string login, string lobbyKey, string lobbyPlayerID){
             List<SpriteProperty> playersprites = GetInventory(login).Where(i => i.Activated).ToList();
             List<SceneProperty> scenes = GetSceneInventory(login, true, false);
