@@ -150,8 +150,9 @@ namespace Palantir.Commands
             int drops = BubbleWallet.GetDrops(login);
             int bubbles = BubbleWallet.GetBubbles(login);
             int credit = BubbleWallet.CalculateCredit(login);
-            int splits = BubbleWallet.GetMemberSplits(Convert.ToInt32(login), perm).Sum(s => s.Value);
             List<SpriteProperty> inventory = BubbleWallet.GetInventory(login).OrderBy(s => s.ID).ToList();
+            PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
+            int splits = BubbleWallet.GetMemberSplits(Convert.ToInt32(login), perm).Sum(s => s.Value);
 
             DiscordEmbedBuilder embed = new DiscordEmbedBuilder()
                 .WithColor(DiscordColor.Magenta)
@@ -172,8 +173,6 @@ namespace Palantir.Commands
                 + (splits > 0 ? "`🏆` **" + splits + "** Splits rewarded\n" : "")
                 + "`🔥` " + (boostCooldown.TotalSeconds > 0 ? "Next `>dropboost` in " + boostCooldown.ToString(@"dd\d\ hh\h\ mm\m\ ss\s") : "`>dropboost` available!"));
 
-
-            PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
             string flags = "";
             if (perm.BubbleFarming) flags += "`🚩 Bubble Farming`\n";
             if (perm.BotAdmin) flags += "`✔️ Verified cool guy aka Admin`\n";
