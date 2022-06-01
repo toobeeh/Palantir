@@ -160,14 +160,15 @@ namespace Palantir
             return boosts;
         }
 
-        public static bool AddBoost(int login, double factor, int duration, out BoostEntity currentBoost)
+        public static bool AddBoost(int login, double factor, int duration, int cooldownSubtraction, out BoostEntity currentBoost)
         {
             BoostEntity boost = new()
             {
                 Login = login,
                 Factor = factor,
                 DurationS = duration * 1000,
-                StartUTCS = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()
+                StartUTCS = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                CooldownBonusS = cooldownSubtraction * 1000
             };
             bool inserted = false;
             PalantirDbContext db = new();
@@ -186,8 +187,9 @@ namespace Palantir
         {
             TimeSpan cooldown = new();
             PalantirDbContext db = new();
-            if (!db.DropBoosts.Any(boost => boost.Login == login)) cooldown = TimeSpan.FromSeconds(0);
-            else cooldown = TimeSpan.FromMilliseconds(db.DropBoosts.FirstOrDefault(boost => boost.Login == login).StartUTCS + TimeSpan.FromDays(7).TotalMilliseconds - DateTimeOffset.UtcNow.ToUnixTimeMilliseconds());
+            BoostEntity boost = db.DropBoosts.FirstOrDefault(boost => boost.Login == login);
+            if (boost == null) cooldown = TimeSpan.FromSeconds(0);
+            else cooldown = TimeSpan.FromMilliseconds(boost.StartUTCS + TimeSpan.FromDays(7).TotalMilliseconds - boost.CooldownBonusS - DateTimeOffset.UtcNow.ToUnixTimeMilliseconds());
             db.Dispose();
             return cooldown;
         }

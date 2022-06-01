@@ -209,6 +209,7 @@ namespace Palantir
         public double StartUTCS { get; set; }
         public int DurationS { get; set; }
         public double Factor { get; set; }
+        public int CooldownBonusS { get; set; }
     }
 
     public class EventEntity

@@ -731,7 +731,7 @@ namespace Palantir.Commands
             if (perm.Patron) factor = 1.5;
             if (perm.Patronizer) factor = 1.8;
             BoostEntity boost;
-            bool boosted = Drops.AddBoost(login, factor, 60 * 60, out boost);
+            bool boosted = Drops.AddBoost(login, factor, 60 * 60, 0, out boost);
             if (!boosted)
             {
                 string left = Drops.BoostCooldown(login).ToString(@"dd\d\ hh\h\ mm\m\ ss\s");
@@ -785,6 +785,15 @@ namespace Palantir.Commands
                 return;
             }
             int login = Convert.ToInt32(BubbleWallet.GetLoginOfMember(context.User.Id.ToString()));
+
+            TimeSpan cooldown = Drops.BoostCooldown(login);
+
+            if (cooldown.TotalMilliseconds > 0)
+            {
+                string left = Drops.BoostCooldown(login).ToString(@"dd\d\ hh\h\ mm\m\ ss\s");
+                await Program.SendEmbed(context.Channel, "Take your time...", "The default cooldown after a drop boost is one week.\nYou can't boost yet!\nWait " + left);
+            }
+
             double factor = 1.1;
             var memberSplits = BubbleWallet.GetMemberSplits(login, perm);
             int memberAvailableSplits = memberSplits.Sum(s => s.Value);
@@ -792,9 +801,8 @@ namespace Palantir.Commands
             if (factorSplits + durationSplits + cooldownSplits > memberAvailableSplits) factorSplits = durationSplits = cooldownSplits = 0;
 
 
-
             var chooseMessage = new DiscordMessageBuilder()
-                .WithContent("> **Customize your Dropboost**\n> You have `" + memberAvailableSplits + "` Splits available.\n> \n> `🔥` **Intensity:** +2 Splits => +0.1 factor\n> `⌛` **Duration:** +1 Split => +20min boost\n> `💤` **Cooldown:** +1 Split => -12hrs until next boost\n\n_ _");
+                .WithContent("> **Customize your Dropboost**\n> You have `" + memberAvailableSplits + "` Splits available.\n> \n> `🔥` **Intensity:** +2 Splits => +0.1 factor\n> `⌛` **Duration:** +1 Split => +20min boost\n> `💤` **Cooldown:** +1 Split => -12hrs until next boost\n_ _");
 
             Action<string, bool> updateComponents = (string starttext, bool disable) =>
             {
@@ -802,15 +810,15 @@ namespace Palantir.Commands
 
                 var minusFactor = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Secondary, "-fac", "-", disable);
                 var plusFactor = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Secondary, "+fac", "+", disable);
-                var labelFactor = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Primary, "fac", "Boost Factor: " + factorSplits + " Splits", true);
+                var labelFactor = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Primary, "fac", "Boost Factor: " + factorSplits + " Splits (+" + factorSplits * 0.5+"x)", true);
 
                 var minusDur = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Secondary, "-dur", "-", disable);
                 var plusDur = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Secondary, "+dur", "+", disable);
-                var labelDur = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Primary, "dur", "Boost Duration: " + durationSplits + " Splits", true);
+                var labelDur = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Primary, "dur", "Boost Duration: " + durationSplits + " Splits (+" + durationSplits * 20 + "min)", true);
 
                 var minusCool = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Secondary, "-cool", "-", disable);
                 var plusCool = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Secondary, "+cool", "+", disable);
-                var labelCool = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Primary, "cool", "Boost Cooldown: " + cooldownSplits + " Splits", true);
+                var labelCool = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Primary, "cool", "Boost Cooldown: " + cooldownSplits + " Splits (-" + cooldownSplits * 12 + "hrs)", true);
 
                 var start = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Success, "start", starttext, disable);
 
@@ -838,15 +846,23 @@ namespace Palantir.Commands
                 await reaction.Result.Interaction.CreateResponseAsync(DSharpPlus.InteractionResponseType.UpdateMessage);
 
                 if (reaction.Result.Id == "-dur" && durationSplits > 0) durationSplits--;
-                if (reaction.Result.Id == "-fac" && factorSplits > 0) factorSplits--;
+                if (reaction.Result.Id == "-fac" && factorSplits > 1) factorSplits-=2;
                 if (reaction.Result.Id == "-cool" && cooldownSplits > 0) cooldownSplits--;
 
                 if (reaction.Result.Id == "+dur" && (durationSplits + factorSplits + cooldownSplits) < memberAvailableSplits) durationSplits++;
-                if (reaction.Result.Id == "+fac" && (durationSplits + factorSplits + cooldownSplits) < memberAvailableSplits - 1) factorSplits++;
+                if (reaction.Result.Id == "+fac" && (durationSplits + factorSplits + cooldownSplits) < memberAvailableSplits - 1) factorSplits+=2;
                 if (reaction.Result.Id == "+cool" && (durationSplits + factorSplits + cooldownSplits) < memberAvailableSplits) cooldownSplits++;
 
                 if(reaction.Result.Id == "start")
                 {
+
+                    BoostEntity boost;
+
+                    factor = factor + factorSplits * 0.1;
+                    int duration = (60 + durationSplits * 20) * 60;
+                    int cooldownRed = 60 * 60 * 12 * cooldownSplits;
+
+                    bool boosted = Drops.AddBoost(login, factor, duration, cooldownRed, out boost);
 
                     updateComponents("You boosted! 🔥", true);
                     await sent.ModifyAsync(chooseMessage);
