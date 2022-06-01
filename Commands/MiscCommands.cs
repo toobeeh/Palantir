@@ -716,33 +716,52 @@ namespace Palantir.Commands
             await Program.SendEmbed(context.Channel, "Current Drop Rate", "ATM, drops appear in an average frequency of about " + mins + "min " + secs + "s.\n\nThis includes following boosts:\n" + boosts + "\n\nYou can boost once a week with `>dropboost`.");
         }
 
-        [Description("Boost the drop frequency. You can do this once a week.")]
-        [Command("dropboost")]
-        public async Task DropBoost(CommandContext context)
+        //[Description("Boost the drop frequency. You can do this once a week.")]
+        //[Command("dropboost")]
+        //public async Task DropBoost(CommandContext context)
+        //{
+        //    PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
+        //    if (perm.Permanban)
+        //    {
+        //        await Program.SendEmbed(context.Channel, "So... you're one of the bad guys, huh?", "Users with a permanban obviously cant boost, lol");
+        //        return;
+        //    }
+        //    int login = Convert.ToInt32(BubbleWallet.GetLoginOfMember(context.User.Id.ToString()));
+        //    double factor = 1.1;
+        //    if (perm.Patron) factor = 1.5;
+        //    if (perm.Patronizer) factor = 1.8;
+        //    BoostEntity boost;
+        //    bool boosted = Drops.AddBoost(login, factor, 60 * 60, 0, out boost);
+        //    if (!boosted)
+        //    {
+        //        string left = Drops.BoostCooldown(login).ToString(@"dd\d\ hh\h\ mm\m\ ss\s");
+        //        await Program.SendEmbed(context.Channel, "Take your time...", "The cooldown after a drop boost is one week.\nYou can't boost yet!\nWait " + left);
+        //    }
+        //    else await Program.SendEmbed(context.Channel, "Wooohoo!", "You " + (perm.Patron ? "used Patron perks and " : "") + "boosted drops for one hour by the factor " + boost.Factor + "!\nCheck boosts with `>droprate`, you can boost again in **one week**.");
+        //}
+
+        [Description("Add a split reward to someone")]
+        [Command("splitreward")]
+        [RequirePermissionFlag(2)]
+        public async Task Splitreward(CommandContext context, long id, int split)
         {
-            PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
-            if (perm.Permanban)
+            int login = Convert.ToInt32(BubbleWallet.GetLoginOfMember(id.ToString()));
+
+            SplitReward reward = new SplitReward()
             {
-                await Program.SendEmbed(context.Channel, "So... you're one of the bad guys, huh?", "Users with a permanban obviously cant boost, lol");
-                return;
-            }
-            int login = Convert.ToInt32(BubbleWallet.GetLoginOfMember(context.User.Id.ToString()));
-            double factor = 1.1;
-            if (perm.Patron) factor = 1.5;
-            if (perm.Patronizer) factor = 1.8;
-            BoostEntity boost;
-            bool boosted = Drops.AddBoost(login, factor, 60 * 60, 0, out boost);
-            if (!boosted)
-            {
-                string left = Drops.BoostCooldown(login).ToString(@"dd\d\ hh\h\ mm\m\ ss\s");
-                await Program.SendEmbed(context.Channel, "Take your time...", "The cooldown after a drop boost is one week.\nYou can't boost yet!\nWait " + left);
-            }
-            else await Program.SendEmbed(context.Channel, "Wooohoo!", "You " + (perm.Patron ? "used Patron perks and " : "") + "boosted drops for one hour by the factor " + boost.Factor + "!\nCheck boosts with `>droprate`, you can boost again in **one week**.");
+                Login = login,
+                Split = split,
+                RewardDate = DateTime.UtcNow.ToShortDateString()
+            };
+            PalantirDbContext db = new();
+            db.SplitCredits.Add(reward);
+            db.SaveChanges();
+            db.Dispose();
+            await Program.SendEmbed(context.Channel, "Added split reward", "Userid: " + id + ", Split: " + split);
         }
 
         [Description("Show your earned boost splits.")]
         [Command("splits")]
-        [RequireBeta()]
         public async Task Splits(CommandContext context)
         {
             PermissionFlag flags = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
@@ -760,22 +779,21 @@ namespace Palantir.Commands
             }
             else
             {
-                message.AddField(memberSplits.Sum(s => s.Value).ToString(),"total earned Splits");
+                message.AddField(memberSplits.Sum(s => s.Value).ToString(),"total earned Splits\n_ _");
 
                 memberSplits.ForEach(split =>
                 {
-                    message.AddField("➜ " + split.Name, split.Description + "\n Earned " + split.Value + " Splits" + (split.RewardDate != null && split.RewardDate != "" ? " on `" + split.RewardDate + "`" : ""));
+                    message.AddField("➜ " + split.Name + (split.RewardDate != null && split.RewardDate != "" ? "  `" + split.RewardDate + "`" : ""), split.Description + "\n *worth " + split.Value + " Splits*");
                 });
 
-                message.WithDescription("You can use your Splits to customize your Drop Boosts.\nChoose the boost intensity, duration or cooldown individually when using `>dropboost`");
+                message.WithDescription("You can use your Splits to customize your Drop Boosts.\nChoose the boost intensity, duration or cooldown individually when using `>dropboost`\n_ _");
             }
             
             await context.Message.RespondAsync(message);
         }
 
-        [Description("Boost the drop frequency. You can do this once a week.")]
-        [Command("splitboost")]
-        [RequireBeta()]
+        [Description("Boost the drop rate. You can do this once a week.")]
+        [Command("dropboost")]
         public async Task SplitBoost(CommandContext context, int factorSplits = 0, int durationSplits = 0, int cooldownSplits = 0)
         {
             PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
