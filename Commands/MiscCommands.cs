@@ -794,7 +794,7 @@ namespace Palantir.Commands
 
 
             var chooseMessage = new DiscordMessageBuilder()
-                .WithContent("**Customize your Dropboost**\n> You have `" + memberAvailableSplits + "` Splits available.\n> \n> **Intensity:** +2 Splits => +0.1 factor\n> **Duration:** +1 Split => +20min boost\n> **Cooldown:** +1 Split => -12hrs until next boost\n\n");
+                .WithContent("> **Customize your Dropboost**\n> You have `" + memberAvailableSplits + "` Splits available.\n> \n> `🔥` **Intensity:** +2 Splits => +0.1 factor\n> `⌛` **Duration:** +1 Split => +20min boost\n> `💤` **Cooldown:** +1 Split => -12hrs until next boost\n\n_ _");
 
             Action<string, bool> updateComponents = (string starttext, bool disable) =>
             {
@@ -853,6 +853,7 @@ namespace Palantir.Commands
                     break;
                 }
 
+                updateComponents("Start Dropboost", false);
                 await sent.ModifyAsync(chooseMessage);
             }
         }
