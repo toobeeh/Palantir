@@ -371,20 +371,26 @@ namespace Palantir
             return login;
         }
 
-        public static List<SplitCreditEntity> GetMemberSplits(int login)
+        public static List<SplitReward> GetMemberSplits(int login)
         {
             PalantirDbContext context = new PalantirDbContext();
+            List<BoostSplitEntity> sources = context.BoostSplits.ToList();
             List<SplitCreditEntity> splits = context.SplitCredits.Where(s => s.Login == login).ToList();
             context.Dispose();
-            return splits;
-        }
+            return splits.ConvertAll(split =>
+            {
+                SplitReward reward = new SplitReward();
+                BoostSplitEntity boostSplit = sources.Find(s => s.ID == split.Split);
+                reward.Login = login;
+                reward.Split = split.Split;
+                reward.ID = boostSplit.ID;
+                reward.Value = boostSplit.Value;
+                reward.RewardDate = split.RewardDate;
+                reward.Name = boostSplit.Name;
+                reward.CreateDate = boostSplit.Date;
 
-        public static List<BoostSplitEntity> GetBoostSplits()
-        {
-            PalantirDbContext context = new PalantirDbContext();
-            List<BoostSplitEntity> splits = context.BoostSplits.ToList();
-            context.Dispose();
-            return splits;
+                return reward;
+            });
         }
 
         public static void SetOnlineSprite(string login, string lobbyKey, string lobbyPlayerID){
@@ -546,5 +552,14 @@ namespace Palantir
     public class SceneProperty : SceneEntity
     {
         public bool Activated;
+    }
+
+    public class SplitReward : SplitCreditEntity
+    {
+        public int ID;
+        public int Value;
+        public string Name;
+        public string Description;
+        public string CreateDate;
     }
 }
