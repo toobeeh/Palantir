@@ -792,6 +792,7 @@ namespace Palantir.Commands
             {
                 string left = Drops.BoostCooldown(login).ToString(@"dd\d\ hh\h\ mm\m\ ss\s");
                 await Program.SendEmbed(context.Channel, "Take your time...", "The default cooldown after a drop boost is one week.\nYou can't boost yet!\nWait " + left);
+                return;
             }
 
             double factor = 1.1;
@@ -802,7 +803,7 @@ namespace Palantir.Commands
 
 
             var chooseMessage = new DiscordMessageBuilder()
-                .WithContent("> **Customize your Dropboost**\n> You have `" + memberAvailableSplits + "` Splits available.\n> \n> `🔥` **Intensity:** +2 Splits => +0.1 factor\n> `⌛` **Duration:** +1 Split => +20min boost\n> `💤` **Cooldown:** +1 Split => -12hrs until next boost\n_ _");
+                .WithContent("> **Customize your Dropboost**\n> \n> You have `" + memberAvailableSplits + "` Splits available.\n> \n> `🔥 Intensity: +2 Splits => +0.1 factor`\n> `⌛ Duration:  +1 Split  => +20min boost`\n> `💤 Cooldown:  +1 Split  => -12hrs until next boost`\n> _ _");
 
             Action<string, bool> updateComponents = (string starttext, bool disable) =>
             {
@@ -810,7 +811,7 @@ namespace Palantir.Commands
 
                 var minusFactor = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Secondary, "-fac", "-", disable);
                 var plusFactor = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Secondary, "+fac", "+", disable);
-                var labelFactor = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Primary, "fac", "Boost Factor: " + factorSplits + " Splits (+" + factorSplits * 0.5+"x)", true);
+                var labelFactor = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Primary, "fac", "Boost Factor: " + factorSplits + " Splits (+" + factorSplits * 0.05 + "x)", true);
 
                 var minusDur = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Secondary, "-dur", "-", disable);
                 var plusDur = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Secondary, "+dur", "+", disable);
@@ -820,7 +821,7 @@ namespace Palantir.Commands
                 var plusCool = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Secondary, "+cool", "+", disable);
                 var labelCool = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Primary, "cool", "Boost Cooldown: " + cooldownSplits + " Splits (-" + cooldownSplits * 12 + "hrs)", true);
 
-                var start = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Success, "start", starttext, disable);
+                var start = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Success, "start", starttext + " (" + (cooldownSplits+durationSplits+factorSplits) + "/" + memberAvailableSplits + " Splits selected)", disable);
 
                 chooseMessage
                     .AddComponents(minusFactor, labelFactor, plusFactor)
