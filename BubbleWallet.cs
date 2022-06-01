@@ -371,13 +371,13 @@ namespace Palantir
             return login;
         }
 
-        public static List<SplitReward> GetMemberSplits(int login)
+        public static List<SplitReward> GetMemberSplits(int login, PermissionFlag flags)
         {
             PalantirDbContext context = new PalantirDbContext();
             List<BoostSplitEntity> sources = context.BoostSplits.ToList();
             List<SplitCreditEntity> splits = context.SplitCredits.Where(s => s.Login == login).ToList();
             context.Dispose();
-            return splits.ConvertAll(split =>
+            List<SplitReward> rewards = splits.ConvertAll(split =>
             {
                 SplitReward reward = new SplitReward();
                 BoostSplitEntity boostSplit = sources.Find(s => s.ID == split.Split);
@@ -392,6 +392,34 @@ namespace Palantir
 
                 return reward;
             });
+
+            if (flags.Patron)
+            {
+                rewards.Add(new SplitReward()
+                {
+                    Login = login,
+                    Split = -1,
+                    ID = -1,
+                    Value = flags.Patronizer ? 16 : 10,
+                    Name = flags.Patronizer ? " 💜 Patronizer Crew" : " 💜 Patron Crew",
+                    Description = "Some extra Splits that come with a Typo Patronage on patreon.com"
+                });
+            }
+
+            if (flags.BotAdmin)
+            {
+                rewards.Add(new SplitReward()
+                {
+                    Login = login,
+                    Split = -1,
+                    ID = -1,
+                    Value = 9001,
+                    Name = "Unlimited POWAAAH",
+                    Description = "'its over 9000' ~ sheev palpatine"
+                });
+            }
+
+            return rewards;
         }
 
         public static void SetOnlineSprite(string login, string lobbyKey, string lobbyPlayerID){

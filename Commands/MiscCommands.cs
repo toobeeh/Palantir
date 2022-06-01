@@ -748,7 +748,7 @@ namespace Palantir.Commands
             PermissionFlag flags = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
             int login = Convert.ToInt32(BubbleWallet.GetLoginOfMember(context.User.Id.ToString()));
 
-            var memberSplits = BubbleWallet.GetMemberSplits(login);
+            var memberSplits = BubbleWallet.GetMemberSplits(login, flags);
 
             var message = new DiscordEmbedBuilder();
             message.WithTitle(context.Message.Author.Username + "s Split Achievements");
@@ -771,6 +771,87 @@ namespace Palantir.Commands
             }
             
             await context.Message.RespondAsync(message);
+        }
+
+        [Description("Boost the drop frequency. You can do this once a week.")]
+        [Command("splitboost")]
+        public async Task SplitBoost(CommandContext context, int factorSplits = 0, int durationSplits = 0, int cooldownSplits = 0)
+        {
+            PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
+            if (perm.Permanban)
+            {
+                await Program.SendEmbed(context.Channel, "So... you're one of the bad guys, huh?", "Users with a permanban obviously cant boost, lol");
+                return;
+            }
+            int login = Convert.ToInt32(BubbleWallet.GetLoginOfMember(context.User.Id.ToString()));
+            double factor = 1.1;
+            var memberSplits = BubbleWallet.GetMemberSplits(login, perm);
+            int memberAvailableSplits = memberSplits.Sum(s => s.Value);
+
+            if (factorSplits + durationSplits + cooldownSplits > memberAvailableSplits) factorSplits = durationSplits = cooldownSplits = 0;
+
+
+
+            var chooseMessage = new DiscordMessageBuilder()
+                .WithContent("**Customize your Dropboost**\nYou have `" + memberSplits + "` Splits available.\n\n**Intensity:** +2 Splits => +0.1 factor\n**Duration:** +1 Split => +20min boost\n**Cooldown:** +1 Split => -12hrs until next boost");
+
+            Action<string, bool> updateComponents = (string starttext, bool disable) =>
+            {
+                chooseMessage.ClearComponents();
+
+                var minusFactor = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Secondary, "-fac", "**-**", disable);
+                var plusFactor = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Secondary, "+fac", "**-**", disable);
+                var labelFactor = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Primary, "fac", "Boost Factor: " + factorSplits + " Splits", true);
+
+                var minusDur = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Secondary, "-dur", "**-**", disable);
+                var plusDur = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Secondary, "+dur", "**-**", disable);
+                var labelDur = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Primary, "dur", "Boost Duration: " + durationSplits + " Splits", true);
+
+                var minusCool = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Secondary, "-cool", "**-**", disable);
+                var plusCool = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Secondary, "+cool", "**-**", disable);
+                var labelCool = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Primary, "cool", "Boost Cooldown: " + cooldownSplits + " Splits");
+
+                var start = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Success, "start", starttext, disable);
+
+                chooseMessage
+                    .AddComponents(minusFactor, labelFactor, plusFactor)
+                    .AddComponents(minusDur, labelDur, plusDur)
+                    .AddComponents(minusCool, labelCool, plusCool)
+                    .AddComponents(start);
+            };
+
+            updateComponents("Start Dropboost", false);
+
+            var sent = await context.RespondAsync(chooseMessage);
+
+            while (true)
+            {
+                var reaction = await sent.WaitForButtonAsync(context.User, TimeSpan.FromSeconds(60));
+                if (reaction.TimedOut)
+                {
+                    updateComponents("Timed out", true);
+                    await sent.ModifyAsync(chooseMessage);
+                    break;
+                }
+
+                await reaction.Result.Interaction.CreateResponseAsync(DSharpPlus.InteractionResponseType.UpdateMessage);
+
+                if (reaction.Result.Id == "-dur" && durationSplits > 0) durationSplits--;
+                if (reaction.Result.Id == "-factor" && factorSplits > 0) factorSplits--;
+                if (reaction.Result.Id == "-cool" && cooldownSplits > 0) cooldownSplits--;
+
+                if (reaction.Result.Id == "+dur" && (durationSplits + factorSplits + cooldownSplits) < memberAvailableSplits) durationSplits++;
+                if (reaction.Result.Id == "+factor" && (durationSplits + factorSplits + cooldownSplits) < memberAvailableSplits - 1) factorSplits++;
+                if (reaction.Result.Id == "+cool" && (durationSplits + factorSplits + cooldownSplits) < memberAvailableSplits) cooldownSplits++;
+
+                if(reaction.Result.Id == "start")
+                {
+
+                    updateComponents("You boosted! 🔥", true);
+                    await sent.ModifyAsync(chooseMessage);
+                    break;
+                }
+            }
         }
 
 
