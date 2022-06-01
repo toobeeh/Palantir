@@ -388,6 +388,7 @@ namespace Palantir
                 reward.RewardDate = split.RewardDate;
                 reward.Name = boostSplit.Name;
                 reward.CreateDate = boostSplit.Date;
+                reward.Description = boostSplit.Description;
 
                 return reward;
             });

@@ -760,7 +760,7 @@ namespace Palantir.Commands
             }
             else
             {
-                message.AddField("Total earned Splits: ", memberSplits.Sum(s => s.Value).ToString());
+                message.AddField(memberSplits.Sum(s => s.Value).ToString(),"total earned Splits");
 
                 memberSplits.ForEach(split =>
                 {
