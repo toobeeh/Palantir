@@ -127,9 +127,11 @@ namespace Palantir.Commands
             }
 
             int drops = BubbleWallet.GetDrops(login);
+            int splits = BubbleWallet.GetMemberSplits(Convert.ToInt32(login), perm).Sum(s => s.Value);
             if (inventory.Count <= 0) desc = "You haven't unlocked any sprites yet!";
             desc += "\n\n🔮 **" + BubbleWallet.CalculateCredit(login) + "** of " + BubbleWallet.GetBubbles(login) + " collected Bubbles available.";
             desc += "\n\n💧 **" + drops + "** Drops collected.";
+            if(splits >  0 ) desc += "\n\n🏆 **" + splits + "** Splits rewarded.";
             if (drops >= 1000 || perm.BotAdmin || perm.Patron) desc += "\n\n<a:chest:810521425156636682> **" + (perm.BotAdmin ? "Infinite" : (drops / 1000 + 1 + (perm.Patron ? 1 : 0)).ToString()) + " ** Sprite slots available.";
 
             embed.AddField("\u200b ", desc);
