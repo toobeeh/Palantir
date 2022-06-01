@@ -150,6 +150,7 @@ namespace Palantir.Commands
             int drops = BubbleWallet.GetDrops(login);
             int bubbles = BubbleWallet.GetBubbles(login);
             int credit = BubbleWallet.CalculateCredit(login);
+            int splits = BubbleWallet.GetMemberSplits(Convert.ToInt32(login), perm).Sum(s => s.Value);
             List<SpriteProperty> inventory = BubbleWallet.GetInventory(login).OrderBy(s => s.ID).ToList();
 
             DiscordEmbedBuilder embed = new DiscordEmbedBuilder()
@@ -168,7 +169,9 @@ namespace Palantir.Commands
             embed.AddField("\u200b ",
                 "`🔮` **" + credit + " ** / " + bubbles + " Bubbles\n"
                 + "`💧` **" + drops + "** Drops caught\n"
+                + (splits > 0 ? "`🏆` **" + splits + "** Splits rewarded\n" : "")
                 + "`🔥` " + (boostCooldown.TotalSeconds > 0 ? "Next `>dropboost` in " + boostCooldown.ToString(@"dd\d\ hh\h\ mm\m\ ss\s") : "`>dropboost` available!"));
+
 
             PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
             string flags = "";
