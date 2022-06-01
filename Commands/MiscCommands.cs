@@ -775,6 +775,7 @@ namespace Palantir.Commands
 
         [Description("Boost the drop frequency. You can do this once a week.")]
         [Command("splitboost")]
+        [RequireBeta()]
         public async Task SplitBoost(CommandContext context, int factorSplits = 0, int durationSplits = 0, int cooldownSplits = 0)
         {
             PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
@@ -793,23 +794,23 @@ namespace Palantir.Commands
 
 
             var chooseMessage = new DiscordMessageBuilder()
-                .WithContent("**Customize your Dropboost**\nYou have `" + memberSplits + "` Splits available.\n\n**Intensity:** +2 Splits => +0.1 factor\n**Duration:** +1 Split => +20min boost\n**Cooldown:** +1 Split => -12hrs until next boost");
+                .WithContent("**Customize your Dropboost**\n> You have `" + memberAvailableSplits + "` Splits available.\n> \n> **Intensity:** +2 Splits => +0.1 factor\n> **Duration:** +1 Split => +20min boost\n> **Cooldown:** +1 Split => -12hrs until next boost\n\n");
 
             Action<string, bool> updateComponents = (string starttext, bool disable) =>
             {
                 chooseMessage.ClearComponents();
 
-                var minusFactor = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Secondary, "-fac", "**-**", disable);
-                var plusFactor = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Secondary, "+fac", "**-**", disable);
+                var minusFactor = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Secondary, "-fac", "-", disable);
+                var plusFactor = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Secondary, "+fac", "+", disable);
                 var labelFactor = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Primary, "fac", "Boost Factor: " + factorSplits + " Splits", true);
 
-                var minusDur = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Secondary, "-dur", "**-**", disable);
-                var plusDur = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Secondary, "+dur", "**-**", disable);
+                var minusDur = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Secondary, "-dur", "-", disable);
+                var plusDur = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Secondary, "+dur", "+", disable);
                 var labelDur = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Primary, "dur", "Boost Duration: " + durationSplits + " Splits", true);
 
-                var minusCool = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Secondary, "-cool", "**-**", disable);
-                var plusCool = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Secondary, "+cool", "**-**", disable);
-                var labelCool = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Primary, "cool", "Boost Cooldown: " + cooldownSplits + " Splits");
+                var minusCool = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Secondary, "-cool", "-", disable);
+                var plusCool = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Secondary, "+cool", "+", disable);
+                var labelCool = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Primary, "cool", "Boost Cooldown: " + cooldownSplits + " Splits", true);
 
                 var start = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Success, "start", starttext, disable);
 
@@ -837,11 +838,11 @@ namespace Palantir.Commands
                 await reaction.Result.Interaction.CreateResponseAsync(DSharpPlus.InteractionResponseType.UpdateMessage);
 
                 if (reaction.Result.Id == "-dur" && durationSplits > 0) durationSplits--;
-                if (reaction.Result.Id == "-factor" && factorSplits > 0) factorSplits--;
+                if (reaction.Result.Id == "-fac" && factorSplits > 0) factorSplits--;
                 if (reaction.Result.Id == "-cool" && cooldownSplits > 0) cooldownSplits--;
 
                 if (reaction.Result.Id == "+dur" && (durationSplits + factorSplits + cooldownSplits) < memberAvailableSplits) durationSplits++;
-                if (reaction.Result.Id == "+factor" && (durationSplits + factorSplits + cooldownSplits) < memberAvailableSplits - 1) factorSplits++;
+                if (reaction.Result.Id == "+fac" && (durationSplits + factorSplits + cooldownSplits) < memberAvailableSplits - 1) factorSplits++;
                 if (reaction.Result.Id == "+cool" && (durationSplits + factorSplits + cooldownSplits) < memberAvailableSplits) cooldownSplits++;
 
                 if(reaction.Result.Id == "start")
