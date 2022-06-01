@@ -752,7 +752,8 @@ namespace Palantir.Commands
             var memberSplits = BubbleWallet.GetMemberSplits(login);
 
             var message = new DiscordEmbedBuilder();
-            message.WithTitle(context.Message.Author + "s Split Achievements");
+            message.WithTitle(context.Message.Author.Username + "s Split Achievements");
+            message.WithColor(DiscordColor.Magenta);
 
             if(memberSplits.Count == 0)
             {
@@ -763,7 +764,7 @@ namespace Palantir.Commands
                 memberSplits.ForEach(split =>
                 {
                     var source = splits.Find(s => s.ID == split.Split);
-                    message.AddField("➜ " + source.Name, source.Description + "\n Earned " + source.Value + " Splits" + (source.Date != null && source.Date != "" ? "`" + source.Date + "`" : ""));
+                    message.AddField("➜ " + source.Name, source.Description + "\n Earned " + source.Value + " Splits" + (source.Date != null && source.Date != "" ? " on `" + source.Date + "`" : ""));
                 });
 
                 message.WithDescription("You can use your Splits to customize your Drop Boosts.\nChoose the boost intensity, duration or cooldown individually when using `>dropboost`");
