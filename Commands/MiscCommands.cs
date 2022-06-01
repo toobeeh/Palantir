@@ -852,6 +852,8 @@ namespace Palantir.Commands
                     await sent.ModifyAsync(chooseMessage);
                     break;
                 }
+
+                await sent.ModifyAsync(chooseMessage);
             }
         }
 
