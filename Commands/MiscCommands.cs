@@ -882,7 +882,7 @@ namespace Palantir.Commands
 
                         BoostEntity boost;
 
-                        factor = factor + factorSplits * 0.1;
+                        factor = factor + factorSplits * 0.05;
                         int duration = (60 + durationSplits * 20) * 60;
                         int cooldownRed = 60 * 60 * 12 * cooldownSplits;
 

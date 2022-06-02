@@ -189,7 +189,14 @@ namespace Palantir
             PalantirDbContext db = new();
             BoostEntity boost = db.DropBoosts.FirstOrDefault(boost => boost.Login == login);
             if (boost == null) cooldown = TimeSpan.FromSeconds(0);
-            else cooldown = TimeSpan.FromMilliseconds(boost.StartUTCS + TimeSpan.FromDays(7).TotalMilliseconds - boost.CooldownBonusS - DateTimeOffset.UtcNow.ToUnixTimeMilliseconds());
+            else
+            {
+                TimeSpan boostRemaining = TimeSpan.FromMilliseconds(boost.StartUTCS + boost.DurationS - DateTimeOffset.UtcNow.ToUnixTimeMilliseconds());
+
+                cooldown = TimeSpan.FromMilliseconds(boost.StartUTCS + TimeSpan.FromDays(7).TotalMilliseconds - boost.CooldownBonusS - DateTimeOffset.UtcNow.ToUnixTimeMilliseconds());
+
+                if(boostRemaining > cooldown) cooldown = boostRemaining;
+            }
             db.Dispose();
             return cooldown;
         }
