@@ -819,6 +819,7 @@ namespace Palantir.Commands
             else
             {
                 double factor = 1.1;
+                factorSplits = factorSplits - factorSplits % 2;
                 var memberSplits = BubbleWallet.GetMemberSplits(login, perm);
                 int memberAvailableSplits = memberSplits.Sum(s => s.Value);
 
