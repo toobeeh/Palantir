@@ -183,6 +183,7 @@ namespace Palantir
         public string CaughtLobbyKey { get; set; }
         public string ValidFrom { get; set; }
         public int EventDropID { get; set; }
+        public int LeagueWeight { get; set; }
     }
     public class PastDropEntity
     {
@@ -192,6 +193,7 @@ namespace Palantir
         public string CaughtLobbyKey { get; set; }
         public string ValidFrom { get; set; }
         public int EventDropID { get; set; }
+        public int LeagueWeight { get; set; }
     }
 
     public class BubbleTraceEntity
