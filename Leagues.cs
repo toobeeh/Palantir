@@ -25,12 +25,14 @@ namespace Palantir
 
         private List<PastDropEntity> leagueDrops;
 
-        public League(int month, int year)
+        public League(string month, string year)
         {
+
+            month = month.PadLeft(2, '0');
 
             PalantirDbContext palantirDbContext = new PalantirDbContext();
             this.leagueDrops = palantirDbContext.PastDrops.Where(drop => 
-                drop.ValidFrom.Substring(5,1) == month.ToString().PadLeft(2,'0') && drop.ValidFrom.Substring(4) == year.ToString()
+                drop.ValidFrom.Substring(5,1).Contains(month) && drop.ValidFrom.Substring(4).Contains(year)
             ).ToList();
         }
 
