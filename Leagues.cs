@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -25,16 +26,18 @@ namespace Palantir
 
         private List<PastDropEntity> leagueDrops;
 
-        public League(int month, int year)
+        public League(string month, string year)
         {
 
-            long startStamp = ((DateTimeOffset) new DateTime(year, month, 1)).ToUnixTimeSeconds();
-            long endStamp = ((DateTimeOffset)new DateTime(year, month + 1, 1)).ToUnixTimeSeconds();
+            month = month.PadLeft(2, '0');
 
             PalantirDbContext palantirDbContext = new PalantirDbContext();
-            this.leagueDrops = palantirDbContext.PastDrops.Where(drop => 
-                Convert.ToInt64(drop.DropID) > startStamp && Convert.ToInt64(drop.DropID) < endStamp
-            ).ToList();
+            this.leagueDrops = palantirDbContext.PastDrops
+                .FromSqlRaw($"SELECT * FROM \"PastDrops\" WHERE substr(ValidFrom, 6, 2) LIKE \"{month}\" AND substr(ValidFrom, 1, 4) == \"{year}\"")
+                .ToList();
+            //this.leagueDrops = palantirDbContext.PastDrops.Where(drop => 
+            //    drop.ValidFrom.Substring(5,1).Contains(month) && drop.ValidFrom.Substring(4).Contains(year.ToString())
+            //).ToList();
         }
 
         public List<MemberLeagueResult> LeagueResults()
