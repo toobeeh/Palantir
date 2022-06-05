@@ -292,7 +292,7 @@ namespace Palantir.Commands
         public async Task League(CommandContext context)
         {
 
-           var season = new League(DateTime.Now.Month.ToString(), DateTime.Now.Year.ToString());
+           var season = new League(DateTime.Now.Month, DateTime.Now.Year);
            var results = season.LeagueResults();
 
             var embed = new DiscordEmbedBuilder()
