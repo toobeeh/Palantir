@@ -285,5 +285,76 @@ namespace Palantir.Commands
             dbcontext.Dispose();
             await context.Channel.SendMessageAsync(embed: embed);
         }
+
+        [Description("Show the current Drop League season ranking")]
+        [Command("league")]
+        [RequireBeta()]
+        public async Task League(CommandContext context)
+        {
+
+           var season = new League(DateTime.Now.Month, DateTime.Now.Year);
+           var results = season.LeagueResults();
+
+            var embed = new DiscordEmbedBuilder()
+                 .WithAuthor("Drop League")
+                 .WithTitle("**" + DateTime.Now.ToString("MMMM yyyy") + "** Season")
+                 .WithDescription("Drop Leagues are a monthly competition, where the very fastest catchers rank against each other.\n_ _\nSeason ends `in 20 days`\n_ _");
+
+            void AddTop(League.MemberLeagueResult result)
+            {
+                var member = Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(Program.Feanor.GetMemberByLogin(result.Login).Member);
+                embed.AddField(
+                    "`#1`  **" + member.UserName + "**",
+                    "> `" + result.Score + "dw`\n> ***" + result.LeagueDrops.Count + "* *League Drops*\n> ***" + result.AverageWeight + "%** avg.weight*\n> ***" + result.AverageTime + "ms* *avg.time*"
+                );
+            }
+
+            if (results.Count() > 0) AddTop(results[0]);
+            if (results.Count() > 1) AddTop(results[1]);
+            if (results.Count() > 2) AddTop(results[2]);
+
+            string LowerText(List<League.MemberLeagueResult> results)
+            {
+                string content = "";
+                foreach(var result in results)
+                {
+                    var member = Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(Program.Feanor.GetMemberByLogin(result.Login).Member);
+                    content += "> " + member.UserName + " `" + result.Score + "dw / " + result.AverageWeight + "%`\n";
+                }
+                return content;
+            }
+
+            if (results.Count() > 3) embed.AddField("`#4 - #7`", LowerText(results.GetRange(3,4)));
+            if (results.Count() > 7) embed.AddField("`#8 - #10`", LowerText(results.GetRange(7, 3)));
+
+            if(results.Count > 0)
+            {
+                var maxOverall = results.Max(r => r.Score);
+                var overall = Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(
+                    Program.Feanor.GetMemberByLogin(results.Find(r => r.Score == maxOverall).Login).Member
+                );
+
+                var maxWeight = results.Max(r => r.AverageWeight);
+                var weight = Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(
+                    Program.Feanor.GetMemberByLogin(results.Find(r => r.AverageWeight == maxWeight).Login).Member
+                );
+
+                var maxCount = results.Max(r => r.LeagueDrops.Count);
+                var count = Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(
+                    Program.Feanor.GetMemberByLogin(results.Find(r => r.LeagueDrops.Count == maxCount).Login).Member
+                );
+
+                embed.AddField(
+                    "_ _\n`⚔️` Category Leaders",
+                    "➜ **Overall**: " + overall.UserName + " (`" + maxOverall + "dw`)\n➜ **Average Weight**: " 
+                        + weight.UserName + " (`" + maxWeight + "%`)\n➜ **League Drops**: " + count.UserName + " (`" + maxCount + "%`)"
+                );
+            }
+
+            embed.AddField("_ _ \n`🎖️` Rewards", "➜ **Overall:** #1 : 4 Splits, #2-3: 3 Splits,  #4-10: 2 Splits\n➜ **Weight Leader: **3 Splits\n➜ **League Drops Leader: **3 Splits");
+
+            await context.RespondAsync(embed);
+
+        }
     }
 }
