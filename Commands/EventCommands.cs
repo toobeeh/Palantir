@@ -298,20 +298,23 @@ namespace Palantir.Commands
             var embed = new DiscordEmbedBuilder()
                  .WithAuthor("Drop League")
                  .WithTitle("**" + DateTime.Now.ToString("MMMM yyyy") + "** Season")
+                 .WithColor(DiscordColor.Magenta)
+                 .WithThumbnail("https://media.discordapp.net/attachments/910894527261327370/983025068214992948/challenge.gif")
                  .WithDescription("Drop Leagues are a monthly competition, where the very fastest catchers rank against each other.\n_ _\nSeason ends `in 20 days`\n_ _");
 
-            void AddTop(League.MemberLeagueResult result)
+            void AddTop(League.MemberLeagueResult result, int rank)
             {
                 var member = Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(Program.Feanor.GetMemberByLogin(result.Login).Member);
                 embed.AddField(
-                    "`#1`  **" + member.UserName + "**",
-                    "> `" + result.Score + "dw`\n> ***" + result.LeagueDrops.Count + "* *League Drops*\n> ***" + result.AverageWeight + "%** avg.weight*\n> ***" + result.AverageTime + "ms* *avg.time*"
+                    "`#"+rank+"`  **" + member.UserName + "**",
+                    "> `" + result.Score + "dw`\n> ***" + result.LeagueDrops.Count + "* *League Drops*\n> ***" + result.AverageWeight + "%** avg.weight*\n> ***" + result.AverageTime + "ms* *avg.time*",
+                    true
                 );
             }
 
-            if (results.Count() > 0) AddTop(results[0]);
-            if (results.Count() > 1) AddTop(results[1]);
-            if (results.Count() > 2) AddTop(results[2]);
+            if (results.Count() > 0) AddTop(results[0],1);
+            if (results.Count() > 1) AddTop(results[1],2);
+            if (results.Count() > 2) AddTop(results[2],3);
 
             string LowerText(List<League.MemberLeagueResult> results)
             {
@@ -347,7 +350,8 @@ namespace Palantir.Commands
                 embed.AddField(
                     "_ _\n`⚔️` Category Leaders",
                     "➜ **Overall**: " + overall.UserName + " (`" + maxOverall + "dw`)\n➜ **Average Weight**: " 
-                        + weight.UserName + " (`" + maxWeight + "%`)\n➜ **League Drops**: " + count.UserName + " (`" + maxCount + "%`)"
+                        + weight.UserName + " (`" + maxWeight + "%`)\n➜ **League Drops**: " + count.UserName + " (`" + maxCount + "%`)",
+                    true
                 );
             }
 
