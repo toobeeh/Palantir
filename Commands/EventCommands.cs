@@ -347,15 +347,21 @@ namespace Palantir.Commands
                     Program.Feanor.GetMemberByLogin(results.Find(r => r.LeagueDrops.Count == maxCount).Login).Member
                 );
 
+                var maxStreak = results.Max(r => r.Streak);
+                var streak = Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(
+                    Program.Feanor.GetMemberByLogin(results.Find(r => r.LeagueDrops.Count == maxStreak).Login).Member
+                );
+
                 embed.AddField(
                     "_ _\n`⚔️` Category Leaders",
                     "➜ **Overall**: " + overall.UserName + " (`" + maxOverall + "dw`)\n➜ **Average Weight**: " 
-                        + weight.UserName + " (`" + maxWeight + "%`)\n➜ **League Drops**: " + count.UserName + " (`" + maxCount + " drops`)",
+                        + weight.UserName + " (`" + maxWeight + "%`)\n➜ **League Drops**: " + count.UserName + " (`" + maxCount + " drops`)"
+                        + "\n➜ **League Drop Streak * *: " + streak.UserName + "(`" + maxStreak + " drops`)",
                     true
                 );
             }
 
-            embed.AddField("_ _ \n`🎖️` Rewards", "➜ **Overall:** #1 : 4 Splits, #2-3: 3 Splits,  #4-10: 2 Splits\n➜ **Weight Leader: **3 Splits\n➜ **League Drops Leader: **3 Splits");
+            embed.AddField("_ _ \n`🎖️` Rewards", "➜ **Overall:** #1 : 4 Splits, #2-3: 3 Splits,  #4-10: 2 Splits\n➜ **Weight Leader: **3 Splits\n➜ **League Drops Leader: **3 Splits\n➜ **Streak Leader: **3 Splits");
 
             await context.RespondAsync(embed);
 
