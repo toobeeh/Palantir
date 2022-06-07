@@ -10,7 +10,7 @@ namespace Palantir
 {
     internal class League
     {
-        public static double Weight(int catchSeconds)
+        public static double Weight(double catchSeconds)
         {
             return -372.505925447102 * Math.Pow(catchSeconds, 4) + 1093.85046326223 * Math.Pow(catchSeconds, 3) - 988.674423615601 * Math.Pow(catchSeconds, 2) + 187.221934927817 * catchSeconds + 90.1079508726569;
         }

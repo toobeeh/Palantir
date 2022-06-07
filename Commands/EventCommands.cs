@@ -293,7 +293,7 @@ namespace Palantir.Commands
         {
 
            var season = new League(DateTime.Now.Month.ToString(), DateTime.Now.Year.ToString());
-           var results = season.LeagueResults();
+           var results = season.LeagueResults().OrderByDescending(l=>l.Score).ToList();
 
             var embed = new DiscordEmbedBuilder()
                  .WithAuthor("Drop League")
