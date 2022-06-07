@@ -52,6 +52,9 @@ namespace Palantir
                 result.AverageWeight = Math.Round(result.Score / result.LeagueDrops.Count);
                 result.Login = BubbleWallet.GetLoginOfMember(userid);
 
+                // lower score for readability
+                result.Score = result.Score / 10;
+
                 results.Add(result);
             });
 
