@@ -48,30 +48,34 @@ namespace Palantir
 
         public Dictionary<string, int> GetStreaks()
         {
-            Dictionary<string,int> streaks = new Dictionary<string,int>();
-            Dictionary<string, int> maxStreaks = new Dictionary<string, int>();
 
             var participants = this.leagueDrops.Select(d => d.CaughtLobbyPlayerID).Distinct().ToList();
+            int[] streaks = new int[participants.Count];
+            int[] maxStreaks = new int[participants.Count];
 
             this.allDrops.GroupBy(d => d.DropID).ToList().ForEach(drop =>
             {
-                participants.ForEach(p =>
+                for(int i = 0; i < participants.Count; i++)
                 {
-                    if (drop.Any(d => d.CaughtLobbyPlayerID == p && d.LeagueWeight > 0)){
-                        int val;
-                        if (streaks.TryGetValue(p, out val))
-                            streaks[p] = val++;
-                        else streaks[p] = 1;
+                    if(drop.Any(d => d.CaughtLobbyPlayerID == participants[i] && d.LeagueWeight > 0))
+                    {
+                        streaks[i]++;
                     }
                     else
                     {
-                        if(streaks.ContainsKey(p)) maxStreaks[p] = streaks[p];
-                        streaks[p] = 0;
+                        if (streaks[i] > maxStreaks[i]) maxStreaks[i] = streaks[i];
+                        streaks[i] = 0;
                     }
-                });
+                }
             });
 
-            return maxStreaks;
+            Dictionary<string, int> results = new Dictionary<string, int>();
+
+            for(int i = 0; i < participants.Count; i++)
+            {
+                results.Add(participants[i], maxStreaks[i]);
+            }
+            return results;
         }
 
         public List<MemberLeagueResult> LeagueResults()
