@@ -81,11 +81,11 @@ namespace Palantir
                 DateTime tracedt = Convert.ToDateTime(trace.Date);
                 return tracedt <= end && tracedt >= start;
             }).Select(trace => trace.Bubbles).ToList();
-            int timespanStartBubbles = bubbles.Min();
-            int timespanEndBubbles = bubbles.Max();
+            int timespanStartBubbles = bubbles.Count > 0 ? bubbles.Min() : 0;
+            int timespanEndBubbles = bubbles.Count > 0 ? bubbles.Max() : 0;
 
             // if for last day isn't a trace existent, use current bubble value 
-            if(!bubbleTraces.Any(trace => Convert.ToDateTime(trace.Date).Date.Equals(end.Date)))
+            if(bubbles.Count > 0 && !bubbleTraces.Any(trace => Convert.ToDateTime(trace.Date).Date.Equals(end.Date)))
             {
                 timespanEndBubbles = BubbleWallet.GetBubbles(login);
             }
