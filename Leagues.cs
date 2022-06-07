@@ -47,8 +47,8 @@ namespace Palantir
             {
                 MemberLeagueResult result = new MemberLeagueResult();
                 result.LeagueDrops = leagueDrops.Where(drop => drop.CaughtLobbyPlayerID == userid).ToList();
-                result.AverageTime = Math.Round(leagueDrops.Average(drop => drop.LeagueWeight));
-                result.Score = Math.Round(leagueDrops.Sum(drop => League.Weight(drop.LeagueWeight / 1000)));
+                result.AverageTime = Math.Round(result.LeagueDrops.Average(drop => drop.LeagueWeight));
+                result.Score = Math.Round(result.LeagueDrops.Sum(drop => League.Weight(drop.LeagueWeight / 1000)));
                 result.AverageWeight = Math.Round(result.Score / result.LeagueDrops.Count);
                 result.Login = BubbleWallet.GetLoginOfMember(userid);
 
