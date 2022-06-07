@@ -356,7 +356,7 @@ namespace Palantir.Commands
                     "_ _\n`⚔️` Category Leaders",
                     "➜ **Overall**: " + overall.UserName + " (`" + maxOverall + "dw`)\n➜ **Average Weight**: " 
                         + weight.UserName + " (`" + maxWeight + "%`)\n➜ **League Drops**: " + count.UserName + " (`" + maxCount + " drops`)"
-                        + "\n➜ **League Drop Streak * *: " + streak.UserName + "(`" + maxStreak + " drops`)",
+                        + "\n➜ **League Drop Streak**: " + streak.UserName + "(`" + maxStreak + " drops`)",
                     true
                 );
             }
