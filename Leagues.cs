@@ -49,6 +49,7 @@ namespace Palantir
         public Dictionary<string, int> GetStreaks()
         {
             Dictionary<string,int> streaks = new Dictionary<string,int>();
+            Dictionary<string, int> maxStreaks = new Dictionary<string, int>();
 
             var participants = this.leagueDrops.Select(d => d.CaughtLobbyPlayerID).Distinct().ToList();
 
@@ -64,12 +65,13 @@ namespace Palantir
                     }
                     else
                     {
+                        if(streaks.ContainsKey(p)) maxStreaks[p] = streaks[p];
                         streaks[p] = 0;
                     }
                 });
             });
 
-            return streaks;
+            return maxStreaks;
         }
 
         public List<MemberLeagueResult> LeagueResults()
