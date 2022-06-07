@@ -350,7 +350,7 @@ namespace Palantir.Commands
                 embed.AddField(
                     "_ _\n`⚔️` Category Leaders",
                     "➜ **Overall**: " + overall.UserName + " (`" + maxOverall + "dw`)\n➜ **Average Weight**: " 
-                        + weight.UserName + " (`" + maxWeight + "%`)\n➜ **League Drops**: " + count.UserName + " (`" + maxCount + "%`)",
+                        + weight.UserName + " (`" + maxWeight + "%`)\n➜ **League Drops**: " + count.UserName + " (`" + maxCount + " drops`)",
                     true
                 );
             }
