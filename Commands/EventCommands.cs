@@ -349,7 +349,7 @@ namespace Palantir.Commands
 
                 var maxStreak = results.Max(r => r.Streak);
                 var streak = Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(
-                    Program.Feanor.GetMemberByLogin(results.Find(r => r.LeagueDrops.Count == maxStreak).Login).Member
+                    Program.Feanor.GetMemberByLogin(results.Find(r => r.Streak == maxStreak).Login).Member
                 );
 
                 embed.AddField(
