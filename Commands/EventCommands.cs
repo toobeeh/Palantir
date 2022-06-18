@@ -38,7 +38,7 @@ namespace Palantir.Commands
                 eventdrops.ForEach(e =>
                 {
                     List<SpritesEntity> sprites = Events.GetEventSprites(e.EventDropID);
-                    dropList += "\n**" + e.Name + "**  (" + BubbleWallet.GetEventCredit(login, e.EventDropID) + " caught)";
+                    dropList += "\n**" + e.Name + "**  (" + BubbleWallet.GetEventCredit(login, e.EventDropID) + " caught) `[ID: " + e.EventDropID + "]`";
                     int spent = inv.Where(spt => sprites.Any(eventsprite => eventsprite.ID == spt.ID)).Sum(spt => spt.Cost);
                     sprites.OrderBy(sprite => sprite.ID).ForEach(sprite =>
                        dropList += "\n> ‎ \n> ➜ **" + sprite.Name + "** (#" + sprite.ID + ")\n> "
@@ -135,7 +135,7 @@ namespace Palantir.Commands
             events.ForEach(e =>
             {
                 eventsList += "➜ **" + e.EventName + "** [#" + e.EventID + "]: " + e.ValidFrom + " to " + Convert.ToDateTime(e.ValidFrom).AddDays(e.DayLength).ToShortDateString() + "\n";
-                eventsList += e.Description + "\n\n";
+                //eventsList += e.Description + "\n\n";
             });
             if (eventsList == "") eventsList = "There have no events passed.";
 
