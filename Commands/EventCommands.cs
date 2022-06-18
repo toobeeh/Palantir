@@ -367,7 +367,7 @@ namespace Palantir.Commands
             }
 
             embed.AddField("_ _ \n`🎖️` Rewards", "➜ **Overall:** #1 : 4 Splits, #2-3: 3 Splits,  #4-10: 2 Splits\n➜ **Weight Leader: **3 Splits\n➜ **League Drops Leader: **3 Splits\n➜ **Streak Leader: **3 Splits");
-
+            embed.AddField("\u200b ", "BTW: check your own rank with `>rank`");
             await context.RespondAsync(embed);
 
         }
@@ -398,15 +398,15 @@ namespace Palantir.Commands
                 
                 if(position == 1)
                 {
-                    embed.AddField("<a:league_rnk1:987699431350632518> You are ranked as #1", ""); // \u200b 
+                    embed.AddField("<a:league_rnk1:987699431350632518> You are ranked as #1", "\u200b "); // \u200b 
                 }
                 else if(position == 2)
                 {
-                    embed.AddField("<a:league_rnk2:987710613893566515> You are ranked as #2", "");
+                    embed.AddField("<a:league_rnk2:987710613893566515> You are ranked as #2", "\u200b ");
                 }
                 else if(position == 3)
                 {
-                    embed.AddField("<a:league_rnk3:987716889352470528> You are ranked as #3", "");
+                    embed.AddField("<a:league_rnk3:987716889352470528> You are ranked as #3", "\u200b ");
                 }
                 else if(position <= 10)
                 {
