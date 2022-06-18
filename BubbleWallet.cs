@@ -203,7 +203,7 @@ namespace Palantir
             int total = GetBubbles(login);
             GetInventory(login).ForEach(s =>
             {
-                if(s.EventDropID <= 0) total -= s.Cost;
+                if(s.EventDropID == 0) total -= s.Cost;
             });
             total += GetDrops(login, userid) * 50;
             int nextPrice = SceneStartPrice;

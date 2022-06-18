@@ -54,6 +54,29 @@ namespace Palantir
             return bubblesDuringEvent >= eventSceneValue;
         }
 
+        public static double GetAvailableLeagueTradeDrops(string userid, EventEntity evt, out List<PastDropEntity> consumable)
+        {
+            var drops = GetEventDrops(new List<EventEntity>() { evt }).ConvertAll(drop => drop.EventDropID).ToArray();
+            var caught = League.GetLeagueEventDrops(userid, drops);
+            consumable = caught;
+
+            var weight = caught.Sum(result => League.Weight(result.LeagueWeight / 1000.0) / 100);
+            return weight;
+        }
+
+        public static int TradeLeagueEventDrops(List<PastDropEntity> consumed, int targetDropID, string login)
+        {
+            int value = Convert.ToInt32(Math.Floor(consumed.Sum(drop => League.Weight(drop.LeagueWeight / 1000.0) / 100)));
+            BubbleWallet.ChangeEventDropCredit(login, targetDropID, value);
+
+            PalantirDbContext context = new PalantirDbContext();
+            consumed.ForEach(drop => {
+                   context.PastDrops.FirstOrDefault(past => past.DropID == drop.DropID).EventDropID *= -1;
+            });
+            context.SaveChanges();
+            context.Dispose();
+            return value;
+        }
 
     }
 }

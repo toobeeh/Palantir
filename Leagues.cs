@@ -35,16 +35,32 @@ namespace Palantir
         {
             PalantirDbContext palantirDbContext = new PalantirDbContext();
             var userDrops = palantirDbContext.PastDrops
-                .FromSqlRaw($"SELECT * FROM \"PastDrops\" WHERE LeagueWeight > 0 AND EventDropID > 0 AND CaughtLobbyPlayerID == \"{userid}\"")
+                .FromSqlRaw($"SELECT * FROM \"PastDrops\" WHERE LeagueWeight > 0 AND EventDropID NOT 0 AND CaughtLobbyPlayerID == \"{userid}\"")
                 .ToList();
             palantirDbContext.Dispose();
             List<double> weights = new();
             foreach (var item in userDrops)
             {
-                if (item.EventDropID != 0) weights.Add(League.Weight(item.LeagueWeight / 1000.0) / 100);
+                if (item.EventDropID > 0) weights.Add(League.Weight(item.LeagueWeight / 1000.0) / 100);
             }
 
             return weights;
+        }
+
+        public static List<PastDropEntity> GetLeagueEventDrops(string userid, int[] eventdrops)
+        {
+            PalantirDbContext palantirDbContext = new PalantirDbContext();
+            var userDrops = palantirDbContext.PastDrops
+                .FromSqlRaw($"SELECT * FROM \"PastDrops\" WHERE EventDropID > 0 AND LeagueWeight > 0 AND CaughtLobbyPlayerID == \"{userid}\"")
+                .ToList();
+            palantirDbContext.Dispose();
+            List<PastDropEntity> drops = new();
+            foreach (var item in userDrops)
+            {
+                if(eventdrops.Contains(item.EventDropID)) drops.Add(item);
+            }
+
+            return drops;
         }
 
         public struct MemberLeagueResult

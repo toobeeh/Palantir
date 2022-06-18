@@ -58,6 +58,11 @@ namespace Palantir.Commands
                     embed.WithImageUrl(scene.URL);
                     embed.AddField("\n\u200b \nEvent Scene: **" + scene.Name + "**", "> \n> " + (hasScene ? ":package:" : "") + collectedBubbles + " / " + (evt.DayLength * Events.eventSceneDayValue) + " Bubbles collected");
                 }
+
+                // league stuff
+                List<PastDropEntity> leaguedrops = new List<PastDropEntity>();
+                var credit = Events.GetAvailableLeagueTradeDrops(context.User.Id.ToString(), evt, out leaguedrops);
+                if (credit > 0) embed.AddField("\n\u200b \nLeague Event Drops", "You have " + Math.Round(credit, 1).ToString() + " Drops to redeem! \nUse the command `>redeem [amount] [event drop id]` to get your reward.");
             }
             else
             {
@@ -67,6 +72,57 @@ namespace Palantir.Commands
             }
 
             await context.Channel.SendMessageAsync(embed: embed);
+        }
+
+        [Description("Swap League Event Drop credit to  Event Drops")]
+        [Command("redeem")]
+        public async Task Redeem(CommandContext context, int amount, int eventDropID)
+        {
+            if (amount < 0)
+            {
+                await Program.SendEmbed(context.Channel, "What's that supposed to mean?", "no comment");
+                return;
+            }
+            if (eventDropID < 1)
+            {
+                await Program.SendEmbed(context.Channel, "CONGRATSASDJKAHKDJ!!!!", "You found the super duper secret easteregg! ||jk, read the manual||");
+                return;
+            }
+
+            var events = Events.GetEvents();
+            var drops = Events.GetEventDrops();
+            var drop = drops.Find(drop => drop.EventDropID == eventDropID);
+
+            if (drop is null)
+            {
+                await Program.SendEmbed(context.Channel, "Watch out", eventDropID + " is no valid event drop");
+                return;
+            }
+
+            var target = events.Find(evt => evt.EventID == drop.EventID);
+            List<PastDropEntity> consumable;
+            double credit = Events.GetAvailableLeagueTradeDrops(context.User.Id.ToString(), target, out consumable);
+
+            if (credit < amount)
+            {
+                await Program.SendEmbed(context.Channel, "Sad times", "Your credit (" + Math.Round(credit, 1) + " is too low!");
+                return;
+            }
+
+            List<PastDropEntity> spent = new();
+            //consumable = consumable.OrderByDescending(drop => Palantir.League.Weight(drop.LeagueWeight / 1000.0) / 100).ToList();
+            double spent_count = 0;
+
+            while(spent_count < amount)
+            {
+                spent.Add(consumable.First());
+                consumable.RemoveAt(0);
+            }
+
+            int result = Events.TradeLeagueEventDrops(spent, eventDropID, BubbleWallet.GetLoginOfMember(context.User.Id.ToString()));
+
+            await Program.SendEmbed(context.Channel, "Poggers", "You traded " + result + " of your Event League Credit to " + drop.Name);
+            return;
         }
 
         [Description("Show passed events")]

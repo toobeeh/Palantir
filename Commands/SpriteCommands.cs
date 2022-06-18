@@ -39,7 +39,7 @@ namespace Palantir.Commands
                 {
                     embed.Description += "**Artist:** " + s.Artist + " \n";
                 }
-                if (s.EventDropID <= 0)
+                if (s.EventDropID == 0)
                 {
                     embed.Description += "**Costs:** " + s.Cost + " Bubbles\n\n**ID**: " + s.ID + (s.Special ? " :sparkles: " : "");
                 }
@@ -114,7 +114,7 @@ namespace Palantir.Commands
                     return;
                 }
             }
-            else if (target.EventDropID <= 0)
+            else if (target.EventDropID == 0)
             {
                 if (credit < target.Cost && !perm.BotAdmin)
                 {
