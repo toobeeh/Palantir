@@ -35,7 +35,7 @@ namespace Palantir
         {
             PalantirDbContext palantirDbContext = new PalantirDbContext();
             var userDrops = palantirDbContext.PastDrops
-                .FromSqlRaw($"SELECT * FROM \"PastDrops\" WHERE LeagueWeight > 0 AND EventDropID NOT 0 AND CaughtLobbyPlayerID == \"{userid}\"")
+                .FromSqlRaw($"SELECT * FROM \"PastDrops\" WHERE LeagueWeight > 0 AND EventDropID != 0 AND CaughtLobbyPlayerID == \"{userid}\"")
                 .ToList();
             palantirDbContext.Dispose();
             List<double> weights = new();
