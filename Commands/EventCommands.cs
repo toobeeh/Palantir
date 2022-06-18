@@ -420,19 +420,19 @@ namespace Palantir.Commands
                 var maxAvg = results.Max(r => r.AverageWeight);
                 if (results.Find(r => r.AverageWeight == maxAvg).Login == login)
                 {
-                    embed.AddField("<a:league_rnk1:987699431350632518>", "➜ Leader in the category `Average Weight`");
+                    embed.AddField("<a:league_rnk1:987699431350632518>  _ _ Leader in the category `Average Weight`", "\u200b ");
                 }
 
                 var maxCount = results.Max(r => r.LeagueDrops.Count);
                 if (results.Find(r => r.LeagueDrops.Count == maxCount).Login == login)
                 {
-                    embed.AddField("<a:league_rnk1:987699431350632518>", "➜ Leader in the category `League Drops`");
+                    embed.AddField("<a:league_rnk1:987699431350632518>  _ _  Leader in the category `League Drops`", "\u200b ");
                 }
 
                 var maxStreak = results.Max(r => r.Streak);
                 if (results.Find(r => r.Streak == maxStreak).Login == login)
                 {
-                    embed.AddField("<a:league_rnk1:987699431350632518>", "➜ Leader in the category `Maximum Streak`");
+                    embed.AddField("<a:league_rnk1:987699431350632518>  _ _  Leader in the category `Maximum Streak`", "\u200b ");
                 }
 
                 embed.AddField(
@@ -441,12 +441,12 @@ namespace Palantir.Commands
                    true
                 );
 
-                embed.AddField("About ranking", "\n> ➜ The **overall ranking leader** is the player with the most collected 'drop weight / `dw`'. Each League Drop you collect is weighted by how fast you catch it.\n> Each League Drop adds `dw` to your score. Collect more or be faster to be ranked up!"
-                    + "\n> ➜ The **average weight leader** is the player that has the highest average drop weight - this means, this player has the fastest average catch time!"
-                    + "\n> ➜ The **league drops leader** is the player with the most total collected League Drops."
-                    + "\n> ➜ The **maximum streak leader** is the player with the highest caught League Drop streak. Only League Drops count, otherwise the streak is broken."
-                    + "\n> ➜ When you catch a League Drop, it is weighted (between 0.1 and 1) by how fast you were and added to your Drop/Bubble credit."
-                    + "\n> ➜ When you catch a Event League Drop, it is also weighted. Using `>event` you can see your collected Event League Dropsfor an Event. You can trade them to any Eventdrop of this event!");
+                embed.AddField("About ranking", "\n> ➜ The **overall ranking leader** is the player with the most collected 'drop weight / `dw`'. Each League Drop you collect is weighted by how fast you catch it and adds to your score."
+                    + "\n_ _ \n> ➜ The **average weight leader** is the player that has the highest average drop weight - this means, this player has the fastest average catch time!"
+                    + "\n_ _ \n> ➜ The **league drops leader** is the player with the most total collected League Drops."
+                    + "\n_ _ \n> ➜ The **maximum streak leader** is the player with the highest caught League Drop streak. Only League Drops count, otherwise the streak is broken."
+                    + "\n_ _ \n> ➜ When you catch a League Drop, it is weighted (between 0.1 and 1) by how fast you were and added to your Drop/Bubble credit."
+                    + "\n_ _ \n> ➜ When you catch a Event League Drop, it is also weighted. Using `>event` you can see your collected Event League Dropsfor an Event. You can trade them to any Eventdrop of this event!");
 
                 await context.RespondAsync(embed);
             }
