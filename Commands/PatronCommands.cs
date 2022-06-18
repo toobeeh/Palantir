@@ -88,10 +88,11 @@ namespace Palantir.Commands
 
             int caughtEventdrops = BubbleWallet.CaughtEventdrops(dUser.Id.ToString());
             int caughtleagueEventdrops = Convert.ToInt32(League.GetLeagueEventDropWeights(dUser.Id.ToString()).Sum());
-            double ratio = Math.Round(((double)member.Drops + caughtEventdrops + caughtleagueEventdrops) / ((double)member.Bubbles / 1000), 1);
+            int caughtleagueDrops = Convert.ToInt32(League.GetLeagueDropWeights(dUser.Id.ToString()).Sum());
+            double ratio = Math.Round(((double)member.Drops + caughtEventdrops + caughtleagueEventdrops + caughtleagueDrops) / ((double)member.Bubbles / 1000), 1);
             if (!double.IsFinite(ratio)) ratio = 0;
 
-            SpriteComboImage.FillPlaceholdersBG(ref content, profilebase64, spritebase64, background64, cardsettings.BackgroundOpacity, cardsettings.HeaderOpacity, bgheight.ToString(), cardsettings.HeaderColor, cardsettings.LightTextColor, cardsettings.DarkTextColor, dMember is not null ? dMember.DisplayName : dUser.Username, member.Bubbles.ToString(), member.Drops.ToString(), ratio,
+            SpriteComboImage.FillPlaceholdersBG(ref content, profilebase64, spritebase64, background64, cardsettings.BackgroundOpacity, cardsettings.HeaderOpacity, bgheight.ToString(), cardsettings.HeaderColor, cardsettings.LightTextColor, cardsettings.DarkTextColor, dMember is not null ? dMember.DisplayName : dUser.Username, member.Bubbles.ToString(), (member.Drops + caughtleagueDrops).ToString(), ratio,
                 BubbleWallet.FirstTrace(login), BubbleWallet.GetInventory(login).Count.ToString(), BubbleWallet.ParticipatedEvents(login).Count.ToString() + " (" + caughtEventdrops + " Drops)", Math.Round((double)member.Bubbles * 10 / 3600).ToString(),
                 BubbleWallet.GlobalRanking(login).ToString(), BubbleWallet.GlobalRanking(login, true).ToString(), memberDetail.Guilds.Count.ToString(), perm.Patron, BubbleWallet.IsEarlyUser(login), perm.Moderator);
             
