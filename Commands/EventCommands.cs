@@ -116,6 +116,7 @@ namespace Palantir.Commands
             while(spent_count < amount)
             {
                 spent.Add(consumable.First());
+                spent_count += Palantir.League.Weight(consumable.First().LeagueWeight / 1000.0) / 100;
                 consumable.RemoveAt(0);
             }
 
