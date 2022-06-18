@@ -371,5 +371,79 @@ namespace Palantir.Commands
             await context.RespondAsync(embed);
 
         }
+
+        [Description("Show your current Drop League season ranking")]
+        [Command("rank")]
+        [RequireBeta()]
+        public async Task Rank(CommandContext context, int month = -1, int year = -1)
+        {
+
+            if (year == -1) year = DateTime.Now.Year;
+            if (month == -1) month = DateTime.Now.Month;
+
+            var season = new League(month.ToString(), year.ToString());
+            var results = season.LeagueResults().OrderByDescending(l => l.Score).ToList();
+            string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
+            int position = results.FindIndex(result => result.Login == login) + 1;
+
+            if (position <= 0) await Program.SendEmbed(context.Channel, "Oopsie", "You aren't ranked in this season." + (season.IsActive() ? "Catch some drops faster than 1000ms to appear in the ranking!" : ""));
+            else
+            {
+                var embed = new DiscordEmbedBuilder()
+                    .WithAuthor("Drop League")
+                    .WithTitle("**" + DateTime.Now.ToString("MMMM yyyy") + "** Season")
+                    .WithColor(DiscordColor.Magenta)
+                    .WithThumbnail("https://media.discordapp.net/attachments/910894527261327370/983025068214992948/challenge.gif")
+                    .WithDescription("Drop Leagues are a monthly competition, where the very fastest catchers rank against each other.\n_ _\n" + (season.IsActive() ? "Season ends <t:" + season.GetEndTimestamp() + ":R>\n_ _" : "Ended <t:" + season.GetEndTimestamp() + ">\n_ _"));
+                
+                if(position == 1)
+                {
+                    embed.AddField("<a:league_rnk1:987699431350632518> You are ranked as #1", ""); // \u200b 
+                }
+                else if(position == 2)
+                {
+                    embed.AddField("<a:league_rnk2:987710613893566515> You are ranked as #2", "");
+                }
+                else if(position == 3)
+                {
+                    embed.AddField("<a:league_rnk3:987716889352470528> You are ranked as #3", "");
+                }
+                else if(position <= 10)
+                {
+                    embed.AddField("<a:league_rnk4:987723143982514207> You are ranked as #" + position, "You are below the top 10 ranked players this season.");
+                }
+                else
+                {
+                    embed.AddField("<a:league_rnk1:987699431350632518> You are ranked as #" + position, "Catch more League Drops to be ranked below the top 10 players.");
+                }
+
+                var maxAvg = results.Max(r => r.AverageWeight);
+                if (results.Find(r => r.AverageWeight == maxAvg).Login == login)
+                {
+                    embed.AddField("<a:league_rnk1:987699431350632518>", "➜ Leader in the category `Average Weight`");
+                }
+
+                var maxCount = results.Max(r => r.LeagueDrops.Count);
+                if (results.Find(r => r.LeagueDrops.Count == maxAvg).Login == login)
+                {
+                    embed.AddField("<a:league_rnk1:987699431350632518>", "➜ Leader in the category `League Drops`");
+                }
+
+                var maxStreak = results.Max(r => r.Streak);
+                if (results.Find(r => r.Streak == maxStreak).Login == login)
+                {
+                    embed.AddField("<a:league_rnk1:987699431350632518>", "➜ Leader in the category `Maximum Streak`");
+                }
+
+                embed.AddField(
+                   "➜ Your Stats",
+                   "> `" + results[position-1].Score + "dw`\n> ***" + results[position - 1].LeagueDrops.Count + "** League Drops*\n> ***" + results[position - 1].AverageWeight + "%** avg.weight*\n> ***" + results[position - 1].AverageTime + "ms** avg.time*\n> ***" + results[position - 1].Streak + "** max.streak*",
+                   true
+               );
+
+                await context.RespondAsync(embed);
+            }
+        }
     }
 }
+
