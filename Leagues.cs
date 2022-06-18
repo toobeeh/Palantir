@@ -25,7 +25,7 @@ namespace Palantir
             List<double> weights = new();
             foreach (var item in userDrops)
             {
-                if (item.EventDropID == 0) weights.Add(League.Weight(item.LeagueWeight));
+                if (item.EventDropID == 0) weights.Add(League.Weight(item.LeagueWeight / 1000.0));
             }
 
             return weights;
@@ -41,7 +41,7 @@ namespace Palantir
             List<double> weights = new();
             foreach (var item in userDrops)
             {
-                if (item.EventDropID != 0) weights.Add(League.Weight(item.LeagueWeight));
+                if (item.EventDropID != 0) weights.Add(League.Weight(item.LeagueWeight / 1000.0));
             }
 
             return weights;
