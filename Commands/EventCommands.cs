@@ -311,7 +311,7 @@ namespace Palantir.Commands
             {
                 var member = Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(Program.Feanor.GetMemberByLogin(result.Login).Member);
                 embed.AddField(
-                    emote + " `#"+rank+"`  **" + member.UserName + "**",
+                    emote + "_ _  _ _ `#"+rank+"`  **" + member.UserName + "**",
                     "> `" + result.Score + "dw`\n> ***" + result.LeagueDrops.Count + "** League Drops*\n> ***" + result.AverageWeight + "%** avg.weight*\n> ***" + result.AverageTime + "ms** avg.time*\n> ***" + result.Streak + "** max.streak*",
                     true
                 );
@@ -332,8 +332,8 @@ namespace Palantir.Commands
                 return content;
             }
 
-            if (results.Count() > 3) embed.AddField("`#4 - #7`", LowerText(results.GetRange(3,4)));
-            if (results.Count() > 7) embed.AddField("`#8 - #10`", LowerText(results.GetRange(7, 3)));
+            if (results.Count() > 3) embed.AddField("<a:league_rnk4:987723143982514207>_ _  _ _ `#4 - #7`", LowerText(results.GetRange(3,4)));
+            if (results.Count() > 7) embed.AddField("<a:league_rnk4:987723143982514207>_ _  _ _ `#8 - #10`", LowerText(results.GetRange(7, 3)));
 
             if(results.Count > 0)
             {
