@@ -307,19 +307,19 @@ namespace Palantir.Commands
                     .WithThumbnail("https://media.discordapp.net/attachments/910894527261327370/983025068214992948/challenge.gif")
                     .WithDescription("Drop Leagues are a monthly competition, where the very fastest catchers rank against each other.\n_ _\n" + (season.IsActive() ?  "Season ends <t:" + season.GetEndTimestamp() + ":R>\n_ _" : "Ended <t:" + season.GetEndTimestamp() + ">\n_ _"));
 
-            void AddTop(League.MemberLeagueResult result, int rank)
+            void AddTop(League.MemberLeagueResult result, int rank, string emote)
             {
                 var member = Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(Program.Feanor.GetMemberByLogin(result.Login).Member);
                 embed.AddField(
-                    "`#"+rank+"`  **" + member.UserName + "**",
+                    emote + " `#"+rank+"`  **" + member.UserName + "**",
                     "> `" + result.Score + "dw`\n> ***" + result.LeagueDrops.Count + "** League Drops*\n> ***" + result.AverageWeight + "%** avg.weight*\n> ***" + result.AverageTime + "ms** avg.time*\n> ***" + result.Streak + "** max.streak*",
                     true
                 );
             }
 
-            if (results.Count() > 0) AddTop(results[0],1);
-            if (results.Count() > 1) AddTop(results[1],2);
-            if (results.Count() > 2) AddTop(results[2],3);
+            if (results.Count() > 0) AddTop(results[0],1, "<a:league_rnk1:987699431350632518>");
+            if (results.Count() > 1) AddTop(results[1],2, "<a:league_rnk2:987710613893566515>");
+            if (results.Count() > 2) AddTop(results[2],3, "<a:league_rnk3:987716889352470528>");
 
             string LowerText(List<League.MemberLeagueResult> results)
             {
