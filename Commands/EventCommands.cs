@@ -289,18 +289,23 @@ namespace Palantir.Commands
         [Description("Show the current Drop League season ranking")]
         [Command("league")]
         [RequireBeta()]
-        public async Task League(CommandContext context)
+        public async Task League(CommandContext context, int month = -1, int year = -1)
         {
 
-           var season = new League(DateTime.Now.Month.ToString(), DateTime.Now.Year.ToString());
+            if (year == -1) year = DateTime.Now.Year;
+            if (month == -1) month = DateTime.Now.Month;
+
+           var season = new League(month.ToString(), year.ToString());
            var results = season.LeagueResults().OrderByDescending(l=>l.Score).ToList();
 
+
+
             var embed = new DiscordEmbedBuilder()
-                 .WithAuthor("Drop League")
-                 .WithTitle("**" + DateTime.Now.ToString("MMMM yyyy") + "** Season")
-                 .WithColor(DiscordColor.Magenta)
-                 .WithThumbnail("https://media.discordapp.net/attachments/910894527261327370/983025068214992948/challenge.gif")
-                 .WithDescription("Drop Leagues are a monthly competition, where the very fastest catchers rank against each other.\n_ _\nSeason ends `in 20 days`\n_ _");
+                    .WithAuthor("Drop League")
+                    .WithTitle("**" + DateTime.Now.ToString("MMMM yyyy") + "** Season")
+                    .WithColor(DiscordColor.Magenta)
+                    .WithThumbnail("https://media.discordapp.net/attachments/910894527261327370/983025068214992948/challenge.gif")
+                    .WithDescription("Drop Leagues are a monthly competition, where the very fastest catchers rank against each other.\n_ _\n" + (season.IsActive() ?  "Season ends <t:" + season.GetEndTimestamp() + ":R>\n_ _" : "Ended <t:" + season.GetEndTimestamp() + ">\n_ _"));
 
             void AddTop(League.MemberLeagueResult result, int rank)
             {
@@ -356,7 +361,7 @@ namespace Palantir.Commands
                     "_ _\n`⚔️` Category Leaders",
                     "➜ **Overall**: " + overall.UserName + " (`" + maxOverall + "dw`)\n➜ **Average Weight**: " 
                         + weight.UserName + " (`" + maxWeight + "%`)\n➜ **League Drops**: " + count.UserName + " (`" + maxCount + " drops`)"
-                        + "\n➜ **League Drop Streak**: " + streak.UserName + "(`" + maxStreak + " drops`)",
+                        + "\n➜ **League Drop Streak**: " + streak.UserName + " (`" + maxStreak + " drops`)",
                     true
                 );
             }
