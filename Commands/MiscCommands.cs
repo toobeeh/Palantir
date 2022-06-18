@@ -171,9 +171,9 @@ namespace Palantir.Commands
             embed.AddField("\u200b ",
                 "`🔮` **" + credit + " ** / " + bubbles + " Bubbles\n"
                 + "`💧` **" + drops + "** Drops caught\n"
-                + (leagueDrops > 0 ? "<a:league_rnk1:987699431350632518> **" + leagueDrops + "** League Drops caught\n" : "")
                 + (splits > 0 ? "`🏆` **" + splits + "** Splits rewarded\n" : "")
-                + "`🔥` " + (boostCooldown.TotalSeconds > 0 ? "Next `>dropboost` in " + boostCooldown.ToString(@"dd\d\ hh\h\ mm\m\ ss\s") : "`>dropboost` available!"));
+                + "`🔥` " + (boostCooldown.TotalSeconds > 0 ? "Next `>dropboost` in " + boostCooldown.ToString(@"dd\d\ hh\h\ mm\m\ ss\s") : "`>dropboost` available!")
+                + (leagueDrops > 0 ? "\n\n<a:league_rnk1:987699431350632518> **" + leagueDrops + "** League Drops caught\n" : ""));
 
             string flags = "";
             if (perm.BubbleFarming) flags += "`🚩 Bubble Farming`\n";
