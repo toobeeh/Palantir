@@ -375,7 +375,7 @@ namespace Palantir.Commands
         [Description("Show your current Drop League season ranking")]
         [Command("rank")]
         [RequireBeta()]
-        public async Task Rank(CommandContext context, int month = -1, int year = -1)
+        public async Task Rank(CommandContext context, int month = -1, int year = -1, bool help = true)
         {
 
             if (year == -1) year = DateTime.Now.Year;
@@ -441,7 +441,7 @@ namespace Palantir.Commands
                    true
                 );
 
-                embed.AddField("About ranking", "\n> ➜ The **overall ranking leader** is the player with the most collected 'drop weight / `dw`'. Each League Drop you collect is weighted by how fast you catch it and adds to your score."
+                if(help) embed.AddField("_ _\n➜ About ranking", "\n> ➜ The **overall ranking leader** is the player with the most collected 'drop weight / `dw`'. Each League Drop you collect is weighted by how fast you catch it and adds to your score."
                     + "\n_ _ \n> ➜ The **average weight leader** is the player that has the highest average drop weight - this means, this player has the fastest average catch time!"
                     + "\n_ _ \n> ➜ The **league drops leader** is the player with the most total collected League Drops."
                     + "\n_ _ \n> ➜ The **maximum streak leader** is the player with the highest caught League Drop streak. Only League Drops count, otherwise the streak is broken."
@@ -450,6 +450,14 @@ namespace Palantir.Commands
 
                 await context.RespondAsync(embed);
             }
+        }
+
+        [Description("Show your current Drop League season ranking - cleaner without help ;)")]
+        [Command("rnk")]
+        [RequireBeta()]
+        public async Task RankWithoutHelp(CommandContext context, int month = -1, int year = -1)
+        {
+            await Rank(context, month, year, false);
         }
     }
 }
