@@ -89,7 +89,7 @@ namespace Palantir.Commands
                 return;
             }
 
-            var events = Events.GetEvents();
+            var events = Events.GetEvents(false);
             var drops = Events.GetEventDrops();
             var drop = drops.Find(drop => drop.EventDropID == eventDropID);
 
