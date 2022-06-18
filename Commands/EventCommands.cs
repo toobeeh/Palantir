@@ -345,7 +345,6 @@ namespace Palantir.Commands
 
         [Description("Show the current Drop League season ranking")]
         [Command("league")]
-        [RequireBeta()]
         public async Task League(CommandContext context, int month = -1, int year = -1)
         {
 
@@ -431,7 +430,6 @@ namespace Palantir.Commands
 
         [Description("Show your current Drop League season ranking")]
         [Command("rank")]
-        [RequireBeta()]
         public async Task Rank(CommandContext context, int month = -1, int year = -1, bool help = true)
         {
 
@@ -511,7 +509,6 @@ namespace Palantir.Commands
 
         [Description("Show your current Drop League season ranking - cleaner without help ;)")]
         [Command("rnk")]
-        [RequireBeta()]
         public async Task RankWithoutHelp(CommandContext context, int month = -1, int year = -1)
         {
             await Rank(context, month, year, false);
