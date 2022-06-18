@@ -51,12 +51,12 @@ namespace Palantir
 
         public bool IsActive()
         {
-            return DateTime.Now.Month.ToString() == this.month && DateTime.Now.Year.ToString() == this.year;
+            return DateTime.Now.Month == Int32.Parse(this.month) && DateTime.Now.Year == Int32.Parse(this.year);
         }
 
         public long GetEndTimestamp()
         {
-            return DateTimeOffset.Parse(this.month + "/01/" + this.year).ToUnixTimeSeconds();
+            return DateTimeOffset.Parse("01/" + this.month + "/" + this.year).ToUnixTimeSeconds();
         }
 
         public Dictionary<string, int> GetStreaks()
