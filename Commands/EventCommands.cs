@@ -398,23 +398,23 @@ namespace Palantir.Commands
                 
                 if(position == 1)
                 {
-                    embed.AddField("<a:league_rnk1:987699431350632518> You are ranked as #1", "\u200b "); // \u200b 
+                    embed.AddField("_ _\n<a:league_rnk1:987699431350632518>  _ _ You are ranked as #1!", "\u200b "); // \u200b 
                 }
                 else if(position == 2)
                 {
-                    embed.AddField("<a:league_rnk2:987710613893566515> You are ranked as #2", "\u200b ");
+                    embed.AddField("_ _\n<a:league_rnk2:987710613893566515>  _ _ You are ranked as #2!", "\u200b ");
                 }
                 else if(position == 3)
                 {
-                    embed.AddField("<a:league_rnk3:987716889352470528> You are ranked as #3", "\u200b ");
+                    embed.AddField("_ _\n<a:league_rnk3:987716889352470528>  _ _ You are ranked as #3!", "\u200b ");
                 }
                 else if(position <= 10)
                 {
-                    embed.AddField("<a:league_rnk4:987723143982514207> You are ranked as #" + position, "You are below the top 10 ranked players this season.");
+                    embed.AddField("_ _\n<a:league_rnk4:987723143982514207>  _ _ You are ranked as #" + position, "You are below the top 10 ranked players this season.");
                 }
                 else
                 {
-                    embed.AddField("<a:league_rnk1:987699431350632518> You are ranked as #" + position, "Catch more League Drops to be ranked below the top 10 players.");
+                    embed.AddField("_ _\n<a:league_rnk1:987699431350632518>  _ _ You are ranked as #" + position, "Catch more League Drops to be ranked below the top 10 players.");
                 }
 
                 var maxAvg = results.Max(r => r.AverageWeight);
@@ -424,7 +424,7 @@ namespace Palantir.Commands
                 }
 
                 var maxCount = results.Max(r => r.LeagueDrops.Count);
-                if (results.Find(r => r.LeagueDrops.Count == maxAvg).Login == login)
+                if (results.Find(r => r.LeagueDrops.Count == maxCount).Login == login)
                 {
                     embed.AddField("<a:league_rnk1:987699431350632518>", "➜ Leader in the category `League Drops`");
                 }
