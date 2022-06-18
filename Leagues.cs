@@ -56,7 +56,7 @@ namespace Palantir
 
         public long GetEndTimestamp()
         {
-            return DateTimeOffset.Parse("01/" + this.month + "/" + this.year).ToUnixTimeSeconds();
+            return DateTimeOffset.Parse("01/" + this.month + "/" + this.year).AddMonths(1).ToUnixTimeSeconds();
         }
 
         public Dictionary<string, int> GetStreaks()
