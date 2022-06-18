@@ -439,7 +439,14 @@ namespace Palantir.Commands
                    "➜ Your Stats",
                    "> `" + results[position-1].Score + "dw`\n> ***" + results[position - 1].LeagueDrops.Count + "** League Drops*\n> ***" + results[position - 1].AverageWeight + "%** avg.weight*\n> ***" + results[position - 1].AverageTime + "ms** avg.time*\n> ***" + results[position - 1].Streak + "** max.streak*",
                    true
-               );
+                );
+
+                embed.AddField("About ranking", "\n> ➜ The **overall ranking leader** is the player with the most collected 'drop weight / `dw`'. Each League Drop you collect is weighted by how fast you catch it.\n> Each League Drop adds `dw` to your score. Collect more or be faster to be ranked up!"
+                    + "\n> ➜ The **average weight leader** is the player that has the highest average drop weight - this means, this player has the fastest average catch time!"
+                    + "\n> ➜ The **league drops leader** is the player with the most total collected League Drops."
+                    + "\n> ➜ The **maximum streak leader** is the player with the highest caught League Drop streak. Only League Drops count, otherwise the streak is broken."
+                    + "\n> ➜ When you catch a League Drop, it is weighted (between 0.1 and 1) by how fast you were and added to your Drop/Bubble credit."
+                    + "\n> ➜ When you catch a Event League Drop, it is also weighted. Using `>event` you can see your collected Event League Dropsfor an Event. You can trade them to any Eventdrop of this event!");
 
                 await context.RespondAsync(embed);
             }
