@@ -55,7 +55,7 @@ namespace Palantir
             return bubbles;
         }
 
-        public static int GetDrops(string login)
+        public static int GetDrops(string login, string userid)
         {
             PalantirDbContext context = new PalantirDbContext();
             MemberEntity entity = context.Members.FirstOrDefault(s => s.Login == login);
@@ -67,6 +67,10 @@ namespace Palantir
             }
             context.SaveChanges();
             context.Dispose();
+
+            var leagueDrops = League.GetLeagueDropWeights(userid);
+            int leagueWieght = Convert.ToInt32(Math.Floor(leagueDrops.Sum()));
+            drops += leagueWieght;
 
             return drops;
         }
@@ -194,14 +198,14 @@ namespace Palantir
             return scene;
         }
 
-        public static int CalculateCredit(string login)
+        public static int CalculateCredit(string login, string userid)
         {
             int total = GetBubbles(login);
             GetInventory(login).ForEach(s =>
             {
                 if(s.EventDropID <= 0) total -= s.Cost;
             });
-            total += GetDrops(login) * 50;
+            total += GetDrops(login, userid) * 50;
             int nextPrice = SceneStartPrice;
             List<SceneProperty> regScenes = GetSceneInventory(login, false, true);
             foreach (SceneProperty scene in regScenes)
@@ -307,7 +311,7 @@ namespace Palantir
         public static int CaughtEventdrops(string discordID)
         {
             PalantirDbContext context = new PalantirDbContext();
-            int caught = context.PastDrops.Where(drop => drop.CaughtLobbyPlayerID == discordID && drop.EventDropID > 0).Count();
+            int caught = context.PastDrops.Where(drop => drop.CaughtLobbyPlayerID == discordID && drop.EventDropID > 0 && drop.LeagueWeight == 0).Count();
             context.Dispose();
             return caught;
         }

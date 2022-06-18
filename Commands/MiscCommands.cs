@@ -126,10 +126,10 @@ namespace Palantir.Commands
                 embed.ImageUrl = path;
             }
 
-            int drops = BubbleWallet.GetDrops(login);
+            int drops = BubbleWallet.GetDrops(login, context.User.Id.ToString());
             int splits = BubbleWallet.GetMemberSplits(Convert.ToInt32(login), perm).Sum(s => s.Value);
             if (inventory.Count <= 0) desc = "You haven't unlocked any sprites yet!";
-            desc += "\n\n🔮 **" + BubbleWallet.CalculateCredit(login) + "** of " + BubbleWallet.GetBubbles(login) + " collected Bubbles available.";
+            desc += "\n\n🔮 **" + BubbleWallet.CalculateCredit(login, context.User.Id.ToString()) + "** of " + BubbleWallet.GetBubbles(login) + " collected Bubbles available.";
             desc += "\n\n💧 **" + drops + "** Drops collected.";
             if(splits >  0 ) desc += "\n\n🏆 **" + splits + "** Splits rewarded.";
             if (drops >= 1000 || perm.BotAdmin || perm.Patron) desc += "\n\n<a:chest:810521425156636682> **" + (perm.BotAdmin ? "Infinite" : (drops / 1000 + 1 + (perm.Patron ? 1 : 0)).ToString()) + " ** Sprite slots available.";
@@ -147,12 +147,13 @@ namespace Palantir.Commands
         public async Task Inventory(CommandContext context, int batchsize = 7)
         {
             string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
-            int drops = BubbleWallet.GetDrops(login);
+            int drops = BubbleWallet.GetDrops(login, context.User.Id.ToString());
             int bubbles = BubbleWallet.GetBubbles(login);
-            int credit = BubbleWallet.CalculateCredit(login);
+            int credit = BubbleWallet.CalculateCredit(login, context.User.Id.ToString());
             List<SpriteProperty> inventory = BubbleWallet.GetInventory(login).OrderBy(s => s.ID).ToList();
             PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
             int splits = BubbleWallet.GetMemberSplits(Convert.ToInt32(login), perm).Sum(s => s.Value);
+            int leagueDrops = League.GetLeagueEventDropWeights(context.User.Id.ToString()).Count + League.GetLeagueDropWeights(context.User.Id.ToString()).Count;
 
             DiscordEmbedBuilder embed = new DiscordEmbedBuilder()
                 .WithColor(DiscordColor.Magenta)
@@ -170,6 +171,7 @@ namespace Palantir.Commands
             embed.AddField("\u200b ",
                 "`🔮` **" + credit + " ** / " + bubbles + " Bubbles\n"
                 + "`💧` **" + drops + "** Drops caught\n"
+                + (leagueDrops > 0 ? "<a:league_rnk1:987699431350632518> **" + leagueDrops + "** League Drops caught\n" : "")
                 + (splits > 0 ? "`🏆` **" + splits + "** Splits rewarded\n" : "")
                 + "`🔥` " + (boostCooldown.TotalSeconds > 0 ? "Next `>dropboost` in " + boostCooldown.ToString(@"dd\d\ hh\h\ mm\m\ ss\s") : "`>dropboost` available!"));
 
@@ -299,7 +301,10 @@ namespace Palantir.Commands
                         unranked++;
                         embed.AddField("\u200b", "**`🚩` - " + name + "**\n `This player has been flagged as *bubble farming*`.", true);
                     }
-                    else embed.AddField("\u200b", "**#" + (members.IndexOf(member) + 1 - unranked).ToString() + " - " + name + "**" + (perm.BotAdmin ? " ` Admin` " : "") + (perm.Patron ? " ` 🎖️ Patron` " : "") + "\n🔮 " + BubbleWallet.GetBubbles(member.Login).ToString() + " Bubbles\n💧 " + BubbleWallet.GetDrops(member.Login).ToString() + " Drops", true);
+                    else embed.AddField("\u200b", "**#" + (members.IndexOf(member) + 1 - unranked).ToString() + " - " + name + "**" + (perm.BotAdmin ? " ` Admin` " : "") + (perm.Patron ? " ` 🎖️ Patron` " : "") + "\n🔮 " 
+                        + BubbleWallet.GetBubbles(member.Login).ToString() + " Bubbles\n💧 " 
+                        + BubbleWallet.GetDrops(member.Login, JsonConvert.DeserializeObject<Member>(Program.Feanor.GetMemberByLogin(member.Login).Member).UserID).ToString() + " Drops", true
+                       );
                 }
                 embed.WithFooter(context.Member.DisplayName + " can react within 2 mins to show the next page.");
                 await leaderboard.ModifyAsync(embed: embed.Build(), content: "");
@@ -398,7 +403,7 @@ namespace Palantir.Commands
                     {
                         embed.AddField("\u200b", "**`🚩` - " + name + "**\n `This player has been flagged as *bubble farming*`.", true);
                     }
-                    else embed.AddField("\u200b", "**#" + (ranks.IndexOf(member.Login) + 1) + " - " + name + "**" + (perm.BotAdmin ? " \n`Admin` " : "") + (perm.Patron ? " \n`🎖️ Patron` " : "") + (perm.Patronizer ? " \n`🎁 Patronizer` " : "") + "\n🔮 " + BubbleWallet.GetBubbles(member.Login).ToString() + " Bubbles\n💧 " + BubbleWallet.GetDrops(member.Login).ToString() + " Drops", true);
+                    else embed.AddField("\u200b", "**#" + (ranks.IndexOf(member.Login) + 1) + " - " + name + "**" + (perm.BotAdmin ? " \n`Admin` " : "") + (perm.Patron ? " \n`🎖️ Patron` " : "") + (perm.Patronizer ? " \n`🎁 Patronizer` " : "") + "\n🔮 " + BubbleWallet.GetBubbles(member.Login).ToString() + " Bubbles\n💧 " + BubbleWallet.GetDrops(member.Login, JsonConvert.DeserializeObject<Member>(Program.Feanor.GetMemberByLogin(member.Login).Member).UserID).ToString() + " Drops", true);
                 }
                 embed.WithFooter(context.Member.DisplayName + " can react within 10 mins to show the next page.");
 
@@ -517,7 +522,7 @@ namespace Palantir.Commands
                     List<Sprite> available = BubbleWallet.GetAvailableSprites();
                     Sprite sprite = available.FirstOrDefault(s => (ulong)s.ID == target);
                     if (sprite.EventDropID > 0) { await Program.SendEmbed(context.Channel, "This is an event sprite!", "It can only be bought with event drops."); return; }
-                    hours = ((double)sprite.Cost - BubbleWallet.CalculateCredit(login)) / 360;
+                    hours = ((double)sprite.Cost - BubbleWallet.CalculateCredit(login, context.User.Id.ToString())) / 360;
                     await Program.SendEmbed(context.Channel, "🔮  Time to get " + sprite.Name + ":",
                         (TimeSpan.FromHours(hours).Days * 24 + TimeSpan.FromHours(hours).Hours).ToString() + "h "
                         + TimeSpan.FromHours(hours).Minutes.ToString() + "min "

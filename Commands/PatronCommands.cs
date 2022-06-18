@@ -87,7 +87,8 @@ namespace Palantir.Commands
             System.IO.File.Delete(combopath);
 
             int caughtEventdrops = BubbleWallet.CaughtEventdrops(dUser.Id.ToString());
-            double ratio = Math.Round(((double)member.Drops + caughtEventdrops) / ((double)member.Bubbles / 1000), 1);
+            int caughtleagueEventdrops = Convert.ToInt32(League.GetLeagueEventDropWeights(dUser.Id.ToString()).Sum());
+            double ratio = Math.Round(((double)member.Drops + caughtEventdrops + caughtleagueEventdrops) / ((double)member.Bubbles / 1000), 1);
             if (!double.IsFinite(ratio)) ratio = 0;
 
             SpriteComboImage.FillPlaceholdersBG(ref content, profilebase64, spritebase64, background64, cardsettings.BackgroundOpacity, cardsettings.HeaderOpacity, bgheight.ToString(), cardsettings.HeaderColor, cardsettings.LightTextColor, cardsettings.DarkTextColor, dMember is not null ? dMember.DisplayName : dUser.Username, member.Bubbles.ToString(), member.Drops.ToString(), ratio,

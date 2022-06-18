@@ -104,7 +104,7 @@ namespace Palantir.Commands
             }
 
             Sprite target = available.FirstOrDefault(s => s.ID == sprite);
-            int credit = BubbleWallet.CalculateCredit(login);
+            int credit = BubbleWallet.CalculateCredit(login, context.User.Id.ToString());
             PermissionFlag perm = new PermissionFlag((byte)member.Flag);
             if (target.ID == 1003)
             {
@@ -165,7 +165,7 @@ namespace Palantir.Commands
             MemberEntity member = Program.Feanor.GetMemberByLogin(login);
             PermissionFlag perm = new PermissionFlag((byte)member.Flag);
 
-            if (!perm.BotAdmin && (slot < 1 || slot > BubbleWallet.GetDrops(login) / 1000 + 1 + (perm.Patron ? 1 : 0)))
+            if (!perm.BotAdmin && (slot < 1 || slot > BubbleWallet.GetDrops(login, context.User.Id.ToString()) / 1000 + 1 + (perm.Patron ? 1 : 0)))
             {
                 await Program.SendEmbed(context.Channel, "Out of your league.", "You can't use that sprite slot!\nFor each thousand collected drops, you get one extra slot.");
                 return;
@@ -217,7 +217,7 @@ namespace Palantir.Commands
             MemberEntity member = Program.Feanor.GetMemberByLogin(login);
             PermissionFlag perm = new PermissionFlag((byte)member.Flag);
 
-            if (!perm.BotAdmin && (sprites.Length < 1 || sprites.Length > BubbleWallet.GetDrops(login) / 1000 + 1 + (perm.Patron ? 1 : 0)))
+            if (!perm.BotAdmin && (sprites.Length < 1 || sprites.Length > BubbleWallet.GetDrops(login, context.User.Id.ToString()) / 1000 + 1 + (perm.Patron ? 1 : 0)))
             {
                 await Program.SendEmbed(context.Channel, "Gotcha!", "You can't use that many sprite slots!\nFor each thousand collected drops, you get one extra slot.");
                 return;
@@ -295,7 +295,7 @@ namespace Palantir.Commands
             PermissionFlag flags = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
             List<SceneEntity> available = BubbleWallet.GetAvailableScenes();
             List<SceneProperty> inventory = BubbleWallet.GetSceneInventory(login, false, false);
-            int credit = flags.BotAdmin ? int.MaxValue : BubbleWallet.CalculateCredit(login);
+            int credit = flags.BotAdmin ? int.MaxValue : BubbleWallet.CalculateCredit(login, context.User.Id.ToString());
             int sceneCost = BubbleWallet.SceneStartPrice;
             inventory.Where(s => s.EventID == 0).ForEach(scene => sceneCost *= BubbleWallet.ScenePriceFactor);
             int eventID = available.FirstOrDefault(scene => scene.ID == id).EventID;

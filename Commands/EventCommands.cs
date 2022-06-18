@@ -436,12 +436,12 @@ namespace Palantir.Commands
                 }
 
                 embed.AddField(
-                   "➜ Your Stats",
+                   "➜ _ _ Your Stats",
                    "> `" + results[position-1].Score + "dw`\n> ***" + results[position - 1].LeagueDrops.Count + "** League Drops*\n> ***" + results[position - 1].AverageWeight + "%** avg.weight*\n> ***" + results[position - 1].AverageTime + "ms** avg.time*\n> ***" + results[position - 1].Streak + "** max.streak*",
                    true
                 );
 
-                if(help) embed.AddField("_ _\n➜ About ranking", "\n> ➜ The **overall ranking leader** is the player with the most collected 'drop weight / `dw`'. Each League Drop you collect is weighted by how fast you catch it and adds to your score."
+                if(help) embed.AddField("_ _\n➜ _ _ About ranking", "\n> ➜ The **overall ranking leader** is the player with the most collected 'drop weight / `dw`'. Each League Drop you collect is weighted by how fast you catch it and adds to your score."
                     + "\n_ _ \n> ➜ The **average weight leader** is the player that has the highest average drop weight - this means, this player has the fastest average catch time!"
                     + "\n_ _ \n> ➜ The **league drops leader** is the player with the most total collected League Drops."
                     + "\n_ _ \n> ➜ The **maximum streak leader** is the player with the highest caught League Drop streak. Only League Drops count, otherwise the streak is broken."
