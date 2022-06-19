@@ -16,7 +16,7 @@ namespace Palantir
             catchSeconds *= 1000;
             if (catchSeconds < 0) return 0;
             if (catchSeconds > 1000) return 40;
-            return -1.42746105233562 * Math.Pow(10, -9) * Math.Pow(catchSeconds, 4) + 0.00000357514422271203 * Math.Pow(catchSeconds, 3) - 0.00312725463318275 * Math.Pow(catchSeconds, 2) + 1.01957146280634 * catchSeconds;
+            return -1.78641975945623 * Math.Pow(10, -9) * Math.Pow(catchSeconds, 4) + 0.00000457264006980028 * Math.Pow(catchSeconds, 3) - 0.00397188791256729 * Math.Pow(catchSeconds, 2) + 1.21566760222325 * catchSeconds;
         }
 
         public static List<double> GetLeagueDropWeights(string userid)
