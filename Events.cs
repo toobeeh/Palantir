@@ -66,7 +66,7 @@ namespace Palantir
 
         public static int TradeLeagueEventDrops(List<PastDropEntity> consumed, int targetDropID, string login)
         {
-            int value = Convert.ToInt32(Math.Floor(consumed.Sum(drop => League.Weight(drop.LeagueWeight / 1000.0) / 100)));
+            int value = Convert.ToInt32(consumed.Sum(drop => League.Weight(drop.LeagueWeight / 1000.0) / 100));
             BubbleWallet.ChangeEventDropCredit(login, targetDropID, value);
 
             PalantirDbContext context = new PalantirDbContext();
