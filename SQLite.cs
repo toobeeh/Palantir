@@ -81,7 +81,9 @@ namespace Palantir
             modelBuilder.Entity<WebhookEntity>()
                 .HasKey(e => new { e.ServerID, e.Name });
             modelBuilder.Entity<SplitCreditEntity>()
-                .HasKey(e => new { e.Login, e.Split });
+                .HasKey(e => new { e.Login, e.Split }); 
+            modelBuilder.Entity<PastDropEntity>()
+                 .HasKey(e => new { e.DropID, e.CaughtLobbyPlayerID });
         }
 
     }
@@ -187,7 +189,6 @@ namespace Palantir
     }
     public class PastDropEntity
     {
-        [Key]
         public string DropID { get; set; }
         public string CaughtLobbyPlayerID { get; set; }
         public string CaughtLobbyKey { get; set; }
