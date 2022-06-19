@@ -71,7 +71,7 @@ namespace Palantir
 
             PalantirDbContext context = new PalantirDbContext();
             consumed.ForEach(drop => {
-                   context.PastDrops.FirstOrDefault(past => past.DropID == drop.DropID).EventDropID *= -1;
+                   context.PastDrops.FirstOrDefault(past => past.DropID == drop.DropID && past.CaughtLobbyPlayerID == drop.CaughtLobbyPlayerID).EventDropID *= -1;
             });
             context.SaveChanges();
             context.Dispose();
