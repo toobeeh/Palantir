@@ -12,9 +12,11 @@ namespace Palantir
     {
         public static double Weight(double catchSeconds)
         {
-            if (catchSeconds < 0.1) return 100;
-            if (catchSeconds > 1) return 10;
-            return -372.505925447102 * Math.Pow(catchSeconds, 4) + 1093.85046326223 * Math.Pow(catchSeconds, 3) - 988.674423615601 * Math.Pow(catchSeconds, 2) + 187.221934927817 * catchSeconds + 90.1079508726569;
+            //convert to ms ugh
+            catchSeconds *= 1000;
+            if (catchSeconds < 0) return 0;
+            if (catchSeconds > 1000) return 40;
+            return -1.11140938198988 * Math.Pow(10, -9) * Math.Pow(catchSeconds, 4) + 0.00000310709907722374 * Math.Pow(catchSeconds, 3) - 0.00305593944694741 * Math.Pow(catchSeconds, 2) + 1.10024975171356 * catchSeconds;
         }
 
         public static List<double> GetLeagueDropWeights(string userid)
