@@ -15,7 +15,7 @@ namespace Palantir
             //convert to ms ugh
             catchSeconds *= 1000;
             if (catchSeconds < 0) return 0;
-            if (catchSeconds > 1000) return 40;
+            if (catchSeconds > 1000) return 30;
             return -1.78641975945623 * Math.Pow(10, -9) * Math.Pow(catchSeconds, 4) + 0.00000457264006980028 * Math.Pow(catchSeconds, 3) - 0.00397188791256729 * Math.Pow(catchSeconds, 2) + 1.21566760222325 * catchSeconds;
         }
 
