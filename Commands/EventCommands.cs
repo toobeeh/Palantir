@@ -105,7 +105,7 @@ namespace Palantir.Commands
 
             if (credit < amount)
             {
-                await Program.SendEmbed(context.Channel, "Sad times", "Your credit (" + Math.Round(credit, 1) + " is too low!");
+                await Program.SendEmbed(context.Channel, "Sad times", "Your credit (" + Math.Round(credit, 1) + ") is too low!");
                 return;
             }
 
@@ -441,7 +441,7 @@ namespace Palantir.Commands
             string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
             int position = results.FindIndex(result => result.Login == login) + 1;
 
-            if (position <= 0) await Program.SendEmbed(context.Channel, "Oopsie", "You aren't ranked in this season." + (season.IsActive() ? "Catch some drops faster than 1000ms to appear in the ranking!" : ""));
+            if (position <= 0) await Program.SendEmbed(context.Channel, "Oopsie", "You aren't ranked in this season." + (season.IsActive() ? " Catch some drops faster than 1000ms to appear in the ranking!" : ""));
             else
             {
                 var embed = new DiscordEmbedBuilder()
@@ -469,7 +469,7 @@ namespace Palantir.Commands
                 }
                 else
                 {
-                    embed.AddField("_ _\n<a:league_rnk1:987699431350632518>  _ _ You are ranked as #" + position, "Catch more League Drops to be ranked below the top 10 players.");
+                    embed.AddField("_ _\n<a:league_rnk4:987723143982514207>  _ _ You are ranked as #" + position, "Catch more League Drops to be ranked below the top 10 players.");
                 }
 
                 var maxAvg = results.Max(r => r.AverageWeight);

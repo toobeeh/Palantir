@@ -88,7 +88,7 @@ namespace Palantir.Commands
 
             int caughtEventdrops = BubbleWallet.CaughtEventdrops(dUser.Id.ToString());
             int caughtleagueEventdrops = Convert.ToInt32(League.GetLeagueEventDropWeights(dUser.Id.ToString()).Sum());
-            int caughtleagueDrops = Convert.ToInt32(League.GetLeagueDropWeights(dUser.Id.ToString()).Sum());
+            int caughtleagueDrops = League.CalcLeagueDropsValue(League.GetLeagueDropWeights(dUser.Id.ToString()));
             double ratio = Math.Round(((double)member.Drops + caughtEventdrops + caughtleagueEventdrops + caughtleagueDrops) / ((double)member.Bubbles / 1000), 1);
             if (!double.IsFinite(ratio)) ratio = 0;
 

@@ -19,6 +19,11 @@ namespace Palantir
             return -1.78641975945623 * Math.Pow(10, -9) * Math.Pow(catchSeconds, 4) + 0.00000457264006980028 * Math.Pow(catchSeconds, 3) - 0.00397188791256729 * Math.Pow(catchSeconds, 2) + 1.21566760222325 * catchSeconds;
         }
 
+        public static int CalcLeagueDropsValue(List<double> weights)
+        {
+            return Convert.ToInt32(Math.Floor(weights.Sum()));
+        }
+
         public static List<double> GetLeagueDropWeights(string userid)
         {
             PalantirDbContext palantirDbContext = new PalantirDbContext();

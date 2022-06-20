@@ -68,8 +68,7 @@ namespace Palantir
             context.SaveChanges();
             context.Dispose();
 
-            var leagueDrops = League.GetLeagueDropWeights(userid);
-            int leagueWieght = Convert.ToInt32(Math.Floor(leagueDrops.Sum()));
+            int leagueWieght = League.CalcLeagueDropsValue(League.GetLeagueDropWeights(userid));
             drops += leagueWieght;
 
             return drops;
