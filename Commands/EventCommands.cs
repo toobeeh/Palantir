@@ -62,7 +62,7 @@ namespace Palantir.Commands
                 // league stuff
                 List<PastDropEntity> leaguedrops = new List<PastDropEntity>();
                 var credit = Events.GetAvailableLeagueTradeDrops(context.User.Id.ToString(), evt, out leaguedrops);
-                if (credit > 0) embed.AddField("\n\u200b \nLeague Event Drops", "You have " + Math.Round(credit, 1).ToString() + " EVent Drops to redeem! \nYou can swap them with the command `>redeem [amount] [event drop id]` to any of this event's Event Drops.");
+                if (credit > 0) embed.AddField("\n\u200b \nLeague Event Drops", "You have " + Math.Round(credit, 1).ToString() + " League Drops to redeem! \nYou can swap them with the command `>redeem [amount] [event drop id]` to any of this event's Event Drops.");
             }
             else
             {
@@ -354,14 +354,12 @@ namespace Palantir.Commands
            var season = new League(month.ToString(), year.ToString());
            var results = season.LeagueResults().OrderByDescending(l=>l.Score).ToList();
 
-
-
             var embed = new DiscordEmbedBuilder()
                     .WithAuthor("Drop League")
                     .WithTitle("**" + DateTime.Now.ToString("MMMM yyyy") + "** Season")
                     .WithColor(DiscordColor.Magenta)
                     .WithThumbnail("https://media.discordapp.net/attachments/910894527261327370/983025068214992948/challenge.gif")
-                    .WithDescription("Drop Leagues are a monthly competition, where the very fastest catchers rank against each other.\n_ _\n" + (season.IsActive() ?  "Season ends <t:" + season.GetEndTimestamp() + ":R>\n_ _" : "Ended <t:" + season.GetEndTimestamp() + ">\n_ _"));
+                    .WithDescription("Drop Leagues are a monthly competition, where the very fastest catchers rank against each other.\n_ _\n" + results.Count + " participants in this season\n_ _ \n" + (season.IsActive() ?  "Season ends <t:" + season.GetEndTimestamp() + ":R>\n_ _" : "Ended <t:" + season.GetEndTimestamp() + ">\n_ _"));
 
             void AddTop(League.MemberLeagueResult result, int rank, string emote)
             {
@@ -430,7 +428,7 @@ namespace Palantir.Commands
 
         [Description("Show your current Drop League season ranking")]
         [Command("rank")]
-        public async Task Rank(CommandContext context, int month = -1, int year = -1, bool help = true)
+        public async Task Rank(CommandContext context, [Description("Month of the league season, eg `11`")] int month = -1, [Description("Year of the league season, eg `2022`")] int year = -1, [Description("Command options: `all` to see the total ranking")] string modifier = "help")
         {
 
             if (year == -1) year = DateTime.Now.Year;
@@ -449,7 +447,7 @@ namespace Palantir.Commands
                     .WithTitle("**" + DateTime.Now.ToString("MMMM yyyy") + "** Season")
                     .WithColor(DiscordColor.Magenta)
                     .WithThumbnail("https://media.discordapp.net/attachments/910894527261327370/983025068214992948/challenge.gif")
-                    .WithDescription("Drop Leagues are a monthly competition, where the very fastest catchers rank against each other.\n_ _\n" + (season.IsActive() ? "Season ends <t:" + season.GetEndTimestamp() + ":R>\n_ _" : "Ended <t:" + season.GetEndTimestamp() + ">\n_ _"));
+                    .WithDescription("Drop Leagues are a monthly competition, where the very fastest catchers rank against each other.\n_ _\n" + results.Count + " participants in this season\n_ _ \n" + (season.IsActive() ? "Season ends <t:" + season.GetEndTimestamp() + ":R>\n_ _" : "Ended <t:" + season.GetEndTimestamp() + ">\n_ _"));
                 
                 if(position == 1)
                 {
@@ -473,18 +471,24 @@ namespace Palantir.Commands
                 }
 
                 var maxAvg = results.Max(r => r.AverageWeight);
+                var sortMaxAvg = results.OrderByDescending(r => r.AverageWeight);
+                var selfMaxAvg = sortMaxAvg.ToList().IndexOf(results[position - 1]);
                 if (results.Find(r => r.AverageWeight == maxAvg).Login == login)
                 {
                     embed.AddField("<a:league_rnk1:987699431350632518>  _ _ Leader in the category `Average Weight`", "\u200b ");
                 }
 
                 var maxCount = results.Max(r => r.LeagueDrops.Count);
+                var sortMaxCount = results.OrderByDescending(results => results.LeagueDrops.Count);
+                var selfMaxCount = sortMaxCount.ToList().IndexOf(results[position - 1]);
                 if (results.Find(r => r.LeagueDrops.Count == maxCount).Login == login)
                 {
                     embed.AddField("<a:league_rnk1:987699431350632518>  _ _  Leader in the category `League Drops`", "\u200b ");
                 }
 
                 var maxStreak = results.Max(r => r.Streak);
+                var sortMaxStreak = results.OrderByDescending(results=> results.Streak);
+                var selfMaxStreak = sortMaxStreak.ToList().IndexOf(results[position - 1]);
                 if (results.Find(r => r.Streak == maxStreak).Login == login)
                 {
                     embed.AddField("<a:league_rnk1:987699431350632518>  _ _  Leader in the category `Maximum Streak`", "\u200b ");
@@ -492,11 +496,29 @@ namespace Palantir.Commands
 
                 embed.AddField(
                    "➜ _ _ Your Stats",
-                   "> `" + results[position-1].Score + "dw`\n> ***" + results[position - 1].LeagueDrops.Count + "** League Drops*\n> ***" + results[position - 1].AverageWeight + "%** avg.weight*\n> ***" + results[position - 1].AverageTime + "ms** avg.time*\n> ***" + results[position - 1].Streak + "** max.streak*",
+                   "> `" + results[position-1].Score + "dw`\n> ***" + results[position - 1].LeagueDrops.Count 
+                    + "** League Drops (#" + position + ")*\n> ***" + results[position - 1].AverageWeight
+                    + "%** avg.weight (#" + selfMaxAvg + ")*\n> ***" + results[position - 1].AverageTime 
+                    + "ms** avg.time *\n> ***" + results[position - 1].Streak + "** max.streak (#" + selfMaxStreak +")*",
                    true
                 );
 
-                if(help) embed.AddField("_ _\n➜ _ _ About ranking", "\n> ➜ The **overall ranking leader** is the player with the most collected 'drop weight / `dw`'. Each League Drop you collect is weighted by how fast you catch it and adds to your score."
+                if (modifier == "all")
+                {
+                    results.Batch(5).ForEach((batch, i) =>
+                    {
+                        var aBatch = batch.ToArray();
+                        embed.AddField("\u200b ", "" +
+                            "#" + (i * 5 + 1) + " - " + Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(Program.Feanor.GetMemberByLogin(aBatch[0].Login).Member).UserName + " `" + aBatch[0].Score + "dw / " + aBatch[0].AverageWeight + "% / " + aBatch[0].Streak + "`\n" +
+                            "#" + (i * 5 + 2) + " - " + Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(Program.Feanor.GetMemberByLogin(aBatch[1].Login).Member).UserName + " `" + aBatch[1].Score + "dw / " + aBatch[1].AverageWeight + "% / " + aBatch[1].Streak + "`\n" +
+                            "#" + (i * 5 + 3) + " - " + Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(Program.Feanor.GetMemberByLogin(aBatch[2].Login).Member).UserName + " `" + aBatch[2].Score + "dw / " + aBatch[2].AverageWeight + "% / " + aBatch[2].Streak + "`\n" +
+                            "#" + (i * 5 + 4) + " - " + Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(Program.Feanor.GetMemberByLogin(aBatch[3].Login).Member).UserName + " `" + aBatch[3].Score + "dw / " + aBatch[3].AverageWeight + "% / " + aBatch[3].Streak + "`\n" +
+                            "#" + (i * 5 + 5) + " - " + Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(Program.Feanor.GetMemberByLogin(aBatch[4].Login).Member).UserName + " `" + aBatch[4].Score + "dw / " + aBatch[4].AverageWeight + "% / " + aBatch[4].Streak + "`\n"
+                        );
+                    });
+                }
+
+                else if(modifier == "help") embed.AddField("_ _\n➜ _ _ About ranking", "\n> ➜ The **overall ranking leader** is the player with the most collected 'drop weight / `dw`'. Each League Drop you collect is weighted by how fast you catch it and adds to your score."
                     + "\n_ _ \n> ➜ The **average weight leader** is the player that has the highest average drop weight - this means, this player has the fastest average catch time!"
                     + "\n_ _ \n> ➜ The **league drops leader** is the player with the most total collected League Drops."
                     + "\n_ _ \n> ➜ The **maximum streak leader** is the player with the highest caught League Drop streak. Only League Drops count, otherwise the streak is broken."
@@ -509,9 +531,9 @@ namespace Palantir.Commands
 
         [Description("Show your current Drop League season ranking - cleaner without help ;)")]
         [Command("rnk")]
-        public async Task RankWithoutHelp(CommandContext context, int month = -1, int year = -1)
+        public async Task RankWithoutHelp(CommandContext context, int month = -1, int year = -1, string modifier = "")
         {
-            await Rank(context, month, year, false);
+            await Rank(context, month, year, modifier);
         }
     }
 }
