@@ -196,7 +196,7 @@ namespace Palantir.Commands
             {
                 selected += "Slot " + sprite.Slot + ": " + sprite.Name + " (#" + sprite.ID + ")\n";
             });
-            if (drops >= 1000 || perm.BotAdmin || perm.Patron) selected += "\n<a:chest:810521425156636682> **" + (perm.BotAdmin ? "Infinite" : (drops / 1000 + 1 + (perm.Patron ? 1 : 0)).ToString()) + " ** Sprite slots available.";
+            if (drops >= 1000 || perm.BotAdmin || perm.Patron) selected += "\n<a:chest:810521425156636682> **" + (perm.BotAdmin ? "Infinite" : ((drops + leagueDrops) / 1000 + 1 + (perm.Patron ? 1 : 0)).ToString()) + " ** Sprite slots available.";
             embed.AddField("Selected Sprites:", selected.Length > 0 ? selected : "None");
 
             if (inventory.Where(spt => spt.Activated).Count() == 1)
@@ -803,7 +803,7 @@ namespace Palantir.Commands
 
         [Description("Boost the drop rate. You can do this once a week.")]
         [Command("dropboost")]
-        public async Task SplitBoost(CommandContext context, int factorSplits = 0, int durationSplits = 0, int cooldownSplits = 0)
+        public async Task SplitBoost(CommandContext context, int factorSplits = 0, int durationSplits = 0, int cooldownSplits = 0, string modifier = "")
         {
             PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
             if (perm.Permanban)
@@ -883,7 +883,7 @@ namespace Palantir.Commands
                     if (reaction.Result.Id == "+fac" && (durationSplits + factorSplits + cooldownSplits) < memberAvailableSplits - 1) factorSplits += 2;
                     if (reaction.Result.Id == "+cool" && (durationSplits + factorSplits + cooldownSplits) < memberAvailableSplits) cooldownSplits++;
 
-                    if (reaction.Result.Id == "start")
+                    if (reaction.Result.Id == "start" || modifier == "now")
                     {
 
                         BoostEntity boost;

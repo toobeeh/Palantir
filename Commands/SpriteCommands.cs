@@ -102,7 +102,7 @@ namespace Palantir.Commands
                 await Program.SendEmbed(context.Channel, "Eh...?", "Can't find that sprite. \nChoose another one or keep your bubbles.");
                 return;
             }
-
+            
             Sprite target = available.FirstOrDefault(s => s.ID == sprite);
             int credit = BubbleWallet.CalculateCredit(login, context.User.Id.ToString());
             PermissionFlag perm = new PermissionFlag((byte)member.Flag);

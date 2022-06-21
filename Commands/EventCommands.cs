@@ -38,10 +38,10 @@ namespace Palantir.Commands
                 eventdrops.ForEach(e =>
                 {
                     List<SpritesEntity> sprites = Events.GetEventSprites(e.EventDropID);
-                    dropList += "\n**" + e.Name + "**  (" + BubbleWallet.GetEventCredit(login, e.EventDropID) + " caught) `[ID: " + e.EventDropID + "]`";
+                    dropList += "\n**" + e.Name + "**  (" + BubbleWallet.GetEventCredit(login, e.EventDropID) + " caught) (`#" + e.EventDropID + "`)";
                     int spent = inv.Where(spt => sprites.Any(eventsprite => eventsprite.ID == spt.ID)).Sum(spt => spt.Cost);
                     sprites.OrderBy(sprite => sprite.ID).ForEach(sprite =>
-                       dropList += "\n> ‎ \n> ➜ **" + sprite.Name + "** (#" + sprite.ID + ")\n> "
+                       dropList += "\n> ‎ \n> ➜ **" + sprite.Name + "** (`#" + sprite.ID + "`)\n> "
                         + (inv.Any(s => s.ID == sprite.ID) ? ":package: " : (BubbleWallet.GetEventCredit(login, sprite.EventDropID) - spent + " / "))
                         + sprite.Cost + " " + e.Name + " Drops "
                     );
@@ -62,7 +62,7 @@ namespace Palantir.Commands
                 // league stuff
                 List<PastDropEntity> leaguedrops = new List<PastDropEntity>();
                 var credit = Events.GetAvailableLeagueTradeDrops(context.User.Id.ToString(), evt, out leaguedrops);
-                if (credit > 0) embed.AddField("\n\u200b \nLeague Event Drops", "You have " + Math.Round(credit, 1).ToString() + " Drops to redeem! \nUse the command `>redeem [amount] [event drop id]` to get your reward.");
+                if (credit > 0) embed.AddField("\n\u200b \nLeague Event Drops", "You have " + Math.Round(credit, 1).ToString() + " EVent Drops to redeem! \nYou can swap them with the command `>redeem [amount] [event drop id]` to any of this event's Event Drops.");
             }
             else
             {
@@ -95,7 +95,7 @@ namespace Palantir.Commands
 
             if (drop is null)
             {
-                await Program.SendEmbed(context.Channel, "Watch out", eventDropID + " is no valid event drop");
+                await Program.SendEmbed(context.Channel, "Watch out :o", eventDropID + " is no valid event drop");
                 return;
             }
 
@@ -105,7 +105,7 @@ namespace Palantir.Commands
 
             if (credit < amount)
             {
-                await Program.SendEmbed(context.Channel, "Sad times", "Your credit (" + Math.Round(credit, 1) + ") is too low!");
+                await Program.SendEmbed(context.Channel, "Sad times :c", "Your credit (" + Math.Round(credit, 1) + ") is too low!");
                 return;
             }
 
@@ -122,7 +122,7 @@ namespace Palantir.Commands
 
             int result = Events.TradeLeagueEventDrops(spent, eventDropID, BubbleWallet.GetLoginOfMember(context.User.Id.ToString()));
 
-            await Program.SendEmbed(context.Channel, "Poggers", "You traded " + result + " of your Event League Credit to " + drop.Name);
+            await Program.SendEmbed(context.Channel, "Congrats!", "You traded " + result + " of your Event League Credit to " + drop.Name);
             return;
         }
 
