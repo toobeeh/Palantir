@@ -428,7 +428,7 @@ namespace Palantir.Commands
 
         [Description("Show your current Drop League season ranking")]
         [Command("rank")]
-        public async Task Rank(CommandContext context, [Description("Month of the league season, eg `11`")] int month = -1, [Description("Year of the league season, eg `2022`")] int year = -1, [Description("Command options: `all` to see the total ranking")] string modifier = "help")
+        public async Task Rank(CommandContext context, [Description("Month of the league season, eg `11`")] int month = -1, [Description("Year of the league season, eg `2022`")] int year = -1, [Description("Command options: `all` to see the total ranking, `help` to see with explaination")] string modifier = "help")
         {
 
             if (year == -1) year = DateTime.Now.Year;
@@ -509,11 +509,12 @@ namespace Palantir.Commands
                     {
                         var aBatch = batch.ToArray();
                         embed.AddField("\u200b ", "" +
-                            "#" + (i * 5 + 1) + " - " + Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(Program.Feanor.GetMemberByLogin(aBatch[0].Login).Member).UserName + " `" + aBatch[0].Score + "dw / " + aBatch[0].AverageWeight + "% / " + aBatch[0].Streak + "`\n" +
-                            "#" + (i * 5 + 2) + " - " + Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(Program.Feanor.GetMemberByLogin(aBatch[1].Login).Member).UserName + " `" + aBatch[1].Score + "dw / " + aBatch[1].AverageWeight + "% / " + aBatch[1].Streak + "`\n" +
-                            "#" + (i * 5 + 3) + " - " + Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(Program.Feanor.GetMemberByLogin(aBatch[2].Login).Member).UserName + " `" + aBatch[2].Score + "dw / " + aBatch[2].AverageWeight + "% / " + aBatch[2].Streak + "`\n" +
-                            "#" + (i * 5 + 4) + " - " + Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(Program.Feanor.GetMemberByLogin(aBatch[3].Login).Member).UserName + " `" + aBatch[3].Score + "dw / " + aBatch[3].AverageWeight + "% / " + aBatch[3].Streak + "`\n" +
-                            "#" + (i * 5 + 5) + " - " + Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(Program.Feanor.GetMemberByLogin(aBatch[4].Login).Member).UserName + " `" + aBatch[4].Score + "dw / " + aBatch[4].AverageWeight + "% / " + aBatch[4].Streak + "`\n"
+                            "#" + (i * 5 + 1) + " - " + Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(Program.Feanor.GetMemberByLogin(aBatch[0].Login).Member).UserName + "\n`" + aBatch[0].Score + "dw / " + aBatch[0].AverageWeight + "% / " + aBatch[0].Streak + "`\n" +
+                            "#" + (i * 5 + 2) + " - " + Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(Program.Feanor.GetMemberByLogin(aBatch[1].Login).Member).UserName + "\n`" + aBatch[1].Score + "dw / " + aBatch[1].AverageWeight + "% / " + aBatch[1].Streak + "`\n" +
+                            "#" + (i * 5 + 3) + " - " + Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(Program.Feanor.GetMemberByLogin(aBatch[2].Login).Member).UserName + "\n`" + aBatch[2].Score + "dw / " + aBatch[2].AverageWeight + "% / " + aBatch[2].Streak + "`\n" +
+                            "#" + (i * 5 + 4) + " - " + Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(Program.Feanor.GetMemberByLogin(aBatch[3].Login).Member).UserName + "\n`" + aBatch[3].Score + "dw / " + aBatch[3].AverageWeight + "% / " + aBatch[3].Streak + "`\n" +
+                            "#" + (i * 5 + 5) + " - " + Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(Program.Feanor.GetMemberByLogin(aBatch[4].Login).Member).UserName + "\n`" + aBatch[4].Score + "dw / " + aBatch[4].AverageWeight + "% / " + aBatch[4].Streak + "`\n",
+                            true
                         );
                     });
                 }
@@ -531,7 +532,7 @@ namespace Palantir.Commands
 
         [Description("Show your current Drop League season ranking - cleaner without help ;)")]
         [Command("rnk")]
-        public async Task RankWithoutHelp(CommandContext context, int month = -1, int year = -1, string modifier = "")
+        public async Task RankWithoutHelp(CommandContext context, string modifier = "", int month = -1, int year = -1)
         {
             await Rank(context, month, year, modifier);
         }
