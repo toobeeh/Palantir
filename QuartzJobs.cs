@@ -51,6 +51,7 @@ namespace Palantir.QuartzJobs
 
     public class StatusUpdaterJob : IJob
     {
+        public static int currentOnlineIDs;
         public async Task Execute(IJobExecutionContext context)
         {
             List<string> onlineIDs = new List<string>();
@@ -61,6 +62,7 @@ namespace Palantir.QuartzJobs
                 if (!onlineIDs.Contains(id)) onlineIDs.Add(id);
             });
             int count = onlineIDs.Count();
+            StatusUpdaterJob.currentOnlineIDs = count;
             dbcontext.Dispose();
             double boost = Math.Round(Drops.GetCurrentFactor(), 1);
             string status = " " + count + " ppl " + (boost <= 1 ? "on skribbl.io" : "(" + boost + " Boost)");
