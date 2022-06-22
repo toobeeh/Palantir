@@ -472,7 +472,7 @@ namespace Palantir.Commands
 
                 var maxAvg = results.Max(r => r.AverageWeight);
                 var sortMaxAvg = results.OrderByDescending(r => r.AverageWeight);
-                var selfMaxAvg = sortMaxAvg.ToList().IndexOf(results[position - 1]);
+                var selfMaxAvg = sortMaxAvg.ToList().IndexOf(results[position - 1]) + 1;
                 if (results.Find(r => r.AverageWeight == maxAvg).Login == login)
                 {
                     embed.AddField("<a:league_rnk1:987699431350632518>  _ _ Leader in the category `Average Weight`", "\u200b ");
@@ -480,7 +480,7 @@ namespace Palantir.Commands
 
                 var maxCount = results.Max(r => r.LeagueDrops.Count);
                 var sortMaxCount = results.OrderByDescending(results => results.LeagueDrops.Count);
-                var selfMaxCount = sortMaxCount.ToList().IndexOf(results[position - 1]);
+                var selfMaxCount = sortMaxCount.ToList().IndexOf(results[position - 1]) + 1;
                 if (results.Find(r => r.LeagueDrops.Count == maxCount).Login == login)
                 {
                     embed.AddField("<a:league_rnk1:987699431350632518>  _ _  Leader in the category `League Drops`", "\u200b ");
@@ -488,7 +488,7 @@ namespace Palantir.Commands
 
                 var maxStreak = results.Max(r => r.Streak);
                 var sortMaxStreak = results.OrderByDescending(results=> results.Streak);
-                var selfMaxStreak = sortMaxStreak.ToList().IndexOf(results[position - 1]);
+                var selfMaxStreak = sortMaxStreak.ToList().IndexOf(results[position - 1]) + 1;
                 if (results.Find(r => r.Streak == maxStreak).Login == login)
                 {
                     embed.AddField("<a:league_rnk1:987699431350632518>  _ _  Leader in the category `Maximum Streak`", "\u200b ");
@@ -510,10 +510,10 @@ namespace Palantir.Commands
                         var aBatch = batch.ToArray();
                         embed.AddField("\u200b ", "" +
                             "#" + (i * 5 + 1) + " - " + Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(Program.Feanor.GetMemberByLogin(aBatch[0].Login).Member).UserName + "\n`" + aBatch[0].Score + "dw / " + aBatch[0].AverageWeight + "% / " + aBatch[0].Streak + "`\n_ _\n" +
-                            "#" + (i * 5 + 2) + " - " + Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(Program.Feanor.GetMemberByLogin(aBatch[1].Login).Member).UserName + "\n`" + aBatch[1].Score + "dw / " + aBatch[1].AverageWeight + "% / " + aBatch[1].Streak + "`\n_ _\n" +
-                            "#" + (i * 5 + 3) + " - " + Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(Program.Feanor.GetMemberByLogin(aBatch[2].Login).Member).UserName + "\n`" + aBatch[2].Score + "dw / " + aBatch[2].AverageWeight + "% / " + aBatch[2].Streak + "`\n_ _\n" +
-                            "#" + (i * 5 + 4) + " - " + Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(Program.Feanor.GetMemberByLogin(aBatch[3].Login).Member).UserName + "\n`" + aBatch[3].Score + "dw / " + aBatch[3].AverageWeight + "% / " + aBatch[3].Streak + "`\n_ _\n" +
-                            "#" + (i * 5 + 5) + " - " + Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(Program.Feanor.GetMemberByLogin(aBatch[4].Login).Member).UserName + "\n`" + aBatch[4].Score + "dw / " + aBatch[4].AverageWeight + "% / " + aBatch[4].Streak + "`\n",
+                            (aBatch.Length > 1 ? "#" + (i * 5 + 2) + " - " + Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(Program.Feanor.GetMemberByLogin(aBatch[1].Login).Member).UserName + "\n`" + aBatch[1].Score + "dw / " + aBatch[1].AverageWeight + "% / " + aBatch[1].Streak + "`\n_ _\n" : "") +
+                            (aBatch.Length > 2 ? "#" + (i * 5 + 3) + " - " + Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(Program.Feanor.GetMemberByLogin(aBatch[2].Login).Member).UserName + "\n`" + aBatch[2].Score + "dw / " + aBatch[2].AverageWeight + "% / " + aBatch[2].Streak + "`\n_ _\n" : "") +
+                            (aBatch.Length > 3 ? "#" + (i * 5 + 4) + " - " + Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(Program.Feanor.GetMemberByLogin(aBatch[3].Login).Member).UserName + "\n`" + aBatch[3].Score + "dw / " + aBatch[3].AverageWeight + "% / " + aBatch[3].Streak + "`\n_ _\n" : "") +
+                            (aBatch.Length > 4 ? "#" + (i * 5 + 5) + " - " + Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(Program.Feanor.GetMemberByLogin(aBatch[4].Login).Member).UserName + "\n`" + aBatch[4].Score + "dw / " + aBatch[4].AverageWeight + "% / " + aBatch[4].Streak + "`\n" : ""),
                             true
                         );
                     });
