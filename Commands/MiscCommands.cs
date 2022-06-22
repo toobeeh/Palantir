@@ -863,7 +863,22 @@ namespace Palantir.Commands
 
                 var sent = await context.RespondAsync(chooseMessage);
 
-                while (true)
+                async Task StartBoost()
+                {
+                    BoostEntity boost;
+
+                    factor = factor + factorSplits * 0.05;
+                    int duration = (60 + durationSplits * 20) * 60;
+                    int cooldownRed = 60 * 60 * 12 * cooldownSplits;
+
+                    bool boosted = Drops.AddBoost(login, factor, duration, cooldownRed, out boost);
+
+                    updateComponents("You boosted! 🔥", true);
+                    await sent.ModifyAsync(chooseMessage);
+                }
+
+                if (modifier == "now") await StartBoost();
+                else while (true)
                 {
                     var reaction = await sent.WaitForButtonAsync(context.User, TimeSpan.FromSeconds(60));
                     if (reaction.TimedOut)
@@ -885,17 +900,7 @@ namespace Palantir.Commands
 
                     if (reaction.Result.Id == "start" || modifier == "now")
                     {
-
-                        BoostEntity boost;
-
-                        factor = factor + factorSplits * 0.05;
-                        int duration = (60 + durationSplits * 20) * 60;
-                        int cooldownRed = 60 * 60 * 12 * cooldownSplits;
-
-                        bool boosted = Drops.AddBoost(login, factor, duration, cooldownRed, out boost);
-
-                        updateComponents("You boosted! 🔥", true);
-                        await sent.ModifyAsync(chooseMessage);
+                        await StartBoost();
                         break;
                     }
 
