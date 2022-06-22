@@ -475,7 +475,7 @@ namespace Palantir.Commands
 
                 if(page.Length > 0) pages.Add(new DSharpPlus.Interactivity.Page(page + "\n```"));
 
-                await Program.Interactivity.SendPaginatedMessageAsync(context.Channel, context.User, pages);
+                await Program.Interactivity.SendPaginatedMessageAsync(context.Channel, context.Message.Author, pages);
                 //results.Batch(5).ForEach((batch, i) =>
                 //{
                 //    var aBatch = batch.ToArray();
