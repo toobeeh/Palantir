@@ -461,8 +461,19 @@ namespace Palantir.Commands
                     else ranks += "\n";
                 });
 
-                var pages = Program.Interactivity.GeneratePagesInContent(ranks, DSharpPlus.Interactivity.Enums.SplitType.Line);
-                pages.ForEach(page => page.Content = msg + page.Content + "\n```");
+                string page = msg;
+                List<DSharpPlus.Interactivity.Page> pages = new();
+                ranks.Split("\n").ForEach(line =>
+                {
+                    if (page.Length + line.Length < 1800) page += msg;
+                    else
+                    {
+                        pages.Add(new DSharpPlus.Interactivity.Page(page + "\n```"));
+                        page = msg + line;
+                    }
+                });
+
+                if(page.Length > 0) pages.Add(new DSharpPlus.Interactivity.Page(page + "\n```"));
 
                 await Program.Interactivity.SendPaginatedMessageAsync(context.Channel, context.User, pages);
                 //results.Batch(5).ForEach((batch, i) =>
