@@ -444,19 +444,19 @@ namespace Palantir.Commands
             {
                 string msg = "```\n";
                 msg += "                                Leaderboard Drop League Season " + month.ToString().PadLeft(2, ' ') + "/" + year.ToString().PadLeft(2, ' ') + "\n \n";
-                msg += "｜Rank｜     Name     ｜ Score ｜Ø Weight｜Streak｜ ｜Rank｜     Name     ｜ Score ｜Ø Weight｜Streak｜\n";
+                msg += "｜Rank ｜      Name     ｜ Score ｜Ø Weight｜Streak｜ ｜Rank｜     Name     ｜ Score ｜Ø Weight｜Streak｜\n";
 
                 string ranks = "";
                 results.Batch(2).ForEach((batch, i) =>
                 {
                     var aBatch = batch.ToArray();
-                    var rank1 = Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(Program.Feanor.GetMemberByLogin(aBatch[0].Login).Member);
+                    var rank1 = Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(Program.Feanor.GetMemberByLogin(aBatch[0].Login).Member).UserName;
                     ranks += $"｜#{ i * 2 + 1,4 }｜{ rank1,14 }｜{ aBatch[0].Score,6 } ｜{ aBatch[0].AverageWeight,6 }% ｜{ aBatch[0].Streak,5 } ｜ ";
 
                     if (aBatch.Length > 1)
                     {
-                        var rank2 = Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(Program.Feanor.GetMemberByLogin(aBatch[1].Login).Member);
-                        msg += $"｜#{ i * 2 + 2,4 }｜{ rank1,14 }｜{ aBatch[1].Score,6 } ｜{ aBatch[1].AverageWeight,6 }% ｜{ aBatch[1].Streak,5 } ｜\n";
+                        var rank2 = Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(Program.Feanor.GetMemberByLogin(aBatch[1].Login).Member).UserName;
+                        ranks += $"｜#{ i * 2 + 2,4 }｜{ rank2,14 }｜{ aBatch[1].Score,6 } ｜{ aBatch[1].AverageWeight,6 }% ｜{ aBatch[1].Streak,5 } ｜\n";
                     }
                     else ranks += "\n";
                 });
