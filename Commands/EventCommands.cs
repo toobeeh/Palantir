@@ -461,11 +461,11 @@ namespace Palantir.Commands
                     else ranks += "\n";
                 });
 
-                string page = msg;
+                string page = "" + msg;
                 List<DSharpPlus.Interactivity.Page> pages = new();
                 ranks.Split("\n").ForEach(line =>
                 {
-                    if (page.Length + line.Length < 1800) page += msg;
+                    if (page.Length + line.Length < 1800) page += line;
                     else
                     {
                         pages.Add(new DSharpPlus.Interactivity.Page(page + "\n```"));
