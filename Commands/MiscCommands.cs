@@ -153,7 +153,8 @@ namespace Palantir.Commands
             List<SpriteProperty> inventory = BubbleWallet.GetInventory(login).OrderBy(s => s.ID).ToList();
             PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
             int splits = BubbleWallet.GetMemberSplits(Convert.ToInt32(login), perm).Sum(s => s.Value);
-            int leagueDrops = League.GetLeagueEventDropWeights(context.User.Id.ToString()).Count + League.GetLeagueDropWeights(context.User.Id.ToString()).Count;
+            int regLeagueDrops = League.GetLeagueEventDropWeights(context.User.Id.ToString()).Count;
+            int leagueDrops = regLeagueDrops + League.GetLeagueDropWeights(context.User.Id.ToString()).Count;
 
             DiscordEmbedBuilder embed = new DiscordEmbedBuilder()
                 .WithColor(DiscordColor.Magenta)
@@ -196,7 +197,7 @@ namespace Palantir.Commands
             {
                 selected += "Slot " + sprite.Slot + ": " + sprite.Name + " (#" + sprite.ID + ")\n";
             });
-            if (drops >= 1000 || perm.BotAdmin || perm.Patron) selected += "\n<a:chest:810521425156636682> **" + (perm.BotAdmin ? "Infinite" : ((drops + leagueDrops) / 1000 + 1 + (perm.Patron ? 1 : 0)).ToString()) + " ** Sprite slots available.";
+            if (drops >= 1000 || perm.BotAdmin || perm.Patron) selected += "\n<a:chest:810521425156636682> **" + (perm.BotAdmin ? "Infinite" : ((drops + regLeagueDrops) / 1000 + 1 + (perm.Patron ? 1 : 0)).ToString()) + " ** Sprite slots available.";
             embed.AddField("Selected Sprites:", selected.Length > 0 ? selected : "None");
 
             if (inventory.Where(spt => spt.Activated).Count() == 1)
