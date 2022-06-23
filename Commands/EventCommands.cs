@@ -451,12 +451,12 @@ namespace Palantir.Commands
                 {
                     var aBatch = batch.ToArray();
                     var rank1 = Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(Program.Feanor.GetMemberByLogin(aBatch[0].Login).Member).UserName;
-                    ranks += $"｜#{ i * 2 + 1,3 }｜{ rank1,15 }｜{ aBatch[0].Score,6 } ｜{ aBatch[0].AverageWeight,6 }% ｜{ aBatch[0].Streak,5 } ｜ ";
+                    ranks += $"｜#{ i * 2 + 1,3 }｜{ Regex.Replace(rank1, @"\p{Cs}", "") ,15 }｜{ aBatch[0].Score,6 } ｜{ aBatch[0].AverageWeight,6 }% ｜{ aBatch[0].Streak,5 } ｜ ";
 
                     if (aBatch.Length > 1)
                     {
                         var rank2 = Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(Program.Feanor.GetMemberByLogin(aBatch[1].Login).Member).UserName;
-                        ranks += $"｜#{ i * 2 + 2,3 }｜{ rank2,15 }｜{ aBatch[1].Score,6 } ｜{ aBatch[1].AverageWeight,6 }% ｜{ aBatch[1].Streak,5 } ｜\n";
+                        ranks += $"｜#{ i * 2 + 2,3 }｜{ Regex.Replace(rank2, @"\p{Cs}", ""),15 }｜{ aBatch[1].Score,6 } ｜{ aBatch[1].AverageWeight,6 }% ｜{ aBatch[1].Streak,5 } ｜\n";
                     }
                     else ranks += "\n";
                 });
@@ -475,7 +475,7 @@ namespace Palantir.Commands
 
                 if(page.Length > 0) pages.Add(new DSharpPlus.Interactivity.Page(page + "\n```"));
 
-                await Program.Interactivity.SendPaginatedMessageAsync(context.Channel, context.Message.Author, pages);
+                await Program.Interactivity.SendPaginatedMessageAsync(context.Channel, context.Message.Author, pages, TimeSpan.FromMinutes(3));
                 //results.Batch(5).ForEach((batch, i) =>
                 //{
                 //    var aBatch = batch.ToArray();
