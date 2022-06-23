@@ -444,14 +444,14 @@ namespace Palantir.Commands
             {
                 string msg = "```\n";
                 msg += "                                Leaderboard Drop League Season " + month.ToString().PadLeft(2, ' ') + "/" + year.ToString().PadLeft(2, ' ') + "\n \n";
-                msg += "｜Rank｜      Name     ｜ Score ｜Ø Weight｜Streak｜ ｜Rank｜     Name     ｜ Score ｜Ø Weight｜Streak｜\n";
+                msg += "｜Rank｜      Name     ｜ Score ｜Ø Weight｜Streak｜\n";
 
                 string ranks = "";
                 results.Batch(1).ForEach((batch, i) =>
                 {
                     var aBatch = batch.ToArray();
                     var rank1 = Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(Program.Feanor.GetMemberByLogin(aBatch[0].Login).Member).UserName;
-                    ranks += $"｜#{ i * 2 + 1,3 }｜{ Regex.Replace(rank1, @"p{Cs}", ""),15 }｜{ aBatch[0].Score,6 } ｜{ aBatch[0].AverageWeight,6 }% ｜{ aBatch[0].Streak,5 }";
+                    ranks += $"｜#{ i + 1,3 }｜{ Regex.Replace(rank1, @"p{Cs}", ""),15 }｜{ aBatch[0].Score,6 } ｜{ aBatch[0].AverageWeight,6 }% ｜{ aBatch[0].Streak,5 }";
 
                     if (aBatch.Length > 1)
                     {
