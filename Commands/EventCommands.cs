@@ -50,6 +50,11 @@ namespace Palantir.Commands
                 embed.AddField("Event Sprites", dropList == "" ? "No drops added yet." : dropList);
                 embed.AddField("\u200b", "Use `>sprite [id]` to see the event drop and sprite!");
 
+                // league stuff
+                List<PastDropEntity> leaguedrops = new List<PastDropEntity>();
+                var credit = Events.GetAvailableLeagueTradeDrops(context.User.Id.ToString(), evt, out leaguedrops);
+                if (credit > 0) embed.AddField("\n\u200b \nLeague Event Drops", "> You have " + Math.Round(credit, 1, MidpointRounding.ToZero).ToString() + " League Drops to redeem! \n> You can swap them with the command `>redeem [amount] [event drop id]` to any of this event's Event Drops.");
+                
                 SceneEntity scene = BubbleWallet.GetAvailableScenes().FirstOrDefault(scene => scene.EventID == evt.EventID);
                 if (scene != null)
                 {
@@ -59,11 +64,7 @@ namespace Palantir.Commands
                     embed.AddField("\n\u200b \nEvent Scene: **" + scene.Name + "**", "> \n> " + (hasScene ? ":package:" : "") + collectedBubbles + " / " + (evt.DayLength * Events.eventSceneDayValue) + " Bubbles collected");
                 }
 
-                // league stuff
-                List<PastDropEntity> leaguedrops = new List<PastDropEntity>();
-                var credit = Events.GetAvailableLeagueTradeDrops(context.User.Id.ToString(), evt, out leaguedrops);
-                if (credit > 0) embed.AddField("\n\u200b \nLeague Event Drops", "You have " + Math.Round(credit, 1).ToString() + " League Drops to redeem! \nYou can swap them with the command `>redeem [amount] [event drop id]` to any of this event's Event Drops.");
-            }
+                }
             else
             {
                 embed.Title = ":champagne: No Event active :(";
