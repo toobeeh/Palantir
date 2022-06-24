@@ -114,7 +114,7 @@ namespace Palantir.Commands
             string login = BubbleWallet.GetLoginOfMember(context.User.Id.ToString());
 
             System.Net.WebClient client = new System.Net.WebClient();
-            byte[] bgbytes = client.DownloadData("https://i.imgur.com/" + backgroundUrl);
+            byte[] bgbytes = client.DownloadData("https://i.imgur.com/" + (backgroundUrl != "" && backgroundUrl != "-" ? backgroundUrl : "qFmcbT0.png"));
             System.IO.File.WriteAllBytes("/home/pi/cardassets/imgur_" + backgroundUrl + ".bgb", bgbytes);
             PalantirDbContext db = new PalantirDbContext();
             CustomCard settings = new CustomCard
