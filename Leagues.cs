@@ -10,6 +10,8 @@ namespace Palantir
 {
     internal class League
     {
+        private static League Cache;
+
         public static double Weight(double catchSeconds)
         {
             //convert to ms ugh
