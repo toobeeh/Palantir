@@ -349,8 +349,8 @@ namespace Palantir.Commands
         public async Task League(CommandContext context, int month = -1, int year = -1)
         {
 
-            if (year == -1) year = DateTime.Now.Year;
-            if (month == -1) month = DateTime.Now.Month;
+            if (year == -1) year = DateTime.UtcNow.Year;
+            if (month == -1) month = DateTime.UtcNow.Month;
 
             var season = new League(month.ToString(), year.ToString());
             var results = season.LeagueResults().OrderByDescending(l => l.Score).ToList();
@@ -432,8 +432,8 @@ namespace Palantir.Commands
         public async Task Rank(CommandContext context, [Description("Month of the league season, eg `11`")] int month = -1, [Description("Year of the league season, eg `2022`")] int year = -1, [Description("Command options: `all` to see the total ranking, `help` to see with explaination")] string modifier = "help")
         {
 
-            if (year == -1) year = DateTime.Now.Year;
-            if (month == -1) month = DateTime.Now.Month;
+            if (year == -1) year = DateTime.UtcNow.Year;
+            if (month == -1) month = DateTime.UtcNow.Month;
 
             var season = new League(month.ToString(), year.ToString());
             var results = season.LeagueResults().OrderByDescending(l => l.Score).ToList();
