@@ -110,7 +110,7 @@ namespace Palantir
 
         public bool IsActive()
         {
-            return DateTime.Now.Month == Int32.Parse(this.month) && DateTime.Now.Year == Int32.Parse(this.year);
+            return DateTime.UtcNow.Month == Int32.Parse(this.month) && DateTime.UtcNow.Year == Int32.Parse(this.year);
         }
 
         public long GetEndTimestamp()
