@@ -51,6 +51,7 @@ namespace Palantir
             DateTime eventEnd = eventStart.AddDays(evt.DayLength);
             int bubblesDuringEvent = BubbleWallet.GetCollectedBubblesInTimespan(eventStart, eventEnd.AddDays(-1), login);
             int eventSceneValue = evt.DayLength * eventSceneDayValue;
+            if (eventID == 15) eventSceneValue = 7000;
             return bubblesDuringEvent >= eventSceneValue;
         }
 
