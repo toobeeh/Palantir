@@ -205,7 +205,7 @@ namespace Palantir
                 reward.splits += splits;
             };
 
-            var results = this.LeagueResults();
+            var results = this.LeagueResults().OrderByDescending(res => res.Score).ToList();
 
             // add #1 overall
             var overall_1 = results[0];
