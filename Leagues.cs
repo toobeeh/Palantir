@@ -84,8 +84,16 @@ namespace Palantir
             public int Streak;
         }
 
+        public class MemberLeagueReward
+        {
+            public MemberLeagueResult result;
+            public int splits;
+            public List<string> rewards;
+        }
+
         private List<PastDropEntity> leagueDrops, allDrops;
         private string month, year;
+        public string seasonName;
 
 
         public League(string month, string year)
@@ -94,6 +102,7 @@ namespace Palantir
             month = month.PadLeft(2, '0');
             this.month = month;
             this.year = year;
+            this.seasonName = DateTime.Parse("01/02/2022 +0000").ToString("MMMM yyyy");
 
             PalantirDbContext palantirDbContext = new PalantirDbContext();
             this.leagueDrops = palantirDbContext.PastDrops
@@ -174,6 +183,93 @@ namespace Palantir
 
 
             return results;
+        }
+
+        public List<MemberLeagueReward> Evaluate()
+        {
+            List<MemberLeagueReward> rewards = new();
+
+            Action<string, string, int, MemberLeagueResult> addReward = (string login, string desc, int splits, MemberLeagueResult res) =>
+            {
+                var reward = rewards.FirstOrDefault(r => r.result.Login == login);
+                if(reward is null)
+                {
+                    reward = new MemberLeagueReward();
+                    reward.result = res;
+                    reward.splits = 0;
+                    reward.rewards = new();
+                    rewards.Add(reward);
+                }
+
+                reward.rewards.Add(desc);
+                reward.splits += splits;
+            };
+
+            var results = this.LeagueResults();
+
+            // add #1 overall
+            var overall_1 = results[0];
+            addReward(overall_1.Login, "Overall Ranking Leader", 5, overall_1);
+
+            // add #2 overall
+            var overall_2 = results[1];
+            addReward(overall_2.Login, "Overall Ranking #2", 4, overall_2);
+
+            // add #3 overall
+            var overall_3 = results[2];
+            addReward(overall_3.Login, "Overall Ranking #3", 3, overall_3);
+
+            // add top 10
+            foreach(var overall_10 in results.Skip(3).Take(7))
+            {
+                addReward(overall_10.Login, "Overall Ranking Top 10", 2, overall_10);
+            }
+
+            // add top 20
+            foreach (var overall_20 in results.Skip(10).Take(10))
+            {
+                addReward(overall_20.Login, "Overall Ranking Top 10", 2, overall_20);
+            }
+
+            // ------ add top streak -----------
+            var resultsStreak = results.OrderByDescending(results => results.Streak).ToList();
+
+            // add #1 streak
+            var firstStreakDisqualified = results[0].Login == resultsStreak[0].Login;
+            var streak_1 = firstStreakDisqualified ? resultsStreak[1] : resultsStreak[0];
+            addReward(streak_1.Login, "Highest Streak (" + streak_1.Streak + ")", 3, streak_1);
+
+            // add #2 streak
+            var streak_2 = firstStreakDisqualified ? resultsStreak[2] : resultsStreak[1];
+            addReward(streak_2.Login, "#2 Streak (" + streak_2.Streak + ")", 2, streak_2);
+
+            // add #3 streak
+            var streak_3 = firstStreakDisqualified ? resultsStreak[3] : resultsStreak[2];
+            addReward(streak_3.Login, "#3 Streak (" + streak_3.Streak + ")", 1, streak_3);
+
+            // ------ add top count -----------
+            var resultsCount = results.OrderByDescending(results => results.LeagueDrops.Count).ToList();
+
+            // add #1 count
+            var firstCountDisqualified = results[0].Login == resultsCount[0].Login;
+            var count_1 = firstCountDisqualified ? resultsCount[1] : resultsCount[0];
+            addReward(streak_1.Login, "Most Drops (" + streak_1.LeagueDrops.Count + ")", 3, streak_1);
+
+            // add #2 count
+            var count_2 = firstCountDisqualified ? resultsCount[2] : resultsCount[1];
+            addReward(streak_2.Login, "#2 Drops (" + count_2.LeagueDrops.Count + ")", 2, count_2);
+
+            // add #3 count
+            var count_3 = firstCountDisqualified ? resultsCount[3] : resultsCount[2];
+            addReward(streak_3.Login, "#3 Drops (" + streak_3.LeagueDrops.Count + ")", 1, streak_3);
+
+            // --- total domination
+            if(results[0].Login == resultsStreak[0].Login && results[0].Login == resultsCount[0].Login)
+            {
+                addReward(results[0].Login, "League Champion in all categories", 3, results[0]);
+            }
+
+            return rewards;
         }
 
     }

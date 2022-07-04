@@ -357,7 +357,7 @@ namespace Palantir.Commands
 
             var embed = new DiscordEmbedBuilder()
                     .WithAuthor("Drop League")
-                    .WithTitle("**" + DateTime.Now.ToString("MMMM yyyy") + "** Season")
+                    .WithTitle("**" + season.seasonName + "** Season")
                     .WithColor(DiscordColor.Magenta)
                     .WithThumbnail("https://media.discordapp.net/attachments/910894527261327370/983025068214992948/challenge.gif")
                     .WithDescription("Drop Leagues are a monthly competition, where the very fastest catchers rank against each other.\n_ _\n" + results.Count + " participants in this season\n_ _ \n" + (season.IsActive() ? "Season ends <t:" + season.GetEndTimestamp() + ":R>\n_ _" : "Ended <t:" + season.GetEndTimestamp() + ">\n_ _"));
@@ -444,8 +444,8 @@ namespace Palantir.Commands
             if (modifier == "all")
             {
                 string msg = "```\n";
-                msg += "                                Leaderboard Drop League Season " + month.ToString().PadLeft(2, ' ') + "/" + year.ToString().PadLeft(2, ' ') + "\n \n";
-                msg += "｜Rank｜      Name     ｜ Score ｜Ø Weight｜Streak｜\n";
+                msg += " Leaderboard Drop League Season " + season.seasonName + "\n \n";
+                msg += "｜Rank｜      Name     ｜ Score ｜Ø Weight｜Streak\n";
 
                 string ranks = "";
                 results.Batch(1).ForEach((batch, i) =>
@@ -499,7 +499,7 @@ namespace Palantir.Commands
 
                     var embed = new DiscordEmbedBuilder()
                     .WithAuthor("Drop League")
-                    .WithTitle("**" + DateTime.Now.ToString("MMMM yyyy") + "** Season")
+                    .WithTitle("**" + season.seasonName + "** Season")
                     .WithColor(DiscordColor.Magenta)
                     .WithThumbnail("https://media.discordapp.net/attachments/910894527261327370/983025068214992948/challenge.gif")
                     .WithDescription("Drop Leagues are a monthly competition, where the very fastest catchers rank against each other.\n_ _\n" + results.Count + " participants in this season\n_ _ \n" + (season.IsActive() ? "Season ends <t:" + season.GetEndTimestamp() + ":R>\n_ _" : "Ended <t:" + season.GetEndTimestamp() + ">\n_ _"));
@@ -576,6 +576,26 @@ namespace Palantir.Commands
         public async Task RankWithoutHelp(CommandContext context, string modifier = "", int month = -1, int year = -1)
         {
             await Rank(context, month, year, modifier);
+        }
+
+        [Description("Evaluates a league and rewards splits")]
+        [Command("evalleague")]
+        [RequirePermissionFlag(PermissionFlag.ADMIN)]
+        public async Task EvalLeague(CommandContext context, int month, int year)
+        {
+            var season = new League(month.ToString(), year.ToString());
+            string text = "**Evaluation of League Season " + season.seasonName + "**\n\n\n";
+
+
+            var rewards = season.Evaluate();
+
+            rewards.ForEach(reward =>
+            {
+                var name = Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(Program.Feanor.GetMemberByLogin(reward.result.Login).Member).UserName;
+                text += name + ": `" + reward.rewards.ToDelimitedString(",") + "`=> " + reward.splits + " Splits\n";
+            });
+
+            await context.RespondAsync(text);
         }
     }
 }
