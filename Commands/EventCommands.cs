@@ -362,7 +362,7 @@ namespace Palantir.Commands
                     .WithThumbnail("https://media.discordapp.net/attachments/910894527261327370/983025068214992948/challenge.gif")
                     .WithDescription("Drop Leagues are a monthly competition, where the very fastest catchers rank against each other.\n_ _\n" + results.Count + " participants in this season\n_ _ \n" + (season.IsActive() ? "Season ends <t:" + season.GetEndTimestamp() + ":R>\n_ _" : "Ended <t:" + season.GetEndTimestamp() + ">\n_ _"));
 
-            void AddTop(League.MemberLeagueResult result, int rank, string emote)
+            void AddTop(MemberLeagueResult result, int rank, string emote)
             {
                 var member = Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(Program.Feanor.GetMemberByLogin(result.Login).Member);
                 embed.AddField(
@@ -376,7 +376,7 @@ namespace Palantir.Commands
             if (results.Count() > 1) AddTop(results[1], 2, "<a:league_rnk2:987710613893566515>");
             if (results.Count() > 2) AddTop(results[2], 3, "<a:league_rnk3:987716889352470528>");
 
-            string LowerText(List<League.MemberLeagueResult> results)
+            string LowerText(List<MemberLeagueResult> results)
             {
                 string content = "";
                 foreach (var result in results)
@@ -407,9 +407,9 @@ namespace Palantir.Commands
                     Program.Feanor.GetMemberByLogin(results.Find(r => r.LeagueDrops.Count == maxCount).Login).Member
                 );
 
-                var maxStreak = results.Max(r => r.Streak);
+                var maxStreak = results.Max(r => r.Streak.streakMax);
                 var streak = Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(
-                    Program.Feanor.GetMemberByLogin(results.Find(r => r.Streak == maxStreak).Login).Member
+                    Program.Feanor.GetMemberByLogin(results.Find(r => r.Streak.streakMax == maxStreak).Login).Member
                 );
 
                 embed.AddField(
@@ -541,10 +541,10 @@ namespace Palantir.Commands
                         embed.AddField("<a:league_rnk1:987699431350632518>  _ _  Leader in the category `League Drops`", "\u200b ");
                     }
 
-                    var maxStreak = results.Max(r => r.Streak);
-                    var sortMaxStreak = results.OrderByDescending(results => results.Streak);
+                    var maxStreak = results.Max(r => r.Streak.streakMax);
+                    var sortMaxStreak = results.OrderByDescending(results => results.Streak.streakMax);
                     var selfMaxStreak = sortMaxStreak.ToList().IndexOf(results[position - 1]) + 1;
-                    if (results.Find(r => r.Streak == maxStreak).Login == login)
+                    if (results.Find(r => r.Streak.streakMax == maxStreak).Login == login)
                     {
                         embed.AddField("<a:league_rnk1:987699431350632518>  _ _  Leader in the category `Maximum Streak`", "\u200b ");
                     }
@@ -554,7 +554,7 @@ namespace Palantir.Commands
                        "> `" + results[position - 1].Score + "dw`\n> ***" + results[position - 1].LeagueDrops.Count
                         + "** League Drops (#" + position + ")*\n> ***" + results[position - 1].AverageWeight
                         + "%** avg.weight (#" + selfMaxAvg + ")*\n> ***" + results[position - 1].AverageTime
-                        + "ms** avg.time *\n> ***" + results[position - 1].Streak + "** max.streak (#" + selfMaxStreak + ")*",
+                        + "ms** avg.time *\n> ***" + results[position - 1].Streak.streakMax + "** max.streak (#" + selfMaxStreak + ", current streak: " + results[position - 1].Streak.streakEnd + ")*",
                        false
                     );
 

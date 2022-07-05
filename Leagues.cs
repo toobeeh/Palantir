@@ -8,9 +8,38 @@ using System.Threading.Tasks;
 namespace Palantir
 
 {
+    internal struct MemberLeagueResult
+    {
+        public List<PastDropEntity> LeagueDrops;
+        public double AverageWeight;
+        public double AverageTime;
+        public double Score;
+        public string Login;
+        public MemberSpanStreak Streak;
+    }
+
+    class MemberLeagueReward
+    {
+        public MemberLeagueResult result;
+        public int splits;
+        public List<string> rewards;
+    }
+
+    struct MemberSpanStreak
+    {
+        public int streakStart;
+        public int streakEnd;
+        public int streakMax;
+    }
+
+    struct LeagueCache
+    {
+        public List<MemberLeagueResult> results;
+        public int lastDrop;
+    }
+
     internal class League
     {
-        private static Dictionary<string, League> Cache = new();
 
         public static double Weight(double catchSeconds)
         {
@@ -74,23 +103,6 @@ namespace Palantir
             return drops;
         }
 
-        public struct MemberLeagueResult
-        {
-            public List<PastDropEntity> LeagueDrops;
-            public double AverageWeight;
-            public double AverageTime;
-            public double Score;
-            public string Login;
-            public int Streak;
-        }
-
-        public class MemberLeagueReward
-        {
-            public MemberLeagueResult result;
-            public int splits;
-            public List<string> rewards;
-        }
-
         private List<PastDropEntity> leagueDrops, allDrops;
         private string month, year;
         public string seasonName;
@@ -128,20 +140,25 @@ namespace Palantir
             return DateTimeOffset.Parse("01/" + this.month + "/" + this.year + " +0000").AddMonths(1).ToUnixTimeSeconds();
         }
 
-        private Dictionary<string, int> GetStreaks()
+        private Dictionary<string, MemberSpanStreak> GetStreaks(int startDropID)
         {
 
             var participants = this.leagueDrops.Select(d => d.CaughtLobbyPlayerID).Distinct().ToList();
             int[] streaks = new int[participants.Count];
+            int[] startStreaks = new int[participants.Count];
             int[] maxStreaks = new int[participants.Count];
 
-            this.allDrops.GroupBy(d => d.DropID).ToList().ForEach(drop =>
+            int dropCount = 0;
+            this.allDrops.Where(drop => Convert.ToInt16(drop.DropID) > startDropID).GroupBy(d => d.DropID).ToList().ForEach(drop =>
             {
-                for(int i = 0; i < participants.Count; i++)
+                dropCount++;
+
+                for (int i = 0; i < participants.Count; i++)
                 {
                     if(drop.Any(d => d.CaughtLobbyPlayerID == participants[i] && d.LeagueWeight > 0))
                     {
                         streaks[i]++;
+                        if (startStreaks[i] == dropCount - 1) startStreaks[i] = dropCount;
                     }
                     else
                     {
@@ -149,39 +166,84 @@ namespace Palantir
                         streaks[i] = 0;
                     }
                 }
+
             });
 
-            Dictionary<string, int> results = new Dictionary<string, int>();
+            Dictionary<string, MemberSpanStreak> results = new Dictionary<string, MemberSpanStreak>();
 
             for(int i = 0; i < participants.Count; i++)
             {
-                results.Add(participants[i], maxStreaks[i]);
+                MemberSpanStreak streak = new MemberSpanStreak()
+                {
+                    streakStart = startStreaks[i],
+                    streakEnd = streaks[i],
+                    streakMax = maxStreaks[i]
+                };
+                results.Add(participants[i], streak);
             }
             return results;
         }
 
+        private static Dictionary<string,LeagueCache> cachedResults = new();
+
         public List<MemberLeagueResult> LeagueResults()
         {
 
-            var streaks = GetStreaks();
+            // get cached results if available
+            LeagueCache cached;
+            if (League.cachedResults.ContainsKey(this.seasonName)) cached = League.cachedResults[this.seasonName];
+            else cached = new() { results = new(), lastDrop = 0 };
+
+            var streaks = GetStreaks(cached.lastDrop);
 
             List<MemberLeagueResult> results = new();
-            leagueDrops.ConvertAll(drop => drop.CaughtLobbyPlayerID).Distinct().ToList().ForEach(userid =>
+
+            List<PastDropEntity> uncached = leagueDrops.Where(drop => Convert.ToInt16(drop.DropID) > cached.lastDrop).ToList();
+            leagueDrops.Where(drop => Convert.ToInt16(drop.DropID) > cached.lastDrop).ToList().ConvertAll(drop => drop.CaughtLobbyPlayerID).Distinct().ToList().ForEach(userid =>
             {
                 MemberLeagueResult result = new MemberLeagueResult();
-                result.LeagueDrops = leagueDrops.Where(drop => drop.CaughtLobbyPlayerID == userid).ToList();
-                result.AverageTime = Math.Round(result.LeagueDrops.Average(drop => drop.LeagueWeight));
-                result.Score = Math.Round(result.LeagueDrops.Sum(drop => League.Weight(drop.LeagueWeight / 1000.0)));
-                result.AverageWeight = Math.Round(result.Score / result.LeagueDrops.Count);
                 result.Login = BubbleWallet.GetLoginOfMember(userid);
-                result.Streak = streaks.ContainsKey(userid) ? streaks[userid] : 0;
 
-                // lower score for readability
-                result.Score = result.Score / 10;
+                MemberLeagueResult cachedResult = new()
+                {
+                    LeagueDrops = new(),
+                    AverageTime = 0,
+                    Score = 0,
+                    AverageWeight = 0,
+                    Streak = new MemberSpanStreak()
+                    {
+                        streakStart = 0,
+                        streakEnd = 0,
+                        streakMax = 0
+                    }
+                };
+
+                if (cached.results.Any(c => c.Login == result.Login)) cachedResult = cached.results.FirstOrDefault(c => c.Login == result.Login);
+
+                List<PastDropEntity> uncachedMemerDrops = uncached.Where(drop => drop.CaughtLobbyPlayerID == userid).ToList();
+
+                result.LeagueDrops = cachedResult.LeagueDrops.Concat(uncachedMemerDrops).ToList();
+                result.AverageTime = Math.Round( (cachedResult.AverageTime + uncachedMemerDrops.Average(drop => drop.LeagueWeight) ) / 2);
+                result.Score = cachedResult.Score + Math.Round(uncachedMemerDrops.Sum(drop => League.Weight(drop.LeagueWeight / 1000.0))) / 10;
+                result.AverageWeight = Math.Round(result.Score / result.LeagueDrops.Count);
+
+                bool hasNewStreak = streaks.ContainsKey(userid);
+                result.Streak = new MemberSpanStreak()
+                {
+                    streakStart = cachedResult.Streak.streakStart,
+                    streakEnd = hasNewStreak ? streaks[userid].streakEnd : 0,
+                    streakMax = Math.Max(cachedResult.Streak.streakMax, cachedResult.Streak.streakEnd + (hasNewStreak ? streaks[userid].streakStart : 0))
+                };
 
                 results.Add(result);
             });
 
+            // update cache
+            League.cachedResults[this.seasonName] = new LeagueCache()
+            {
+                lastDrop = Convert.ToInt16(this.allDrops.Last().DropID),
+                results = results
+            };
 
             return results;
         }
