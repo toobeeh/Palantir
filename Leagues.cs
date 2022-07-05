@@ -222,7 +222,7 @@ namespace Palantir
                 List<PastDropEntity> uncachedMemerDrops = uncached.Where(drop => drop.CaughtLobbyPlayerID == userid).ToList();
 
                 result.LeagueDrops = cachedResult.LeagueDrops.Concat(uncachedMemerDrops).ToList();
-                result.AverageTime = Math.Round( (cachedResult.AverageTime + uncachedMemerDrops.Average(drop => drop.LeagueWeight) ) / 2);
+                result.AverageTime = Math.Round(cachedResult.AverageTime * cachedResult.LeagueDrops.Count / result.LeagueDrops.Count + uncachedMemerDrops.Average(drop => drop.LeagueWeight) * uncachedMemerDrops.Count / result.LeagueDrops.Count);
                 result.Score = cachedResult.Score + Math.Round(uncachedMemerDrops.Sum(drop => League.Weight(drop.LeagueWeight / 1000.0))) / 10;
                 result.AverageWeight = Math.Round(result.Score / result.LeagueDrops.Count);
 
@@ -238,7 +238,7 @@ namespace Palantir
             });
 
             // add results that were not updated
-            results = results.Concat(cached.results.Where(c => results.Any(r => r.Login == c.Login))).ToList();
+            results = results.Concat(cached.results.Where(c => !results.Any(r => r.Login == c.Login))).ToList();
 
             // update cache
             League.cachedResults[this.seasonName] = new LeagueCache()
