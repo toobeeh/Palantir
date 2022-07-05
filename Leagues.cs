@@ -254,20 +254,20 @@ namespace Palantir
             // add #1 count
             var firstCountDisqualified = results[0].Login == resultsCount[0].Login;
             var count_1 = firstCountDisqualified ? resultsCount[1] : resultsCount[0];
-            addReward(streak_1.Login, "Most Drops (" + streak_1.LeagueDrops.Count + ")", 3, streak_1);
+            addReward(count_1.Login, "Most Drops (" + count_1.LeagueDrops.Count + ")", 3, count_1);
 
             // add #2 count
             var count_2 = firstCountDisqualified ? resultsCount[2] : resultsCount[1];
-            addReward(streak_2.Login, "#2 Drops (" + count_2.LeagueDrops.Count + ")", 2, count_2);
+            addReward(count_2.Login, "#2 Drops (" + count_2.LeagueDrops.Count + ")", 2, count_2);
 
             // add #3 count
             var count_3 = firstCountDisqualified ? resultsCount[3] : resultsCount[2];
-            addReward(streak_3.Login, "#3 Drops (" + streak_3.LeagueDrops.Count + ")", 1, streak_3);
+            addReward(count_3.Login, "#3 Drops (" + count_3.LeagueDrops.Count + ")", 1, count_3);
 
             // --- total domination
             if(results[0].Login == resultsStreak[0].Login && results[0].Login == resultsCount[0].Login)
             {
-                addReward(results[0].Login, "League Champion in all categories", 3, results[0]);
+                addReward(results[0].Login, "League Champion in all categories", 5, results[0]);
             }
 
             return rewards;
