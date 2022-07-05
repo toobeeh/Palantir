@@ -421,7 +421,7 @@ namespace Palantir.Commands
                 );
             }
 
-            embed.AddField("_ _ \n`🎖️` Rewards", "➜ **Overall:** #1 : 4 Splits, #2-3: 3 Splits,  #4-10: 2 Splits\n➜ **Weight Leader: **3 Splits\n➜ **League Drops Leader: **3 Splits\n➜ **Streak Leader: **3 Splits");
+            embed.AddField("_ _ \n`🎖️` Rewards", "➜ **Overall:** Top 4: 5,4,3 Splits, Top 10: 2 Splits, Top 20: 1 Split\n➜ **League Drops Leaders: **3,2,1 Splits\n➜ **Streak Leaders: **3,2,1 Splits\n➜ **Overall Leaders: Can't compete in categories, but gets 5 Splits if #1 in all categories");
             embed.AddField("\u200b ", "BTW: check your own rank with `>rank`");
             await context.RespondAsync(embed);
 
