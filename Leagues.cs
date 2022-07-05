@@ -198,7 +198,7 @@ namespace Palantir
 
             List<MemberLeagueResult> results = new();
 
-            List<PastDropEntity> uncached = leagueDrops.Where(drop => Convert.ToInt16(drop.DropID) > cached.lastDrop).ToList();
+            List<PastDropEntity> uncached = leagueDrops.Where(drop => Convert.ToInt64(drop.DropID) > cached.lastDrop).ToList();
             leagueDrops.Where(drop => Convert.ToInt64(drop.DropID) > cached.lastDrop).ToList().ConvertAll(drop => drop.CaughtLobbyPlayerID).Distinct().ToList().ForEach(userid =>
             {
                 MemberLeagueResult result = new MemberLeagueResult();
