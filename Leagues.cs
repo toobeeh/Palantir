@@ -114,8 +114,7 @@ namespace Palantir
             month = month.PadLeft(2, '0');
             this.month = month;
             this.year = year;
-            this.seasonName = DateTime.Parse("01/02/2022 +0000").ToString("MMMM yyyy");
-
+            this.seasonName = DateTime.Parse("01/" + this.month + "/" + this.year + " +0000").ToString("MMMM yyyy");
 
             PalantirDbContext palantirDbContext = new PalantirDbContext();
             this.leagueDrops = palantirDbContext.PastDrops
