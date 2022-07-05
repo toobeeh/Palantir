@@ -609,8 +609,9 @@ namespace Palantir.Commands
                 {
                     Date = "01/" + month.ToString().PadLeft(2, '0') + "/" + year.ToString(),
                     ID = id,
-                    Description = "Drop League Season " + season.seasonName,
-                    Value = 0
+                    Description = "You have been ranked in the leaderboard of that season." ,
+                    Value = 0,
+                    Name = "<a:league_rnk1:987699431350632518> League " + season.seasonName
                 };
 
                 db.BoostSplits.Add(leagueSplit);
