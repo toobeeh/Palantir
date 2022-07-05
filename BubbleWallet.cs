@@ -406,7 +406,8 @@ namespace Palantir
                     ID = -1,
                     Value = flags.Patronizer ? 16 : 10,
                     Name = flags.Patronizer ? " 💜 Patronizer Crew" : " 💜 Patron Crew",
-                    Description = "Some extra Splits that come with a Typo Patronage on patreon.com"
+                    Description = "Some extra Splits that come with a Typo Patronage on patreon.com",
+                    Comment = ""
                 });
             }
 
@@ -419,7 +420,8 @@ namespace Palantir
                     ID = -1,
                     Value = 9001,
                     Name = "Unlimited POWAAAH",
-                    Description = "'its over 9000' ~ sheev palpatine"
+                    Description = "'its over 9000' ~ sheev palpatine",
+                    Comment = ""
                 });
             }
 
