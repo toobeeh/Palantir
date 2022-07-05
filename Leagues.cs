@@ -230,8 +230,8 @@ namespace Palantir
                 result.Streak = new MemberSpanStreak()
                 {
                     streakStart = cachedResult.Streak.streakStart,
-                    streakEnd = hasNewStreak ? streaks[userid].streakEnd : 0,
-                    streakMax = Math.Max(cachedResult.Streak.streakMax, cachedResult.Streak.streakEnd + (hasNewStreak ? streaks[userid].streakStart : 0))
+                    streakEnd = hasNewStreak ? streaks[userid].streakEnd : Convert.ToInt64(this.allDrops.Last().DropID) == cached.lastDrop ? cachedResult.Streak.streakEnd : 0,
+                    streakMax = (new int[] { cachedResult.Streak.streakMax, cachedResult.Streak.streakEnd + (hasNewStreak ? streaks[userid].streakStart : 0), hasNewStreak ? streaks[userid].streakEnd : 0 }).Max()
                 };
 
                 results.Add(result);
