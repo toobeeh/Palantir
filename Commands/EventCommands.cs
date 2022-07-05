@@ -591,8 +591,8 @@ namespace Palantir.Commands
 
             rewards.ForEach(reward =>
             {
-                var name = Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(Program.Feanor.GetMemberByLogin(reward.result.Login).Member).UserName;
-                text += name + ": `" + reward.rewards.ToDelimitedString(", ") + "`=> " + reward.splits + " Splits\n";
+                var name = Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(Program.Feanor.GetMemberByLogin(reward.result.Login).Member).UserName.Replace("`","");
+                text += name + ": `" + reward.rewards.ToDelimitedString(", ") + " `=> " + reward.splits + " Splits\n";
             });
 
             await context.RespondAsync(text);

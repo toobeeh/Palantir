@@ -10,7 +10,7 @@ namespace Palantir
 {
     internal class League
     {
-        private static League Cache;
+        private static Dictionary<string, League> Cache = new();
 
         public static double Weight(double catchSeconds)
         {
@@ -104,6 +104,7 @@ namespace Palantir
             this.year = year;
             this.seasonName = DateTime.Parse("01/02/2022 +0000").ToString("MMMM yyyy");
 
+
             PalantirDbContext palantirDbContext = new PalantirDbContext();
             this.leagueDrops = palantirDbContext.PastDrops
                 .FromSqlRaw($"SELECT * FROM \"PastDrops\" WHERE LeagueWeight > 0 AND substr(ValidFrom, 6, 2) LIKE \"{month}\" AND substr(ValidFrom, 1, 4) == \"{year}\"")
@@ -127,7 +128,7 @@ namespace Palantir
             return DateTimeOffset.Parse("01/" + this.month + "/" + this.year + " +0000").AddMonths(1).ToUnixTimeSeconds();
         }
 
-        public Dictionary<string, int> GetStreaks()
+        private Dictionary<string, int> GetStreaks()
         {
 
             var participants = this.leagueDrops.Select(d => d.CaughtLobbyPlayerID).Distinct().ToList();
@@ -228,7 +229,7 @@ namespace Palantir
             // add top 20
             foreach (var overall_20 in results.Skip(10).Take(10))
             {
-                addReward(overall_20.Login, "Overall Ranking Top 10", 2, overall_20);
+                addReward(overall_20.Login, "Overall Ranking Top 20", 1, overall_20);
             }
 
             // ------ add top streak -----------
