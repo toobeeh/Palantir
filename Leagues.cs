@@ -224,7 +224,7 @@ namespace Palantir
                 result.LeagueDrops = cachedResult.LeagueDrops.Concat(uncachedMemerDrops).ToList();
                 result.AverageTime = Math.Round(cachedResult.AverageTime * cachedResult.LeagueDrops.Count / result.LeagueDrops.Count + uncachedMemerDrops.Average(drop => drop.LeagueWeight) * uncachedMemerDrops.Count / result.LeagueDrops.Count);
                 result.Score = cachedResult.Score + Math.Round(uncachedMemerDrops.Sum(drop => League.Weight(drop.LeagueWeight / 1000.0))) / 10;
-                result.AverageWeight = Math.Round(result.Score / result.LeagueDrops.Count);
+                result.AverageWeight = Math.Round(result.Score * 10 / result.LeagueDrops.Count);
 
                 bool hasNewStreak = streaks.ContainsKey(userid);
                 result.Streak = new MemberSpanStreak()
