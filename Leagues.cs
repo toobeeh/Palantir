@@ -237,6 +237,9 @@ namespace Palantir
                 results.Add(result);
             });
 
+            // add results that were not updated
+            results = results.Concat(cached.results.Where(c => results.Any(r => r.Login == c.Login))).ToList();
+
             // update cache
             League.cachedResults[this.seasonName] = new LeagueCache()
             {
