@@ -35,7 +35,7 @@ namespace Palantir
     struct LeagueCache
     {
         public List<MemberLeagueResult> results;
-        public int lastDrop;
+        public long lastDrop;
     }
 
     internal class League
@@ -140,7 +140,7 @@ namespace Palantir
             return DateTimeOffset.Parse("01/" + this.month + "/" + this.year + " +0000").AddMonths(1).ToUnixTimeSeconds();
         }
 
-        private Dictionary<string, MemberSpanStreak> GetStreaks(int startDropID)
+        private Dictionary<string, MemberSpanStreak> GetStreaks(long startDropID)
         {
 
             var participants = this.leagueDrops.Select(d => d.CaughtLobbyPlayerID).Distinct().ToList();
@@ -149,7 +149,7 @@ namespace Palantir
             int[] maxStreaks = new int[participants.Count];
 
             int dropCount = 0;
-            this.allDrops.Where(drop => Convert.ToInt16(drop.DropID) > startDropID).GroupBy(d => d.DropID).ToList().ForEach(drop =>
+            this.allDrops.Where(drop => Convert.ToInt64(drop.DropID) > startDropID).GroupBy(d => d.DropID).ToList().ForEach(drop =>
             {
                 dropCount++;
 
@@ -199,7 +199,7 @@ namespace Palantir
             List<MemberLeagueResult> results = new();
 
             List<PastDropEntity> uncached = leagueDrops.Where(drop => Convert.ToInt16(drop.DropID) > cached.lastDrop).ToList();
-            leagueDrops.Where(drop => Convert.ToInt16(drop.DropID) > cached.lastDrop).ToList().ConvertAll(drop => drop.CaughtLobbyPlayerID).Distinct().ToList().ForEach(userid =>
+            leagueDrops.Where(drop => Convert.ToInt64(drop.DropID) > cached.lastDrop).ToList().ConvertAll(drop => drop.CaughtLobbyPlayerID).Distinct().ToList().ForEach(userid =>
             {
                 MemberLeagueResult result = new MemberLeagueResult();
                 result.Login = BubbleWallet.GetLoginOfMember(userid);
@@ -241,7 +241,7 @@ namespace Palantir
             // update cache
             League.cachedResults[this.seasonName] = new LeagueCache()
             {
-                lastDrop = Convert.ToInt16(this.allDrops.Last().DropID),
+                lastDrop = Convert.ToInt64(this.allDrops.Last().DropID),
                 results = results
             };
 
