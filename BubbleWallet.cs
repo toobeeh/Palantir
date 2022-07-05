@@ -387,11 +387,12 @@ namespace Palantir
                 reward.Login = login;
                 reward.Split = split.Split;
                 reward.ID = boostSplit.ID;
-                reward.Value = boostSplit.Value;
+                reward.Value = split.ValueOverride >= 0 ? split.ValueOverride : boostSplit.Value;
                 reward.RewardDate = split.RewardDate;
                 reward.Name = boostSplit.Name;
                 reward.CreateDate = boostSplit.Date;
                 reward.Description = boostSplit.Description;
+                reward.Comment = split.Comment;
 
                 return reward;
             });

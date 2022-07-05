@@ -793,7 +793,7 @@ namespace Palantir.Commands
 
                 memberSplits.ForEach(split =>
                 {
-                    message.AddField("➜ " + split.Name + (split.RewardDate != null && split.RewardDate != "" ? "  `" + split.RewardDate + "`" : ""), split.Description + "\n *worth " + split.Value + " Splits*");
+                    message.AddField("➜ " + split.Name + (split.RewardDate != null && split.RewardDate != "" ? "  `" + split.RewardDate + "`" : ""), split.Description + "\n *worth " + split.Value + " Splits*" + (split.Comment.Length > 0 ? " ~ `" + split.Comment + "`" : ""));
                 });
 
                 message.WithDescription("You can use your Splits to customize your Drop Boosts.\nChoose the boost intensity, duration or cooldown individually when using `>dropboost`\n_ _");

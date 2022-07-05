@@ -421,7 +421,7 @@ namespace Palantir.Commands
                 );
             }
 
-            embed.AddField("_ _ \n`🎖️` Rewards", "➜ **Overall:** Top 4: 5,4,3 Splits, Top 10: 2 Splits, Top 20: 1 Split\n➜ **League Drops Leaders: **3,2,1 Splits\n➜ **Streak Leaders: **3,2,1 Splits\n➜ **Overall Leaders: Can't compete in categories, but gets 5 Splits if #1 in all categories");
+            embed.AddField("_ _ \n`🎖️` Rewards", "➜ **Overall:** Top 4: 5,4,3 Splits, Top 10: 2 Splits, Top 20: 1 Split\n➜ **League Drops Leaders: **3,2,1 Splits\n➜ **Streak Leaders: **3,2,1 Splits\n➜ **Overall Leaders: Can't compete in categories, but gets 4 Splits if #1 in all categories");
             embed.AddField("\u200b ", "BTW: check your own rank with `>rank`");
             await context.RespondAsync(embed);
 
@@ -581,13 +581,16 @@ namespace Palantir.Commands
         [Description("Evaluates a league and rewards splits")]
         [Command("evalleague")]
         [RequirePermissionFlag(PermissionFlag.ADMIN)]
-        public async Task EvalLeague(CommandContext context, int month, int year)
+        public async Task EvalLeague(CommandContext context, int month, int year, bool apply = false)
         {
             var season = new League(month.ToString(), year.ToString());
             string text = "**Evaluation of League Season " + season.seasonName + "**\n\n\n";
 
 
             var rewards = season.Evaluate();
+
+            
+            List<SplitCreditEntity> splits = new List<SplitCreditEntity>();
 
             rewards.ForEach(reward =>
             {
@@ -596,6 +599,39 @@ namespace Palantir.Commands
             });
 
             await context.RespondAsync(text);
+
+            if (apply)
+            {
+                PalantirDbContext db = new();
+                int id = db.BoostSplits.Max(s => s.ID) + 1;
+
+                BoostSplitEntity leagueSplit = new BoostSplitEntity()
+                {
+                    Date = "01/" + month.ToString().PadLeft(2, '0') + "/" + year.ToString(),
+                    ID = id,
+                    Description = "Drop League Season " + season.seasonName,
+                    Value = 0
+                };
+
+                db.BoostSplits.Add(leagueSplit);
+
+                rewards.ForEach((reward) =>
+                {
+                    db.SplitCredits.Add(new SplitCreditEntity()
+                    {
+                        ValueOverride = reward.splits,
+                        Login = Convert.ToInt32(reward.result.Login),
+                        RewardDate = DateTime.UtcNow.ToShortDateString(),
+                        Split = id,
+                        Comment = reward.rewards.ToDelimitedString(", ")
+                    });
+                });
+
+                db.SaveChanges();
+                db.Dispose();
+
+                await context.RespondAsync("Rewarded splits.");
+            }
         }
     }
 }

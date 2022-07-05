@@ -267,7 +267,7 @@ namespace Palantir
             // --- total domination
             if(results[0].Login == resultsStreak[0].Login && results[0].Login == resultsCount[0].Login)
             {
-                addReward(results[0].Login, "League Champion in all categories", 5, results[0]);
+                addReward(results[0].Login, "League Champion in all categories", 4, results[0]);
             }
 
             return rewards;
