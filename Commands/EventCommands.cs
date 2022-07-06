@@ -366,7 +366,7 @@ namespace Palantir.Commands
             {
                 var member = Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(Program.Feanor.GetMemberByLogin(result.Login).Member);
                 embed.AddField(
-                    emote + "_ _  `#" + rank + " - " + result.Score + "dw` \n _ _ **" + member.UserName + "**",
+                    emote + " _ _ " + member.UserName + "\n_ _  `#" + rank + " - " + result.Score + "dw`",
                     "> ***" + result.LeagueDrops.Count + "** League Drops*\n> ***" + result.AverageWeight + "%** avg.weight*\n> ***" + result.AverageTime + "ms** avg.time*\n> ***" + result.Streak.streakMax + "** max.streak*",
                     true
                 );
