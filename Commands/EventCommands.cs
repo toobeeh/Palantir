@@ -367,7 +367,7 @@ namespace Palantir.Commands
                 var member = Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(Program.Feanor.GetMemberByLogin(result.Login).Member);
                 embed.AddField(
                     emote + "_ _  _ _ `#" + rank + "`  **" + member.UserName + "**",
-                    "> `" + result.Score + "dw`\n> ***" + result.LeagueDrops.Count + "** League Drops*\n> ***" + result.AverageWeight + "%** avg.weight*\n> ***" + result.AverageTime + "ms** avg.time*\n> ***" + result.Streak + "** max.streak*",
+                    "> `" + result.Score + "dw`\n> ***" + result.LeagueDrops.Count + "** League Drops*\n> ***" + result.AverageWeight + "%** avg.weight*\n> ***" + result.AverageTime + "ms** avg.time*\n> ***" + result.Streak.streakMax + "** max.streak*",
                     true
                 );
             }
