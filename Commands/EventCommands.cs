@@ -366,8 +366,8 @@ namespace Palantir.Commands
             {
                 var member = Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(Program.Feanor.GetMemberByLogin(result.Login).Member);
                 embed.AddField(
-                    "**#" + rank + "_ _  _ _ " + emote + "\n  **" + member.UserName + "**",
-                    "> `" + result.Score + "dw`\n> ***" + result.LeagueDrops.Count + "** League Drops*\n> ***" + result.AverageWeight + "%** avg.weight*\n> ***" + result.AverageTime + "ms** avg.time*\n> ***" + result.Streak.streakMax + "** max.streak*",
+                    emote + "_ _  _ _  `#" + rank + " - " + result.Score + "dw \n _ _  _ _    **" + member.UserName + "**",
+                    "> ***" + result.LeagueDrops.Count + "** League Drops*\n> ***" + result.AverageWeight + "%** avg.weight*\n> ***" + result.AverageTime + "ms** avg.time*\n> ***" + result.Streak.streakMax + "** max.streak*",
                     true
                 );
             }
@@ -413,10 +413,10 @@ namespace Palantir.Commands
                 );
 
                 embed.AddField(
-                    "_ _\n`⚔️` Category Leaders",
-                    "➜ **Overall:**\n> " + overall.UserName + " (`" + maxOverall + "dw`)\n\n➜ **Average Weight:**\n> "
-                        + weight.UserName + " (`" + maxWeight + "%`)\n\n➜ **League Drops:**\n> " + count.UserName + " (`" + maxCount + " drops`)"
-                        + "\n\n➜ **League Drop Streak:**\n> " + streak.UserName + " (`" + maxStreak + " drops`)",
+                    "_ _\n`⚔️` Category Leaders\n_ _  ",
+                    "➜ **Overall:**\n> " + overall.UserName + ": `" + maxOverall + "dw`\n\n➜ **Average Weight:**\n> "
+                        + weight.UserName + ": `" + maxWeight + "%`\n\n➜ **League Drops:**\n> " + count.UserName + ": `" + maxCount + " drops`"
+                        + "\n\n➜ **League Drop Streak:**\n> " + streak.UserName + ": `" + maxStreak + " drops`",
                     true
                 );
             }
@@ -484,7 +484,7 @@ namespace Palantir.Commands
                    .WithThumbnail("https://media.discordapp.net/attachments/910894527261327370/983025068214992948/challenge.gif")
                    .WithDescription("Drop Leagues are a monthly competition, where the very fastest catchers rank against each other.\n_ _\n");
 
-            embed.AddField("_ _\n➜ _ _ About ranking", "\n> ➜ The **overall ranking leader** is the player with the most collected 'drop weight / `dw`'. Each League Drop you collect is weighted by how fast you catch it and adds to your score."
+            embed.AddField("_ _\n`📃` _ _ About ranking", "\n> ➜ The **overall ranking leader** is the player with the most collected 'drop weight / `dw`'. Each League Drop you collect is weighted by how fast you catch it and adds to your score."
             + "\n_ _ \n> ➜ The **average weight leader** is the player that has the highest average drop weight - this means, this player has the fastest average catch time!"
             + "\n_ _ \n> ➜ The **league drops leader** is the player with the most total collected League Drops."
             + "\n_ _ \n> ➜ The **maximum streak leader** is the player with the highest caught League Drop streak. Only League Drops count, otherwise the streak is broken."
@@ -492,7 +492,9 @@ namespace Palantir.Commands
             + "\n_ _ \n> ➜ When you catch a Event League Drop, it is also weighted. Using `>event` you can see your collected Event League Dropsfor an Event. You can trade them to any Eventdrop of this event!");
 
 
-            embed.AddField("_ _ \n`🎖️` Rewards", "➜ **Overall:**\n> Top 4: 5,4,3 Splits\n> Top 10: 2 Splits\n> Top 20: 1 Split\n➜ **League Drops Leaders: **\n> 3,2,1 Splits\n➜ **Streak Leaders: **\n> 3,2,1 Splits\n➜ **Overall Leader**: \n> Can't compete in categories, but gets 4 Splits if #1 in all categories");
+            embed.AddField("_ _ \n`🎖` _ _ Rewards", "➜ **Overall:**\n> Top 4: 5,4,3 Splits\n> Top 10: 2 Splits\n> Top 20: 1 Split\n➜ **League Drops Leaders: **\n> 3,2,1 Splits\n➜ **Streak Leaders: **\n> 3,2,1 Splits\n➜ **Overall Leader**: \n> Can't compete in categories, but gets 4 Splits if #1 in all categories");
+
+            embed.AddField("_ _\n`🤖` _ _ Important commands", " ➜ `>league` To show the top ranking of the current season\n ➜ `>league-baord` to show the complete ranking of this season\n ➜ `>league-rank` to show your current statistics");
 
             await context.RespondAsync(embed);
         }
