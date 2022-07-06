@@ -427,7 +427,7 @@ namespace Palantir.Commands
         }
 
         [Description("Show the complete Drop League season ranking")]
-        [Command("league board")]
+        [Command("league-board")]
         public async Task Board(CommandContext context, [Description("Month of the league season, eg `11`")] int month = -1, [Description("Year of the league season, eg `2022`")] int year = -1)
         {
 
@@ -474,7 +474,7 @@ namespace Palantir.Commands
         }
 
         [Description("Show your current Drop League season ranking")]
-        [Command("league help")]
+        [Command("league-help")]
         public async Task LeagueHelp(CommandContext context)
         {
             var embed = new DiscordEmbedBuilder()
@@ -499,7 +499,7 @@ namespace Palantir.Commands
 
 
         [Description("Show your current Drop League season ranking")]
-        [Command("league rank")]
+        [Command("league-rank")]
         public async Task Rank(CommandContext context, [Description("Month of the league season, eg `11`")] int month = -1, [Description("Year of the league season, eg `2022`")] int year = -1)
         {
 
@@ -584,11 +584,11 @@ namespace Palantir.Commands
         [Command("rnk")]
         public async Task RankWithoutHelp(CommandContext context)
         {
-            await context.RespondAsync("The league commands got improved - probably you're looking for `>league board`. \nAlso check out `>league`, `>league rank` and `>league help`");
+            await context.RespondAsync("The league commands got improved - probably you're looking for `>league-board`. \nAlso check out `>league`, `>league-rank` and `>league-help`");
         }
 
         [Description("Evaluates a league and rewards splits")]
-        [Command("league eval")]
+        [Command("league-eval")]
         [RequirePermissionFlag(PermissionFlag.ADMIN)]
         public async Task EvalLeague(CommandContext context, int month, int year, bool apply = false)
         {
