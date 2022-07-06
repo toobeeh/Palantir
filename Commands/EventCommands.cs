@@ -366,7 +366,7 @@ namespace Palantir.Commands
             {
                 var member = Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(Program.Feanor.GetMemberByLogin(result.Login).Member);
                 embed.AddField(
-                    emote + "_ _  _ _ `#" + rank + "`  **" + member.UserName + "**",
+                    "**#" + rank + "_ _  _ _ " + emote + "\n  **" + member.UserName + "**",
                     "> `" + result.Score + "dw`\n> ***" + result.LeagueDrops.Count + "** League Drops*\n> ***" + result.AverageWeight + "%** avg.weight*\n> ***" + result.AverageTime + "ms** avg.time*\n> ***" + result.Streak.streakMax + "** max.streak*",
                     true
                 );
@@ -382,7 +382,7 @@ namespace Palantir.Commands
                 foreach (var result in results)
                 {
                     var member = Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(Program.Feanor.GetMemberByLogin(result.Login).Member);
-                    content += "> " + member.UserName + " `" + result.Score + "dw / " + result.AverageWeight + "%`\n";
+                    content += "> " + member.UserName.Replace("`", "\\`") + " `" + result.Score + "dw / " + result.AverageWeight + "%`\n";
                 }
                 return content;
             }
@@ -414,22 +414,93 @@ namespace Palantir.Commands
 
                 embed.AddField(
                     "_ _\n`⚔️` Category Leaders",
-                    "➜ **Overall**: " + overall.UserName + " (`" + maxOverall + "dw`)\n➜ **Average Weight**: "
-                        + weight.UserName + " (`" + maxWeight + "%`)\n➜ **League Drops**: " + count.UserName + " (`" + maxCount + " drops`)"
-                        + "\n➜ **League Drop Streak**: " + streak.UserName + " (`" + maxStreak + " drops`)",
+                    "➜ **Overall:**\n> " + overall.UserName + " (`" + maxOverall + "dw`)\n\n➜ **Average Weight:**\n> "
+                        + weight.UserName + " (`" + maxWeight + "%`)\n\n➜ **League Drops:**\n> " + count.UserName + " (`" + maxCount + " drops`)"
+                        + "\n\n➜ **League Drop Streak:**\n> " + streak.UserName + " (`" + maxStreak + " drops`)",
                     true
                 );
             }
-
-            embed.AddField("_ _ \n`🎖️` Rewards", "➜ **Overall:** Top 4: 5,4,3 Splits, Top 10: 2 Splits, Top 20: 1 Split\n➜ **League Drops Leaders: **3,2,1 Splits\n➜ **Streak Leaders: **3,2,1 Splits\n➜ **Overall Leaders: Can't compete in categories, but gets 4 Splits if #1 in all categories");
-            embed.AddField("\u200b ", "BTW: check your own rank with `>rank`");
+            
+            embed.AddField("\u200b ", "BTW: check your own rank with `>league rank`");
             await context.RespondAsync(embed);
 
         }
 
+        [Description("Show the complete Drop League season ranking")]
+        [Command("league board")]
+        public async Task Board(CommandContext context, [Description("Month of the league season, eg `11`")] int month = -1, [Description("Year of the league season, eg `2022`")] int year = -1)
+        {
+
+            if (year == -1) year = DateTime.UtcNow.Year;
+            if (month == -1) month = DateTime.UtcNow.Month;
+
+            var season = new League(month.ToString(), year.ToString());
+            var results = season.LeagueResults().OrderByDescending(l => l.Score).ToList();
+
+            string msg = "```\n";
+            msg += " Leaderboard Drop League Season " + season.seasonName + "\n \n";
+            msg += "｜Rank｜      Name     ｜ Score ｜Ø Weight｜Streak\n";
+
+            string ranks = "";
+            results.Batch(1).ForEach((batch, i) =>
+            {
+                var aBatch = batch.ToArray();
+                var rank1 = Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(Program.Feanor.GetMemberByLogin(aBatch[0].Login).Member).UserName;
+                ranks += $"｜#{ i + 1,3 }｜{ Regex.Replace(rank1, @"p{Cs}", ""),15 }｜{ aBatch[0].Score,6 } ｜{ aBatch[0].AverageWeight,6 }% ｜{ aBatch[0].Streak.streakMax,5 }";
+
+                if (aBatch.Length > 1)
+                {
+                    var rank2 = Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(Program.Feanor.GetMemberByLogin(aBatch[1].Login).Member).UserName;
+                    ranks += $"｜#{ i * 2 + 2,3 }｜{ Regex.Replace(rank1, @"p{Cs}", ""),15 }｜{ aBatch[1].Score,6 } ｜{ aBatch[1].AverageWeight,6 }% ｜{ aBatch[1].Streak.streakMax,5 } ｜\n";
+                }
+                else ranks += "\n";
+            });
+
+            string page = "" + msg;
+            List<DSharpPlus.Interactivity.Page> pages = new();
+            ranks.Split("\n").ForEach(line =>
+            {
+                if (page.Length + line.Length < 1800) page += line + "\n";
+                else
+                {
+                    pages.Add(new DSharpPlus.Interactivity.Page(page + "\n```"));
+                    page = msg + line + "\n";
+                }
+            });
+
+            if (page.Length > 0) pages.Add(new DSharpPlus.Interactivity.Page(page + "\n```"));
+
+            await Program.Interactivity.SendPaginatedMessageAsync(context.Channel, context.Message.Author, pages);
+        }
+
         [Description("Show your current Drop League season ranking")]
-        [Command("rank")]
-        public async Task Rank(CommandContext context, [Description("Month of the league season, eg `11`")] int month = -1, [Description("Year of the league season, eg `2022`")] int year = -1, [Description("Command options: `all` to see the total ranking, `help` to see with explaination")] string modifier = "help")
+        [Command("league help")]
+        public async Task LeagueHelp(CommandContext context)
+        {
+            var embed = new DiscordEmbedBuilder()
+                   .WithAuthor("Drop League")
+                   .WithTitle("**Help & Informations")
+                   .WithColor(DiscordColor.Magenta)
+                   .WithThumbnail("https://media.discordapp.net/attachments/910894527261327370/983025068214992948/challenge.gif")
+                   .WithDescription("Drop Leagues are a monthly competition, where the very fastest catchers rank against each other.\n_ _\n");
+
+            embed.AddField("_ _\n➜ _ _ About ranking", "\n> ➜ The **overall ranking leader** is the player with the most collected 'drop weight / `dw`'. Each League Drop you collect is weighted by how fast you catch it and adds to your score."
+            + "\n_ _ \n> ➜ The **average weight leader** is the player that has the highest average drop weight - this means, this player has the fastest average catch time!"
+            + "\n_ _ \n> ➜ The **league drops leader** is the player with the most total collected League Drops."
+            + "\n_ _ \n> ➜ The **maximum streak leader** is the player with the highest caught League Drop streak. Only League Drops count, otherwise the streak is broken."
+            + "\n_ _ \n> ➜ When you catch a League Drop, it is weighted (between 0.1 and 1) by how fast you were and added to your Drop/Bubble credit."
+            + "\n_ _ \n> ➜ When you catch a Event League Drop, it is also weighted. Using `>event` you can see your collected Event League Dropsfor an Event. You can trade them to any Eventdrop of this event!");
+
+
+            embed.AddField("_ _ \n`🎖️` Rewards", "➜ **Overall:**\n> Top 4: 5,4,3 Splits\n> Top 10: 2 Splits\n> Top 20: 1 Split\n➜ **League Drops Leaders: **\n> 3,2,1 Splits\n➜ **Streak Leaders: **\n> 3,2,1 Splits\n➜ **Overall Leader**: \n> Can't compete in categories, but gets 4 Splits if #1 in all categories");
+
+            await context.RespondAsync(embed);
+        }
+
+
+        [Description("Show your current Drop League season ranking")]
+        [Command("league rank")]
+        public async Task Rank(CommandContext context, [Description("Month of the league season, eg `11`")] int month = -1, [Description("Year of the league season, eg `2022`")] int year = -1)
         {
 
             if (year == -1) year = DateTime.UtcNow.Year;
@@ -440,146 +511,84 @@ namespace Palantir.Commands
             string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
             int position = results.FindIndex(result => result.Login == login) + 1;
 
-
-            if (modifier == "all")
+            if (position <= 0) await Program.SendEmbed(context.Channel, "Oopsie", "You aren't ranked in this season." + (season.IsActive() ? " Catch some drops faster than 1000ms to appear in the ranking!" : ""));
+            else
             {
-                string msg = "```\n";
-                msg += " Leaderboard Drop League Season " + season.seasonName + "\n \n";
-                msg += "｜Rank｜      Name     ｜ Score ｜Ø Weight｜Streak\n";
+                var embed = new DiscordEmbedBuilder()
+                .WithAuthor("Drop League")
+                .WithTitle("**" + season.seasonName + "** Season")
+                .WithColor(DiscordColor.Magenta)
+                .WithThumbnail("https://media.discordapp.net/attachments/910894527261327370/983025068214992948/challenge.gif")
+                .WithDescription("Drop Leagues are a monthly competition, where the very fastest catchers rank against each other.\n_ _\n" + results.Count + " participants in this season\n_ _ \n" + (season.IsActive() ? "Season ends <t:" + season.GetEndTimestamp() + ":R>\n_ _" : "Ended <t:" + season.GetEndTimestamp() + ">\n_ _"));
 
-                string ranks = "";
-                results.Batch(1).ForEach((batch, i) =>
+                if (position == 1)
                 {
-                    var aBatch = batch.ToArray();
-                    var rank1 = Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(Program.Feanor.GetMemberByLogin(aBatch[0].Login).Member).UserName;
-                    ranks += $"｜#{ i + 1,3 }｜{ Regex.Replace(rank1, @"p{Cs}", ""),15 }｜{ aBatch[0].Score,6 } ｜{ aBatch[0].AverageWeight,6 }% ｜{ aBatch[0].Streak,5 }";
-
-                    if (aBatch.Length > 1)
-                    {
-                        var rank2 = Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(Program.Feanor.GetMemberByLogin(aBatch[1].Login).Member).UserName;
-                        ranks += $"｜#{ i * 2 + 2,3 }｜{ Regex.Replace(rank1, @"p{Cs}", ""),15 }｜{ aBatch[1].Score,6 } ｜{ aBatch[1].AverageWeight,6 }% ｜{ aBatch[1].Streak,5 } ｜\n";
-                    }
-                    else ranks += "\n";
-                });
-
-                string page = "" + msg;
-                List<DSharpPlus.Interactivity.Page> pages = new();
-                ranks.Split("\n").ForEach(line =>
+                    embed.AddField("_ _\n<a:league_rnk1:987699431350632518>  _ _ You are ranked as #1!", "\u200b "); // \u200b 
+                }
+                else if (position == 2)
                 {
-                    if (page.Length + line.Length < 1800) page += line + "\n";
-                    else
-                    {
-                        pages.Add(new DSharpPlus.Interactivity.Page(page + "\n```"));
-                        page = msg + line + "\n";
-                    }
-                });
-
-                if(page.Length > 0) pages.Add(new DSharpPlus.Interactivity.Page(page + "\n```"));
-
-                await Program.Interactivity.SendPaginatedMessageAsync(context.Channel, context.Message.Author, pages);
-                //results.Batch(5).ForEach((batch, i) =>
-                //{
-                //    var aBatch = batch.ToArray();
-                //    embed.AddField("\u200b ", "" +
-                //        "#" + (i * 5 + 1) + " - " + Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(Program.Feanor.GetMemberByLogin(aBatch[0].Login).Member).UserName + "\n`" + aBatch[0].Score + "dw / " + aBatch[0].AverageWeight + "% / " + aBatch[0].Streak + "`\n_ _\n" +
-                //        (aBatch.Length > 1 ? "#" + (i * 5 + 2) + " - " + Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(Program.Feanor.GetMemberByLogin(aBatch[1].Login).Member).UserName + "\n`" + aBatch[1].Score + "dw / " + aBatch[1].AverageWeight + "% / " + aBatch[1].Streak + "`\n_ _\n" : "") +
-                //        (aBatch.Length > 2 ? "#" + (i * 5 + 3) + " - " + Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(Program.Feanor.GetMemberByLogin(aBatch[2].Login).Member).UserName + "\n`" + aBatch[2].Score + "dw / " + aBatch[2].AverageWeight + "% / " + aBatch[2].Streak + "`\n_ _\n" : "") +
-                //        (aBatch.Length > 3 ? "#" + (i * 5 + 4) + " - " + Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(Program.Feanor.GetMemberByLogin(aBatch[3].Login).Member).UserName + "\n`" + aBatch[3].Score + "dw / " + aBatch[3].AverageWeight + "% / " + aBatch[3].Streak + "`\n_ _\n" : "") +
-                //        (aBatch.Length > 4 ? "#" + (i * 5 + 5) + " - " + Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(Program.Feanor.GetMemberByLogin(aBatch[4].Login).Member).UserName + "\n`" + aBatch[4].Score + "dw / " + aBatch[4].AverageWeight + "% / " + aBatch[4].Streak + "`\n" : ""),
-                //        true
-                //    );
-                //});
-            }
-
-            else if (modifier == "help" || modifier == "")
-            {
-                if (position <= 0) await Program.SendEmbed(context.Channel, "Oopsie", "You aren't ranked in this season." + (season.IsActive() ? " Catch some drops faster than 1000ms to appear in the ranking!" : ""));
+                    embed.AddField("_ _\n<a:league_rnk2:987710613893566515>  _ _ You are ranked as #2!", "\u200b ");
+                }
+                else if (position == 3)
+                {
+                    embed.AddField("_ _\n<a:league_rnk3:987716889352470528>  _ _ You are ranked as #3!", "\u200b ");
+                }
+                else if (position <= 10)
+                {
+                    embed.AddField("_ _\n<a:league_rnk4:987723143982514207>  _ _ You are ranked as #" + position, "You are below the top 10 ranked players this season.");
+                }
                 else
                 {
-
-                    var embed = new DiscordEmbedBuilder()
-                    .WithAuthor("Drop League")
-                    .WithTitle("**" + season.seasonName + "** Season")
-                    .WithColor(DiscordColor.Magenta)
-                    .WithThumbnail("https://media.discordapp.net/attachments/910894527261327370/983025068214992948/challenge.gif")
-                    .WithDescription("Drop Leagues are a monthly competition, where the very fastest catchers rank against each other.\n_ _\n" + results.Count + " participants in this season\n_ _ \n" + (season.IsActive() ? "Season ends <t:" + season.GetEndTimestamp() + ":R>\n_ _" : "Ended <t:" + season.GetEndTimestamp() + ">\n_ _"));
-
-                    if (position == 1)
-                    {
-                        embed.AddField("_ _\n<a:league_rnk1:987699431350632518>  _ _ You are ranked as #1!", "\u200b "); // \u200b 
-                    }
-                    else if (position == 2)
-                    {
-                        embed.AddField("_ _\n<a:league_rnk2:987710613893566515>  _ _ You are ranked as #2!", "\u200b ");
-                    }
-                    else if (position == 3)
-                    {
-                        embed.AddField("_ _\n<a:league_rnk3:987716889352470528>  _ _ You are ranked as #3!", "\u200b ");
-                    }
-                    else if (position <= 10)
-                    {
-                        embed.AddField("_ _\n<a:league_rnk4:987723143982514207>  _ _ You are ranked as #" + position, "You are below the top 10 ranked players this season.");
-                    }
-                    else
-                    {
-                        embed.AddField("_ _\n<a:league_rnk4:987723143982514207>  _ _ You are ranked as #" + position, "Catch more League Drops to be ranked below the top 10 players.");
-                    }
-
-                    var maxAvg = results.Max(r => r.AverageWeight);
-                    var sortMaxAvg = results.OrderByDescending(r => r.AverageWeight);
-                    var selfMaxAvg = sortMaxAvg.ToList().IndexOf(results[position - 1]) + 1;
-                    if (results.Find(r => r.AverageWeight == maxAvg).Login == login)
-                    {
-                        embed.AddField("<a:league_rnk1:987699431350632518>  _ _ Leader in the category `Average Weight`", "\u200b ");
-                    }
-
-                    var maxCount = results.Max(r => r.LeagueDrops.Count);
-                    var sortMaxCount = results.OrderByDescending(results => results.LeagueDrops.Count);
-                    var selfMaxCount = sortMaxCount.ToList().IndexOf(results[position - 1]) + 1;
-                    if (results.Find(r => r.LeagueDrops.Count == maxCount).Login == login)
-                    {
-                        embed.AddField("<a:league_rnk1:987699431350632518>  _ _  Leader in the category `League Drops`", "\u200b ");
-                    }
-
-                    var maxStreak = results.Max(r => r.Streak.streakMax);
-                    var sortMaxStreak = results.OrderByDescending(results => results.Streak.streakMax);
-                    var selfMaxStreak = sortMaxStreak.ToList().IndexOf(results[position - 1]) + 1;
-                    if (results.Find(r => r.Streak.streakMax == maxStreak).Login == login)
-                    {
-                        embed.AddField("<a:league_rnk1:987699431350632518>  _ _  Leader in the category `Maximum Streak`", "\u200b ");
-                    }
-
-                    embed.AddField(
-                       "➜ _ _ Your Stats",
-                       "> `" + results[position - 1].Score + "dw`\n> ***" + results[position - 1].LeagueDrops.Count
-                        + "** League Drops (#" + position + ")*\n> ***" + results[position - 1].AverageWeight
-                        + "%** avg.weight (#" + selfMaxAvg + ")*\n> ***" + results[position - 1].AverageTime
-                        + "ms** avg.time *\n> ***" + results[position - 1].Streak.streakMax + "** max.streak (#" + selfMaxStreak + ", current streak: " + results[position - 1].Streak.streakEnd + ")*",
-                       false
-                    );
-
-                    embed.AddField("_ _\n➜ _ _ About ranking", "\n> ➜ The **overall ranking leader** is the player with the most collected 'drop weight / `dw`'. Each League Drop you collect is weighted by how fast you catch it and adds to your score."
-                    + "\n_ _ \n> ➜ The **average weight leader** is the player that has the highest average drop weight - this means, this player has the fastest average catch time!"
-                    + "\n_ _ \n> ➜ The **league drops leader** is the player with the most total collected League Drops."
-                    + "\n_ _ \n> ➜ The **maximum streak leader** is the player with the highest caught League Drop streak. Only League Drops count, otherwise the streak is broken."
-                    + "\n_ _ \n> ➜ When you catch a League Drop, it is weighted (between 0.1 and 1) by how fast you were and added to your Drop/Bubble credit."
-                    + "\n_ _ \n> ➜ When you catch a Event League Drop, it is also weighted. Using `>event` you can see your collected Event League Dropsfor an Event. You can trade them to any Eventdrop of this event!");
-
-                    await context.RespondAsync(embed);
+                    embed.AddField("_ _\n<a:league_rnk4:987723143982514207>  _ _ You are ranked as #" + position, "Catch more League Drops to be ranked below the top 10 players.");
                 }
+
+                var maxAvg = results.Max(r => r.AverageWeight);
+                var sortMaxAvg = results.OrderByDescending(r => r.AverageWeight);
+                var selfMaxAvg = sortMaxAvg.ToList().IndexOf(results[position - 1]) + 1;
+                if (results.Find(r => r.AverageWeight == maxAvg).Login == login)
+                {
+                    embed.AddField("<a:league_rnk1:987699431350632518>  _ _ Leader in the category `Average Weight`", "\u200b ");
+                }
+
+                var maxCount = results.Max(r => r.LeagueDrops.Count);
+                var sortMaxCount = results.OrderByDescending(results => results.LeagueDrops.Count);
+                var selfMaxCount = sortMaxCount.ToList().IndexOf(results[position - 1]) + 1;
+                if (results.Find(r => r.LeagueDrops.Count == maxCount).Login == login)
+                {
+                    embed.AddField("<a:league_rnk1:987699431350632518>  _ _  Leader in the category `League Drops`", "\u200b ");
+                }
+
+                var maxStreak = results.Max(r => r.Streak.streakMax);
+                var sortMaxStreak = results.OrderByDescending(results => results.Streak.streakMax);
+                var selfMaxStreak = sortMaxStreak.ToList().IndexOf(results[position - 1]) + 1;
+                if (results.Find(r => r.Streak.streakMax == maxStreak).Login == login)
+                {
+                    embed.AddField("<a:league_rnk1:987699431350632518>  _ _  Leader in the category `Maximum Streak`", "\u200b ");
+                }
+
+                embed.AddField(
+                    "➜ _ _ Your Stats",
+                    "> `" + results[position - 1].Score + "dw`\n> ***" + results[position - 1].LeagueDrops.Count
+                    + "** League Drops (#" + position + ")*\n> ***" + results[position - 1].AverageWeight
+                    + "%** avg.weight (#" + selfMaxAvg + ")*\n> ***" + results[position - 1].AverageTime
+                    + "ms** avg.time *\n> ***" + results[position - 1].Streak.streakMax + "** max.streak (#" + selfMaxStreak + ", current streak: " + results[position - 1].Streak.streakEnd + ")*",
+                    false
+                );
+
+                await context.RespondAsync(embed);
             }
         }
 
 
-        [Description("Show your current Drop League season ranking - cleaner without help ;)")]
+        [Description("Deprecated")]
         [Command("rnk")]
-        public async Task RankWithoutHelp(CommandContext context, string modifier = "", int month = -1, int year = -1)
+        public async Task RankWithoutHelp(CommandContext context)
         {
-            await Rank(context, month, year, modifier);
+            await context.RespondAsync("The league commands got improved - probably you're looking for `>league board`. \nAlso check out `>league`, `>league rank` and `>league help`");
         }
 
         [Description("Evaluates a league and rewards splits")]
-        [Command("evalleague")]
+        [Command("league eval")]
         [RequirePermissionFlag(PermissionFlag.ADMIN)]
         public async Task EvalLeague(CommandContext context, int month, int year, bool apply = false)
         {
