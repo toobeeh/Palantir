@@ -297,20 +297,20 @@ namespace Palantir
             }
 
             // ------ add top streak -----------
-            var resultsStreak = results.OrderByDescending(results => results.Streak).ToList();
+            var resultsStreak = results.OrderByDescending(results => results.Streak.streakMax).ToList();
 
             // add #1 streak
             var firstStreakDisqualified = results[0].Login == resultsStreak[0].Login;
             var streak_1 = firstStreakDisqualified ? resultsStreak[1] : resultsStreak[0];
-            addReward(streak_1.Login, "Highest Streak (" + streak_1.Streak + ")", 3, streak_1);
+            addReward(streak_1.Login, "Highest Streak (" + streak_1.Streak.streakMax + ")", 3, streak_1);
 
             // add #2 streak
             var streak_2 = firstStreakDisqualified ? resultsStreak[2] : resultsStreak[1];
-            addReward(streak_2.Login, "#2 Streak (" + streak_2.Streak + ")", 2, streak_2);
+            addReward(streak_2.Login, "#2 Streak (" + streak_2.Streak.streakMax + ")", 2, streak_2);
 
             // add #3 streak
             var streak_3 = firstStreakDisqualified ? resultsStreak[3] : resultsStreak[2];
-            addReward(streak_3.Login, "#3 Streak (" + streak_3.Streak + ")", 1, streak_3);
+            addReward(streak_3.Login, "#3 Streak (" + streak_3.Streak.streakMax + ")", 1, streak_3);
 
             // ------ add top count -----------
             var resultsCount = results.OrderByDescending(results => results.LeagueDrops.Count).ToList();
