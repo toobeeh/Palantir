@@ -274,7 +274,7 @@ namespace Palantir
 
             // add #1 overall
             var overall_1 = results[0];
-            addReward(overall_1.Login, "Overall Ranking Leader", 5, overall_1);
+            addReward(overall_1.Login, "Overall Ranking Leader", 6, overall_1);
 
             // add #2 overall
             var overall_2 = results[1];
