@@ -71,6 +71,7 @@ namespace Palantir
         public DbSet<WebhookEntity> Webhooks { get; set; }
         public DbSet<BoostSplitEntity> BoostSplits { get; set; }
         public DbSet<SplitCreditEntity> SplitCredits { get; set; }
+        public DbSet<OnlineItemsEntity> OnlineItems { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder options)
             => options.UseSqlite("Data Source=/home/pi/Database/palantir.db");
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -103,6 +104,7 @@ namespace Palantir
         public string Customcard { get; set; }
         public string Scenes { get; set; }
         public string Streamcode { get; set; }
+        public string RainbowSprites { get; set; }
     }
     public class PalantirEntity
     {
@@ -118,6 +120,7 @@ namespace Palantir
         public string URL { get; set; }
         public int Cost { get; set; }
         public bool Special { get; set; }
+        public bool Rainbow { get; set; }
         public int EventDropID { get; set; }
         public string Artist { get; set; }
     }
@@ -175,6 +178,17 @@ namespace Palantir
         public string Sprite { get; set; }
         public string Date { get; set; }
         public int Slot { get; set; }
+    }
+
+    public class OnlineItemsEntity
+    {
+        [Key]
+        public int ItemType { get; set; }
+        public int Slot { get; set; }
+        public int ItemID { get; set; }
+        public string LobbyKey { get; set; }
+        public int LobbyPlayerID { get; set; }
+        public int Date { get; set; }
     }
 
     public class DropEntity

@@ -131,7 +131,7 @@ namespace Palantir.Commands
                 }
             }
 
-            inventory.Add(new SpriteProperty(target.Name, target.URL, target.Cost, target.ID, target.Special, target.EventDropID, target.Artist, false, -1));
+            inventory.Add(new SpriteProperty(target.Name, target.URL, target.Cost, target.ID, target.Special, target.Rainbow, target.EventDropID, target.Artist, false, -1));
             BubbleWallet.SetInventory(inventory, login);
 
             DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
@@ -360,7 +360,7 @@ namespace Palantir.Commands
         [Description("Add a sprite")]
         [Command("addsprite")]
         [RequirePermissionFlag((byte)4)] // 4 -> mod
-        public async Task AddSprite(CommandContext context, [Description("The name of the sprite")] string name, [Description("The bubble price")] int price, [Description("Any string except '-' if the sprite should replace the avatar")] string special = "", [Description("Any string except '-' to set the sprite artist")] string artist = "")
+        public async Task AddSprite(CommandContext context, [Description("The name of the sprite")] string name, [Description("The bubble price")] int price, [Description("Any string except '-' if the sprite should replace the avatar")] string special = "", [Description("Any string except '-' if the sprite should be color-customizable")] string rainbow = "", [Description("Any string except '-' to set the sprite artist")] string artist = "")
         {
             PalantirDbContext dbcontext = new PalantirDbContext();
             if (context.Message.Attachments.Count <= 0 || !context.Message.Attachments[0].FileName.EndsWith(".gif"))
@@ -389,6 +389,7 @@ namespace Palantir.Commands
                 price,
                 dbcontext.Sprites.Where(s => s.ID < 1000).Max(s => s.ID) + 1,
                 special != "-" && special != "",
+                rainbow != "-" && rainbow != "",
                 0,
                 (artist == "" || artist == "-") ? null : artist
             );

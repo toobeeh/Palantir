@@ -255,7 +255,7 @@ namespace Palantir.Commands
         [Description("Add a seasonal sprite to an event")]
         [Command("eventsprite")]
         [RequirePermissionFlag((byte)4)] // 4 -> mod
-        public async Task CreateEventSprite(CommandContext context, [Description("The id of the event drop for the sprite")] int eventDropID, [Description("The name of the sprite")] string name, [Description("The event drop price")] int price, [Description("Any string except '-' if the sprite should replace the avatar")] string special = "", [Description("Any string except '-' to set the sprite artist")] string artist = "")
+        public async Task CreateEventSprite(CommandContext context, [Description("The id of the event drop for the sprite")] int eventDropID, [Description("The name of the sprite")] string name, [Description("The event drop price")] int price, [Description("Any string except '-' if the sprite should replace the avatar")] string special = "", [Description("Any string except '-' if the sprite should be color-customizable")] string rainbow = "", [Description("Any string except '-' to set the sprite artist")] string artist = "")
         {
             PalantirDbContext dbcontext = new PalantirDbContext();
 
@@ -290,6 +290,7 @@ namespace Palantir.Commands
                 price,
                 dbcontext.Sprites.Where(s => s.ID < 1000).Max(s => s.ID) + 1,
                 special != "-" && special != "",
+                rainbow != "-" && rainbow != "",
                 eventDropID,
                 artist == "" || artist == "-" ? null : artist
             );

@@ -115,7 +115,7 @@ namespace Palantir
                     try
                     {
                         int id;
-                        if (int.TryParse(i,out id) && id == s.ID) spriteInventory.Add(new SpriteProperty(s.Name, s.URL, s.Cost, s.ID, s.Special, s.EventDropID, s.Artist, activated, slot));
+                        if (int.TryParse(i,out id) && id == s.ID) spriteInventory.Add(new SpriteProperty(s.Name, s.URL, s.Cost, s.ID, s.Special, s.Rainbow, s.EventDropID, s.Artist, activated, slot));
                     }
                     catch(Exception e)
                     {
@@ -151,7 +151,7 @@ namespace Palantir
         {
             List<Sprite> sprites = new List<Sprite>();
             PalantirDbContext context = new PalantirDbContext();
-            context.Sprites.ToList().ForEach(s => sprites.Add(new Sprite(s.Name, s.URL, s.Cost, s.ID, s.Special, s.EventDropID, s.Artist)));
+            context.Sprites.ToList().ForEach(s => sprites.Add(new Sprite(s.Name, s.URL, s.Cost, s.ID, s.Special, s.Rainbow, s.EventDropID, s.Artist)));
             context.SaveChanges();
             context.Dispose();
             return sprites;
@@ -338,7 +338,7 @@ namespace Palantir
                     int spriteid = 0;
                     if (Int32.TryParse(id, out spriteid))
                     {
-                        joined.Add(new SpriteProperty("", "", 0, spriteid, false, 0, "", indOfActive >= 0, 0));
+                        joined.Add(new SpriteProperty("", "", 0, spriteid, false, false, 0, "", indOfActive >= 0, 0));
                     }
                 });
             });
@@ -559,9 +559,10 @@ namespace Palantir
         public string URL;
         public int Cost;
         public bool Special;
+        public bool Rainbow;
         public int EventDropID;
         public string Artist;
-        public Sprite(string name, string url, int cost, int id, bool special, int eventDropID, string artist)
+        public Sprite(string name, string url, int cost, int id, bool special, bool rainbow, int eventDropID, string artist)
         {
             Name = name;
             URL = url;
@@ -570,6 +571,7 @@ namespace Palantir
             Special = special;
             EventDropID = eventDropID;
             Artist = artist;
+            Rainbow = rainbow;
         }
     }
 
@@ -577,7 +579,7 @@ namespace Palantir
     {
         public bool Activated;
         public int Slot;
-        public SpriteProperty(string name, string url, int cost, int id, bool special, int eventdropID, string artist, bool activated, int slot) : base(name,url,cost,id, special, eventdropID, artist)
+        public SpriteProperty(string name, string url, int cost, int id, bool special, bool rainbow, int eventdropID, string artist, bool activated, int slot) : base(name,url,cost,id, special, rainbow, eventdropID, artist)
         {
             Activated = activated;
             Slot = activated ? slot : -1;
