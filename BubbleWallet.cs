@@ -474,6 +474,37 @@ namespace Palantir
             //aprilf.Slot = 1;
             //aprilf.ID = lobbyKey + lobbyPlayerID + "aprf";
             //context.OnlineSprites.Add(aprilf);
+
+            // now the new table
+            context.OnlineItems.RemoveRange(context.OnlineItems.Where(o => o.LobbyKey == lobbyKey && lobbyPlayerID == o.LobbyPlayerID.ToString()));
+            if (scenes.Count() > 0)
+            {
+                OnlineItemsEntity sceneEntity = new()
+                {
+                    LobbyKey = lobbyKey,
+                    LobbyPlayerID = Convert.ToInt32(lobbyPlayerID),
+                    Date = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds(),
+                    Slot = 0,
+                    ItemType = "scene",
+                    ItemID = scenes[0].ID,
+                };
+                context.OnlineItems.Add(sceneEntity);
+            }
+
+            foreach (SpriteProperty slot in playersprites)
+            {
+                OnlineItemsEntity spriteEntity = new()
+                {
+                    LobbyKey = lobbyKey,
+                    LobbyPlayerID = Convert.ToInt32(lobbyPlayerID),
+                    Date = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds(),
+                    Slot = slot.Slot + 1,
+                    ItemType = "sprite",
+                    ItemID = slot is object ? slot.ID : 0
+                };
+                context.OnlineItems.Add(spriteEntity);
+            }
+
             try
             {
                 context.SaveChanges();

@@ -183,12 +183,12 @@ namespace Palantir
     public class OnlineItemsEntity
     {
         [Key]
-        public int ItemType { get; set; }
+        public string ItemType { get; set; }
         public int Slot { get; set; }
         public int ItemID { get; set; }
         public string LobbyKey { get; set; }
         public int LobbyPlayerID { get; set; }
-        public int Date { get; set; }
+        public long Date { get; set; }
     }
 
     public class DropEntity
