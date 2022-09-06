@@ -484,11 +484,13 @@ namespace Palantir.Commands
                 shifts = new();
             }
 
-            shifts.Add(sprite, shift);
+            shifts[sprite] = shift;
+
+            string desc = shifts.Keys.ToList().Select(key => "**#" + key.ToString() + "*: " + shifts[key].ToString()).ToDelimitedString("\n");
 
             BubbleWallet.SetMemberRainbowShifts(login, shifts);
 
-            await Program.SendEmbed(context.Channel, "Nice choice :}", "Your sprite will now be color-customized. Try it on!" + (perm.BotAdmin || perm.Patron ? "" : "\nYour previous color customizations were cleared. Become a Patron to set multiple at once!"));
+            await Program.SendEmbed(context.Channel, "Nice choice :}", "Your sprite will now be color-customized. Try it on!\n\nYour current choices are:\n" + desc + (perm.BotAdmin || perm.Patron ? "" : "\n\nYour previous color customizations were cleared. Become a Patron to set multiple at once!"));
         }
     }
 }
