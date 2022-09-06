@@ -41,7 +41,7 @@ namespace Palantir.Commands
                 }
                 if (s.EventDropID == 0)
                 {
-                    embed.Description += "**Costs:** " + s.Cost + " Bubbles\n\n**ID**: " + s.ID + (s.Special ? " :sparkles: " : "");
+                    embed.Description += "**Costs:** " + s.Cost + " Bubbles\n\n**ID**: " + s.ID + (s.Special ? " :sparkles: " : "") + (s.Rainbow ? "  :rainbow: " : "");
                 }
                 else
                 {
