@@ -46,7 +46,7 @@ namespace Palantir.Commands
                 else
                 {
                     EventDropEntity drop = Events.GetEventDrops().FirstOrDefault(d => d.EventDropID == s.EventDropID);
-                    embed.Description += "**Event Drop Price:** " + s.Cost + " " + drop.Name + "\n**ID**: " + s.ID + (s.Special ? " :sparkles: " : "");
+                    embed.Description += "**Event Drop Price:** " + s.Cost + " " + drop.Name + "\n**ID**: " + s.ID + (s.Special ? " :sparkles: " : "") + (s.Rainbow ? "  :rainbow: " : "");
                     embed.WithThumbnail(drop.URL);
                 }
                 int[] score = BubbleWallet.SpriteScoreboard().FirstOrDefault(score => score.Key == s.ID).Value;
@@ -486,7 +486,7 @@ namespace Palantir.Commands
 
             shifts[sprite] = shift;
 
-            string desc = shifts.Keys.ToList().Select(key => "**#" + key.ToString() + "*: " + shifts[key].ToString()).ToDelimitedString("\n");
+            string desc = shifts.Keys.ToList().Select(key => "**#" + key.ToString() + "**: " + shifts[key].ToString()).ToDelimitedString("\n");
 
             BubbleWallet.SetMemberRainbowShifts(login, shifts);
 
