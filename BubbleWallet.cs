@@ -428,6 +428,33 @@ namespace Palantir
             return rewards;
         }
 
+        public static Dictionary<int, int> GetMemberRainbowShifts(string login)
+        {
+            PalantirDbContext context = new PalantirDbContext();
+            string shifts = context.Members.FirstOrDefault(mem => mem.Login == login).RainbowSprites;
+            context.Dispose();
+            Dictionary<int, int> spriteShifts = new();
+            foreach (string shift in shifts.Split(","))
+            {
+                spriteShifts.Add(Convert.ToInt32(shift.Split(":")[0]), Convert.ToInt32(shift.Split(":")[1]));
+            }
+            return spriteShifts;
+        }
+
+        public static void SetMemberRainbowShifts(string login, Dictionary<int, int> shifts)
+        {
+            List<string> spriteShifts = new();
+            shifts.Keys.ForEach(key =>
+            {
+                if(shifts[key] > 0) spriteShifts.Add(key.ToString() + ":" + spriteShifts[key].ToString());
+            });
+            string rainbowSprites = spriteShifts.ToDelimitedString(",");
+
+            PalantirDbContext context = new PalantirDbContext();
+            context.Members.FirstOrDefault(mem => mem.Login == login).RainbowSprites = rainbowSprites;
+            context.Dispose();
+        }
+
         public static void SetOnlineSprite(string login, string lobbyKey, string lobbyPlayerID){
             List<SpriteProperty> playersprites = GetInventory(login).Where(i => i.Activated).ToList();
             List<SceneProperty> scenes = GetSceneInventory(login, true, false);

@@ -102,7 +102,7 @@ namespace Palantir.Commands
                 await Program.SendEmbed(context.Channel, "Eh...?", "Can't find that sprite. \nChoose another one or keep your bubbles.");
                 return;
             }
-            
+
             Sprite target = available.FirstOrDefault(s => s.ID == sprite);
             int credit = BubbleWallet.CalculateCredit(login, context.User.Id.ToString());
             PermissionFlag perm = new PermissionFlag((byte)member.Flag);
@@ -174,7 +174,8 @@ namespace Palantir.Commands
             if (sprite == 0)
             {
                 await Program.SendEmbed(context.Channel, "Minimalist, huh? Your sprite was disabled.", "");
-                inventory.ForEach(i => {
+                inventory.ForEach(i =>
+                {
                     if (i.Slot == slot) i.Activated = false;
                 });
                 BubbleWallet.SetInventory(inventory, login);
@@ -187,7 +188,8 @@ namespace Palantir.Commands
                 return;
             }
 
-            inventory.ForEach(i => {
+            inventory.ForEach(i =>
+            {
                 if (i.ID == sprite && i.Activated) i.Slot = slot; // if sprite is already activated, activate on other slot
                 else if (i.ID == sprite && !i.Activated) { i.Activated = true; i.Slot = slot; } // if sprite is not activated, activate on slot
                 else if (!(i.Activated && i.ID != sprite && i.Slot != slot)) { i.Activated = false; i.Slot = -1; }
@@ -228,7 +230,8 @@ namespace Palantir.Commands
                 return;
             }
 
-            inventory.ForEach(item => {
+            inventory.ForEach(item =>
+            {
                 item.Activated = false;
                 item.Slot = 0;
             });
@@ -269,7 +272,7 @@ namespace Palantir.Commands
                 int sceneCost = BubbleWallet.SceneStartPrice;
                 inventory.Where(s => s.EventID == 0).ForEach(scene => sceneCost *= BubbleWallet.ScenePriceFactor);
 
-                if(scene.Color.IndexOf("!") > 0) scene.Color = scene.Color.Substring(0, scene.Color.IndexOf("!"));
+                if (scene.Color.IndexOf("!") > 0) scene.Color = scene.Color.Substring(0, scene.Color.IndexOf("!"));
                 if (scene.GuessedColor.IndexOf("!") > 0) scene.GuessedColor = scene.GuessedColor.Substring(0, scene.GuessedColor.IndexOf("!"));
 
                 DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
@@ -312,7 +315,7 @@ namespace Palantir.Commands
             {
                 await Program.SendEmbed(context.Channel, "I see you 👀", "You need at least " + sceneCost + " to buy a scene!\nScene cost increases by *2 with every scene you buy.");
             }
-            else if(eventID > 0 && !Events.EligibleForEventScene(login, eventID))
+            else if (eventID > 0 && !Events.EligibleForEventScene(login, eventID))
             {
                 await Program.SendEmbed(context.Channel, "Sorryyy,", "You have not (yet) collected enough bubbles during that event to buy this scene.\nCheck `>event " + eventID + "` to view your event bubbles.");
             }
@@ -428,7 +431,7 @@ namespace Palantir.Commands
                 await Program.SendEmbed(context.Channel, "Hmm...", "Something went wrong with the scene name.");
                 return;
             }
-            if(eventID != 0 && !Events.GetEvents(false).Any(evt => evt.EventID == eventID))
+            if (eventID != 0 && !Events.GetEvents(false).Any(evt => evt.EventID == eventID))
             {
                 eventID = 0;
             }
@@ -449,6 +452,37 @@ namespace Palantir.Commands
 
             dbcontext.Dispose();
             await context.Channel.SendMessageAsync(embed: embed);
+        }
+
+        [Description("Set the color of a rainbow sprite.")]
+        [Command("rainbow")]
+        [RequireBeta()]
+        public async Task Raijnbow(CommandContext context, [Description("The id of the sprite (eg '15')")] int sprite, [Description("The rainbow shift from 0-360. 0 to remove it.")] int shift = 0)
+        {
+            string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
+            List<SpriteProperty> inventory;
+            inventory = BubbleWallet.GetInventory(login);
+            if (sprite != 0 && !inventory.Any(s => s.ID == sprite))
+            {
+                await Program.SendEmbed(context.Channel, "Hold on!", "You don't own that. \nGet it first with `>buy " + sprite + "`.");
+                return;
+            }
+
+            MemberEntity member = Program.Feanor.GetMemberByLogin(login);
+            PermissionFlag perm = new PermissionFlag((byte)member.Flag);
+
+            var shifts = BubbleWallet.GetMemberRainbowShifts(login);
+
+            if (!(perm.BotAdmin || perm.Patron))
+            {
+                shifts = new();
+            }
+
+            shifts.Add(sprite, shift);
+
+            BubbleWallet.SetMemberRainbowShifts(login, shifts);
+
+            await Program.SendEmbed(context.Channel, "Nice choice :}", "Your sprite will now be color-customized. Try it out!" + (perm.BotAdmin || perm.Patron ? "" : "\nYour previous color customizations were cleared. Become a Patron to set multiple at once!"));
         }
     }
 }
