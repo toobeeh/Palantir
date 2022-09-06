@@ -85,6 +85,8 @@ namespace Palantir
                 .HasKey(e => new { e.Login, e.Split }); 
             modelBuilder.Entity<PastDropEntity>()
                  .HasKey(e => new { e.DropID, e.CaughtLobbyPlayerID });
+            modelBuilder.Entity<OnlineItemsEntity>()
+                 .HasKey(e => new { e.ItemType, e.Slot, e.ItemID, e.LobbyKey, e.LobbyPlayerID });
         }
 
     }
@@ -182,7 +184,6 @@ namespace Palantir
 
     public class OnlineItemsEntity
     {
-        [Key]
         public string ItemType { get; set; }
         public int Slot { get; set; }
         public int ItemID { get; set; }
