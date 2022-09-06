@@ -477,6 +477,16 @@ namespace Palantir
 
             // now the new table
             context.OnlineItems.RemoveRange(context.OnlineItems.Where(o => o.LobbyKey == lobbyKey && lobbyPlayerID == o.LobbyPlayerID));
+
+            try
+            {
+                context.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error writing sprite:\n" + e);
+            }
+
             if (scenes.Count() > 0)
             {
                 OnlineItemsEntity sceneEntity = new()
