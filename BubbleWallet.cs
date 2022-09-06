@@ -506,10 +506,6 @@ namespace Palantir
             //aprilf.Slot = 1;
             //aprilf.ID = lobbyKey + lobbyPlayerID + "aprf";
             //context.OnlineSprites.Add(aprilf);
-
-            // now the new table
-            context.OnlineItems.RemoveRange(context.OnlineItems.Where(o => o.LobbyKey == lobbyKey && lobbyPlayerID == o.LobbyPlayerID));
-
             try
             {
                 context.SaveChanges();
@@ -518,6 +514,8 @@ namespace Palantir
             {
                 Console.WriteLine("Error writing sprite:\n" + e);
             }
+
+            List<OnlineItemsEntity> items = new();
 
             if (scenes.Count() > 0)
             {
@@ -530,7 +528,7 @@ namespace Palantir
                     ItemType = "scene",
                     ItemID = scenes[0].ID,
                 };
-                context.OnlineItems.Add(sceneEntity);
+                items.Add(sceneEntity);
             }
 
             var rainbowSprites = BubbleWallet.GetMemberRainbowShifts(login);
@@ -546,11 +544,11 @@ namespace Palantir
                     ItemType = "sprite",
                     ItemID = slot is object ? slot.ID : 0
                 };
-                context.OnlineItems.Add(spriteEntity);
+                items.Add(spriteEntity);
 
                 if(slot is object && rainbowSprites.ContainsKey(slot.ID))
                 {
-                    context.OnlineItems.Add(new()
+                    items.Add(new()
                     {
                         LobbyKey = lobbyKey,
                         LobbyPlayerID = lobbyPlayerID,
@@ -561,6 +559,9 @@ namespace Palantir
                     });
                 }
             }
+
+            context.OnlineItems.RemoveRange(context.OnlineItems.Where(o => o.LobbyKey == lobbyKey && lobbyPlayerID == o.LobbyPlayerID));
+            context.OnlineItems.AddRange(items);
 
             try
             {
