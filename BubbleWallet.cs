@@ -456,6 +456,7 @@ namespace Palantir
 
             PalantirDbContext context = new PalantirDbContext();
             context.Members.FirstOrDefault(mem => mem.Login == login).RainbowSprites = rainbowSprites;
+            context.SaveChanges();
             context.Dispose();
         }
 
