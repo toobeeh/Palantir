@@ -457,14 +457,20 @@ namespace Palantir.Commands
         [Description("Set the color of a rainbow sprite.")]
         [Command("rainbow")]
         [RequireBeta()]
-        public async Task Raijnbow(CommandContext context, [Description("The id of the sprite (eg '15')")] int sprite, [Description("The rainbow shift from 0-360. 0 to remove it.")] int shift = 0)
+        public async Task Rainbow(CommandContext context, [Description("The id of the sprite (eg '15')")] int sprite, [Description("The rainbow shift from 0-360. 0 to remove it.")] int shift = 0)
         {
             string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
             List<SpriteProperty> inventory;
             inventory = BubbleWallet.GetInventory(login);
             if (sprite != 0 && !inventory.Any(s => s.ID == sprite))
             {
-                await Program.SendEmbed(context.Channel, "Hold on!", "You don't own that. \nGet it first with `>buy " + sprite + "`.");
+                await Program.SendEmbed(context.Channel, "Hold on!", "You don't own that sprite. \nGet it first with `>buy " + sprite + "`.");
+                return;
+            }
+
+            if(!inventory.Find(s => s.ID == sprite).Rainbow)
+            {
+                await Program.SendEmbed(context.Channel, "Hold on!", "That's not a rainbow sprite :(");
                 return;
             }
 
@@ -482,7 +488,7 @@ namespace Palantir.Commands
 
             BubbleWallet.SetMemberRainbowShifts(login, shifts);
 
-            await Program.SendEmbed(context.Channel, "Nice choice :}", "Your sprite will now be color-customized. Try it out!" + (perm.BotAdmin || perm.Patron ? "" : "\nYour previous color customizations were cleared. Become a Patron to set multiple at once!"));
+            await Program.SendEmbed(context.Channel, "Nice choice :}", "Your sprite will now be color-customized. Try it on!" + (perm.BotAdmin || perm.Patron ? "" : "\nYour previous color customizations were cleared. Become a Patron to set multiple at once!"));
         }
     }
 }

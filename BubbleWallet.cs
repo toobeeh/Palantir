@@ -433,6 +433,8 @@ namespace Palantir
             PalantirDbContext context = new PalantirDbContext();
             string shifts = context.Members.FirstOrDefault(mem => mem.Login == login).RainbowSprites;
             context.Dispose();
+
+            if (shifts is null) shifts = "";
             Dictionary<int, int> spriteShifts = new();
             foreach (string shift in shifts.Split(","))
             {
