@@ -434,11 +434,13 @@ namespace Palantir
             string shifts = context.Members.FirstOrDefault(mem => mem.Login == login).RainbowSprites;
             context.Dispose();
 
-            if (shifts is null) shifts = "";
             Dictionary<int, int> spriteShifts = new();
-            foreach (string shift in shifts.Split(","))
+            if (shifts is not null && shifts != "")
             {
-                spriteShifts.Add(Convert.ToInt32(shift.Split(":")[0]), Convert.ToInt32(shift.Split(":")[1]));
+                foreach (string shift in shifts.Split(","))
+                {
+                    spriteShifts.Add(Convert.ToInt32(shift.Split(":")[0]), Convert.ToInt32(shift.Split(":")[1]));
+                }
             }
             return spriteShifts;
         }
