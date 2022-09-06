@@ -187,7 +187,7 @@ namespace Palantir
         public int Slot { get; set; }
         public int ItemID { get; set; }
         public string LobbyKey { get; set; }
-        public int LobbyPlayerID { get; set; }
+        public string LobbyPlayerID { get; set; }
         public long Date { get; set; }
     }
 

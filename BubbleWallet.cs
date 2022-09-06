@@ -476,13 +476,13 @@ namespace Palantir
             //context.OnlineSprites.Add(aprilf);
 
             // now the new table
-            context.OnlineItems.RemoveRange(context.OnlineItems.Where(o => o.LobbyKey == lobbyKey && lobbyPlayerID == o.LobbyPlayerID.ToString()));
+            context.OnlineItems.RemoveRange(context.OnlineItems.Where(o => o.LobbyKey == lobbyKey && lobbyPlayerID == o.LobbyPlayerID));
             if (scenes.Count() > 0)
             {
                 OnlineItemsEntity sceneEntity = new()
                 {
                     LobbyKey = lobbyKey,
-                    LobbyPlayerID = Convert.ToInt32(lobbyPlayerID),
+                    LobbyPlayerID = lobbyPlayerID,
                     Date = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds(),
                     Slot = 0,
                     ItemType = "scene",
@@ -496,7 +496,7 @@ namespace Palantir
                 OnlineItemsEntity spriteEntity = new()
                 {
                     LobbyKey = lobbyKey,
-                    LobbyPlayerID = Convert.ToInt32(lobbyPlayerID),
+                    LobbyPlayerID = lobbyPlayerID,
                     Date = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds(),
                     Slot = slot.Slot + 1,
                     ItemType = "sprite",
