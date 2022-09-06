@@ -533,6 +533,8 @@ namespace Palantir
                 context.OnlineItems.Add(sceneEntity);
             }
 
+            var rainbowSprites = BubbleWallet.GetMemberRainbowShifts(login);
+
             foreach (SpriteProperty slot in playersprites)
             {
                 OnlineItemsEntity spriteEntity = new()
@@ -545,6 +547,19 @@ namespace Palantir
                     ItemID = slot is object ? slot.ID : 0
                 };
                 context.OnlineItems.Add(spriteEntity);
+
+                if(slot is object && rainbowSprites.ContainsKey(slot.ID))
+                {
+                    context.OnlineItems.Add(new()
+                    {
+                        LobbyKey = lobbyKey,
+                        LobbyPlayerID = lobbyPlayerID,
+                        Date = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds(),
+                        Slot = slot.Slot + 1,
+                        ItemType = "shift",
+                        ItemID = rainbowSprites[slot.ID]
+                    });
+                }
             }
 
             try
