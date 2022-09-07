@@ -165,7 +165,8 @@ namespace Palantir.Commands
             {
                 sprites.Add(
                     "**#" + s.ID + "** -" + s.Name
-                    + (s.Special ? " :sparkles: " : ""));
+                    + (s.Special ? " :sparkles: " : "")
+                    + (s.Rainbow ? " :rainbow: " : ""));
             });
 
             TimeSpan boostCooldown = Drops.BoostCooldown(Convert.ToInt32(login));
@@ -203,16 +204,22 @@ namespace Palantir.Commands
             if (inventory.Where(spt => spt.Activated).Count() == 1)
                 embed.ImageUrl = inventory.FirstOrDefault(s => s.Activated).URL;
             if (inventory.Where(spt => spt.Activated).Count() > 1)
-                embed.ImageUrl = SpriteComboImage.GenerateImage(SpriteComboImage.GetSpriteSources(
-                    inventory.Where(s => s.Activated).OrderBy(s => s.Slot).Select(s => s.ID).ToArray()), "/home/pi/Webroot/files/combos/")
-                    .Replace(@"/home/pi/Webroot/", "https://tobeh.host/");
+            {
+                embed.ImageUrl = SpriteComboImage.GenerateImage(
+                    SpriteComboImage.GetSpriteSources(
+                        inventory.Where(s => s.Activated).OrderBy(s => s.Slot).Select(s => s.ID).ToArray(),
+                        BubbleWallet.GetMemberRainbowShifts(login)
+                    ),
+                    "/home/pi/Webroot/files/combos/")
+                .Replace(@"/home/pi/Webroot/", "https://tobeh.host/");
+            }
 
             DiscordEmbedField sleft = embed.AddField("\u200b ", "\u200b ", true).Fields.Last();
             DiscordEmbedField smiddle = embed.AddField("\u200b ", "\u200b ", true).Fields.Last();
             DiscordEmbedField sright = embed.AddField("\u200b ", "\u200b ", true).Fields.Last();
             var spritebatches = sprites.Batch(batchsize * 3);
 
-            if (inventory.Count < 5) embed.AddField("Command help: ", "Use `>use [id]` to select your Sprite!\n`>use 0` will set no Sprite.\nBuy a Sprite with `>buy [id]`.\nSpecial Sprites :sparkles: replace your whole avatar! ");
+            if (inventory.Count < 5) embed.AddField("Command help: ", "Use `>use [id]` to select your Sprite!\n`>use 0` will set no Sprite.\nBuy a Sprite with `>buy [id]`.\nSpecial Sprites :sparkles: replace your whole avatar! \nRainbow Sprites :rainbow: can be color-customized! (`>rainbow`) ");
             embed.AddField("\u200b", "[View all Sprites](https://typo.rip/#sprites)");
             DiscordMessageBuilder response = new DiscordMessageBuilder();
 

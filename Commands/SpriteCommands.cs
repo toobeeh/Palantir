@@ -454,9 +454,9 @@ namespace Palantir.Commands
             await context.Channel.SendMessageAsync(embed: embed);
         }
 
-        [Description("Set the color of a rainbow sprite.")]
+        [Description("Set the color of a rainbow sprite. Use without parameters to view your choices.")]
         [Command("rainbow")]
-        public async Task Rainbow(CommandContext context, [Description("The id of the sprite (eg '15')")] int sprite = -1, [Description("The rainbow shift from 0-360. -1 to remove it.")] int shift = -1)
+        public async Task Rainbow(CommandContext context, [Description("The id of the sprite (eg '15')")] int sprite = -1, [Description("The rainbow shift from 0-200. -1 to remove it.")] int shift = -1)
         {
             string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
             List<SpriteProperty> inventory;
@@ -474,7 +474,8 @@ namespace Palantir.Commands
 
             if (sprite < 0)
             {
-                string only = shifts.Keys.ToList().Select(key => "**#" + key.ToString() + "**: " + shifts[key].ToString()).ToDelimitedString("\n");
+                string only = shifts.Keys.ToList().OrderBy(key => key).Select(key => "**#" + key.ToString() + "**: " + shifts[key].ToString()).ToDelimitedString("\n");
+                if(only == "") only = "You have no color choices set.";
                 await Program.SendEmbed(context.Channel, "Your current color customizations:", only + (perm.BotAdmin || perm.Patron ? "" : "\n\nBecome a patron to customize more than one sprite!"));
                 return;
             }
@@ -493,7 +494,8 @@ namespace Palantir.Commands
             shifts[sprite] = shift;
             if (shift < 0) shifts.Remove(sprite);
 
-            string desc = shifts.Keys.ToList().Select(key => "**#" + key.ToString() + "**: " + shifts[key].ToString()).ToDelimitedString("\n");
+            string desc = shifts.Keys.ToList().OrderBy(key => key).Select(key => "**#" + key.ToString() + "**: " + shifts[key].ToString()).ToDelimitedString("\n");
+            if (desc == "") desc = "You have no color choices set.";
 
             BubbleWallet.SetMemberRainbowShifts(login, shifts);
 

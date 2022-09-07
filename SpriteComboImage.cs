@@ -90,7 +90,7 @@ namespace Palantir
             return savePath + ".png";
         }
 
-        public static string[] GetSpriteSources(int[] sprites)
+        public static string[] GetSpriteSources(int[] sprites, Dictionary<int, int> colormods = null)
         {
             List<string> sources = new List<string>();
             foreach (int id in sprites)
@@ -101,17 +101,26 @@ namespace Palantir
                     spt = BubbleWallet.GetSpriteByID(id);
                 }
                 catch { continue; }
+
+                string path = "";
                 if (spt.URL.Contains("https://tobeh.host/"))
                 {
-                    sources.Add(spt.URL.Replace("https://tobeh.host/", "/home/pi/Webroot/"));
+                    path = spt.URL.Replace("https://tobeh.host/", "/home/pi/Webroot/");
                 }
                 else
                 {
                     // download sprite
                     System.Net.WebClient client = new System.Net.WebClient();
-                    string path = "/home/pi/Webroot/files/combos/" + DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString() + ".gif";
+                    path = "/home/pi/Webroot/files/combos/" + DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString() + ".gif";
                     client.DownloadFile(spt.URL,path);
-                    sources.Add(path);
+                }
+
+                if (colormods != null && colormods.ContainsKey(id))
+                {
+                    // convert to right color choice
+                    string targetPath = "/home/pi/tmpGen/" + DateTimeOffset.UtcNow.ToUnixTimeMilliseconds().ToString() + ".gif";
+                    string output = $"sudo convert ${path}[0] -modulate 100,100,${colormods[id]} ${targetPath}".Bash();
+                    path = targetPath;
                 }
             }
             return sources.ToArray();
