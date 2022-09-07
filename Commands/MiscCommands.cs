@@ -190,7 +190,7 @@ namespace Palantir.Commands
             List<SceneProperty> sceneInv = BubbleWallet.GetSceneInventory(login, false, false);
             if(sceneInv.Count > 0)
             {
-                embed.AddField("Scenes:", sceneInv.ConvertAll(scene => "#" + scene.ID + " - " + scene.Name + (scene.Activated ? " (active)" : "")).ToDelimitedString("\n"));
+                embed.AddField("Scenes:", sceneInv.OrderBy(scene => scene.ID).ToList().ConvertAll(scene => "#" + scene.ID + " - " + scene.Name + (scene.Activated ? " (active)" : "")).ToDelimitedString("\n"));
             }
 
             string selected = "";
