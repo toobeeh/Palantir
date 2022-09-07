@@ -253,7 +253,7 @@ namespace Palantir.Commands
             embed.Color = DiscordColor.Magenta;
             if (sprites.Length > 0)
             {
-                string path = SpriteComboImage.GenerateImage(SpriteComboImage.GetSpriteSources(sprites), "/home/pi/Webroot/files/combos/")
+                string path = SpriteComboImage.GenerateImage(SpriteComboImage.GetSpriteSources(sprites, BubbleWallet.GetMemberRainbowShifts(login)), "/home/pi/Webroot/files/combos/")
                     .Replace(@"/home/pi/Webroot/", "https://tobeh.host/");
                 embed.ImageUrl = path;
             }
