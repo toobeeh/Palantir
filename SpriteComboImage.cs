@@ -119,9 +119,11 @@ namespace Palantir
                 {
                     // convert to right color choice
                     string targetPath = "/home/pi/tmpGen/" + DateTimeOffset.UtcNow.ToUnixTimeMilliseconds().ToString() + ".gif";
-                    string output = $"sudo convert {path}[0] -modulate 100,100,${colormods[id]} {targetPath}".Bash();
+                    string output = $"convert {path}[0] -modulate 100,100,${colormods[id]} {targetPath}".Bash();
                     path = targetPath;
                 }
+
+                sources.Add(path);
             }
             return sources.ToArray();
         }
