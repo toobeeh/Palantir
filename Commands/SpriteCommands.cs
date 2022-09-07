@@ -456,15 +456,26 @@ namespace Palantir.Commands
 
         [Description("Set the color of a rainbow sprite.")]
         [Command("rainbow")]
-        [RequireBeta()]
-        public async Task Rainbow(CommandContext context, [Description("The id of the sprite (eg '15')")] int sprite, [Description("The rainbow shift from 0-360. 0 to remove it.")] int shift = 0)
+        public async Task Rainbow(CommandContext context, [Description("The id of the sprite (eg '15')")] int sprite = -1, [Description("The rainbow shift from 0-360. -1 to remove it.")] int shift = -1)
         {
             string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
             List<SpriteProperty> inventory;
             inventory = BubbleWallet.GetInventory(login);
-            if (sprite != 0 && !inventory.Any(s => s.ID == sprite))
+            if (sprite > 0 && !inventory.Any(s => s.ID == sprite))
             {
                 await Program.SendEmbed(context.Channel, "Hold on!", "You don't own that sprite. \nGet it first with `>buy " + sprite + "`.");
+                return;
+            }
+
+            MemberEntity member = Program.Feanor.GetMemberByLogin(login);
+            PermissionFlag perm = new PermissionFlag((byte)member.Flag);
+
+            var shifts = BubbleWallet.GetMemberRainbowShifts(login);
+
+            if (sprite < 0)
+            {
+                string only = shifts.Keys.ToList().Select(key => "**#" + key.ToString() + "**: " + shifts[key].ToString()).ToDelimitedString("\n");
+                await Program.SendEmbed(context.Channel, "Your current color customizations:", only + (perm.BotAdmin || perm.Patron ? "" : "\n\nBecome a patron to customize more than one sprite!"));
                 return;
             }
 
@@ -473,11 +484,6 @@ namespace Palantir.Commands
                 await Program.SendEmbed(context.Channel, "Hold on!", "That's not a rainbow sprite :(");
                 return;
             }
-
-            MemberEntity member = Program.Feanor.GetMemberByLogin(login);
-            PermissionFlag perm = new PermissionFlag((byte)member.Flag);
-
-            var shifts = BubbleWallet.GetMemberRainbowShifts(login);
 
             if (!(perm.BotAdmin || perm.Patron))
             {

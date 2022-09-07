@@ -450,7 +450,7 @@ namespace Palantir
             List<string> spriteShifts = new();
             shifts.Keys.ForEach(key =>
             {
-                if(shifts[key] > 0) spriteShifts.Add(key.ToString() + ":" + shifts[key].ToString());
+                if(shifts[key] >= 0) spriteShifts.Add(key.ToString() + ":" + shifts[key].ToString());
             });
             string rainbowSprites = spriteShifts.ToDelimitedString(",");
 
