@@ -491,6 +491,7 @@ namespace Palantir.Commands
             }
 
             shifts[sprite] = shift;
+            if (shift < 0) shifts.Remove(sprite);
 
             string desc = shifts.Keys.ToList().Select(key => "**#" + key.ToString() + "**: " + shifts[key].ToString()).ToDelimitedString("\n");
 
