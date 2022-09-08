@@ -402,6 +402,7 @@ namespace Palantir.Commands
                 DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
                 embed.Title = "🔮  Leaderboard of " + context.Guild.Name;
                 embed.Color = DiscordColor.Magenta;
+                embed.WithDescription("`Note: This leaderboard does not account league drops!`");
                 IEnumerable<MemberEntity> memberBatch = memberBatches[page];
                 foreach (MemberEntity member in memberBatch)
                 {
