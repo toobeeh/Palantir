@@ -573,7 +573,7 @@ namespace Palantir.Commands
                             "/home/pi/Webroot/files/combos/")
                         .Replace(@"/home/pi/Webroot/", "https://tobeh.host/");
 
-                        await context.RespondAsync((new DiscordEmbedBuilder()).WithUrl(useurl).WithDescription(" ").WithTitle("The profile has been activated!"));
+                        await context.RespondAsync((new DiscordEmbedBuilder()).WithImageUrl(useurl).WithDescription(" ").WithTitle("The profile has been activated!"));
                     }
 
                     break;
