@@ -639,6 +639,45 @@ namespace Palantir
             };
         }
 
+        public static SpriteProfileEntity GetCurrentSpriteProfile(string login)
+        {
+            PalantirDbContext db = new();
+            var member = db.Members.FirstOrDefault(m => m.Login == login);
+
+            db.Dispose();
+
+            var sprites = BubbleWallet.ParseSpriteInventory(member.Sprites).Where(s => s.Activated).OrderBy(s => s.Slot).Select(s=>s.ID).ToDelimitedString(",");
+            var scenes = BubbleWallet.GetSceneInventory(login, true).Select(s => s.ID).ToDelimitedString(",");
+            var shifts = member.RainbowSprites;
+
+            return new()
+            {
+                Name = "",
+                Login = login,
+                RainbowSprites = shifts,
+                Combo = sprites,
+                Scene = scenes
+            };
+        }
+
+        public static void SaveSpriteProfile(SpriteProfileEntity profile, bool delete = false)
+        {
+            PalantirDbContext db = new();
+            db.SpriteProfiles.RemoveRange(db.SpriteProfiles.Where(p => p.Login == profile.Login && p.Name == profile.Name));
+            if(!delete) db.SpriteProfiles.Add(profile);
+            db.SaveChanges();
+            db.Dispose();
+        }
+
+        public static List<SpriteProfileEntity> GetSpriteProfiles(string login)
+        {
+            PalantirDbContext db = new();
+            var profiles = db.SpriteProfiles.Where(p => p.Login == login).ToList();
+            db.Dispose();
+
+            return profiles;
+        }
+
     }
 
     public class Sprite

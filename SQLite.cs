@@ -72,6 +72,7 @@ namespace Palantir
         public DbSet<BoostSplitEntity> BoostSplits { get; set; }
         public DbSet<SplitCreditEntity> SplitCredits { get; set; }
         public DbSet<OnlineItemsEntity> OnlineItems { get; set; }
+        public DbSet<SpriteProfileEntity> SpriteProfiles { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder options)
             => options.UseSqlite("Data Source=/home/pi/Database/palantir.db");
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -87,6 +88,8 @@ namespace Palantir
                  .HasKey(e => new { e.DropID, e.CaughtLobbyPlayerID });
             modelBuilder.Entity<OnlineItemsEntity>()
                  .HasKey(e => new { e.ItemType, e.Slot, e.ItemID, e.LobbyKey, e.LobbyPlayerID });
+            modelBuilder.Entity<SpriteProfileEntity>()
+                 .HasKey(e => new { e.Login, e.Name });
         }
 
     }
@@ -291,5 +294,14 @@ namespace Palantir
         public string RewardDate { get; set; }
         public string Comment { get; set; }
         public int ValueOverride { get; set; }
+    }
+
+    public class SpriteProfileEntity
+    {
+        public string Login { get; set; }
+        public string Name { get;set; }
+        public string Combo { get; set; }
+        public string RainbowSprites { get; set; }
+        public string Scene { get; set; }
     }
 }

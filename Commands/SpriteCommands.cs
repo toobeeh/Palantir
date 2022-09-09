@@ -482,7 +482,7 @@ namespace Palantir.Commands
 
             if(!inventory.Find(s => s.ID == sprite).Rainbow)
             {
-                await Program.SendEmbed(context.Channel, "Hold on!", "That's not a rainbow sprite :(");
+                await Program.SendEmbed(context.Channel, "Hold up!", "That's not a rainbow sprite :(");
                 return;
             }
 
@@ -500,6 +500,89 @@ namespace Palantir.Commands
             BubbleWallet.SetMemberRainbowShifts(login, shifts);
 
             await Program.SendEmbed(context.Channel, "Nice choice :}", "Your sprite will now be color-customized. Try it on!\n\nYour current choices are:\n" + desc + (perm.BotAdmin || perm.Patron ? "" : "\n\nYour previous color customizations were cleared. Become a Patron to set multiple at once!"));
+        }
+
+        [Description("Set the color of a rainbow sprite. Use without parameters to view your choices.")]
+        [Command("spriteprofile")]
+        [Aliases("spf")]
+        public async Task SpriteProfile(CommandContext context, [Description("What do you want to do? 'list', 'use', 'save', 'delete'")] string action = "list", [Description("The target profile.")] string profile = "")
+        {
+            string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
+            var profiles = BubbleWallet.GetSpriteProfiles(login);
+
+            switch (action)
+            {
+                case "use":
+
+                    var prof = profiles.FirstOrDefault(p => p.Name == profile);
+
+                    if(prof is null)
+                    {
+                        await context.RespondAsync((new DiscordEmbedBuilder()).WithDescription("This profile doesn't exist :(\nTo see all profiles, use `>spriteprofile list`").WithTitle("Oof, typo?"));
+                    }
+                    else
+                    {
+                        Dictionary<int, int> shifts = new();
+                        prof.RainbowSprites.Split(",").ForEach(s =>
+                        {
+                            shifts.Add(Convert.ToInt32(s.Split(":")[0], Convert.ToInt32(s.Split(":")[1]);
+                        });
+                        BubbleWallet.SetMemberRainbowShifts(login, shifts);
+                        
+
+                        var inv = BubbleWallet.GetInventory(login);
+                        var slots = prof.Combo.Split(",").ToList();
+                        inv.ForEach(sprite =>
+                        {
+                            int slot = slots.IndexOf(sprite.ID.ToString());
+
+                            sprite.Activated = slot >= 0;
+                            sprite.Slot = slot;
+                        });
+                        BubbleWallet.SetInventory(inv, login);
+
+                        if (prof.Scene != "") 
+                        {
+                            var sceneinv = BubbleWallet.GetSceneInventory(login);
+                            sceneinv.ForEach(scene => scene.Activated = scene.ID.ToString() == prof.Scene);
+                            BubbleWallet.SetSceneInventory(login, sceneinv);
+                        }
+
+                        await context.RespondAsync((new DiscordEmbedBuilder()).WithDescription(" ").WithTitle("The profile has been activated!"));
+                    }
+
+                    break;
+                case "save":
+
+                    var curr = BubbleWallet.GetCurrentSpriteProfile(login);
+                    curr.Name = profile;
+                    BubbleWallet.SaveSpriteProfile(curr);
+
+                    string msg = "• " + curr.Name + " `" + (curr.Scene != "" ? "Scene: " + curr.Scene + " ~" : "") + " Combo: " + curr.Combo.Replace(",", ", ") + (curr.RainbowSprites != "" ? " ~ Rainbow: " + curr.RainbowSprites.Split(",").Length + " sprites" : "") + "\n";
+
+                    msg += "\n\nTo see all profiles, use `>spriteprofile list`";
+
+                    await context.RespondAsync((new DiscordEmbedBuilder()).WithDescription(msg).WithTitle("Your current profile has been saved!"));
+
+                    break;
+
+                case "list":
+                default:
+
+                    string msg = "";
+                    foreach (var p in profiles)
+                    {
+                        msg += "• " + p.Name + " `" + (p.Scene != "" ? "Scene: " + p.Scene + " ~" : "") + " Combo: " + p.Combo.Replace(",", ", ") + (p.RainbowSprites != "" ? " ~ Rainbow: " + p.RainbowSprites.Split(",").Length + " sprites" : "") + "\n";
+                    }
+
+                    if(msg == "") msg += "No profiles saved :(\n\nTo save a profile, use `>spriteprofile save [new-name]`";
+
+                    msg += "\n\nTo activate a profile, use `>spriteprofile use [name]`";
+
+                    await context.RespondAsync((new DiscordEmbedBuilder()).WithDescription(msg).WithTitle("Your saved profiles"));
+
+                    break;
+            }
         }
     }
 }
