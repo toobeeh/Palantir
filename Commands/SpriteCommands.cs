@@ -523,7 +523,7 @@ namespace Palantir.Commands
                     else
                     {
                         BubbleWallet.SaveSpriteProfile(rem, true);
-                        await context.RespondAsync((new DiscordEmbedBuilder()).WithDescription(" ").WithTitle("The profile has been deleted!"));
+                        await context.RespondAsync((new DiscordEmbedBuilder()).WithDescription(" ").WithTitle($"The profile `{profile}` has been deleted!"));
                     }
 
                     break;
@@ -573,7 +573,7 @@ namespace Palantir.Commands
                             "/home/pi/Webroot/files/combos/")
                         .Replace(@"/home/pi/Webroot/", "https://tobeh.host/");
 
-                        await context.RespondAsync((new DiscordEmbedBuilder()).WithImageUrl(useurl).WithDescription(" ").WithTitle("The profile has been activated!"));
+                        await context.RespondAsync((new DiscordEmbedBuilder()).WithImageUrl(useurl).WithDescription(" ").WithTitle($"The profile `{profile}` has been activated!"));
                     }
 
                     break;
@@ -583,7 +583,7 @@ namespace Palantir.Commands
                     curr.Name = profile;
                     BubbleWallet.SaveSpriteProfile(curr);
 
-                    string msg = "• " + curr.Name + " `" + (curr.Scene != "" ? "Scene: " + curr.Scene + " ~ " : "") + "Combo: " + (curr.Combo != "" ? curr.Combo.Replace(",", ", ") : "empty") + (curr.RainbowSprites != "" ? " ~ Rainbow: " + curr.RainbowSprites.Split(",").Length + " sprites" : "") + "\n";
+                    string msg = "• " + curr.Name + " `" + (curr.Scene != "" ? "Scene: " + curr.Scene + " ~ " : "") + "Combo: " + (curr.Combo != "" ? curr.Combo.Replace(",", ", ") : "empty") + (curr.RainbowSprites != "" ? " ~ Rainbow: " + curr.RainbowSprites.Split(",").Length + " sprites" : "") + "`\n";
 
                     msg += "\n\nTo see all profiles, use `>spriteprofile list`";
 
@@ -595,7 +595,7 @@ namespace Palantir.Commands
                         "/home/pi/Webroot/files/combos/")
                     .Replace(@"/home/pi/Webroot/", "https://tobeh.host/");
 
-                    await context.RespondAsync((new DiscordEmbedBuilder()).WithDescription(msg).WithImageUrl(url).WithTitle("Your current profile has been saved!"));
+                    await context.RespondAsync((new DiscordEmbedBuilder()).WithDescription(msg).WithImageUrl(url).WithTitle($"Your current profile has been saved as `{profile}`!"));
 
                     break;
 
