@@ -505,7 +505,7 @@ namespace Palantir.Commands
         [Description("Set the color of a rainbow sprite. Use without parameters to view your choices.")]
         [Command("spriteprofile")]
         [Aliases("spf")]
-        public async Task SpriteProfile(CommandContext context, [Description("What do you want to do? 'list', 'use', 'save', 'delete'")] string action = "list", [Description("The target profile.")] string profile = "")
+        public async Task SpriteProfile(CommandContext context, [Description("What do you want to do? 'list', 'use' ('use-scene', 'use-combo', 'use-color'), 'save', 'delete'")] string action = "list", [Description("The target profile.")] string profile = "")
         {
             string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
             var profiles = BubbleWallet.GetSpriteProfiles(login);
@@ -527,43 +527,55 @@ namespace Palantir.Commands
                     }
 
                     break;
+                case "use-scene":
+                case "use-combo":
+                case "use-color":
                 case "use":
 
                     var prof = profiles.FirstOrDefault(p => p.Name == profile);
-
                     if(prof is null)
                     {
                         await context.RespondAsync((new DiscordEmbedBuilder()).WithDescription("This profile doesn't exist :(\nTo see all profiles, use `>spriteprofile list`").WithTitle("Oof, typo?"));
                     }
                     else
                     {
-                        if(prof.RainbowSprites != "")
+
+
+                        if (action == "use" || action == "use-color")
                         {
-                            Dictionary<int, int> shifts = new();
-                            prof.RainbowSprites.Split(",").ForEach(s =>
+                            if (prof.RainbowSprites != "")
                             {
-                                shifts.Add(Convert.ToInt32(s.Split(":")[0]), Convert.ToInt32(s.Split(":")[1]));
-                            });
-                            BubbleWallet.SetMemberRainbowShifts(login, shifts);
+                                Dictionary<int, int> shifts = new();
+                                prof.RainbowSprites.Split(",").ForEach(s =>
+                                {
+                                    shifts.Add(Convert.ToInt32(s.Split(":")[0]), Convert.ToInt32(s.Split(":")[1]));
+                                });
+                                BubbleWallet.SetMemberRainbowShifts(login, shifts);
+                            }
+                            else BubbleWallet.SetMemberRainbowShifts(login, new());
                         }
-                        else BubbleWallet.SetMemberRainbowShifts(login, new());
 
 
-                        var inv = BubbleWallet.GetInventory(login);
-                        var slots = prof.Combo.Split(",").ToList();
-                        inv.ForEach(sprite =>
+                        if (action == "use" || action == "use-combo")
                         {
-                            int slot = slots.IndexOf(sprite.ID.ToString());
+                            var inv = BubbleWallet.GetInventory(login);
+                            var slots = prof.Combo.Split(",").ToList();
+                            inv.ForEach(sprite =>
+                            {
+                                int slot = slots.IndexOf(sprite.ID.ToString()) + 1;
 
-                            sprite.Activated = slot >= 0;
-                            sprite.Slot = slot;
-                        });
-                        BubbleWallet.SetInventory(inv, login);
-                        
+                                sprite.Activated = slot > 0;
+                                sprite.Slot = slot;
+                            });
+                            BubbleWallet.SetInventory(inv, login);
+                        }
 
-                        var sceneinv = BubbleWallet.GetSceneInventory(login);
-                        sceneinv.ForEach(scene => scene.Activated = scene.ID.ToString() == prof.Scene);
-                        BubbleWallet.SetSceneInventory(login, sceneinv);
+                        if (action == "use" || action == "use-combo")
+                        {
+                            var sceneinv = BubbleWallet.GetSceneInventory(login);
+                            sceneinv.ForEach(scene => scene.Activated = scene.ID.ToString() == prof.Scene);
+                            BubbleWallet.SetSceneInventory(login, sceneinv);
+                        }  
 
                         string useurl = prof.Combo == "" ? "" : SpriteComboImage.GenerateImage(
                             SpriteComboImage.GetSpriteSources(
@@ -583,7 +595,7 @@ namespace Palantir.Commands
                     curr.Name = profile;
                     BubbleWallet.SaveSpriteProfile(curr);
 
-                    string msg = "• " + curr.Name + " `" + (curr.Scene != "" ? "Scene: " + curr.Scene + " ~ " : "") + "Combo: " + (curr.Combo != "" ? curr.Combo.Replace(",", ", ") : "empty") + (curr.RainbowSprites != "" ? " ~ Rainbow: " + curr.RainbowSprites.Split(",").Length + " sprites" : "") + "`\n";
+                    string msg = "• " + curr.Name + " `" + (curr.Scene != "" ? "Scene: " + curr.Scene + " ~ " : "") + "Combo: " + (curr.Combo != "" ? curr.Combo.Replace(",", ", ") : "empty") + (curr.RainbowSprites != "" ? " ~ Rainbow: " + curr.RainbowSprites.Split(",").Length + " colors" : "") + "`\n";
 
                     msg += "\n\nTo see all profiles, use `>spriteprofile list`";
 
