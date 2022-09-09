@@ -512,6 +512,21 @@ namespace Palantir.Commands
 
             switch (action)
             {
+                case "delete":
+
+                    var rem = profiles.FirstOrDefault(p => p.Name == profile);
+
+                    if (rem is null)
+                    {
+                        await context.RespondAsync((new DiscordEmbedBuilder()).WithDescription("This profile doesn't exist :(\nTo see all profiles, use `>spriteprofile list`").WithTitle("Oof, typo?"));
+                    }
+                    else
+                    {
+                        BubbleWallet.SaveSpriteProfile(rem, true);
+                        await context.RespondAsync((new DiscordEmbedBuilder()).WithDescription(" ").WithTitle("The profile has been deleted!"));
+                    }
+
+                    break;
                 case "use":
 
                     var prof = profiles.FirstOrDefault(p => p.Name == profile);
@@ -522,24 +537,30 @@ namespace Palantir.Commands
                     }
                     else
                     {
-                        Dictionary<int, int> shifts = new();
-                        prof.RainbowSprites.Split(",").ForEach(s =>
+                        if(prof.RainbowSprites != "")
                         {
-                            shifts.Add(Convert.ToInt32(s.Split(":")[0]), Convert.ToInt32(s.Split(":")[1]));
-                        });
-                        BubbleWallet.SetMemberRainbowShifts(login, shifts);
+                            Dictionary<int, int> shifts = new();
+                            prof.RainbowSprites.Split(",").ForEach(s =>
+                            {
+                                shifts.Add(Convert.ToInt32(s.Split(":")[0]), Convert.ToInt32(s.Split(":")[1]));
+                            });
+                            BubbleWallet.SetMemberRainbowShifts(login, shifts);
+                        }
                         
-
-                        var inv = BubbleWallet.GetInventory(login);
-                        var slots = prof.Combo.Split(",").ToList();
-                        inv.ForEach(sprite =>
+                        if(prof.Combo != "")
                         {
-                            int slot = slots.IndexOf(sprite.ID.ToString());
+                            var inv = BubbleWallet.GetInventory(login);
+                            var slots = prof.Combo.Split(",").ToList();
+                            inv.ForEach(sprite =>
+                            {
+                                int slot = slots.IndexOf(sprite.ID.ToString());
 
-                            sprite.Activated = slot >= 0;
-                            sprite.Slot = slot;
-                        });
-                        BubbleWallet.SetInventory(inv, login);
+                                sprite.Activated = slot >= 0;
+                                sprite.Slot = slot;
+                            });
+                            BubbleWallet.SetInventory(inv, login);
+                        }
+                        
 
                         if (prof.Scene != "") 
                         {
@@ -558,7 +579,7 @@ namespace Palantir.Commands
                     curr.Name = profile;
                     BubbleWallet.SaveSpriteProfile(curr);
 
-                    string msg = "• " + curr.Name + " `" + (curr.Scene != "" ? "Scene: " + curr.Scene + " ~" : "") + " Combo: " + curr.Combo.Replace(",", ", ") + (curr.RainbowSprites != "" ? " ~ Rainbow: " + curr.RainbowSprites.Split(",").Length + " sprites" : "") + "\n";
+                    string msg = "• " + curr.Name + " `" + (curr.Scene != "" ? "Scene: " + curr.Scene + " ~" : "") + " Combo: " + (curr.Combo != "" ? curr.Combo.Replace(",", ", ") : "empty") + (curr.RainbowSprites != "" ? " ~ Rainbow: " + curr.RainbowSprites.Split(",").Length + " sprites" : "") + "\n";
 
                     msg += "\n\nTo see all profiles, use `>spriteprofile list`";
 
@@ -572,7 +593,7 @@ namespace Palantir.Commands
                     string msgl = "";
                     foreach (var p in profiles)
                     {
-                        msgl += "• " + p.Name + " `" + (p.Scene != "" ? "Scene: " + p.Scene + " ~" : "") + " Combo: " + p.Combo.Replace(",", ", ") + (p.RainbowSprites != "" ? " ~ Rainbow: " + p.RainbowSprites.Split(",").Length + " sprites" : "") + "\n";
+                        msgl += "• " + p.Name + " `\n" + (p.Scene != "" ? "Scene: " + p.Scene + " ~" : "") + " Combo: " + (p.Combo != "" ? p.Combo.Replace(",", ", ") : "empty") + (p.RainbowSprites != "" ? " ~ Rainbow: " + p.RainbowSprites.Split(",").Length + " colors" : "") + "`\n";
                     }
 
                     if(msgl == "") msgl += "No profiles saved :(\n\nTo save a profile, use `>spriteprofile save [new-name]`";
