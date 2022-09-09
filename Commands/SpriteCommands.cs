@@ -502,19 +502,19 @@ namespace Palantir.Commands
             await Program.SendEmbed(context.Channel, "Nice choice :}", "Your sprite will now be color-customized. Try it on!\n\nYour current choices are:\n" + desc + (perm.BotAdmin || perm.Patron ? "" : "\n\nYour previous color customizations were cleared. Become a Patron to set multiple at once!"));
         }
 
-        [Description("Set the color of a rainbow sprite. Use without parameters to view your choices.")]
+        [Description("Save and load your current combo, scene and color choices as profile for easier access.")]
         [Command("spriteprofile")]
         [Aliases("spf")]
         public async Task SpriteProfile(CommandContext context, [Description("What do you want to do? 'list', 'use' ('use-scene', 'use-combo', 'use-color'), 'save', 'delete'")] string action = "list", [Description("The target profile.")] string profile = "")
         {
             string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
-            var profiles = BubbleWallet.GetSpriteProfiles(login);
+            var profiles = BubbleWallet.GetSpriteProfiles(login).OrderBy(s => s.Name);
 
             switch (action)
             {
                 case "delete":
 
-                    var rem = profiles.FirstOrDefault(p => p.Name == profile);
+                    var rem = profiles.FirstOrDefault(p => p.Name.ToLower() == profile.ToLower());
 
                     if (rem is null)
                     {
@@ -532,7 +532,7 @@ namespace Palantir.Commands
                 case "use-color":
                 case "use":
 
-                    var prof = profiles.FirstOrDefault(p => p.Name == profile);
+                    var prof = profiles.FirstOrDefault(p => p.Name.ToLower() == profile.ToLower());
                     if(prof is null)
                     {
                         await context.RespondAsync((new DiscordEmbedBuilder()).WithDescription("This profile doesn't exist :(\nTo see all profiles, use `>spriteprofile list`").WithTitle("Oof, typo?"));
