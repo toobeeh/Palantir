@@ -546,30 +546,34 @@ namespace Palantir.Commands
                             });
                             BubbleWallet.SetMemberRainbowShifts(login, shifts);
                         }
-                        
-                        if(prof.Combo != "")
+                        else BubbleWallet.SetMemberRainbowShifts(login, new());
+
+
+                        var inv = BubbleWallet.GetInventory(login);
+                        var slots = prof.Combo.Split(",").ToList();
+                        inv.ForEach(sprite =>
                         {
-                            var inv = BubbleWallet.GetInventory(login);
-                            var slots = prof.Combo.Split(",").ToList();
-                            inv.ForEach(sprite =>
-                            {
-                                int slot = slots.IndexOf(sprite.ID.ToString());
+                            int slot = slots.IndexOf(sprite.ID.ToString());
 
-                                sprite.Activated = slot >= 0;
-                                sprite.Slot = slot;
-                            });
-                            BubbleWallet.SetInventory(inv, login);
-                        }
+                            sprite.Activated = slot >= 0;
+                            sprite.Slot = slot;
+                        });
+                        BubbleWallet.SetInventory(inv, login);
                         
 
-                        if (prof.Scene != "") 
-                        {
-                            var sceneinv = BubbleWallet.GetSceneInventory(login);
-                            sceneinv.ForEach(scene => scene.Activated = scene.ID.ToString() == prof.Scene);
-                            BubbleWallet.SetSceneInventory(login, sceneinv);
-                        }
+                        var sceneinv = BubbleWallet.GetSceneInventory(login);
+                        sceneinv.ForEach(scene => scene.Activated = scene.ID.ToString() == prof.Scene);
+                        BubbleWallet.SetSceneInventory(login, sceneinv);
 
-                        await context.RespondAsync((new DiscordEmbedBuilder()).WithDescription(" ").WithTitle("The profile has been activated!"));
+                        string useurl = SpriteComboImage.GenerateImage(
+                            SpriteComboImage.GetSpriteSources(
+                                prof.Combo.Split(",").Select(id => Convert.ToInt32(id)).ToArray(),
+                                BubbleWallet.GetMemberRainbowShifts(login)
+                            ),
+                            "/home/pi/Webroot/files/combos/")
+                        .Replace(@"/home/pi/Webroot/", "https://tobeh.host/");
+
+                        await context.RespondAsync((new DiscordEmbedBuilder()).WithUrl(useurl).WithDescription(" ").WithTitle("The profile has been activated!"));
                     }
 
                     break;
@@ -583,7 +587,15 @@ namespace Palantir.Commands
 
                     msg += "\n\nTo see all profiles, use `>spriteprofile list`";
 
-                    await context.RespondAsync((new DiscordEmbedBuilder()).WithDescription(msg).WithTitle("Your current profile has been saved!"));
+                    string url = SpriteComboImage.GenerateImage(
+                        SpriteComboImage.GetSpriteSources(
+                            curr.Combo.Split(",").Select(id => Convert.ToInt32(id)).ToArray(),
+                            BubbleWallet.GetMemberRainbowShifts(login)
+                        ),
+                        "/home/pi/Webroot/files/combos/")
+                    .Replace(@"/home/pi/Webroot/", "https://tobeh.host/");
+
+                    await context.RespondAsync((new DiscordEmbedBuilder()).WithDescription(msg).WithImageUrl(url).WithTitle("Your current profile has been saved!"));
 
                     break;
 
@@ -593,7 +605,7 @@ namespace Palantir.Commands
                     string msgl = "";
                     foreach (var p in profiles)
                     {
-                        msgl += "• " + p.Name + " `\n" + (p.Scene != "" ? "Scene: " + p.Scene + " ~" : "") + " Combo: " + (p.Combo != "" ? p.Combo.Replace(",", ", ") : "empty") + (p.RainbowSprites != "" ? " ~ Rainbow: " + p.RainbowSprites.Split(",").Length + " colors" : "") + "`\n";
+                        msgl += "• " + p.Name + " \n`" + (p.Scene != "" ? "Scene: " + p.Scene + " ~" : "") + " Combo: " + (p.Combo != "" ? p.Combo.Replace(",", ", ") : "empty") + (p.RainbowSprites != "" ? " ~ Rainbow: " + p.RainbowSprites.Split(",").Length + " colors" : "") + "`\n";
                     }
 
                     if(msgl == "") msgl += "No profiles saved :(\n\nTo save a profile, use `>spriteprofile save [new-name]`";
