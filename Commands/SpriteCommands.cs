@@ -565,7 +565,7 @@ namespace Palantir.Commands
                         sceneinv.ForEach(scene => scene.Activated = scene.ID.ToString() == prof.Scene);
                         BubbleWallet.SetSceneInventory(login, sceneinv);
 
-                        string useurl = SpriteComboImage.GenerateImage(
+                        string useurl = prof.Combo == "" ? "" : SpriteComboImage.GenerateImage(
                             SpriteComboImage.GetSpriteSources(
                                 prof.Combo.Split(",").Select(id => Convert.ToInt32(id)).ToArray(),
                                 BubbleWallet.GetMemberRainbowShifts(login)
@@ -583,11 +583,11 @@ namespace Palantir.Commands
                     curr.Name = profile;
                     BubbleWallet.SaveSpriteProfile(curr);
 
-                    string msg = "• " + curr.Name + " `" + (curr.Scene != "" ? "Scene: " + curr.Scene + " ~" : "") + " Combo: " + (curr.Combo != "" ? curr.Combo.Replace(",", ", ") : "empty") + (curr.RainbowSprites != "" ? " ~ Rainbow: " + curr.RainbowSprites.Split(",").Length + " sprites" : "") + "\n";
+                    string msg = "• " + curr.Name + " `" + (curr.Scene != "" ? "Scene: " + curr.Scene + " ~ " : "") + "Combo: " + (curr.Combo != "" ? curr.Combo.Replace(",", ", ") : "empty") + (curr.RainbowSprites != "" ? " ~ Rainbow: " + curr.RainbowSprites.Split(",").Length + " sprites" : "") + "\n";
 
                     msg += "\n\nTo see all profiles, use `>spriteprofile list`";
 
-                    string url = SpriteComboImage.GenerateImage(
+                    string url = curr.Combo == "" ? "" :SpriteComboImage.GenerateImage(
                         SpriteComboImage.GetSpriteSources(
                             curr.Combo.Split(",").Select(id => Convert.ToInt32(id)).ToArray(),
                             BubbleWallet.GetMemberRainbowShifts(login)
@@ -605,7 +605,7 @@ namespace Palantir.Commands
                     string msgl = "";
                     foreach (var p in profiles)
                     {
-                        msgl += "• " + p.Name + " \n`" + (p.Scene != "" ? "Scene: " + p.Scene + " ~" : "") + " Combo: " + (p.Combo != "" ? p.Combo.Replace(",", ", ") : "empty") + (p.RainbowSprites != "" ? " ~ Rainbow: " + p.RainbowSprites.Split(",").Length + " colors" : "") + "`\n";
+                        msgl += "• " + p.Name + " \n`" + (p.Scene != "" ? "Scene: " + p.Scene + " ~ " : "") + "Combo: " + (p.Combo != "" ? p.Combo.Replace(",", ", ") : "empty") + (p.RainbowSprites != "" ? " ~ Rainbow: " + p.RainbowSprites.Split(",").Length + " colors" : "") + "`\n";
                     }
 
                     if(msgl == "") msgl += "No profiles saved :(\n\nTo save a profile, use `>spriteprofile save [new-name]`";
