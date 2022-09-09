@@ -525,7 +525,7 @@ namespace Palantir.Commands
                         Dictionary<int, int> shifts = new();
                         prof.RainbowSprites.Split(",").ForEach(s =>
                         {
-                            shifts.Add(Convert.ToInt32(s.Split(":")[0], Convert.ToInt32(s.Split(":")[1]);
+                            shifts.Add(Convert.ToInt32(s.Split(":")[0]), Convert.ToInt32(s.Split(":")[1]));
                         });
                         BubbleWallet.SetMemberRainbowShifts(login, shifts);
                         
@@ -569,17 +569,17 @@ namespace Palantir.Commands
                 case "list":
                 default:
 
-                    string msg = "";
+                    string msgl = "";
                     foreach (var p in profiles)
                     {
-                        msg += "• " + p.Name + " `" + (p.Scene != "" ? "Scene: " + p.Scene + " ~" : "") + " Combo: " + p.Combo.Replace(",", ", ") + (p.RainbowSprites != "" ? " ~ Rainbow: " + p.RainbowSprites.Split(",").Length + " sprites" : "") + "\n";
+                        msgl += "• " + p.Name + " `" + (p.Scene != "" ? "Scene: " + p.Scene + " ~" : "") + " Combo: " + p.Combo.Replace(",", ", ") + (p.RainbowSprites != "" ? " ~ Rainbow: " + p.RainbowSprites.Split(",").Length + " sprites" : "") + "\n";
                     }
 
-                    if(msg == "") msg += "No profiles saved :(\n\nTo save a profile, use `>spriteprofile save [new-name]`";
+                    if(msgl == "") msgl += "No profiles saved :(\n\nTo save a profile, use `>spriteprofile save [new-name]`";
 
-                    msg += "\n\nTo activate a profile, use `>spriteprofile use [name]`";
+                    msgl += "\n\nTo activate a profile, use `>spriteprofile use [name]`";
 
-                    await context.RespondAsync((new DiscordEmbedBuilder()).WithDescription(msg).WithTitle("Your saved profiles"));
+                    await context.RespondAsync((new DiscordEmbedBuilder()).WithDescription(msgl).WithTitle("Your saved profiles"));
 
                     break;
             }
