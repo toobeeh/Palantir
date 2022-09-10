@@ -570,9 +570,9 @@ namespace Palantir.Commands
                             BubbleWallet.SetInventory(inv, login);
                         }
 
-                        if (action == "use" || action == "use-combo")
+                        if (action == "use" || action == "use-scene")
                         {
-                            var sceneinv = BubbleWallet.GetSceneInventory(login);
+                            var sceneinv = BubbleWallet.GetSceneInventory(login, false, false);
                             sceneinv.ForEach(scene => scene.Activated = scene.ID.ToString() == prof.Scene);
                             BubbleWallet.SetSceneInventory(login, sceneinv);
                         }  
