@@ -647,7 +647,7 @@ namespace Palantir
             db.Dispose();
 
             var sprites = BubbleWallet.ParseSpriteInventory(member.Sprites).Where(s => s.Activated).OrderBy(s => s.Slot).Select(s=>s.ID).ToDelimitedString(",");
-            var scenes = BubbleWallet.GetSceneInventory(login, false, false).Select(s => s.ID).ToDelimitedString(",");
+            var scenes = BubbleWallet.GetSceneInventory(login, false, false).Where(s=>s.Activated).Select(s => s.ID).ToDelimitedString(",");
             var shifts = member.RainbowSprites;
 
             return new()
