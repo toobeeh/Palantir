@@ -393,7 +393,7 @@ namespace Palantir
                 reward.CreateDate = boostSplit.Date;
                 reward.Description = boostSplit.Description;
                 reward.Comment = split.Comment;
-                reward.Expired = reward.Name.Contains("League") && DateTime.Parse(reward.CreateDate) < DateTime.Now.AddMonths(-2);
+                reward.Expired = reward.Name.Contains("League") && DateTime.Parse(reward.CreateDate) < DateTime.Now.AddMonths(-4);
 
                 return reward;
             });
