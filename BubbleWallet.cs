@@ -393,6 +393,7 @@ namespace Palantir
                 reward.CreateDate = boostSplit.Date;
                 reward.Description = boostSplit.Description;
                 reward.Comment = split.Comment;
+                reward.Expired = reward.Name.Contains("League") && DateTime.Parse(reward.CreateDate) < DateTime.Now.AddMonths(-2);
 
                 return reward;
             });
@@ -407,7 +408,8 @@ namespace Palantir
                     Value = flags.Patronizer ? 16 : 10,
                     Name = flags.Patronizer ? " 💜 Patronizer Crew" : " 💜 Patron Crew",
                     Description = "Some extra Splits that come with a Typo Patronage on patreon.com",
-                    Comment = ""
+                    Comment = "",
+                    Expired = false
                 });
             }
 
@@ -421,7 +423,8 @@ namespace Palantir
                     Value = 9001,
                     Name = "Unlimited POWAAAH",
                     Description = "'its over 9000' ~ sheev palpatine",
-                    Comment = ""
+                    Comment = "",
+                    Expired = false
                 });
             }
 
@@ -726,5 +729,6 @@ namespace Palantir
         public string Name;
         public string Description;
         public string CreateDate;
+        public bool Expired;
     }
 }
