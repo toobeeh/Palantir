@@ -10,11 +10,11 @@ using System.Threading.Tasks;
 
 namespace Palantir.Slash
 {
-    [SlashCommandGroup("Utils", "Commands for Palantir that make your life easier")]
-    internal class UtilCommandss : ApplicationCommandModule
+    [SlashCommandGroup(">", "Commands for Palantir")]
+    internal class UtilSlashCommands : ApplicationCommandModule
     {
         [SlashCommand("droprate", "Calculate the current rate in which in-game drops appear")]
-        public async Task TestCommand(InteractionContext context)
+        public async Task Droprate(InteractionContext context)
         {
             const int attempts = 10;
             double now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();

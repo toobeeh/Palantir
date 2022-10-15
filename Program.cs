@@ -62,7 +62,7 @@ namespace Palantir
             Commands.CommandErrored += OnCommandErrored;
 
             Console.WriteLine("Registering commands\n...");
-            Slash.RegisterCommands<Palantir.Slash.UtilCommandss>(779435254225698827);
+            Slash.RegisterCommands<Palantir.Slash.UtilSlashCommands>(779435254225698827);
             Commands.RegisterCommands<Palantir.Commands.MiscCommands>();
             Commands.RegisterCommands<Palantir.Commands.EventCommands>();
             Commands.RegisterCommands<Palantir.Commands.ManagementCommands>();
