@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using Quartz;
 using Quartz.Impl;
 using DSharpPlus.Interactivity.Extensions;
+using DSharpPlus.SlashCommands;
 
 namespace Palantir
 {
@@ -23,6 +24,7 @@ namespace Palantir
         public static DiscordClient Client { get; private set; }
         public static DiscordClient Servant {  get; private set; }
         public static CommandsNextExtension Commands { get; private set; }
+        public static SlashCommandsExtension Slash { get; private set; }
         public static InteractivityExtension Interactivity;
         static async Task Main(string[] args)
         {
@@ -50,6 +52,7 @@ namespace Palantir
                 IgnoreExtraArguments = true,
                 CaseSensitive = false
             });
+            Slash = Client.UseSlashCommands();
 
             Console.WriteLine("Creating interactivity\n...");
             Interactivity = Client.UseInteractivity();
@@ -59,6 +62,7 @@ namespace Palantir
             Commands.CommandErrored += OnCommandErrored;
 
             Console.WriteLine("Registering commands\n...");
+            Slash.RegisterCommands<Palantir.Slash.UtilCommandss>(779435254225698827);
             Commands.RegisterCommands<Palantir.Commands.MiscCommands>();
             Commands.RegisterCommands<Palantir.Commands.EventCommands>();
             Commands.RegisterCommands<Palantir.Commands.ManagementCommands>();

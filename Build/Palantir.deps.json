@@ -8,9 +8,10 @@
     ".NETCoreApp,Version=v5.0": {
       "Palantir/1.0.0": {
         "dependencies": {
-          "DSharpPlus": "4.3.0-nightly-01120",
-          "DSharpPlus.CommandsNext": "4.3.0-nightly-01120",
-          "DSharpPlus.Interactivity": "4.3.0-nightly-01120",
+          "DSharpPlus": "4.3.0-nightly-01173",
+          "DSharpPlus.CommandsNext": "4.3.0-nightly-01173",
+          "DSharpPlus.Interactivity": "4.3.0-nightly-01173",
+          "DSharpPlus.SlashCommands": "4.3.0-nightly-01173",
           "Microsoft.EntityFrameworkCore.Sqlite": "3.1.4",
           "MoreLinq.Source.MoreEnumerable.Batch": "1.0.2",
           "Newtonsoft.Json": "13.0.1",
@@ -34,7 +35,7 @@
           }
         }
       },
-      "DSharpPlus/4.3.0-nightly-01120": {
+      "DSharpPlus/4.3.0-nightly-01173": {
         "dependencies": {
           "Emzi0767.Common": "2.6.2",
           "Microsoft.Extensions.Logging.Abstractions": "5.0.0",
@@ -48,32 +49,44 @@
         },
         "runtime": {
           "lib/netstandard2.0/DSharpPlus.dll": {
-            "assemblyVersion": "4.3.0.1120",
-            "fileVersion": "4.3.0.1120"
+            "assemblyVersion": "4.3.0.1173",
+            "fileVersion": "4.3.0.1173"
           }
         }
       },
-      "DSharpPlus.CommandsNext/4.3.0-nightly-01120": {
+      "DSharpPlus.CommandsNext/4.3.0-nightly-01173": {
         "dependencies": {
-          "DSharpPlus": "4.3.0-nightly-01120",
+          "DSharpPlus": "4.3.0-nightly-01173",
           "Microsoft.Extensions.DependencyInjection": "5.0.1"
         },
         "runtime": {
           "lib/netstandard2.0/DSharpPlus.CommandsNext.dll": {
-            "assemblyVersion": "4.3.0.1120",
-            "fileVersion": "4.3.0.1120"
+            "assemblyVersion": "4.3.0.1173",
+            "fileVersion": "4.3.0.1173"
           }
         }
       },
-      "DSharpPlus.Interactivity/4.3.0-nightly-01120": {
+      "DSharpPlus.Interactivity/4.3.0-nightly-01173": {
         "dependencies": {
           "ConcurrentHashSet": "1.1.0",
-          "DSharpPlus": "4.3.0-nightly-01120"
+          "DSharpPlus": "4.3.0-nightly-01173"
         },
         "runtime": {
           "lib/netstandard2.0/DSharpPlus.Interactivity.dll": {
-            "assemblyVersion": "4.3.0.1120",
-            "fileVersion": "4.3.0.1120"
+            "assemblyVersion": "4.3.0.1173",
+            "fileVersion": "4.3.0.1173"
+          }
+        }
+      },
+      "DSharpPlus.SlashCommands/4.3.0-nightly-01173": {
+        "dependencies": {
+          "DSharpPlus": "4.3.0-nightly-01173",
+          "Microsoft.Extensions.DependencyInjection": "5.0.1"
+        },
+        "runtime": {
+          "lib/netstandard2.0/DSharpPlus.SlashCommands.dll": {
+            "assemblyVersion": "4.3.0.1173",
+            "fileVersion": "4.3.0.1173"
           }
         }
       },
@@ -1233,26 +1246,33 @@
       "path": "concurrenthashset/1.1.0",
       "hashPath": "concurrenthashset.1.1.0.nupkg.sha512"
     },
-    "DSharpPlus/4.3.0-nightly-01120": {
+    "DSharpPlus/4.3.0-nightly-01173": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-anm3biNJuQQz0kEY/Iz5ACEkB8/W2Jnfj21dRVsVGX+kLmXJL+PxSnw8I/OzKYHVOxyDeo3Pal6xlmG+UR1VoA==",
-      "path": "dsharpplus/4.3.0-nightly-01120",
-      "hashPath": "dsharpplus.4.3.0-nightly-01120.nupkg.sha512"
+      "sha512": "sha512-CWJ80m5NUGLBe79YDlZm2jO7Lelpjue1UyVWrEZm9QIudzLm/3SEXZk0NfgsBV/KSbCvrq0vxp8gKw9BymiLMw==",
+      "path": "dsharpplus/4.3.0-nightly-01173",
+      "hashPath": "dsharpplus.4.3.0-nightly-01173.nupkg.sha512"
     },
-    "DSharpPlus.CommandsNext/4.3.0-nightly-01120": {
+    "DSharpPlus.CommandsNext/4.3.0-nightly-01173": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-1aX6dCOgAIXFK4zPPtQXmn8nFF7as3bXS5QpjM6LHL5SV1jlVh5QFz/Msf9HoLgGMPDAz+2kpiFHraRADCpLYA==",
-      "path": "dsharpplus.commandsnext/4.3.0-nightly-01120",
-      "hashPath": "dsharpplus.commandsnext.4.3.0-nightly-01120.nupkg.sha512"
+      "sha512": "sha512-MzKYHbLnoeDqu9FPkWMSytYnoln3FtXutEm6QBOcyWXmIpUtD605jiCluYlpVBTCX369QhkG2aPI5v1ugYL28g==",
+      "path": "dsharpplus.commandsnext/4.3.0-nightly-01173",
+      "hashPath": "dsharpplus.commandsnext.4.3.0-nightly-01173.nupkg.sha512"
     },
-    "DSharpPlus.Interactivity/4.3.0-nightly-01120": {
+    "DSharpPlus.Interactivity/4.3.0-nightly-01173": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-n9FKCEdkCdp8xxaG0OfV1tmZ7ORAOKotZG0d+GcckX0SDGeAF7byOHpG8FEnBL6V1uI7gIDXYZNP0wTgJg9rZg==",
-      "path": "dsharpplus.interactivity/4.3.0-nightly-01120",
-      "hashPath": "dsharpplus.interactivity.4.3.0-nightly-01120.nupkg.sha512"
+      "sha512": "sha512-9qvsw79+n00gUS7vbftceMdgtgt2g3YWUM2OYG5JgZFjoF6f+vNf6MfsrWIXHC713RNtW940m6Nx/5opox4nmg==",
+      "path": "dsharpplus.interactivity/4.3.0-nightly-01173",
+      "hashPath": "dsharpplus.interactivity.4.3.0-nightly-01173.nupkg.sha512"
+    },
+    "DSharpPlus.SlashCommands/4.3.0-nightly-01173": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-DRiA/e0ivWMb5/UqbXNsRA5PxVqF1xSv9lwUs670evlbD6YMUWZdVCbOZbYy8FGiMEFdHvvg4DXNtKEfMNRfYA==",
+      "path": "dsharpplus.slashcommands/4.3.0-nightly-01173",
+      "hashPath": "dsharpplus.slashcommands.4.3.0-nightly-01173.nupkg.sha512"
     },
     "Emzi0767.Common/2.6.2": {
       "type": "package",
