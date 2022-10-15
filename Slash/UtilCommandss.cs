@@ -34,9 +34,10 @@ namespace Palantir.Slash
             double mins = Math.Floor(average / 60);
             double secs = Math.Floor(average - mins * 60);
 
-            var message = "ATM, drops appear in an average frequency of about " + mins + "min " + secs + "s.\n\n" + QuartzJobs.StatusUpdaterJob.currentOnlineIDs + " people are playing.\n\nFollowing boosts are active:\n" + boosts + "\n\nYou can boost once a week with `>dropboost`.";
-            await context.CreateResponseAsync(InteractionResponseType.DeferredChannelMessageWithSource);
-            await Program.SendEmbed(context.Channel, "Current Drop Rate",message);
+            await context.CreateResponseAsync(InteractionResponseType.DeferredChannelMessageWithSource, new DiscordInteractionResponseBuilder().AddEmbed(Program.PalantirEmbed(
+                 "Current Drop Rate",
+                 "ATM, drops appear in an average frequency of about " + mins + "min " + secs + "s.\n\n" + QuartzJobs.StatusUpdaterJob.currentOnlineIDs + " people are playing.\n\nFollowing boosts are active:\n" + boosts + "\n\nYou can boost once a week with `>dropboost`."
+            )));
         }
 
     }

@@ -232,6 +232,14 @@ namespace Palantir
             return;
         }
 
+        public static DiscordEmbed PalantirEmbed(string title, string message)
+        {
+            return new DiscordEmbedBuilder()
+                .WithColor(DiscordColor.Magenta)
+                .WithTitle(title)
+                .WithDescription(message);
+        }
+
         public static void LogError(string message, Exception e)
         {
             int line = new StackTrace(e, true).GetFrame(0).GetFileLineNumber();
