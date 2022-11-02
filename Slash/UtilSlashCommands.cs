@@ -70,10 +70,13 @@ namespace Palantir.Slash
 
                 var chooseMessage = new DiscordInteractionResponseBuilder()
                     .WithContent("> **Customize your Dropboost**\n> \n> You have `" + memberAvailableSplits + "` Splits available.\n> Using splits, you can power up your boost. \n> Use `>splits` to learn more about your Splits.\n> \n> `🔥 Intensity: +2 Splits => +0.1 factor`\n> `⌛ Duration:  +1 Split  => +20min boost`\n> `💤 Cooldown:  +1 Split  => -12hrs until next boost`\n> _ _");
+                var chooseMessageEdit = new DiscordMessageBuilder()
+                    .WithContent("> **Customize your Dropboost**\n> \n> You have `" + memberAvailableSplits + "` Splits available.\n> Using splits, you can power up your boost. \n> Use `>splits` to learn more about your Splits.\n> \n> `🔥 Intensity: +2 Splits => +0.1 factor`\n> `⌛ Duration:  +1 Split  => +20min boost`\n> `💤 Cooldown:  +1 Split  => -12hrs until next boost`\n> _ _");
 
                 Action<string, bool> updateComponents = (string starttext, bool disable) =>
                 {
                     chooseMessage.ClearComponents();
+                    chooseMessageEdit.ClearComponents();
 
                     var minusFactor = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Secondary, "-fac", "-", disable);
                     var plusFactor = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Secondary, "+fac", "+", disable);
@@ -90,6 +93,12 @@ namespace Palantir.Slash
                     var start = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Success, "start", starttext + " (" + (cooldownSplits + durationSplits + factorSplits) + "/" + memberAvailableSplits + " Splits selected)", disable);
 
                     chooseMessage
+                        .AddComponents(minusFactor, labelFactor, plusFactor)
+                        .AddComponents(minusDur, labelDur, plusDur)
+                        .AddComponents(minusCool, labelCool, plusCool)
+                        .AddComponents(start);
+
+                    chooseMessageEdit
                         .AddComponents(minusFactor, labelFactor, plusFactor)
                         .AddComponents(minusDur, labelDur, plusDur)
                         .AddComponents(minusCool, labelCool, plusCool)
@@ -112,7 +121,7 @@ namespace Palantir.Slash
                     bool boosted = Drops.AddBoost(login, factor, duration, cooldownRed, out boost);
 
                     updateComponents("You boosted! 🔥", true);
-                    await sent.ModifyAsync(chooseMessage);
+                    await sent.ModifyAsync(chooseMessageEdit);
                 }
 
                 if (now) await StartBoost();
@@ -123,7 +132,7 @@ namespace Palantir.Slash
                     if (reaction.TimedOut)
                     {
                         updateComponents("Timed out", true);
-                        await sent.ModifyAsync(chooseMessage);
+                        await sent.ModifyAsync(chooseMessageEdit);
                         break;
                     }
 
@@ -137,14 +146,14 @@ namespace Palantir.Slash
                     if (reaction.Result.Id == "+fac" && (durationSplits + factorSplits + cooldownSplits) < memberAvailableSplits - 1) factorSplits += 2;
                     if (reaction.Result.Id == "+cool" && (durationSplits + factorSplits + cooldownSplits) < memberAvailableSplits) cooldownSplits++;
 
-                    if (reaction.Result.Id == "start" || modifier == "now")
+                    if (reaction.Result.Id == "start" || now)
                     {
                         await StartBoost();
                         break;
                     }
 
                     updateComponents("Start Dropboost", false);
-                    context.ed
+                    await sent.ModifyAsync(chooseMessageEdit);
                 }
             }
         }
