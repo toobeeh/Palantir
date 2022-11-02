@@ -6,6 +6,7 @@ using MoreLinq;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,6 +15,33 @@ namespace Palantir.Slash
 {
     internal class UtilSlashCommands : ApplicationCommandModule
     {
+        public enum LeaderboardType
+        {
+            [ChoiceName("Bubbles")]
+            bubbles,
+            [ChoiceName("Drops")]
+            drops
+        }
+
+        public enum StatisticsTimespan
+        {
+            [ChoiceName("Day")]
+            day,
+            [ChoiceName("Week")]
+            week,
+            [ChoiceName("Month")]
+            month
+        }
+        public enum CalcMode
+        {
+            [ChoiceName("Bubbles")]
+            bubbles,
+            [ChoiceName("Rank")]
+            rank,
+            [ChoiceName("Sprite")]
+            sprite
+        }
+
         [SlashCommand("droprate", "Calculate the current rate in which in-game drops appear")]
         public async Task Droprate(InteractionContext context)
         {
@@ -89,12 +117,151 @@ namespace Palantir.Slash
             await context.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().AddEmbed(message));
         }
 
-        public enum LeaderboardType
+        [SlashCommand("statistics", "Show your earned bubbles over time.")]
+        public async Task Stat(InteractionContext context, [Option("Time", "The time span of the statistics")] StatisticsTimespan span = StatisticsTimespan.day)
         {
-            [ChoiceName("Bubbles")]
-            bubbles,
-            [ChoiceName("Drops")]
-            drops,
+            CultureInfo iv = CultureInfo.InvariantCulture;
+            string login = BubbleWallet.GetLoginOfMember(context.User.Id.ToString());
+            string msg = "```css\n";
+            QuartzJobs.BubbleTrace trace;
+            if (span == StatisticsTimespan.week)
+            {
+                trace = new QuartzJobs.BubbleTrace(login, 7 * 10);
+                trace.History = trace.History.Where(
+                    t => t.Key.DayOfWeek == DayOfWeek.Monday || t.Key == trace.History.Keys.Min() || t.Key == trace.History.Keys.Max()
+                    ).ToDictionary();
+                msg += " Weekly";
+            }
+            else if (span == StatisticsTimespan.month)
+            {
+                trace = new QuartzJobs.BubbleTrace(login);
+                trace.History = trace.History.Where(
+                     t => t.Key.Day == 1 || t.Key == trace.History.Keys.Min() || t.Key == trace.History.Keys.Max()
+                     ).ToDictionary();
+                msg += " Monthly";
+            }
+            else
+            {
+                trace = new QuartzJobs.BubbleTrace(login, 30);
+                msg += " Daily";
+            }
+
+            msg += " Bubble-Gain from " + Convert.ToDateTime(trace.History.Keys.Min()).ToString("M", iv) + " to " + Convert.ToDateTime(trace.History.Keys.Max()).ToString("M", iv) + "\n\n";
+            double offs = trace.History.Values.Min() * 0.8;
+            double res = (trace.History.Values.Max() - offs) / 45;
+            int prev = trace.History.Values.Min();
+
+            trace.History.ForEach(t =>
+            {
+                msg += (Convert.ToDateTime(t.Key)).ToString("dd.MM") + " " +
+                new string('█', (int)Math.Round((t.Value - offs) / res, 0)) +
+                (t.Value - prev > 0 ? "    +" + (t.Value - prev) : "") +
+                (trace.History.Keys.ToList().IndexOf(t.Key) == 0 || trace.History.Keys.ToList().IndexOf(t.Key) == trace.History.Count - 1 ? "    @" + t.Value : "") +
+                "\n";
+                prev = t.Value;
+            });
+            msg += "```\n";
+            int diff = trace.History.Values.Max() - trace.History.Values.Min();
+            int diffDays = (trace.History.Keys.Max() - trace.History.Keys.Min()).Days;
+            msg += "> ➜ Total gained: `" + diff + " Bubbles` \n";
+            double hours = (double)diff / 360;
+            msg += "> ➜ Equals `" + (TimeSpan.FromHours(hours).Days * 24 + TimeSpan.FromHours(hours).Hours).ToString() + "h "
+                + TimeSpan.FromHours(hours).Minutes.ToString() + "min "
+                + TimeSpan.FromHours(hours).Seconds.ToString() + "s` on skribbl.io\n";
+            msg += "> ➜ Average `" + (diff / diffDays) + " Bubbles` per day";
+
+            await context.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().WithContent(msg));
+        }
+
+        [SlashCommand("loss", "Calculate average event drop gift loss.")]
+        public async Task Loss(InteractionContext context, [Option("Drops", "The amount of gifted drops")] long drops)
+        {
+            int sum = 0;
+            for (int i = 0; i < 100; i++) sum += (new Random()).Next(0, (int)drops / 3 + 1);
+            string totalres = "";
+            await context.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().AddEmbed(Program.PalantirEmbed(
+                "Such a nerd...",
+                "With 100 random tries, an average of " + Math.Round(sum / 100.0, 2) + " Drops of " + drops + " gifted Drops is lost." + totalres
+            )));
+        }
+
+        [SlashCommand("themes", "Show verified typo themes")]
+        public async Task Themes(InteractionContext context, [Option("Theme", "Show details of a specific theme")] long id)
+        {
+            var embed = new DiscordEmbedBuilder();
+            PalantirDbContext db = new();
+            List<TypoThemeEntity> themes = db.Themes.Where(theme => !String.IsNullOrEmpty(theme.Theme)).ToList();
+            db.Dispose();
+
+            if (id <= 0 || id > themes.Count)
+            {
+                embed.WithTitle("Listing all **Typo Themes**:");
+                embed.WithDescription("Click a link to add the theme or use `>themes [id]` to view theme details!\nTo add your own theme, contact a Palantir mod.");
+                themes.ForEach((theme, index) =>
+                {
+                    embed.AddField("➜ " + theme.Name, "#" + (index + 1) + " - by `" + theme.Author + "` - https://typo.rip/t?ticket=" + theme.Ticket);
+                });
+            }
+            else
+            {
+                TypoThemeEntity theme = themes[(int)id - 1];
+                embed.WithTitle("Theme **" + theme.Name + "**");
+                embed.WithDescription(theme.Description);
+                embed.AddField("Add the theme:", "https://typo.rip/t?ticket=" + theme.Ticket);
+                embed.WithFooter("Created by " + theme.Author);
+                embed.WithImageUrl(theme.ThumbnailLanding);
+            }
+
+            await context.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().AddEmbed(embed));
+        }
+
+        [SlashCommand("calc", "Calculate how long it takes to reach bubbles, a sprite or a leaderboard rank")]
+        public async Task Calc(InteractionContext context, [Option("Mode", "What you want to reach with your bubbles")] CalcMode mode = CalcMode.bubbles, [Option("Goal", "The amount/rank/sprite to reach")] long target = 0)
+        {
+            double hours = 0;
+
+            string login = BubbleWallet.GetLoginOfMember(context.User.Id.ToString());
+            switch (mode)
+            {
+                case CalcMode.sprite:
+                    List<Sprite> available = BubbleWallet.GetAvailableSprites();
+                    Sprite sprite = available.FirstOrDefault(s => (long)s.ID == target);
+                    if (sprite.EventDropID > 0) { await Program.SendEmbed(context.Channel, "This is an event sprite!", "It can only be bought with event drops."); return; }
+                    hours = ((double)sprite.Cost - BubbleWallet.CalculateCredit(login, context.User.Id.ToString())) / 360;
+                    await context.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().AddEmbed(Program.PalantirEmbed(
+                        "🔮  Time to get " + sprite.Name + ":",
+                        (TimeSpan.FromHours(hours).Days * 24 + TimeSpan.FromHours(hours).Hours).ToString() + "h "
+                        + TimeSpan.FromHours(hours).Minutes.ToString() + "min "
+                        + TimeSpan.FromHours(hours).Seconds.ToString() + "s on skribbl.io left."
+                    )));
+                    break;
+                case CalcMode.bubbles:
+                    hours = (double)target / 360;
+                    await context.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().AddEmbed(Program.PalantirEmbed(
+                       "🔮  Time to get " + target + " more Bubbles:",
+                        (TimeSpan.FromHours(hours).Days * 24 + TimeSpan.FromHours(hours).Hours).ToString() + "h "
+                        + TimeSpan.FromHours(hours).Minutes.ToString() + "min "
+                        + TimeSpan.FromHours(hours).Seconds.ToString() + "s on skribbl.io left."
+                    )));
+                    break;
+                case CalcMode.rank:
+                    List<MemberEntity> members = Program.Feanor.GetGuildMembers(context.Guild.Id.ToString()).OrderByDescending(m => m.Bubbles).Where(m => m.Bubbles > 0).ToList();
+                    hours = ((double)members[Convert.ToInt32(target) - 1].Bubbles - BubbleWallet.GetBubbles(login)) / 360;
+                    await Program.SendEmbed(context.Channel, "🔮  Time catch up #" + target + ":",
+                        (TimeSpan.FromHours(hours).Days * 24 + TimeSpan.FromHours(hours).Hours).ToString() + "h "
+                        + TimeSpan.FromHours(hours).Minutes.ToString() + "min "
+                        + TimeSpan.FromHours(hours).Seconds.ToString() + "s on skribbl.io left.");
+                    await context.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().AddEmbed(Program.PalantirEmbed(
+                       "🔮  Time catch up #" + target + ":",
+                         (TimeSpan.FromHours(hours).Days * 24 + TimeSpan.FromHours(hours).Hours).ToString() + "h "
+                        + TimeSpan.FromHours(hours).Minutes.ToString() + "min "
+                        + TimeSpan.FromHours(hours).Seconds.ToString() + "s on skribbl.io left."
+                    )));
+                    break;
+                default:
+                    await Program.SendEmbed(context.Channel, "🔮  Calculate following things:", "➜ `/calc sprite 1` Calculate remaining hours to get Sprite 1 depending on your actual Bubbles left.\n➜ `/calc bubbles 1000` Calculate remaining hours to get 1000 more bubbles.\n➜ `/calc rank 4` Calculate remaining hours to catch up the 4rd ranked member.");
+                    break;
+            }
         }
 
         [SlashCommand("leaderboard", "See who's got the most bubbles.")]
