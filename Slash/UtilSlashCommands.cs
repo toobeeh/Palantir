@@ -205,7 +205,7 @@ namespace Palantir.Slash
         }
 
         [SlashCommand("inventory", "View an overview of your Palantir profile")]
-        public async Task Inventory(InteractionContext context, [Option("Shown sprites", "Set how many sprites are shown per column")] long batchsize = 7)
+        public async Task Inventory(InteractionContext context, [Option("Column-size", "Set how many sprites are shown per column")] long batchsize = 7)
         {
             string login = BubbleWallet.GetLoginOfMember(context.User.Id.ToString());
             int drops = BubbleWallet.GetDrops(login, context.User.Id.ToString());
