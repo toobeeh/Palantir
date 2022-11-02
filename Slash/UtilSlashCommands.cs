@@ -120,6 +120,8 @@ namespace Palantir.Slash
         [SlashCommand("statistics", "Show your earned bubbles over time.")]
         public async Task Stat(InteractionContext context, [Option("Time", "The time span of the statistics")] StatisticsTimespan span = StatisticsTimespan.day)
         {
+            await context.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().WithContent("Processing data..."));
+
             CultureInfo iv = CultureInfo.InvariantCulture;
             string login = BubbleWallet.GetLoginOfMember(context.User.Id.ToString());
             string msg = "```css\n";
@@ -170,7 +172,7 @@ namespace Palantir.Slash
                 + TimeSpan.FromHours(hours).Seconds.ToString() + "s` on skribbl.io\n";
             msg += "> ➜ Average `" + (diff / diffDays) + " Bubbles` per day";
 
-            await context.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().WithContent(msg));
+            await (await context.GetOriginalResponseAsync()).ModifyAsync(msg);
         }
 
         [SlashCommand("loss", "Calculate average event drop gift loss.")]
@@ -186,7 +188,7 @@ namespace Palantir.Slash
         }
 
         [SlashCommand("themes", "Show verified typo themes")]
-        public async Task Themes(InteractionContext context, [Option("Theme", "Show details of a specific theme")] long id)
+        public async Task Themes(InteractionContext context, [Option("Theme", "Show details of a specific theme")] long id = 0)
         {
             var embed = new DiscordEmbedBuilder();
             PalantirDbContext db = new();
@@ -247,10 +249,6 @@ namespace Palantir.Slash
                 case CalcMode.rank:
                     List<MemberEntity> members = Program.Feanor.GetGuildMembers(context.Guild.Id.ToString()).OrderByDescending(m => m.Bubbles).Where(m => m.Bubbles > 0).ToList();
                     hours = ((double)members[Convert.ToInt32(target) - 1].Bubbles - BubbleWallet.GetBubbles(login)) / 360;
-                    await Program.SendEmbed(context.Channel, "🔮  Time catch up #" + target + ":",
-                        (TimeSpan.FromHours(hours).Days * 24 + TimeSpan.FromHours(hours).Hours).ToString() + "h "
-                        + TimeSpan.FromHours(hours).Minutes.ToString() + "min "
-                        + TimeSpan.FromHours(hours).Seconds.ToString() + "s on skribbl.io left.");
                     await context.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().AddEmbed(Program.PalantirEmbed(
                        "🔮  Time catch up #" + target + ":",
                          (TimeSpan.FromHours(hours).Days * 24 + TimeSpan.FromHours(hours).Hours).ToString() + "h "
