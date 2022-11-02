@@ -205,7 +205,7 @@ namespace Palantir.Slash
         }
 
         [SlashCommand("inventory", "View an overview of your Palantir profile")]
-        public async Task Inventory(InteractionContext context, int batchsize = 7)
+        public async Task Inventory(InteractionContext context, long batchsize = 7)
         {
             string login = BubbleWallet.GetLoginOfMember(context.User.Id.ToString());
             int drops = BubbleWallet.GetDrops(login, context.User.Id.ToString());
@@ -278,7 +278,7 @@ namespace Palantir.Slash
             DiscordEmbedField sleft = embed.AddField("\u200b ", "\u200b ", true).Fields.Last();
             DiscordEmbedField smiddle = embed.AddField("\u200b ", "\u200b ", true).Fields.Last();
             DiscordEmbedField sright = embed.AddField("\u200b ", "\u200b ", true).Fields.Last();
-            var spritebatches = sprites.Batch(batchsize * 3);
+            var spritebatches = sprites.Batch((int)batchsize * 3);
 
             if (inventory.Count < 5) embed.AddField("Command help: ", "Use `>use [id]` to select your Sprite!\n`>use 0` will set no Sprite.\nBuy a Sprite with `>buy [id]`.\nSpecial Sprites :sparkles: replace your whole avatar! \nRainbow Sprites :rainbow: can be color-customized! (`>rainbow`) ");
             embed.AddField("\u200b", "[View all Sprites](https://typo.rip/#sprites)");
