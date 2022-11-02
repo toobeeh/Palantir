@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 
 namespace Palantir.Slash
 {
-    [SlashCommandGroup(">", "Commands for Palantir")]
     internal class AdminSlashCommands : ApplicationCommandModule
     {
         [SlashCommand("hardreboot", "Update and reboot Palantir")]
