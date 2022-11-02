@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Palantir.Slash
 {
-    internal class SpriteSlashCommands
+    internal class SpriteSlashCommands : ApplicationCommandModule
     {
         [SlashCommand("buy", "Buy a sprite")]
         public async Task BuySprite(InteractionContext context, [Option("ID", "The sprite ID - find all sprites on https://typo.rip")] long sprite)
