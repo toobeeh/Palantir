@@ -1,7 +1,9 @@
 ﻿using DSharpPlus;
 using DSharpPlus.Entities;
+using DSharpPlus.Interactivity;
 using DSharpPlus.SlashCommands;
 using MoreLinq;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,6 +39,188 @@ namespace Palantir.Slash
                  "Current Drop Rate",
                  "ATM, drops appear in an average frequency of about " + mins + "min " + secs + "s.\n\n" + QuartzJobs.StatusUpdaterJob.currentOnlineIDs + " people are playing.\n\nFollowing boosts are active:\n" + boosts + "\n\nYou can boost once a week with `>dropboost`."
             )));
+        }
+
+        [SlashCommand("splits", "Show your earned boost splits.")]
+        public async Task Splits(InteractionContext context)
+        {
+            PermissionFlag flags = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
+            int login = Convert.ToInt32(BubbleWallet.GetLoginOfMember(context.User.Id.ToString()));
+
+            var memberSplits = BubbleWallet.GetMemberSplits(login, flags);
+
+            var message = new DiscordEmbedBuilder();
+            message.WithTitle(context.User.Username + "s Split Achievements");
+            message.WithColor(DiscordColor.Magenta);
+
+            if (memberSplits.Count == 0)
+            {
+                message.WithDescription("You haven't earned any Splits yet :(\n\nSplits are used to make your Drop Boosts more powerful.\nYou get them by occasional giveaways/challenges or by competing in Drop Leagues.");
+            }
+            else
+            {
+                message.AddField(memberSplits.Sum(s => s.Value).ToString(), "total earned Splits\n_ _");
+
+                memberSplits.ForEach(split =>
+                {
+                    message.AddField("➜ " + split.Name + (split.RewardDate != null && split.RewardDate != "" ? "  `" + split.RewardDate + "`" : "") + (split.Expired ? " / *expired*" : ""), split.Description + "\n *worth " + split.Value + " Splits*" + (split.Comment != null && split.Comment.Length > 0 ? " ~ `" + split.Comment + "`" : ""));
+                });
+
+                message.WithDescription("You can use your Splits to customize your Drop Boosts.\nChoose the boost intensity, duration or cooldown individually when using `>dropboost`\n_ _");
+            }
+
+            await context.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().AddEmbed(message));
+        }
+
+        public enum LeaderboardType
+        {
+            [ChoiceName("Bubbles")]
+            bubbles,
+            [ChoiceName("Drops")]
+            drops,
+        }
+
+
+        [SlashCommand("leaderboard", "See who's got the most bubbles.")]
+        public async Task Leaderboard(InteractionContext context, [Option("Ranking", "The leaderboard ranking type")]LeaderboardType type = LeaderboardType.bubbles)
+        {
+            Program.Feanor.ValidateGuildPalantir(context.Guild.Id.ToString());
+            Program.Feanor.UpdateMemberGuilds();
+            //DiscordMessage leaderboard = await context.RespondAsync("`⏱️` Loading members of `" + context.Guild.Name + "`...");
+            var interactivity = Program.Interactivity;
+            List<MemberEntity> members = Program.Feanor.GetGuildMembers(context.Guild.Id.ToString()).OrderByDescending(m => (type == LeaderboardType.drops ? m.Drops : m.Bubbles)).Where(m => m.Bubbles > 0).ToList();
+            List<IEnumerable<MemberEntity>> memberBatches = members.Batch(9).ToList();
+            List<string> ranks = new List<string>();
+            members.ForEach(member => {
+                if (!(new PermissionFlag((byte)member.Flag)).BubbleFarming) ranks.Add(member.Login);
+            });
+            int page = 0;
+
+            DiscordMessageBuilder leaderboard = new DiscordMessageBuilder();
+            DiscordButtonComponent btnnext, btnprev;
+            DiscordSelectComponent generateSelectWithDefault(int selected = 0, bool disabled = false)
+            {
+                var truncBatches = new List<IEnumerable<MemberEntity>>();
+                if (memberBatches.Count >= 25)
+                {
+                    int right = selected + 12;
+                    if (right >= memberBatches.Count) right = memberBatches.Count - 1;
+                    int left = right - 25;
+                    if (left < 0)
+                    {
+                        left = 0;
+                        right = 25;
+                    }
+
+                    truncBatches = memberBatches.Skip(left).Take(25).ToList();
+                }
+                else truncBatches = memberBatches;
+
+                return new DiscordSelectComponent(
+                    "lbdselect",
+                    "Select Page",
+                    truncBatches.ConvertAll(batch => new DiscordSelectComponentOption(
+                            "Page " + (memberBatches.IndexOf(batch) + 1).ToString(),
+                            "page" + memberBatches.IndexOf(batch).ToString(),
+                            "",
+                            memberBatches.IndexOf(batch) == selected
+                        )).ToArray(),
+                    disabled
+                );
+            }
+            DiscordSelectComponent selectIndex = generateSelectWithDefault();
+            btnnext = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Primary, "lbdnext", "Next Page");
+            btnprev = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Secondary, "lbdprev", "Previous Page");
+            leaderboard.WithContent("`⏱️` Loading members of `" + context.Guild.Name + "`...");
+            await context.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().WithContent("`⏱️` Loading members of `" + context.Guild.Name + "`..."));
+            var msg = await context.GetOriginalResponseAsync();
+
+           InteractivityResult <DSharpPlus.EventArgs.ComponentInteractionCreateEventArgs> press;
+            do
+            {
+                DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
+                embed.Title = "🔮  Leaderboard of " + context.Guild.Name;
+                embed.Color = DiscordColor.Magenta;
+                embed.WithDescription("`Note: This leaderboard does not account league drops!`");
+                IEnumerable<MemberEntity> memberBatch = memberBatches[page];
+                foreach (MemberEntity member in memberBatch)
+                {
+                    string name = "<@" + JsonConvert.DeserializeObject<Member>(member.Member).UserID + ">";
+                    PermissionFlag perm = new PermissionFlag((byte)member.Flag);
+                    if (perm.BubbleFarming)
+                    {
+                        embed.AddField("\u200b", "**`🚩` - " + name + "**\n `This player has been flagged as *bubble farming*`.", true);
+                    }
+                    else embed.AddField("\u200b", "**#" + (ranks.IndexOf(member.Login) + 1) + " - " + name + "**" + (perm.BotAdmin ? " \n`Admin` " : "") + (perm.Patron ? " \n`🎖️ Patron` " : "") + (perm.Patronizer ? " \n`🎁 Patronizer` " : "") + "\n🔮 " + BubbleWallet.GetBubbles(member.Login).ToString() + " Bubbles\n💧 " + BubbleWallet.GetDrops(member.Login, JsonConvert.DeserializeObject<Member>(Program.Feanor.GetMemberByLogin(member.Login).Member).UserID).ToString() + " Drops", true);
+                }
+                embed.WithFooter(context.Member.DisplayName + " can react within 10 mins to show the next page.");
+
+                leaderboard.Embed = embed.Build();
+                leaderboard.Content = "";
+                leaderboard.AddComponents(btnprev, btnnext).AddComponents(generateSelectWithDefault(page));
+                await msg.ModifyAsync(leaderboard);
+
+                press = await interactivity.WaitForEventArgsAsync<DSharpPlus.EventArgs.ComponentInteractionCreateEventArgs>(
+                    args => {
+                        if (args.Message.Id == msg.Id && args.User.Id != context.User.Id)
+                        {
+                            args.Interaction.CreateResponseAsync(DSharpPlus.InteractionResponseType.UpdateMessage);
+                            args.Interaction.CreateFollowupMessageAsync(
+                                new DiscordFollowupMessageBuilder().WithContent("Hands off!\nThat's not your interaction ;)").AsEphemeral(true)
+                            );
+                        }
+                        return args.Message.Id == msg.Id && args.User.Id == context.User.Id;
+                    }, TimeSpan.FromMinutes(10));
+                if (!press.TimedOut)
+                {
+                    await press.Result.Interaction.CreateResponseAsync(DSharpPlus.InteractionResponseType.UpdateMessage);
+                    if (press.Result.Id == "lbdprev") page--;
+                    else if (press.Result.Id == "lbdnext") page++;
+                    else if (press.Result.Interaction.Data.Values[0].StartsWith("page")) page = Convert.ToInt32(press.Result.Interaction.Data.Values[0].Replace("page", ""));
+                    if (page >= memberBatches.Count) page = 0;
+                    else if (page < 0) page = memberBatches.Count - 1;
+                    leaderboard.Clear();
+                }
+            }
+            while (!press.TimedOut);
+
+            leaderboard.ClearComponents();
+            await msg.ModifyAsync(leaderboard);
+        }
+
+        [SlashCommand("ping", "Show a ping statistic.")]
+        public async Task Ping(InteractionContext context)
+        {
+            System.Net.NetworkInformation.Ping ping = new System.Net.NetworkInformation.Ping();
+            long discordRTT = ping.Send("discord.gg", 100).RoundtripTime;
+
+            DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
+
+            embed.Title = "Latency results:";
+            embed.AddField("`🗄️` Database singe read", Program.Feanor.DatabaseReadTime(context.User.Id.ToString(), 1) + "ms");
+            embed.AddField("`🗂️` Database average for 100 reads", Program.Feanor.DatabaseReadTime(context.User.Id.ToString(), 100) + "ms");
+            embed.AddField("`🌐` Discord API request", Program.Client.Ping + "ms");
+            embed.AddField("`⌛` Discord.gg ping RTT", discordRTT + "ms");
+            await context.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().AddEmbed(embed));
+        }
+
+        [SlashCommand("about", "Show some nice information about the bot.")]
+        public async Task About(InteractionContext context)
+        {
+            DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
+
+            embed.Title = "About me";
+            embed.AddField("`🤖` Hi!", "I'm Palantir - I integrate skribbl typo into Discord. \nMy main task is to sell sprites and show you information what's going on with typo.");
+            embed.AddField("`👪` ", "Currently **" + Program.Feanor.PalantirTethers.Count + " ** servers are using me to show skribbl lobbies.");
+            int avgMembers = 0;
+            Program.Client.Guilds.ForEach(guild => avgMembers += guild.Value.MemberCount / Program.Client.Guilds.Count);
+            embed.AddField("`🗄️` ", "Overall **" + Program.Client.Guilds.Count + " ** servers invited me to join.\nIn average, these servers have " + avgMembers + " members.");
+            PalantirDbContext cont = new PalantirDbContext();
+            int members = cont.Members.Count();
+            cont.Dispose();
+            embed.AddField("`👥` ", "**" + members + " ** people have registered on Palantir.");
+            embed.AddField("`❤️` ", "**" + Program.Feanor.PatronCount + " ** Patrons are supporting Typo on Patreon.");
+            await context.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().AddEmbed(embed));
         }
 
         [SlashCommand("dropboost", "Boost the current droprate for a while")]
