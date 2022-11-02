@@ -98,7 +98,7 @@ namespace Palantir.Slash
         }
 
         [SlashCommand("leaderboard", "See who's got the most bubbles.")]
-        public async Task Leaderboard(InteractionContext context, [Option("Ranking", "The leaderboard ranking type")]LeaderboardType type = LeaderboardType.bubbles)
+        public async Task Leaderboard(InteractionContext context, [Option("Ranking", "The leaderboard ranking type")] LeaderboardType type = LeaderboardType.bubbles)
         {
             Program.Feanor.ValidateGuildPalantir(context.Guild.Id.ToString());
             Program.Feanor.UpdateMemberGuilds();
@@ -205,7 +205,7 @@ namespace Palantir.Slash
         }
 
         [SlashCommand("inventory", "View an overview of your Palantir profile")]
-        public async Task Inventory(InteractionContext context, long batchsize = 7)
+        public async Task Inventory(InteractionContext context, [Option("Shown sprites", "Set how many sprites are shown per column")] long batchsize = 7)
         {
             string login = BubbleWallet.GetLoginOfMember(context.User.Id.ToString());
             int drops = BubbleWallet.GetDrops(login, context.User.Id.ToString());
