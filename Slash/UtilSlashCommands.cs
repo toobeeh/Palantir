@@ -41,6 +41,23 @@ namespace Palantir.Slash
             )));
         }
 
+        [SlashCommand("invite", "Connect a Palantir account to this server.")]
+        public async Task Invite(InteractionContext context)
+        {
+            ObservedGuild guild = Program.Feanor.PalantirTethers.FirstOrDefault(g => g.PalantirEndpoint.GuildID == context.Guild.Id.ToString()).PalantirEndpoint;
+            if (guild is null)
+            {
+                await context.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().AddEmbed(Program.PalantirEmbed(
+                    "Aw, shoot :(", 
+                    "This server is not using Palantir yet :/\nVisit https://typo.rip#admin to find out how!")
+                ));
+            }
+            else
+            {
+                await context.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().WithContent("https://typo.rip/i?invite=" + guild.ObserveToken));
+            }
+        }
+
         [SlashCommand("splits", "Show your earned boost splits.")]
         public async Task Splits(InteractionContext context)
         {
@@ -79,7 +96,6 @@ namespace Palantir.Slash
             [ChoiceName("Drops")]
             drops,
         }
-
 
         [SlashCommand("leaderboard", "See who's got the most bubbles.")]
         public async Task Leaderboard(InteractionContext context, [Option("Ranking", "The leaderboard ranking type")]LeaderboardType type = LeaderboardType.bubbles)
@@ -186,6 +202,145 @@ namespace Palantir.Slash
 
             leaderboard.ClearComponents();
             await msg.ModifyAsync(leaderboard);
+        }
+
+        [SlashCommand("inventory", "View an overview of your Palantir profile")]
+        public async Task Inventory(InteractionContext context, int batchsize = 7)
+        {
+            string login = BubbleWallet.GetLoginOfMember(context.User.Id.ToString());
+            int drops = BubbleWallet.GetDrops(login, context.User.Id.ToString());
+            int bubbles = BubbleWallet.GetBubbles(login);
+            int credit = BubbleWallet.CalculateCredit(login, context.User.Id.ToString());
+            List<SpriteProperty> inventory = BubbleWallet.GetInventory(login).OrderBy(s => s.ID).ToList();
+            PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
+            int splits = BubbleWallet.GetMemberSplits(Convert.ToInt32(login), perm).Sum(s => s.Value);
+            int regLeagueDrops = League.GetLeagueEventDropWeights(context.User.Id.ToString()).Count;
+            int leagueDrops = regLeagueDrops + League.GetLeagueDropWeights(context.User.Id.ToString()).Count;
+
+            DiscordEmbedBuilder embed = new DiscordEmbedBuilder()
+                .WithColor(DiscordColor.Magenta)
+                .WithTitle("🔮  " + context.User.Username + "s Inventory");
+
+            List<string> sprites = new List<string>();
+            inventory.OrderBy(s => s.ID).ToList().ForEach(s =>
+            {
+                sprites.Add(
+                    "**#" + s.ID + "** -" + s.Name
+                    + (s.Special ? " :sparkles: " : "")
+                    + (s.Rainbow ? " :rainbow: " : ""));
+            });
+
+            TimeSpan boostCooldown = Drops.BoostCooldown(Convert.ToInt32(login));
+            embed.AddField("\u200b ",
+                "`🔮` **" + credit + " ** / " + bubbles + " Bubbles\n"
+                + "`💧` **" + drops + "** Drops caught\n"
+                + (splits > 0 ? "`🏆` **" + splits + "** Splits rewarded\n" : "")
+                + "`🔥` " + (boostCooldown.TotalSeconds > 0 ? "Next `>dropboost` in " + boostCooldown.ToString(@"dd\d\ hh\h\ mm\m\ ss\s") : "`>dropboost` available!")
+                + (leagueDrops > 0 ? "\n\n<a:league_rnk1:987699431350632518> **" + leagueDrops + "** League Drops caught\n" : ""));
+
+            string flags = "";
+            if (perm.BubbleFarming) flags += "`🚩 Bubble Farming`\n";
+            if (perm.BotAdmin) flags += "`✔️ Verified cool guy aka Admin`\n";
+            if (perm.Moderator) flags += "`🛠️ Palantir Moderator`\n";
+            if (perm.CloudUnlimited || perm.Patron) flags += "`📦 Unlimited cloud storage`\n";
+            if (BubbleWallet.IsEarlyUser(login)) flags += "`💎 Early User`\n";
+            if (perm.Patron) flags += "`💖️ Patreon Subscriber`\n";
+            if (perm.Patronizer) flags += "`🎁 Patronizer`\n";
+            if (flags.Length > 0) embed.AddField("Flags:", flags);
+
+            List<SceneProperty> sceneInv = BubbleWallet.GetSceneInventory(login, false, false);
+            if (sceneInv.Count > 0)
+            {
+                embed.AddField("Scenes:", sceneInv.OrderBy(scene => scene.ID).ToList().ConvertAll(scene => "#" + scene.ID + " - " + scene.Name + (scene.Activated ? " (active)" : "")).ToDelimitedString("\n"));
+            }
+
+            string selected = "";
+            inventory.Where(spt => spt.Activated).OrderBy(slot => slot.Slot).ForEach(sprite =>
+            {
+                selected += "Slot " + sprite.Slot + ": " + sprite.Name + " (#" + sprite.ID + ")\n";
+            });
+            if (drops >= 1000 || perm.BotAdmin || perm.Patron) selected += "\n<a:chest:810521425156636682> **" + (perm.BotAdmin ? "Infinite" : ((drops + regLeagueDrops) / 1000 + 1 + (perm.Patron ? 1 : 0)).ToString()) + " ** Sprite slots available.";
+            embed.AddField("Selected Sprites:", selected.Length > 0 ? selected : "None");
+
+            if (inventory.Where(spt => spt.Activated).Count() == 1)
+                embed.ImageUrl = inventory.FirstOrDefault(s => s.Activated).URL;
+            if (inventory.Where(spt => spt.Activated).Count() > 1)
+            {
+                embed.ImageUrl = SpriteComboImage.GenerateImage(
+                    SpriteComboImage.GetSpriteSources(
+                        inventory.Where(s => s.Activated).OrderBy(s => s.Slot).Select(s => s.ID).ToArray(),
+                        BubbleWallet.GetMemberRainbowShifts(login)
+                    ),
+                    "/home/pi/Webroot/files/combos/")
+                .Replace(@"/home/pi/Webroot/", "https://tobeh.host/");
+            }
+
+            DiscordEmbedField sleft = embed.AddField("\u200b ", "\u200b ", true).Fields.Last();
+            DiscordEmbedField smiddle = embed.AddField("\u200b ", "\u200b ", true).Fields.Last();
+            DiscordEmbedField sright = embed.AddField("\u200b ", "\u200b ", true).Fields.Last();
+            var spritebatches = sprites.Batch(batchsize * 3);
+
+            if (inventory.Count < 5) embed.AddField("Command help: ", "Use `>use [id]` to select your Sprite!\n`>use 0` will set no Sprite.\nBuy a Sprite with `>buy [id]`.\nSpecial Sprites :sparkles: replace your whole avatar! \nRainbow Sprites :rainbow: can be color-customized! (`>rainbow`) ");
+            embed.AddField("\u200b", "[View all Sprites](https://typo.rip/#sprites)");
+
+            DiscordInteractionResponseBuilder response = new DiscordInteractionResponseBuilder();
+            DiscordMessageBuilder responseEdit = new DiscordMessageBuilder();
+
+            Action<string, bool> setComponents = (string navText, bool disabled) =>
+            {
+                response.ClearComponents();
+                responseEdit.ClearComponents();
+                response.AddComponents(new DiscordButtonComponent(DSharpPlus.ButtonStyle.Secondary, "last", "Previous", disabled),
+                    new DiscordButtonComponent(DSharpPlus.ButtonStyle.Secondary, "nav", navText, true),
+                    new DiscordButtonComponent(DSharpPlus.ButtonStyle.Primary, "next", "Next", disabled));
+                responseEdit.AddComponents(new DiscordButtonComponent(DSharpPlus.ButtonStyle.Secondary, "last", "Previous", disabled),
+                   new DiscordButtonComponent(DSharpPlus.ButtonStyle.Secondary, "nav", navText, true),
+                   new DiscordButtonComponent(DSharpPlus.ButtonStyle.Primary, "next", "Next", disabled));
+            };
+            setComponents("Navigate Sprites", false);
+            DiscordMessage sent = null;
+            InteractivityResult<DSharpPlus.EventArgs.ComponentInteractionCreateEventArgs> result;
+            int direction = 0;
+            IEnumerable<string> firstbatch;
+            do
+            {
+                // rotate batch so relevant is always first index 1 2 3 4 5 6 7 8 9 10 11 
+                spritebatches = direction == 0 ? spritebatches : direction > 0 ?
+                    spritebatches.Skip(1).Concat(spritebatches.Take(1)) :
+                    Enumerable.TakeLast(spritebatches, 1).Concat(Enumerable.SkipLast(spritebatches, 1));
+
+                firstbatch = spritebatches.Count() > 0 ? spritebatches.First() : Enumerable.Empty<string>();
+                List<string>[] fielded = new List<string>[3];
+                fielded[0] = firstbatch.ToList();
+                for (int i = 1; i < 3; i++)
+                {
+                    fielded[i] = Enumerable.Skip(fielded[i - 1], firstbatch.Count() / 3).ToList();
+                    fielded[i - 1] = fielded[i - 1].Take(fielded[i - 1].Count() - fielded[i].Count()).ToList();
+                }
+                sleft.Value = fielded[0].Count() > 0 ? fielded[0].ToDelimitedString("\n") : "\u200b ";
+                smiddle.Value = fielded[1].Count() > 0 ? fielded[1].ToDelimitedString("\n") : "\u200b ";
+                sright.Value = fielded[2].Count() > 0 ? fielded[2].ToDelimitedString("\n") : "\u200b ";
+
+                setComponents("Navigate Sprites (" + firstbatch.Count() + "/" + spritebatches.Flatten().Count() + ")", false);
+                response.AddEmbed(embed.Build());
+                responseEdit.AddEmbed(embed.Build());
+                if(sent is null)
+                {
+                    await context.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, response);
+                    sent = await context.GetOriginalResponseAsync();
+                }
+                else await sent.ModifyAsync(responseEdit);
+
+                result = await Program.Interactivity.WaitForButtonAsync(sent, context.User, TimeSpan.FromMinutes(2));
+                if (!result.TimedOut)
+                {
+                    await result.Result.Interaction.CreateResponseAsync(DSharpPlus.InteractionResponseType.UpdateMessage);
+                    direction = result.Result.Id == "next" ? 1 : -1;
+                }
+            }
+            while (!result.TimedOut);
+            setComponents("Navigate Sprites (" + firstbatch.Count() + "/" + spritebatches.Flatten().Count() + ")", true);
+            await sent.ModifyAsync(responseEdit);
         }
 
         [SlashCommand("ping", "Show a ping statistic.")]
