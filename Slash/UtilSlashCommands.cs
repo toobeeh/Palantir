@@ -40,7 +40,7 @@ namespace Palantir.Slash
         }
 
         [SlashCommand("dropboost", "Boost the current droprate for a while")]
-        public async Task Dropboost(InteractionContext context, [Option("factor", "Amount of splits to increase boost factor")] int factorSplits = 0, [Option("duration", "Amount of splits to increase boost duration")] int durationSplits = 0, [Option("cooldown", "Amount of splits to lower boost cooldown")] int cooldownSplits = 0, [Option("instant", "Set to start the boost instantly")] bool now = false)
+        public async Task Dropboost(InteractionContext context, [Option("factor", "Amount of splits to increase boost factor")] long factorSplits = 0, [Option("duration", "Amount of splits to increase boost duration")] long durationSplits = 0, [Option("cooldown", "Amount of splits to lower boost cooldown")] long cooldownSplits = 0, [Option("instant", "Set to start the boost instantly")] bool now = false)
         {
             PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
             if (perm.Permanban)
@@ -115,10 +115,10 @@ namespace Palantir.Slash
                     BoostEntity boost;
 
                     factor = factor + factorSplits * 0.05;
-                    int duration = (60 + durationSplits * 20) * 60;
-                    int cooldownRed = 60 * 60 * 12 * cooldownSplits;
+                    long duration = (60 + durationSplits * 20) * 60;
+                    long cooldownRed = 60 * 60 * 12 * cooldownSplits;
 
-                    bool boosted = Drops.AddBoost(login, factor, duration, cooldownRed, out boost);
+                    bool boosted = Drops.AddBoost(login, factor, Convert.ToInt32(duration), Convert.ToInt32(cooldownRed), out boost);
 
                     updateComponents("You boosted! 🔥", true);
                     await sent.ModifyAsync(chooseMessageEdit);
