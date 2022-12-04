@@ -265,7 +265,7 @@ namespace Palantir.Commands
                 "**Starting the " + giveawayname + "!**\n\nPeople will be eliminated once in " + (timeoutMilliSec / 1000 / 60) + " minutes, the last " + winners + " participants are the winners.");
 
             var msg = await(await Program.Client.GetChannelAsync(channelID)).GetMessageAsync(messageID);
-            var reactions = await msg.GetReactionsAsync(reactionEmoji, 50);
+            var reactions = await msg.GetReactionsAsync(reactionEmoji, 100);
 
             while(reactions.Count > winners)
             {
