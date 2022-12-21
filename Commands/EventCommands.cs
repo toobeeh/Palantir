@@ -38,6 +38,7 @@ namespace Palantir.Commands
                 eventdrops.ForEach(e =>
                 {
                     List<SpritesEntity> sprites = Events.GetEventSprites(e.EventDropID);
+                    eventsprites.AddRange(sprites);
                     dropList += "\n**" + e.Name + " Drop**  (" + BubbleWallet.GetEventCredit(login, e.EventDropID) + " caught) (`#" + e.EventDropID + "`)";
                     int spent = inv.Where(spt => sprites.Any(eventsprite => eventsprite.ID == spt.ID)).Sum(spt => spt.Cost);
                     sprites.OrderBy(sprite => sprite.ID).ForEach(sprite =>
