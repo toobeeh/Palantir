@@ -192,21 +192,31 @@ namespace Palantir.Commands
             string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
             int credit = BubbleWallet.GetRemainingEventDrops(login, eventDropID);
             int total = BubbleWallet.GetEventCredit(login, eventDropID);
-            if (amount < 3 && total >= 3)
-            {
-                await Program.SendEmbed(context.Channel, "That's all you got?", "With more than 3 drops collected, the minimal gift amount is 3 event drops.");
-                return;
-            }
+            //if (amount < 3 && total >= 3)
+            //{
+            //    await Program.SendEmbed(context.Channel, "That's all you got?", "With more than 3 drops collected, the minimal gift amount is 3 event drops.");
+            //    return;
+            //}
             List<SpriteProperty> inv = BubbleWallet.GetInventory(login);
 
             List<EventDropEntity> drops = Events.GetEventDrops();
-            string name = drops.FirstOrDefault(d => d.EventDropID == eventDropID).Name;
+            var drop = drops.FirstOrDefault(d => d.EventDropID == eventDropID);
+            var eventsprites = Events.GetEventSprites(drop.EventID);
+            string name = drop.Name;
             if (credit - amount < 0)
             {
                 await Program.SendEmbed(context.Channel, "You can't trick me!", "Your event credit is too few. You have only " + credit + " " + name + " left.");
                 return;
             }
-            int lost = amount >= 3 ? (new Random()).Next(0, amount / 3 + 1) : (new Random()).Next(0, 2);
+            var collected = Events.GetCollectedEventDrops(context.Message.Author.Id.ToString(), Events.GetEvents(false).FirstOrDefault(e => e.EventID == drop.EventID));
+
+            double lossBase = Events.CurrentGiftLossRate(eventsprites, collected);
+            int lossMin = Convert.ToInt16(Math.Round(lossBase * amount * 0.7));
+            int lossMax = Convert.ToInt16(Math.Round(lossBase * amount * 1.1));
+            if (lossMax < 1) lossMax = 1;
+            int lost = new Random().Next(lossMin, lossMax);
+
+
             string targetLogin = BubbleWallet.GetLoginOfMember(target.Id.ToString());
 
             if (BubbleWallet.ChangeEventDropCredit(targetLogin, eventDropID, amount - lost))

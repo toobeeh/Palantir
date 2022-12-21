@@ -108,9 +108,11 @@ namespace Palantir
             int totalNeeded = eventsprites.ConvertAll(s => s.Cost).Sum();
             double ratio = collected / totalNeeded;
 
-            if (ratio > 4) return 0.8;
-            else if (ratio < 0.5) return 0.1;
-            else return ratio / 5;
+            double loss = ratio / 5 + 0.1;
+            if (loss < 0.2) loss = 0.2;
+            if (loss > 0.8) loss = 0.8;
+
+            return loss;
         }
 
     }
