@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -65,6 +66,29 @@ namespace Palantir
             return weight;
         }
 
+        public static double GetCollectedEventDrops(string userid, EventEntity evt)
+        {
+            var drops = GetEventDrops(new List<EventEntity>() { evt }).ConvertAll(drop => drop.EventDropID).ToArray();
+
+            PalantirDbContext palantirDbContext = new PalantirDbContext();
+            var userDrops = palantirDbContext.PastDrops
+                .FromSqlRaw($"SELECT * FROM \"PastDrops\" WHERE EventDropID < 0 AND CaughtLobbyPlayerID == \"{userid}\"")
+                .ToList();
+            palantirDbContext.Dispose();
+
+            double sum = 0;
+            foreach (var item in userDrops)
+            {
+                if (drops.Contains(item.EventDropID * -1) || drops.Contains(item.EventDropID))
+                {
+                    if (item.LeagueWeight > 0) sum += (League.Weight(item.LeagueWeight / 1000.0) / 100);
+                    else sum++;
+                }
+            }
+
+            return sum;
+        }
+
         public static int TradeLeagueEventDrops(List<PastDropEntity> consumed, int targetDropID, string login)
         {
             int value = Convert.ToInt32(consumed.Sum(drop => League.Weight(drop.LeagueWeight / 1000.0) / 100));
@@ -77,6 +101,16 @@ namespace Palantir
             context.SaveChanges();
             context.Dispose();
             return value;
+        }
+
+        public static double CurrentGiftLossRate(List<SpritesEntity> eventsprites, double collected)
+        {
+            int totalNeeded = eventsprites.ConvertAll(s => s.Cost).Sum();
+            double ratio = collected / totalNeeded;
+
+            if (ratio > 4) return 0.8;
+            else if (ratio < 0.5) return 0.1;
+            else return ratio / 5;
         }
 
     }

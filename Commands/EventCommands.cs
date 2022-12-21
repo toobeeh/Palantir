@@ -38,7 +38,7 @@ namespace Palantir.Commands
                 eventdrops.ForEach(e =>
                 {
                     List<SpritesEntity> sprites = Events.GetEventSprites(e.EventDropID);
-                    dropList += "\n**" + e.Name + "**  (" + BubbleWallet.GetEventCredit(login, e.EventDropID) + " caught) (`#" + e.EventDropID + "`)";
+                    dropList += "\n**" + e.Name + " Drop**  (" + BubbleWallet.GetEventCredit(login, e.EventDropID) + " caught) (`#" + e.EventDropID + "`)";
                     int spent = inv.Where(spt => sprites.Any(eventsprite => eventsprite.ID == spt.ID)).Sum(spt => spt.Cost);
                     sprites.OrderBy(sprite => sprite.ID).ForEach(sprite =>
                        dropList += "\n> ‎ \n> ➜ **" + sprite.Name + "** (`#" + sprite.ID + "`)\n> "
@@ -64,7 +64,10 @@ namespace Palantir.Commands
                     embed.AddField("\n\u200b \nEvent Scene: **" + scene.Name + "**", "> \n> " + (hasScene ? ":package:" : "") + collectedBubbles + " / " + (((evt.EventID == 15 ? -2 : 0) + evt.DayLength) * Events.eventSceneDayValue) + " Bubbles collected");
                 }
 
-                }
+                var collected = Events.GetCollectedEventDrops(context.Message.Author.Id.ToString(), evt);
+                embed.WithFooter(Math.Round(collected) + " Drops total collected ~ Current gift loss rate: " + Math.Round(Events.CurrentGiftLossRate(eventsprites, collected), 3));
+
+            }
             else
             {
                 embed.Title = ":champagne: No Event active :(";
