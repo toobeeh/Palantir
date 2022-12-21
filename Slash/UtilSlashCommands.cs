@@ -176,7 +176,7 @@ namespace Palantir.Slash
         }
 
         [SlashCommand("loss", "Calculate average event drop gift loss.")]
-        public async Task Loss(InteractionContext context, [Option("Drops", "The amount of gifted drops")] long drops, [Option("Loss Base", "Your loss ratio base, find in >event")] long lossBase)
+        public async Task Loss(InteractionContext context, [Option("Drops", "The amount of gifted drops")] long drops, [Option("Loss-Base", "Your loss ratio base, find in >event")] long lossBase)
         {
             int sum = 0;
             for (int i = 0; i < 100; i++)
