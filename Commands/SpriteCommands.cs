@@ -278,7 +278,8 @@ namespace Palantir.Commands
                 DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
                 embed.Title = "**" + scene.Name + "**";
                 embed.Color = DiscordColor.Magenta;
-                embed.AddField("Costs:", scene.EventID > 0 ? "This is an event scene - check `>event " + scene.EventID + "`" : "Your current scene price is **" + sceneCost + "** bubbles.");
+                if(!scene.Exclusive) embed.AddField("Costs:",  scene.EventID > 0 ? "This is an event scene - check `>event " + scene.EventID + "`" : "Your current scene price is **" + sceneCost + "** bubbles.");
+                else embed.AddField("Exclusive:", "This scene can't be bought regulary.");
                 embed.WithDescription("**ID:** " + scene.ID + "\n" + (scene.Artist != "" ? "**Artist:** " + scene.Artist + "\n" : "") + "**Font color: **" + scene.Color + " / " + scene.GuessedColor + "\n\nBuy the scene: `>paint " + id + "`\nUse the scene: `>show " + id + "`");
                 embed.WithImageUrl(scene.URL);
                 await context.Channel.SendMessageAsync(embed: embed);
@@ -411,7 +412,7 @@ namespace Palantir.Commands
         [Description("Add a scene")]
         [Command("addscene")]
         [RequirePermissionFlag((byte)2)] // 2 -> admin
-        public async Task AddScene(CommandContext context, [Description("The name of the scene")] string name, [Description("A color string (hex, rgb, name..)")] string color, [Description("A color when the player has guessed the word")] string guessedColor, [Description("Any string except '-' to set the sprite artist")] string artist = "", [Description("Event ID or '0' to associate to no event")] int eventID = 0)
+        public async Task AddScene(CommandContext context, [Description("The name of the scene")] string name, [Description("A color string (hex, rgb, name..)")] string color, [Description("A color when the player has guessed the word")] string guessedColor, [Description("Any string except '-' to set the sprite artist")] string artist = "", [Description("Event ID or '0' to associate to no event")] int eventID = 0, [Description("If the scene can be bought or only obtained by another way")] bool exclusive = false)
         {
             PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
             if (!perm.Moderator && !perm.BotAdmin)
@@ -442,7 +443,7 @@ namespace Palantir.Commands
 
             string url = "https://tobeh.host/scenes/scene" + name.Replace("'", "-") + ".gif";
             if (artist == "-") artist = "";
-            SceneEntity scene = BubbleWallet.AddScene(name.Replace("_", " "), color, guessedColor, artist, url, eventID);
+            SceneEntity scene = BubbleWallet.AddScene(name.Replace("_", " "), color, guessedColor, artist, url, eventID, exclusive);
 
             DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
             embed.Title = ":champagne:  Scene **" + name + "** with ID " + scene.ID + " was added" + (eventID > 0 ? " to event #" + eventID : "") + "!";

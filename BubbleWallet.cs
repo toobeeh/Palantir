@@ -177,7 +177,7 @@ namespace Palantir
             context.Dispose();
         }
 
-        public static SceneEntity AddScene(string name, string color, string guessedColor, string artist, string url, int eventID)
+        public static SceneEntity AddScene(string name, string color, string guessedColor, string artist, string url, int eventID, bool exclusive)
         {
             PalantirDbContext context = new PalantirDbContext();
             int id = context.Scenes.Count() > 0 ? context.Scenes.Select(s => s.ID).Max() + 1 : 1;
@@ -189,7 +189,8 @@ namespace Palantir
                 URL = url,
                 Name = name,
                 ID = id,
-                EventID = eventID
+                EventID = eventID,
+                Exclusive = exclusive
             };
             context.Scenes.Add(scene);
             context.SaveChanges();
@@ -209,8 +210,11 @@ namespace Palantir
             List<SceneProperty> regScenes = GetSceneInventory(login, false, true);
             foreach (SceneProperty scene in regScenes)
             {
-                total -= nextPrice;
-                nextPrice *= ScenePriceFactor;
+                if (!scene.Exclusive)
+                {
+                    total -= nextPrice;
+                    nextPrice *= ScenePriceFactor;
+                }
             }
             return total;
         }
@@ -638,7 +642,8 @@ namespace Palantir
                 ID = scene.ID,
                 Name = scene.Name,
                 URL = scene.URL,
-                EventID = scene.EventID
+                EventID = scene.EventID,
+                Exclusive = scene.Exclusive
             };
         }
 

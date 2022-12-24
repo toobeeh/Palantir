@@ -139,6 +139,7 @@ namespace Palantir
         public string GuessedColor { get; set; }
         public string Artist { get; set; }
         public int EventID { get; set; }
+        public bool Exclusive { get; set; }
     }
     public class ReportEntity
     {
