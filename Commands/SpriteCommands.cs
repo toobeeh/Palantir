@@ -312,6 +312,10 @@ namespace Palantir.Commands
             {
                 await Program.SendEmbed(context.Channel, "Waiiit :o", "You already own this scene!");
             }
+            else if (available.FirstOrDefault(scene => scene.ID == id).Exclusive)
+            {
+                await Program.SendEmbed(context.Channel, "Oh no, anyway", "This scene can't be bought. Sorry!");
+            }
             else if (eventID == 0 && credit < sceneCost)
             {
                 await Program.SendEmbed(context.Channel, "I see you 👀", "You need at least " + sceneCost + " to buy a scene!\nScene cost increases by *2 with every scene you buy.");
