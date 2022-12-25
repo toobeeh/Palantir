@@ -247,24 +247,33 @@ namespace Palantir
                 if(flag.Patron || flag.BotAdmin) emojis.Add(member.Login, emoji);
                 member.Flag = flag.CalculateFlag();
             });
-            // set flags of patronized members
-            patronized.ForEach(id =>
+            try
             {
-                if(db.Members.Any(member => member.Member.Contains(id)))
+                // set flags of patronized members
+                patronized.ForEach(id =>
                 {
-                    MemberEntity member = db.Members.FirstOrDefault(member => member.Member.Contains(id));
-                    PermissionFlag flag = new PermissionFlag((byte)member.Flag);
-                    flag.Patron = true;
-                    string emoji = String.IsNullOrEmpty(member.Emoji) ? "" : member.Emoji;
-                    emojis.Add(member.Login, emoji);
-                    member.Flag = flag.CalculateFlag();
-                }
-            });
+                    if (db.Members.Any(member => member.Member.Contains(id)))
+                    {
+                        MemberEntity member = db.Members.FirstOrDefault(member => member.Member.Contains(id));
+                        PermissionFlag flag = new PermissionFlag((byte)member.Flag);
+                        flag.Patron = true;
+                        string emoji = String.IsNullOrEmpty(member.Emoji) ? "" : member.Emoji;
+                        emojis.Add(member.Login, emoji);
+                        member.Flag = flag.CalculateFlag();
+                    }
+                });
 
-            db.SaveChanges();
-            db.Dispose();
-            PatronEmojis = emojis;
-            return patrons.Count;
+                PatronEmojis = emojis;
+                return patrons.Count;
+
+                db.SaveChanges();
+                db.Dispose();
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine("Error updating patrons:"+ e);
+                return patrons.Count;
+            }
         }
 
         public void ActivatePalantiri()
