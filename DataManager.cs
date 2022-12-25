@@ -255,19 +255,22 @@ namespace Palantir
                     if (db.Members.Any(member => member.Member.Contains(id)))
                     {
                         MemberEntity member = db.Members.FirstOrDefault(member => member.Member.Contains(id));
-                        PermissionFlag flag = new PermissionFlag((byte)member.Flag);
-                        flag.Patron = true;
-                        string emoji = String.IsNullOrEmpty(member.Emoji) ? "" : member.Emoji;
-                        emojis.Add(member.Login, emoji);
-                        member.Flag = flag.CalculateFlag();
+                        if (!patrons.Contains(member.Login))
+                        {
+                            PermissionFlag flag = new PermissionFlag((byte)member.Flag);
+                            flag.Patron = true;
+                            string emoji = String.IsNullOrEmpty(member.Emoji) ? "" : member.Emoji;
+                            if (!emojis.ContainsKey(member.Login)) emojis.Add(member.Login, emoji);
+                            member.Flag = flag.CalculateFlag();
+                        }
                     }
                 });
 
                 PatronEmojis = emojis;
-                return patrons.Count;
 
                 db.SaveChanges();
                 db.Dispose();
+                return patrons.Count;
             }
             catch(Exception e)
             {
