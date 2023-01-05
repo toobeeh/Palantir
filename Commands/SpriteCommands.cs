@@ -270,7 +270,7 @@ namespace Palantir.Commands
             {
                 List<SceneProperty> inventory = BubbleWallet.GetSceneInventory(BubbleWallet.GetLoginOfMember(context.User.Id.ToString()), false, false);
                 int sceneCost = BubbleWallet.SceneStartPrice;
-                inventory.Where(s => s.EventID == 0).ForEach(scene => sceneCost *= BubbleWallet.ScenePriceFactor);
+                inventory.Where(s => s.EventID == 0 && !s.Exclusive).ForEach(scene => sceneCost *= BubbleWallet.ScenePriceFactor);
 
                 if (scene.Color.IndexOf("!") > 0) scene.Color = scene.Color.Substring(0, scene.Color.IndexOf("!"));
                 if (scene.GuessedColor.IndexOf("!") > 0) scene.GuessedColor = scene.GuessedColor.Substring(0, scene.GuessedColor.IndexOf("!"));
@@ -301,7 +301,7 @@ namespace Palantir.Commands
             List<SceneProperty> inventory = BubbleWallet.GetSceneInventory(login, false, false);
             int credit = flags.BotAdmin ? int.MaxValue : BubbleWallet.CalculateCredit(login, context.User.Id.ToString());
             int sceneCost = BubbleWallet.SceneStartPrice;
-            inventory.Where(s => s.EventID == 0).ForEach(scene => sceneCost *= BubbleWallet.ScenePriceFactor);
+            inventory.Where(s => s.EventID == 0 && !s.Exclusive).ForEach(scene => sceneCost *= BubbleWallet.ScenePriceFactor);
             int eventID = available.FirstOrDefault(scene => scene.ID == id).EventID;
 
             if (!available.Any(scene => scene.ID == id))
