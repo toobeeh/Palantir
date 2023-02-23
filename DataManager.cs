@@ -228,9 +228,10 @@ namespace Palantir
             {
                 if (member.Roles.Any(role => role.Id == 832744566905241610)) patrons.Add(member.Id.ToString());
                 if (member.Roles.Any(role => role.Id == 859100010184572938)) patronizer.Add(member.Id.ToString());
-                if (member.Roles.Any(role => role.Id == 502878288360767489)) patronizer.Add(member.Id.ToString());
             };
             patrons.Add("656074177480228864");
+            patrons.Add("502878288360767489");
+            patronizer.Add("502878288360767489");
             PatronCount = patrons.Count();
             PalantirDbContext db = new PalantirDbContext();
             // iterate through palantir members and set flags
