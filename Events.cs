@@ -73,7 +73,7 @@ namespace Palantir
 
             PalantirContext palantirDbContext = new PalantirContext();
             var userDrops = palantirDbContext.PastDrops
-                .FromSqlRaw($"SELECT * FROM \"PastDrops\" WHERE (EventDropID < 0 OR EventDropID > 0) AND CaughtLobbyPlayerID == \"{userid}\"")
+                .FromSqlRaw($"SELECT * FROM \"PastDrops\" WHERE (EventDropID < 0 OR EventDropID > 0) AND CaughtLobbyPlayerID = '{userid}'")
                 .ToList();
             palantirDbContext.Dispose();
 
