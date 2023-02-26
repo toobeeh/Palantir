@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 using System.Linq;
 using System.Globalization;
 using System.Diagnostics;
+using Palantir.Model;
 
 namespace Palantir
 {
@@ -292,13 +293,13 @@ namespace Palantir
         {
             //return "```Discord lobbies are currently under maintenance. \nThis can take up to 48 hours.\nSorry & see ya!```";
             string message = "";
-            PalantirDbContext database = new PalantirDbContext();
+            PalantirContext database = new PalantirContext();
 
             List<Lobby> Lobbies = new List<Lobby>();
-            List<ReportEntity> reports = database.Reports.Distinct().Where(r=>r.ObserveToken == PalantirEndpoint.ObserveToken).ToList();
+            List<Report> reports = database.Reports.Distinct().Where(r=>r.ObserveToken.ToString() == PalantirEndpoint.ObserveToken).ToList();
 
             List<PlayerStatus> OnlinePlayers = new List<PlayerStatus>();
-            List<StatusEntity> playerstatus = database.Status.Distinct().ToList();
+            List<Status> playerstatus = database.Statuses.Distinct().ToList();
 
             reports.ForEach((r) =>
             {
@@ -307,7 +308,7 @@ namespace Palantir
                     try
                     {
                         //Console.WriteLine("Found report: " + r.LobbyID);
-                        Lobbies.Add(JsonConvert.DeserializeObject<Lobby>(r.Report));
+                        Lobbies.Add(JsonConvert.DeserializeObject<Lobby>(r.Report1));
                     }
                     catch (Exception e) { Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > Couldnt read lobby entry: " + e); };
                 }
@@ -319,7 +320,7 @@ namespace Palantir
                 {
                     try
                     {
-                        OnlinePlayers.Add(JsonConvert.DeserializeObject<PlayerStatus>(p.Status));
+                        OnlinePlayers.Add(JsonConvert.DeserializeObject<PlayerStatus>(p.Status1));
                     }
                     catch (Exception e) { Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > Couldnt read status file: " + e); };
                 }
@@ -334,7 +335,7 @@ namespace Palantir
                 }
             });
 
-            List<EventEntity> events = Events.GetEvents(true);
+            List<Event> events = Events.GetEvents(true);
             if (events.Count <= 0) message += "```arm\nNo event active :( Check upcoming events with '>upcoming'.\n‎As soon as an event is live, you can see details using '>event'.```\n\n";
             else message += "```arm\n" + events[0].EventName + ": \n"+ events[0].Description + "\nView details with '>event'!```\n";
             //else message += "```arm\n" + events[0].EventName + ": \n```" + events[0].Description + "\n```arm\nView details with '>event'!```\n";
@@ -362,7 +363,7 @@ namespace Palantir
                     string json = "";
                     try
                     {
-                        json = database.Lobbies.FirstOrDefault(lobbyEntity => lobbyEntity.LobbyID == l.ID).Lobby;
+                        json = database.Lobbies.FirstOrDefault(lobbyEntity => lobbyEntity.LobbyId == l.ID).Lobby1;
                         ProvidedLobby lobbyraw = JsonConvert.DeserializeObject<ProvidedLobby>(json);
                         d = lobbyraw.Description;
                         if (d.Length > 100) d = d.Substring(0, 100);
@@ -496,7 +497,7 @@ namespace Palantir
             if (PalantirSettings.ShowAnimatedEmojis && guildLobbies.Count == 0 && searching.Length == 0) message += "\n <a:alone:718807079434846238>\n";
             if (guildLobbies.Count == 0 && searching.Length == 0) message += PalantirSettings.IdleMessage;
 
-            GuildLobbiesEntity entity = database.GuildLobbies.FirstOrDefault(g => g.GuildID == PalantirEndpoint.GuildID);
+            GuildLobby entity = database.GuildLobbies.FirstOrDefault(g => g.GuildId == PalantirEndpoint.GuildID);
 
             if (entity != null)
             {
@@ -505,8 +506,8 @@ namespace Palantir
             }
             else
             {
-                entity = new GuildLobbiesEntity();
-                entity.GuildID = PalantirEndpoint.GuildID;
+                entity = new GuildLobby();
+                entity.GuildId = PalantirEndpoint.GuildID;
                 entity.Lobbies = JsonConvert.SerializeObject(guildLobbies);
                 database.GuildLobbies.Add(entity);
                 database.SaveChanges();

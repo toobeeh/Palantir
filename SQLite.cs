@@ -6,7 +6,7 @@ using Microsoft.Data.Sqlite;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Palantir
+namespace Palantir.DEPRECATED
 {
     public class ImageDbContext : DbContext
     {

@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using System.Threading.Tasks;
 using Quartz;
 using MoreLinq;
+using Palantir.Model;
 
 namespace Palantir
 {
@@ -18,18 +19,18 @@ namespace Palantir
             string[] logins = BubbleWallet.loginBubbleTicks.Distinct().ToArray();
             BubbleWallet.loginBubbleTicks = new List<string>();
             Dictionary<string, int> cache = new Dictionary<string, int>();
-            PalantirDbContext dbcontext = new PalantirDbContext();
+            PalantirContext dbcontext = new PalantirContext();
             try
             {
                 foreach (string login in logins)
                 {
-                    MemberEntity member = dbcontext.Members.FirstOrDefault(s => s.Login == login);
-                    if(JsonConvert.DeserializeObject<Member>(member.Member).Guilds.Count > 0) member.Bubbles++;
+                    Model.Member member = dbcontext.Members.FirstOrDefault(s => s.Login.ToString() == login);
+                    if(JsonConvert.DeserializeObject<Member>(member.Member1).Guilds.Count > 0) member.Bubbles++;
                 }
             }
             catch(Exception e) { Console.WriteLine(e.ToString()); }
             await dbcontext.SaveChangesAsync();
-            foreach(MemberEntity member in dbcontext.Members)
+            foreach(Model.Member member in dbcontext.Members)
             {
                 cache.Add(member.Login.ToString(), member.Bubbles);
             }
@@ -57,8 +58,8 @@ namespace Palantir
 
         public static int GetDrops(string login, string userid)
         {
-            PalantirDbContext context = new PalantirDbContext();
-            MemberEntity entity = context.Members.FirstOrDefault(s => s.Login == login);
+            PalantirContext context = new PalantirContext();
+            Model.Member entity = context.Members.FirstOrDefault(s => s.Login.ToString() == login);
             int drops = 0;
 
             if (entity != null)
@@ -77,8 +78,8 @@ namespace Palantir
         public static int GetCollectedBubblesInTimespan(DateTime start, DateTime end, string login)
         {
             start = start.AddDays(-1);
-            PalantirDbContext db = new();
-            List<BubbleTraceEntity> bubbleTraces = db.BubbleTraces.Where(trace => trace.Login == login).ToList();
+            PalantirContext db = new();
+            List<BubbleTrace> bubbleTraces = db.BubbleTraces.Where(trace => trace.Login.ToString() == login).ToList();
             List<int> bubbles = bubbleTraces.Where(trace =>
             {
                 DateTime tracedt = Convert.ToDateTime(trace.Date);
@@ -140,8 +141,8 @@ namespace Palantir
                 }
             });
             inv = inv.Remove(inv.Length - 1);
-            PalantirDbContext context = new PalantirDbContext();
-            context.Members.FirstOrDefault(m => m.Login == login).Sprites = "0," + inv;
+            PalantirContext context = new PalantirContext();
+            context.Members.FirstOrDefault(m => m.Login.ToString() == login).Sprites = "0," + inv;
             context.SaveChanges();
             context.Dispose();
             return inv;
@@ -150,8 +151,8 @@ namespace Palantir
         public static List<Sprite> GetAvailableSprites()
         {
             List<Sprite> sprites = new List<Sprite>();
-            PalantirDbContext context = new PalantirDbContext();
-            context.Sprites.ToList().ForEach(s => sprites.Add(new Sprite(s.Name, s.URL, s.Cost, s.ID, s.Special, s.Rainbow, s.EventDropID, s.Artist)));
+            PalantirContext context = new PalantirContext();
+            context.Sprites.ToList().ForEach(s => sprites.Add(new Sprite(s.Name, s.Url, s.Cost, s.Id, s.Special, s.Rainbow == 1, s.EventDropId, s.Artist)));
             context.SaveChanges();
             context.Dispose();
             return sprites;
@@ -163,13 +164,13 @@ namespace Palantir
 
         public static void AddSprite(Sprite sprite)
         {
-            PalantirDbContext context = new PalantirDbContext();
-            SpritesEntity s = new SpritesEntity();
-            s.ID = sprite.ID;
+            PalantirContext context = new PalantirContext();
+            Model.Sprite s = new();
+            s.Id = sprite.ID;
             s.Name = sprite.Name;
             s.Special = sprite.Special;
-            s.URL = sprite.URL;
-            s.EventDropID = sprite.EventDropID;
+            s.Url = sprite.URL;
+            s.EventDropId = sprite.EventDropID;
             s.Cost = sprite.Cost;
             s.Artist = sprite.Artist;
             context.Sprites.Add(s);
@@ -177,19 +178,19 @@ namespace Palantir
             context.Dispose();
         }
 
-        public static SceneEntity AddScene(string name, string color, string guessedColor, string artist, string url, int eventID, bool exclusive)
+        public static Scene AddScene(string name, string color, string guessedColor, string artist, string url, int eventID, bool exclusive)
         {
-            PalantirDbContext context = new PalantirDbContext();
-            int id = context.Scenes.Count() > 0 ? context.Scenes.Select(s => s.ID).Max() + 1 : 1;
-            SceneEntity scene = new SceneEntity()
+            PalantirContext context = new PalantirContext();
+            int id = context.Scenes.Count() > 0 ? context.Scenes.Select(s => s.Id).Max() + 1 : 1;
+            Scene scene = new Scene()
             {
                 Artist = artist,
                 Color = color,
                 GuessedColor = guessedColor,
-                URL = url,
+                Url = url,
                 Name = name,
-                ID = id,
-                EventID = eventID,
+                Id = id,
+                EventId = eventID,
                 Exclusive = exclusive
             };
             context.Scenes.Add(scene);
@@ -221,9 +222,9 @@ namespace Palantir
 
         public static void BuyScene(string login, int id)
         {
-            PalantirDbContext db = new();
-            MemberEntity member = db.Members.FirstOrDefault(member => member.Login == login);
-            string sceneInv = GetSceneInventory(login, false, false).ConvertAll(scene => (scene.Activated ? "." : "") + scene.ID.ToString()).ToDelimitedString(",");
+            PalantirContext db = new();
+            Model.Member member = db.Members.FirstOrDefault(member => member.Login.ToString() == login);
+            string sceneInv = GetSceneInventory(login, false, false).ConvertAll(scene => (scene.Activated ? "." : "") + scene.Id.ToString()).ToDelimitedString(",");
             sceneInv += (sceneInv.Length > 0 ? "," : "") + id.ToString();
             member.Scenes = sceneInv;
             db.SaveChanges();
@@ -232,9 +233,9 @@ namespace Palantir
 
         public static void SetSceneInventory(string login, List<SceneProperty> inv)
         {
-            PalantirDbContext db = new();
-            db.Members.FirstOrDefault(member => member.Login == login).Scenes = inv
-                .ConvertAll(scene => (scene.Activated ? "." : "") + scene.ID.ToString())
+            PalantirContext db = new();
+            db.Members.FirstOrDefault(member => member.Login.ToString() == login).Scenes = inv
+                .ConvertAll(scene => (scene.Activated ? "." : "") + scene.Id.ToString())
                 .ToDelimitedString(",");
             db.SaveChanges();
             db.Dispose();
@@ -242,88 +243,88 @@ namespace Palantir
 
         public static int GetEventCredit(string login, int eventDropID)
         {
-            PalantirDbContext context = new PalantirDbContext();
+            PalantirContext context = new PalantirContext();
             int credit = 0;
             try { 
-                credit = context.EventCredits.FirstOrDefault(c => c.EventDropID == eventDropID && c.Login == login).Credit;
+                credit = context.EventCredits.FirstOrDefault(c => c.EventDropId == eventDropID && c.Login.ToString() == login).Credit;
             }
             catch { }
             
             context.Dispose();
             return credit;
         }
-        public static List<SceneEntity> GetAvailableScenes()
+        public static List<Scene> GetAvailableScenes()
         {
-            PalantirDbContext db = new PalantirDbContext();
-            List<SceneEntity> scenes = db.Scenes.ToList();
+            PalantirContext db = new PalantirContext();
+            List<Scene> scenes = db.Scenes.ToList();
             db.Dispose();
             return scenes;
         }
 
         public static List<SpriteProperty> GetInventory(string login)
         {
-            PalantirDbContext context = new PalantirDbContext();
-            string inventoryString = context.Members.FirstOrDefault(m => m.Login == login).Sprites;
-            context.Dispose();
+            PalantirContext db = new PalantirContext();
+            string inventoryString = db.Members.FirstOrDefault(m => m.Login.ToString() == login).Sprites;
+            db.Dispose();
             return ParseSpriteInventory(inventoryString);
         }
 
         public static List<SceneProperty> GetSceneInventory(string login, bool onlyActive = false, bool noEventScenes = true)
         {
-            PalantirDbContext context = new PalantirDbContext();
-            string inventoryString = context.Members.FirstOrDefault(m => m.Login == login).Scenes;
+            PalantirContext db = new PalantirContext();
+            string inventoryString = db.Members.FirstOrDefault(m => m.Login.ToString() == login).Scenes;
             if (String.IsNullOrEmpty(inventoryString)) return new List<SceneProperty>();
             List<SceneProperty> inv = inventoryString.Split(",")
                 .Where(id => !onlyActive || onlyActive && id.Contains("."))
                 .ToList()
                 .ConvertAll(id => GetSceneProperty(
-                    context.Scenes.ToList().FirstOrDefault(scene => scene.ID.ToString() == id.Replace(".", "")), id.Contains('.')
+                    db.Scenes.ToList().FirstOrDefault(scene => scene.Id.ToString() == id.Replace(".", "")), id.Contains('.')
                     ));
-            context.Dispose();
-            if (noEventScenes) inv = inv.Where(s => s.EventID == 0).ToList();
+            db.Dispose();
+            if (noEventScenes) inv = inv.Where(s => s.EventId == 0).ToList();
             return inv;
         }
 
         public static bool IsEarlyUser(string login)
         {
-            PalantirDbContext context = new PalantirDbContext();
-            bool exists = context.BubbleTraces.Any(trace => trace.Date == "31/08/2020" && trace.Login == login);
-            context.Dispose();
+            PalantirContext db = new PalantirContext();
+            bool exists = db.BubbleTraces.Any(trace => trace.Date == "31/08/2020" && trace.Login.ToString() == login);
+            db.Dispose();
             return exists;
         }
         public static string FirstTrace(string login)
         {
-            PalantirDbContext context = new PalantirDbContext();
-            List<string> dates = context.BubbleTraces.Where(trace => trace.Login == login).Select(trace => trace.Date).ToList();
-            context.Dispose();
+            PalantirContext db = new PalantirContext();
+            List<string> dates = db.BubbleTraces.Where(trace => trace.Login.ToString() == login).Select(trace => trace.Date).ToList();
+            db.Dispose();
             return dates.Min(date => DateTime.Parse(date)).ToShortDateString();
         }
         public static List<int> ParticipatedEvents(string login)
         {
             List<int> events = new List<int>();
-            PalantirDbContext context = new PalantirDbContext();
-            List<int> eventdrops = context.EventCredits.Where(credit => credit.Login == login).Select(credit => credit.EventDropID).ToList();
+            PalantirContext db = new PalantirContext();
+            List<int> eventdrops = db.EventCredits.Where(credit => credit.Login.ToString() == login).Select(credit => credit.EventDropId).ToList();
             eventdrops.ForEach(caughtdrop =>
             {
-                int eventid = context.EventDrops.FirstOrDefault(drop => caughtdrop == drop.EventDropID).EventID;
+                int eventid = db.EventDrops.FirstOrDefault(drop => caughtdrop == drop.EventDropId).EventId;
                 if (!events.Contains(eventid)) events.Add(eventid);
             });
-            context.Dispose();
+            db.Dispose();
             return events;
         }
         public static int CaughtEventdrops(string discordID)
         {
-            PalantirDbContext context = new PalantirDbContext();
-            int caught = context.PastDrops.Where(drop => drop.CaughtLobbyPlayerID == discordID && drop.EventDropID > 0 && drop.LeagueWeight == 0).Count();
-            context.Dispose();
+            PalantirContext db = new PalantirContext();
+            int caught = db.PastDrops.Where(drop => drop.CaughtLobbyPlayerId == discordID && drop.EventDropId > 0 && drop.LeagueWeight == 0).Count();
+            db.Dispose();
             return caught;
         }
 
         public static int GlobalRanking(string login, bool drops = false)
         {
-            PalantirDbContext context = new PalantirDbContext();
-            int index = context.Members.ToList().Where(member=> !(new PermissionFlag((byte)member.Flag).BubbleFarming)).OrderByDescending(member => drops ? member.Drops : member.Bubbles).Select(member => member.Login).ToList().IndexOf(login) + 1;
-            context.Dispose();
+            PalantirContext db = new PalantirContext();
+            int index = db.Members.ToList().Where(member=> !(new PermissionFlag((byte)member.Flag).BubbleFarming)).OrderByDescending(member => drops ? member.Drops : member.Bubbles).Select(member => member.Login).ToList().IndexOf(Convert.ToInt32(login)) + 1;
+            db.Dispose();
             return index;
         }
 
@@ -332,7 +333,7 @@ namespace Palantir
             List<Sprite> sprites = BubbleWallet.GetAvailableSprites();
             // get all bought sprites
             List<SpriteProperty> joined = new List<SpriteProperty>();
-            PalantirDbContext db = new PalantirDbContext();
+            PalantirContext db = new PalantirContext();
             db.Members.ForEach(member => {
                 string[] sprites = member.Sprites.Split(",");
                 sprites.ForEach(id =>
@@ -364,33 +365,33 @@ namespace Palantir
 
         public static string GetLoginOfMember(string id)
         {
-            PalantirDbContext context = new PalantirDbContext();
+            PalantirContext db = new PalantirContext();
             string login;
             try
             {
-                login = context.Members.First(m => m.Member.Contains(id)).Login;
+                login = db.Members.First(m => m.Member1.Contains(id)).Login.ToString();
             }
             catch
             {
                 throw new Exception("There is no palantir account connected with this discord account.\nCreate one by messaging Palantir `>login` in DM!");
             }
-            context.Dispose();
+            db.Dispose();
             return login;
         }
 
         public static List<SplitReward> GetMemberSplits(int login, PermissionFlag flags)
         {
-            PalantirDbContext context = new PalantirDbContext();
-            List<BoostSplitEntity> sources = context.BoostSplits.ToList();
-            List<SplitCreditEntity> splits = context.SplitCredits.Where(s => s.Login == login).ToList();
-            context.Dispose();
+            PalantirContext db = new PalantirContext();
+            List<BoostSplit> sources = db.BoostSplits.ToList();
+            List<SplitCredit> splits = db.SplitCredits.Where(s => s.Login == login).ToList();
+            db.Dispose();
             List<SplitReward> rewards = splits.ConvertAll(split =>
             {
                 SplitReward reward = new SplitReward();
-                BoostSplitEntity boostSplit = sources.Find(s => s.ID == split.Split);
+                BoostSplit boostSplit = sources.Find(s => s.Id == split.Split);
                 reward.Login = login;
                 reward.Split = split.Split;
-                reward.ID = boostSplit.ID;
+                reward.ID = boostSplit.Id;
                 reward.Value = split.ValueOverride >= 0 ? split.ValueOverride : boostSplit.Value;
                 reward.RewardDate = split.RewardDate;
                 reward.Name = boostSplit.Name;
@@ -437,9 +438,9 @@ namespace Palantir
 
         public static Dictionary<int, int> GetMemberRainbowShifts(string login)
         {
-            PalantirDbContext context = new PalantirDbContext();
-            string shifts = context.Members.FirstOrDefault(mem => mem.Login == login).RainbowSprites;
-            context.Dispose();
+            PalantirContext db = new PalantirContext();
+            string shifts = db.Members.FirstOrDefault(mem => mem.Login.ToString() == login).RainbowSprites;
+            db.Dispose();
 
             Dictionary<int, int> spriteShifts = new();
             if (shifts is not null && shifts != "")
@@ -461,49 +462,49 @@ namespace Palantir
             });
             string rainbowSprites = spriteShifts.ToDelimitedString(",");
 
-            PalantirDbContext context = new PalantirDbContext();
-            context.Members.FirstOrDefault(mem => mem.Login == login).RainbowSprites = rainbowSprites;
-            context.SaveChanges();
-            context.Dispose();
+            PalantirContext db = new PalantirContext();
+            db.Members.FirstOrDefault(mem => mem.Login.ToString() == login).RainbowSprites = rainbowSprites;
+            db.SaveChanges();
+            db.Dispose();
         }
 
         public static void SetOnlineSprite(string login, string lobbyKey, string lobbyPlayerID){
             List<SpriteProperty> playersprites = GetInventory(login).Where(i => i.Activated).ToList();
             List<SceneProperty> scenes = GetSceneInventory(login, true, false);
-            PalantirDbContext context = new PalantirDbContext();
+            PalantirContext db = new PalantirContext();
 
-            context.OnlineSprites.RemoveRange(context.OnlineSprites.Where(o => o.LobbyKey == lobbyKey && lobbyPlayerID == o.LobbyPlayerID));
+            db.OnlineSprites.RemoveRange(db.OnlineSprites.Where(o => o.LobbyKey == lobbyKey && lobbyPlayerID == o.LobbyPlayerId.ToString()));
             try
             {
-                context.SaveChanges();
+                db.SaveChanges();
             }
             catch (Exception e) { //Console.WriteLine("Error deleting sprite:\n" + e); 
             }
 
             if(scenes.Count() > 0)
             {
-                OnlineSpritesEntity sceneEntity = new OnlineSpritesEntity()
+                OnlineSprite sceneEntity = new()
                 {
                     LobbyKey = lobbyKey,
-                    LobbyPlayerID = lobbyPlayerID,
+                    LobbyPlayerId = Convert.ToInt32(lobbyPlayerID),
                     Date = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss"),
                     Slot = -1,
-                    ID = lobbyKey + lobbyPlayerID + "scene",
-                    Sprite = scenes[0].ID.ToString(),
+                    Id = lobbyKey + lobbyPlayerID + "scene",
+                    Sprite = scenes[0].Id,
                 };
-                context.OnlineSprites.Add(sceneEntity);
+                db.OnlineSprites.Add(sceneEntity);
             }
 
             foreach(SpriteProperty slot in playersprites)
             {
-                OnlineSpritesEntity newsprite = new OnlineSpritesEntity();
+                OnlineSprite newsprite = new();
                 newsprite.LobbyKey = lobbyKey;
-                newsprite.LobbyPlayerID = lobbyPlayerID;
+                newsprite.LobbyPlayerId = Convert.ToInt32(lobbyPlayerID);
                 newsprite.Date = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss");
-                newsprite.Sprite = slot is object ? slot.ID.ToString() : "0";
+                newsprite.Sprite = slot is object ? slot.ID : 0;
                 newsprite.Slot = slot.Slot + 1;
-                newsprite.ID = lobbyKey + lobbyPlayerID + slot.Slot.ToString();
-                context.OnlineSprites.Add(newsprite);
+                newsprite.Id = lobbyKey + lobbyPlayerID + slot.Slot.ToString();
+                db.OnlineSprites.Add(newsprite);
             }
             //OnlineSpritesEntity aprilf = new OnlineSpritesEntity();
             //aprilf.LobbyKey = lobbyKey;
@@ -515,25 +516,25 @@ namespace Palantir
             //context.OnlineSprites.Add(aprilf);
             try
             {
-                context.SaveChanges();
+                db.SaveChanges();
             }
             catch (Exception e)
             {
                 Console.WriteLine("Error writing sprite:\n" + e);
             }
 
-            List<OnlineItemsEntity> items = new();
+            List<OnlineItem> items = new();
 
             if (scenes.Count() > 0)
             {
-                OnlineItemsEntity sceneEntity = new()
+                OnlineItem sceneEntity = new()
                 {
                     LobbyKey = lobbyKey,
-                    LobbyPlayerID = lobbyPlayerID,
+                    LobbyPlayerId = Convert.ToInt32(lobbyPlayerID),
                     Date = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds(),
                     Slot = 0,
                     ItemType = "scene",
-                    ItemID = scenes[0].ID,
+                    ItemId = scenes[0].Id,
                 };
                 items.Add(sceneEntity);
             }
@@ -542,14 +543,14 @@ namespace Palantir
 
             foreach (SpriteProperty slot in playersprites)
             {
-                OnlineItemsEntity spriteEntity = new()
+                OnlineItem spriteEntity = new()
                 {
                     LobbyKey = lobbyKey,
-                    LobbyPlayerID = lobbyPlayerID,
+                    LobbyPlayerId = Convert.ToInt32(lobbyPlayerID),
                     Date = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds(),
                     Slot = slot.Slot + 1,
                     ItemType = "sprite",
-                    ItemID = slot is object ? slot.ID : 0
+                    ItemId = slot is object ? slot.ID : 0
                 };
                 items.Add(spriteEntity);
 
@@ -558,25 +559,25 @@ namespace Palantir
                     items.Add(new()
                     {
                         LobbyKey = lobbyKey,
-                        LobbyPlayerID = lobbyPlayerID,
+                        LobbyPlayerId = Convert.ToInt32(lobbyPlayerID),
                         Date = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds(),
                         Slot = slot.Slot + 1,
                         ItemType = "shift",
-                        ItemID = rainbowSprites[slot.ID]
+                        ItemId = rainbowSprites[slot.ID]
                     });
                 }
             }
 
-            context.OnlineItems.RemoveRange(context.OnlineItems.Where(o => o.LobbyKey == lobbyKey && lobbyPlayerID == o.LobbyPlayerID));
-            context.OnlineItems.AddRange(items);
+            db.OnlineItems.RemoveRange(db.OnlineItems.Where(o => o.LobbyKey == lobbyKey && Convert.ToInt32(lobbyPlayerID) == o.LobbyPlayerId));
+            db.OnlineItems.AddRange(items);
 
             try
             {
-                context.SaveChanges();
+                db.SaveChanges();
             }
             catch (Exception e) { Console.WriteLine("Error writing sprite:\n" + e); 
             }
-            context.Dispose();
+            db.Dispose();
         }
 
         public static int GetRemainingEventDrops(string login, int eventDropID)
@@ -592,38 +593,38 @@ namespace Palantir
 
         public static bool ChangeEventDropCredit(string login, int eventDropID, int difference)
         {
-            PalantirDbContext context = new PalantirDbContext();
-            EventCreditEntity credit = context.EventCredits.FirstOrDefault(c => c.EventDropID == eventDropID && c.Login == login);
+            PalantirContext db = new PalantirContext();
+            EventCredit credit = db.EventCredits.FirstOrDefault(c => c.EventDropId == eventDropID && c.Login.ToString() == login);
             if(credit is object)
             {
                 try
                 {
                     credit.Credit += difference;
-                    context.SaveChanges();
-                    context.Dispose();
+                    db.SaveChanges();
+                    db.Dispose();
                 }
                 catch (Exception e)
                 {
-                    context.Dispose();
+                    db.Dispose();
                     Console.WriteLine("Error changing credits for " + login + ":\n" + e);
                     return false;
                 }
             }
             else if (difference > 0)
             {
-                EventCreditEntity newCredit = new EventCreditEntity();
-                newCredit.Login = login;
-                newCredit.EventDropID = eventDropID;
+                EventCredit newCredit = new();
+                newCredit.Login = Convert.ToInt32(login);
+                newCredit.EventDropId = eventDropID;
                 newCredit.Credit = difference;
                 try
                 {
-                    context.EventCredits.Add(newCredit);
-                    context.SaveChanges();
-                    context.Dispose();
+                    db.EventCredits.Add(newCredit);
+                    db.SaveChanges();
+                    db.Dispose();
                 }
                 catch (Exception e)
                 {
-                    context.Dispose();
+                    db.Dispose();
                     Console.WriteLine("Error changing credits for " + login + ":\n" + e);
                     return false;
                 }
@@ -632,55 +633,55 @@ namespace Palantir
             return true;
         }
 
-        public static SceneProperty GetSceneProperty(SceneEntity scene, bool activated)
+        public static SceneProperty GetSceneProperty(Scene scene, bool activated)
         {
             return new SceneProperty()
             {
                 Activated = activated,
                 Artist = scene.Artist,
                 Color = scene.Color,
-                ID = scene.ID,
+                Id = scene.Id,
                 Name = scene.Name,
-                URL = scene.URL,
-                EventID = scene.EventID,
+                Url = scene.Url,
+                EventId = scene.EventId,
                 Exclusive = scene.Exclusive
             };
         }
 
-        public static SpriteProfileEntity GetCurrentSpriteProfile(string login)
+        public static SpriteProfile GetCurrentSpriteProfile(string login)
         {
-            PalantirDbContext db = new();
-            var member = db.Members.FirstOrDefault(m => m.Login == login);
+            PalantirContext db = new PalantirContext();
+            var member = db.Members.FirstOrDefault(m => m.Login.ToString() == login);
 
             db.Dispose();
 
             var sprites = BubbleWallet.ParseSpriteInventory(member.Sprites).Where(s => s.Activated).OrderBy(s => s.Slot).Select(s=>s.ID).ToList().ToDelimitedString(",");
-            var scenes = BubbleWallet.GetSceneInventory(login, false, false).Where(s=>s.Activated).Select(s => s.ID).ToList().ToDelimitedString(",");
+            var scenes = BubbleWallet.GetSceneInventory(login, false, false).Where(s=>s.Activated).Select(s => s.Id).ToList().ToDelimitedString(",");
             var shifts = member.RainbowSprites;
 
             return new()
             {
                 Name = "",
-                Login = login,
+                Login = Convert.ToInt32(login),
                 RainbowSprites = shifts,
                 Combo = sprites,
                 Scene = scenes
             };
         }
 
-        public static void SaveSpriteProfile(SpriteProfileEntity profile, bool delete = false)
+        public static void SaveSpriteProfile(SpriteProfile profile, bool delete = false)
         {
-            PalantirDbContext db = new();
+            PalantirContext db = new PalantirContext();
             db.SpriteProfiles.RemoveRange(db.SpriteProfiles.Where(p => p.Login == profile.Login && p.Name == profile.Name));
             if(!delete) db.SpriteProfiles.Add(profile);
             db.SaveChanges();
             db.Dispose();
         }
 
-        public static List<SpriteProfileEntity> GetSpriteProfiles(string login)
+        public static List<SpriteProfile> GetSpriteProfiles(string login)
         {
-            PalantirDbContext db = new();
-            var profiles = db.SpriteProfiles.Where(p => p.Login == login).ToList();
+            PalantirContext db = new PalantirContext();
+            var profiles = db.SpriteProfiles.Where(p => p.Login.ToString() == login).ToList();
             db.Dispose();
 
             return profiles;
@@ -722,12 +723,12 @@ namespace Palantir
         }
     }
 
-    public class SceneProperty : SceneEntity
+    public class SceneProperty : Scene
     {
         public bool Activated;
     }
 
-    public class SplitReward : SplitCreditEntity
+    public class SplitReward : SplitCredit
     {
         public int ID;
         public int Value;

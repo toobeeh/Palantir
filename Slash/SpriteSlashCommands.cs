@@ -4,6 +4,7 @@ using DSharpPlus.Interactivity;
 using DSharpPlus.SlashCommands;
 using MoreLinq;
 using Newtonsoft.Json;
+using Palantir.Model;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -19,7 +20,7 @@ namespace Palantir.Slash
         public async Task BuySprite(InteractionContext context, [Option("ID", "The sprite ID - find all sprites on https://typo.rip")] long sprite)
         {
             string login = BubbleWallet.GetLoginOfMember(context.User.Id.ToString());
-            MemberEntity member = Program.Feanor.GetMemberByLogin(login);
+            Model.Member member = Program.Feanor.GetMemberByLogin(login);
             List<SpriteProperty> inventory;
             try
             {
@@ -113,7 +114,7 @@ namespace Palantir.Slash
                 return;
             }
 
-            MemberEntity member = Program.Feanor.GetMemberByLogin(login);
+            Model.Member member = Program.Feanor.GetMemberByLogin(login);
             PermissionFlag perm = new PermissionFlag((byte)member.Flag);
 
             if (!perm.BotAdmin && (slot < 1 || slot > BubbleWallet.GetDrops(login, context.User.Id.ToString()) / 1000 + 1 + (perm.Patron ? 1 : 0)))

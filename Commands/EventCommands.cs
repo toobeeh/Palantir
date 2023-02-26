@@ -8,6 +8,7 @@ using System.Linq;
 using MoreLinq.Extensions;
 using System;
 using System.Collections.Generic;
+using Palantir.Model;
 
 namespace Palantir.Commands
 {
@@ -17,13 +18,13 @@ namespace Palantir.Commands
         [Command("event")]
         public async Task ShowEvent(CommandContext context, int eventID = 0)
         {
-            List<EventEntity> events = Events.GetEvents(false);
+            List<Event> events = Events.GetEvents(false);
             DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
             string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
             List<SpriteProperty> inv = BubbleWallet.GetInventory(login);
-            EventEntity evt;
-            if (eventID < 1 || !events.Any(e => e.EventID == eventID)) evt = (Events.GetEvents().Count > 0 ? Events.GetEvents()[0] : null);
-            else evt = events.FirstOrDefault(e => e.EventID == eventID);
+            Event evt;
+            if (eventID < 1 || !events.Any(e => e.EventId == eventID)) evt = (Events.GetEvents().Count > 0 ? Events.GetEvents()[0] : null);
+            else evt = events.FirstOrDefault(e => e.EventId == eventID);
             if (evt != null)
             {
                 DateTime eventStart = Convert.ToDateTime(evt.ValidFrom);
@@ -33,17 +34,17 @@ namespace Palantir.Commands
                 embed.WithDescription(evt.Description + "\nLasts from " + eventStart.ToString("MMMM dd") + " until " + eventEnd.ToString("MMMM dd") + "\n");
 
                 string dropList = "";
-                List<SpritesEntity> eventsprites = new List<SpritesEntity>();
-                List<EventDropEntity> eventdrops = Events.GetEventDrops(new List<EventEntity> { evt });
+                List<Model.Sprite> eventsprites = new List<Model.Sprite>();
+                List<EventDrop> eventdrops = Events.GetEventDrops(new List<Event> { evt });
                 eventdrops.ForEach(e =>
                 {
-                    List<SpritesEntity> sprites = Events.GetEventSprites(e.EventDropID);
+                    List<Model.Sprite> sprites = Events.GetEventSprites(e.EventDropId);
                     eventsprites.AddRange(sprites);
-                    dropList += "\n**" + e.Name + " Drop**  (" + BubbleWallet.GetEventCredit(login, e.EventDropID) + " caught) (`#" + e.EventDropID + "`)";
-                    int spent = inv.Where(spt => sprites.Any(eventsprite => eventsprite.ID == spt.ID)).Sum(spt => spt.Cost);
-                    sprites.OrderBy(sprite => sprite.ID).ForEach(sprite =>
-                       dropList += "\n> ‎ \n> ➜ **" + sprite.Name + "** (`#" + sprite.ID + "`)\n> "
-                        + (inv.Any(s => s.ID == sprite.ID) ? ":package: " : (BubbleWallet.GetEventCredit(login, sprite.EventDropID) - spent + " / "))
+                    dropList += "\n**" + e.Name + " Drop**  (" + BubbleWallet.GetEventCredit(login, e.EventDropId) + " caught) (`#" + e.EventDropId + "`)";
+                    int spent = inv.Where(spt => sprites.Any(eventsprite => eventsprite.Id == spt.ID)).Sum(spt => spt.Cost);
+                    sprites.OrderBy(sprite => sprite.Id).ForEach(sprite =>
+                       dropList += "\n> ‎ \n> ➜ **" + sprite.Name + "** (`#" + sprite.Id + "`)\n> "
+                        + (inv.Any(s => s.ID == sprite.Id) ? ":package: " : (BubbleWallet.GetEventCredit(login, sprite.EventDropId) - spent + " / "))
                         + sprite.Cost + " " + e.Name + " Drops "
                     );
                     dropList += "\n";
@@ -52,17 +53,17 @@ namespace Palantir.Commands
                 embed.AddField("\u200b", "Use `>sprite [id]` to see the event drop and sprite!");
 
                 // league stuff
-                List<PastDropEntity> leaguedrops = new List<PastDropEntity>();
+                List<PastDrop> leaguedrops = new List<PastDrop>();
                 var credit = Events.GetAvailableLeagueTradeDrops(context.User.Id.ToString(), evt, out leaguedrops);
                 if (credit > 0) embed.AddField("\n\u200b \nLeague Event Drops", "> You have " + Math.Round(credit, 1, MidpointRounding.ToZero).ToString() + " League Drops to redeem! \n> You can swap them with the command `>redeem [amount] [event drop id]` to any of this event's Event Drops.");
                 
-                SceneEntity scene = BubbleWallet.GetAvailableScenes().FirstOrDefault(scene => scene.EventID == evt.EventID);
+                Scene scene = BubbleWallet.GetAvailableScenes().FirstOrDefault(scene => scene.EventId == evt.EventId);
                 if (scene != null)
                 {
                     int collectedBubbles = BubbleWallet.GetCollectedBubblesInTimespan(eventStart, eventEnd.AddDays(-1), login);
-                    bool hasScene = BubbleWallet.GetSceneInventory(login, false, false).Any(prop => prop.ID == scene.ID);
-                    embed.WithImageUrl(scene.URL);
-                    embed.AddField("\n\u200b \nEvent Scene: **" + scene.Name + "**", "> \n> " + (hasScene ? ":package:" : "") + collectedBubbles + " / " + (((evt.EventID == 15 ? -2 : 0) + evt.DayLength) * Events.eventSceneDayValue) + " Bubbles collected");
+                    bool hasScene = BubbleWallet.GetSceneInventory(login, false, false).Any(prop => prop.Id == scene.Id);
+                    embed.WithImageUrl(scene.Url);
+                    embed.AddField("\n\u200b \nEvent Scene: **" + scene.Name + "**", "> \n> " + (hasScene ? ":package:" : "") + collectedBubbles + " / " + (((evt.EventId == 15 ? -2 : 0) + evt.DayLength) * Events.eventSceneDayValue) + " Bubbles collected");
                 }
 
                 var collected = Events.GetCollectedEventDrops(context.Message.Author.Id.ToString(), evt);
@@ -96,7 +97,7 @@ namespace Palantir.Commands
 
             var events = Events.GetEvents(false);
             var drops = Events.GetEventDrops();
-            var drop = drops.Find(drop => drop.EventDropID == eventDropID);
+            var drop = drops.Find(drop => drop.EventDropId == eventDropID);
 
             if (drop is null)
             {
@@ -104,8 +105,8 @@ namespace Palantir.Commands
                 return;
             }
 
-            var target = events.Find(evt => evt.EventID == drop.EventID);
-            List<PastDropEntity> consumable;
+            var target = events.Find(evt => evt.EventId == drop.EventId);
+            List<PastDrop> consumable;
             double credit = Events.GetAvailableLeagueTradeDrops(context.User.Id.ToString(), target, out consumable);
 
             if (credit < amount)
@@ -114,7 +115,7 @@ namespace Palantir.Commands
                 return;
             }
 
-            List<PastDropEntity> spent = new();
+            List<PastDrop> spent = new();
             //consumable = consumable.OrderByDescending(drop => Palantir.League.Weight(drop.LeagueWeight / 1000.0) / 100).ToList();
             double spent_count = 0;
 
@@ -135,12 +136,12 @@ namespace Palantir.Commands
         [Command("passed")]
         public async Task PassedEvents(CommandContext context)
         {
-            List<EventEntity> events = Events.GetEvents(false);
+            List<Event> events = Events.GetEvents(false);
             string eventsList = "";
             events = events.Where(e => Convert.ToDateTime(e.ValidFrom).AddDays(e.DayLength) < DateTime.Now).OrderByDescending(e => Convert.ToDateTime(e.ValidFrom)).ToList();
             events.ForEach(e =>
             {
-                eventsList += "➜ **" + e.EventName + "** [#" + e.EventID + "]: " + e.ValidFrom + " to " + Convert.ToDateTime(e.ValidFrom).AddDays(e.DayLength).ToShortDateString() + "\n";
+                eventsList += "➜ **" + e.EventName + "** [#" + e.EventId + "]: " + e.ValidFrom + " to " + Convert.ToDateTime(e.ValidFrom).AddDays(e.DayLength).ToShortDateString() + "\n";
                 //eventsList += e.Description + "\n\n";
             });
             if (eventsList == "") eventsList = "There have no events passed.";
@@ -156,7 +157,7 @@ namespace Palantir.Commands
         [Command("upcoming")]
         public async Task UpcomingEvents(CommandContext context)
         {
-            List<EventEntity> events = Events.GetEvents(false);
+            List<Event> events = Events.GetEvents(false);
             string eventsList = "";
             events = events.Where(e => Convert.ToDateTime(e.ValidFrom) >= DateTime.Now).OrderByDescending(e => Convert.ToDateTime(e.ValidFrom)).ToList();
             events.ForEach(e =>
@@ -199,17 +200,17 @@ namespace Palantir.Commands
             //}
             List<SpriteProperty> inv = BubbleWallet.GetInventory(login);
 
-            List<EventDropEntity> drops = Events.GetEventDrops();
-            var drop = drops.FirstOrDefault(d => d.EventDropID == eventDropID);
-            var eventdrops = drops.Where(d => d.EventID == drop.EventID).ToList();
-            var eventsprites = eventdrops.ConvertAll(d => Events.GetEventSprites(drop.EventDropID)).SelectMany(s => s).ToList();
+            List<EventDrop> drops = Events.GetEventDrops();
+            var drop = drops.FirstOrDefault(d => d.EventDropId == eventDropID);
+            var eventdrops = drops.Where(d => d.EventId == drop.EventId).ToList();
+            var eventsprites = eventdrops.ConvertAll(d => Events.GetEventSprites(drop.EventDropId)).SelectMany(s => s).ToList();
             string name = drop.Name;
             if (credit - amount < 0)
             {
                 await Program.SendEmbed(context.Channel, "You can't trick me!", "Your event credit is too few. You have only " + credit + " " + name + " left.");
                 return;
             }
-            var collected = Events.GetCollectedEventDrops(context.Message.Author.Id.ToString(), Events.GetEvents(false).FirstOrDefault(e => e.EventID == drop.EventID));
+            var collected = Events.GetCollectedEventDrops(context.Message.Author.Id.ToString(), Events.GetEvents(false).FirstOrDefault(e => e.EventId == drop.EventId));
 
             double lossBase = Events.CurrentGiftLossRate(eventsprites, collected);
             int lossMin = Convert.ToInt16(Math.Round(lossBase * amount * 0.7));
@@ -235,15 +236,15 @@ namespace Palantir.Commands
         [RequirePermissionFlag((byte)4)]
         public async Task CreateEvent(CommandContext context, [Description("The event name")] string name, [Description("The duration of the event in days")] int duration, [Description("The count of days when the event will start")] int validInDays, [Description("The event description")] params string[] description)
         {
-            PalantirDbContext dbcontext = new PalantirDbContext();
+            PalantirContext dbcontext = new PalantirContext();
 
-            EventEntity newEvent = new EventEntity();
+            Event newEvent = new Event();
             newEvent.EventName = name.Replace("_", " ");
             newEvent.DayLength = duration;
             newEvent.ValidFrom = DateTime.Now.AddDays(validInDays).ToShortDateString();
             newEvent.Description = description.ToDelimitedString(" ");
-            if (dbcontext.Events.Count() <= 0) newEvent.EventID = 0;
-            else newEvent.EventID = dbcontext.Events.Max(e => e.EventID) + 1;
+            if (dbcontext.Events.Count() <= 0) newEvent.EventId = 0;
+            else newEvent.EventId = dbcontext.Events.Max(e => e.EventId) + 1;
 
             if (dbcontext.Events.ToList().Any(otherEvent =>
                     !((Convert.ToDateTime(newEvent.ValidFrom) > Convert.ToDateTime(otherEvent.ValidFrom).AddDays(otherEvent.DayLength)) || // begin after end
@@ -263,7 +264,7 @@ namespace Palantir.Commands
             embed.Title = ":champagne:  Event created: **" + newEvent.EventName + "**";
             embed.Color = DiscordColor.Magenta;
             embed.WithDescription("The event lasts from  " + newEvent.ValidFrom + " to " + Convert.ToDateTime(newEvent.ValidFrom).AddDays(newEvent.DayLength).ToShortDateString());
-            embed.AddField("Make the event fancy!", "➜ `>eventdrop " + newEvent.EventID + " coolname` Send this command with an attached gif to add a event drop.");
+            embed.AddField("Make the event fancy!", "➜ `>eventdrop " + newEvent.EventId + " coolname` Send this command with an attached gif to add a event drop.");
 
             await context.Channel.SendMessageAsync(embed: embed);
         }
@@ -273,9 +274,9 @@ namespace Palantir.Commands
         [RequirePermissionFlag((byte)4)] // 4 -> mod
         public async Task CreateEventSprite(CommandContext context, [Description("The id of the event drop for the sprite")] int eventDropID, [Description("The name of the sprite")] string name, [Description("The event drop price")] int price, [Description("Any string except '-' if the sprite should replace the avatar")] string special = "", [Description("Any string except '-' if the sprite should be color-customizable")] string rainbow = "", [Description("Any string except '-' to set the sprite artist")] string artist = "")
         {
-            PalantirDbContext dbcontext = new PalantirDbContext();
+            PalantirContext dbcontext = new PalantirContext();
 
-            if (!dbcontext.EventDrops.Any(e => e.EventDropID == eventDropID))
+            if (!dbcontext.EventDrops.Any(e => e.EventDropId == eventDropID))
             {
                 await Program.SendEmbed(context.Channel, "Hmm...", "There's no event drop with that id.\nCheck `>upevent`");
                 return;
@@ -304,7 +305,7 @@ namespace Palantir.Commands
                 name.Replace("_", " "),
                 "https://tobeh.host/eventsprites/evd" + eventDropID + name.Replace("'", "-") + ".gif",
                 price,
-                dbcontext.Sprites.Where(s => s.ID < 1000).Max(s => s.ID) + 1,
+                dbcontext.Sprites.Where(s => s.Id < 1000).Max(s => s.Id) + 1,
                 special != "-" && special != "",
                 rainbow != "-" && rainbow != "",
                 eventDropID,
@@ -313,7 +314,7 @@ namespace Palantir.Commands
             BubbleWallet.AddSprite(eventsprite);
 
             DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
-            embed.Title = ":champagne:  Sprite added to " + dbcontext.EventDrops.FirstOrDefault(e => e.EventDropID == eventDropID).Name + ": **" + eventsprite.Name + "**";
+            embed.Title = ":champagne:  Sprite added to " + dbcontext.EventDrops.FirstOrDefault(e => e.EventDropId == eventDropID).Name + ": **" + eventsprite.Name + "**";
             embed.Color = DiscordColor.Magenta;
             embed.WithDescription("ID: " + eventsprite.ID + "\nYou can buy and view the sprite with the usual comands.");
             embed.WithThumbnail(eventsprite.URL);
@@ -327,9 +328,9 @@ namespace Palantir.Commands
         [RequirePermissionFlag((byte)4)]
         public async Task CreateEventDrop(CommandContext context, [Description("The id of the event for the event drop")] int eventID, [Description("The name of the event drop")] string name)
         {
-            PalantirDbContext dbcontext = new PalantirDbContext();
+            PalantirContext dbcontext = new PalantirContext();
 
-            if (!dbcontext.Events.Any(e => e.EventID == eventID))
+            if (!dbcontext.Events.Any(e => e.EventId == eventID))
             {
                 await Program.SendEmbed(context.Channel, "Hmm...", "There's no event with that id.\nCheck `>upcoming`");
                 return;
@@ -340,22 +341,22 @@ namespace Palantir.Commands
                 return;
             }
 
-            EventDropEntity newDrop = new EventDropEntity();
-            newDrop.EventID = eventID;
+            EventDrop newDrop = new EventDrop();
+            newDrop.EventId = eventID;
             newDrop.Name = name.Replace("_", " ");
-            newDrop.URL = context.Message.Attachments[0].Url;
-            if (dbcontext.EventDrops.Count() <= 0) newDrop.EventDropID = 0;
-            else newDrop.EventDropID = dbcontext.EventDrops.Max(e => e.EventDropID) + 1;
+            newDrop.Url = context.Message.Attachments[0].Url;
+            if (dbcontext.EventDrops.Count() <= 0) newDrop.EventDropId = 0;
+            else newDrop.EventDropId = dbcontext.EventDrops.Max(e => e.EventDropId) + 1;
 
             dbcontext.EventDrops.Add(newDrop);
             dbcontext.SaveChanges();
 
             DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
-            embed.Title = ":champagne:  Drop added to " + dbcontext.Events.FirstOrDefault(e => e.EventID == eventID).EventName + ": **" + newDrop.Name + "**";
+            embed.Title = ":champagne:  Drop added to " + dbcontext.Events.FirstOrDefault(e => e.EventId == eventID).EventName + ": **" + newDrop.Name + "**";
             embed.Color = DiscordColor.Magenta;
-            embed.WithThumbnail(newDrop.URL);
-            embed.WithDescription("The ID of the Drop is  " + newDrop.EventDropID + ".\nAdd a seasonal Sprite which can be bought with the event drops to make your event complete:\n" +
-                "➜ `>eventsprite " + newDrop.EventDropID + " [name] [price]` with the sprite-gif attached.");
+            embed.WithThumbnail(newDrop.Url);
+            embed.WithDescription("The ID of the Drop is  " + newDrop.EventDropId + ".\nAdd a seasonal Sprite which can be bought with the event drops to make your event complete:\n" +
+                "➜ `>eventsprite " + newDrop.EventDropId + " [name] [price]` with the sprite-gif attached.");
 
             dbcontext.Dispose();
             await context.Channel.SendMessageAsync(embed: embed);
@@ -381,7 +382,7 @@ namespace Palantir.Commands
 
             void AddTop(MemberLeagueResult result, int rank, string emote)
             {
-                var member = Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(Program.Feanor.GetMemberByLogin(result.Login).Member);
+                var member = Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(Program.Feanor.GetMemberByLogin(result.Login).Member1);
                 embed.AddField(
                     emote + " _ _ " + member.UserName + "\n_ _  `#" + rank + " - " + result.Score + "dw`",
                     "> ***" + result.LeagueDrops.Count + "** League Drops*\n> ***" + result.AverageWeight + "%** avg.weight*\n> ***" + result.AverageTime + "ms** avg.time*\n> ***" + result.Streak.streakMax + "** max.streak*",
@@ -398,7 +399,7 @@ namespace Palantir.Commands
                 string content = "";
                 foreach (var result in results)
                 {
-                    var member = Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(Program.Feanor.GetMemberByLogin(result.Login).Member);
+                    var member = Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(Program.Feanor.GetMemberByLogin(result.Login).Member1);
                     content += "> " + member.UserName.Replace("`", "\\`") + " `" + result.Score + "dw / " + result.AverageWeight + "%`\n";
                 }
                 return content;
@@ -411,22 +412,22 @@ namespace Palantir.Commands
             {
                 var maxOverall = results.Max(r => r.Score);
                 var overall = Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(
-                    Program.Feanor.GetMemberByLogin(results.Find(r => r.Score == maxOverall).Login).Member
+                    Program.Feanor.GetMemberByLogin(results.Find(r => r.Score == maxOverall).Login).Member1
                 );
 
                 var maxWeight = results.Max(r => r.AverageWeight);
                 var weight = Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(
-                    Program.Feanor.GetMemberByLogin(results.Find(r => r.AverageWeight == maxWeight).Login).Member
+                    Program.Feanor.GetMemberByLogin(results.Find(r => r.AverageWeight == maxWeight).Login).Member1
                 );
 
                 var maxCount = results.Max(r => r.LeagueDrops.Count);
                 var count = Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(
-                    Program.Feanor.GetMemberByLogin(results.Find(r => r.LeagueDrops.Count == maxCount).Login).Member
+                    Program.Feanor.GetMemberByLogin(results.Find(r => r.LeagueDrops.Count == maxCount).Login).Member1
                 );
 
                 var maxStreak = results.Max(r => r.Streak.streakMax);
                 var streak = Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(
-                    Program.Feanor.GetMemberByLogin(results.Find(r => r.Streak.streakMax == maxStreak).Login).Member
+                    Program.Feanor.GetMemberByLogin(results.Find(r => r.Streak.streakMax == maxStreak).Login).Member1
                 );
 
                 embed.AddField(
@@ -462,12 +463,12 @@ namespace Palantir.Commands
             results.Batch(1).ForEach((batch, i) =>
             {
                 var aBatch = batch.ToArray();
-                var rank1 = Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(Program.Feanor.GetMemberByLogin(aBatch[0].Login).Member).UserName;
+                var rank1 = Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(Program.Feanor.GetMemberByLogin(aBatch[0].Login).Member1).UserName;
                 ranks += $"｜#{ i + 1,3 }｜{ Regex.Replace(rank1, @"p{Cs}", ""),15 }｜{ aBatch[0].Score,6 } ｜{ aBatch[0].AverageWeight,6 }% ｜{ aBatch[0].Streak.streakMax,5 }";
 
                 if (aBatch.Length > 1)
                 {
-                    var rank2 = Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(Program.Feanor.GetMemberByLogin(aBatch[1].Login).Member).UserName;
+                    var rank2 = Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(Program.Feanor.GetMemberByLogin(aBatch[1].Login).Member1).UserName;
                     ranks += $"｜#{ i * 2 + 2,3 }｜{ Regex.Replace(rank1, @"p{Cs}", ""),15 }｜{ aBatch[1].Score,6 } ｜{ aBatch[1].AverageWeight,6 }% ｜{ aBatch[1].Streak.streakMax,5 } ｜\n";
                 }
                 else ranks += "\n";
@@ -618,11 +619,11 @@ namespace Palantir.Commands
             var rewards = season.Evaluate();
 
             
-            List<SplitCreditEntity> splits = new List<SplitCreditEntity>();
+            List<SplitCredit> splits = new List<SplitCredit>();
 
             rewards.ForEach(reward =>
             {
-                var name = Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(Program.Feanor.GetMemberByLogin(reward.result.Login).Member).UserName.Replace("`","");
+                var name = Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(Program.Feanor.GetMemberByLogin(reward.result.Login).Member1).UserName.Replace("`","");
                 text += name + ": `" + reward.rewards.ToDelimitedString(", ") + " `=> " + reward.splits + " Splits\n";
             });
 
@@ -630,13 +631,13 @@ namespace Palantir.Commands
 
             if (apply)
             {
-                PalantirDbContext db = new();
-                int id = db.BoostSplits.Max(s => s.ID) + 1;
+                PalantirContext db = new();
+                int id = db.BoostSplits.Max(s => s.Id) + 1;
 
-                BoostSplitEntity leagueSplit = new BoostSplitEntity()
+                BoostSplit leagueSplit = new BoostSplit()
                 {
                     Date = "01/" + month.ToString().PadLeft(2, '0') + "/" + year.ToString(),
-                    ID = id,
+                    Id = id,
                     Description = "You have been ranked in the leaderboard of that season." ,
                     Value = 0,
                     Name = "<a:league_rnk1:987699431350632518> League " + season.seasonName
@@ -646,7 +647,7 @@ namespace Palantir.Commands
 
                 rewards.ForEach((reward) =>
                 {
-                    db.SplitCredits.Add(new SplitCreditEntity()
+                    db.SplitCredits.Add(new SplitCredit()
                     {
                         ValueOverride = reward.splits,
                         Login = Convert.ToInt32(reward.result.Login),

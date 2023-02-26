@@ -8,6 +8,7 @@ using DSharpPlus;
 using DSharpPlus.Entities;
 using Newtonsoft.Json;
 using System.Net;
+using Palantir.Model;
 
 namespace Palantir.QuartzJobs
 {
@@ -16,9 +17,9 @@ namespace Palantir.QuartzJobs
         public async Task Execute(IJobExecutionContext context)
         {
             Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > Tracer for Bubbles is loading values from DB...");
-            PalantirDbContext dbcontext = new PalantirDbContext();
-            List<MemberEntity> members = dbcontext.Members.ToList();
-            List<BubbleTraceEntity> dailyMemberTraces = new List<BubbleTraceEntity>();
+            Model.PalantirContext dbcontext = new PalantirContext();
+            List<Model.Member> members = dbcontext.Members.ToList();
+            List<Model.BubbleTrace> dailyMemberTraces = new List<Model.BubbleTrace>();
             Console.WriteLine("Deleting daily duplicates...");
             dbcontext.BubbleTraces.ToList().ForEach(t =>
             {
@@ -28,15 +29,15 @@ namespace Palantir.QuartzJobs
 
             Console.WriteLine("Creating trace entities...");
             int maxid = 0;
-            try { maxid = dbcontext.BubbleTraces.OrderByDescending(t => t.ID).ToList()[0].ID + 1; }
+            try { maxid = dbcontext.BubbleTraces.OrderByDescending(t => t.Id).ToList()[0].Id + 1; }
             catch { }
             members.ForEach(m =>
             {
-                BubbleTraceEntity trace = new BubbleTraceEntity();
+                Model.BubbleTrace trace = new Model.BubbleTrace();
                 trace.Login = m.Login;
                 trace.Date = DateTime.UtcNow.ToShortDateString();
                 trace.Bubbles = m.Bubbles;
-                trace.ID = ++maxid;
+                trace.Id = ++maxid;
                 dailyMemberTraces.Add(trace);
             });
 
@@ -55,10 +56,10 @@ namespace Palantir.QuartzJobs
         public async Task Execute(IJobExecutionContext context)
         {
             List<string> onlineIDs = new List<string>();
-            PalantirDbContext dbcontext = new PalantirDbContext();
-            dbcontext.Status.ToList().ForEach(status =>
+            PalantirContext dbcontext = new PalantirContext();
+            dbcontext.Statuses.ToList().ForEach(status =>
             {
-                string id = JsonConvert.DeserializeObject<PlayerStatus>(status.Status).PlayerMember.UserID;
+                string id = JsonConvert.DeserializeObject<PlayerStatus>(status.Status1).PlayerMember.UserID;
                 if (!onlineIDs.Contains(id)) onlineIDs.Add(id);
             });
             int count = onlineIDs.Count();
@@ -85,8 +86,8 @@ namespace Palantir.QuartzJobs
         public BubbleTrace(string login, int? dayLimit = null)
         {
             History = new Dictionary<DateTime, int>();
-            PalantirDbContext context = new PalantirDbContext();
-            List<BubbleTraceEntity> traces = context.BubbleTraces.Where(t => t.Login == login).ToList();
+            PalantirContext context = new PalantirContext();
+            List<Model.BubbleTrace> traces = context.BubbleTraces.Where(t => t.Login.ToString() == login).ToList();
             if (dayLimit is null) dayLimit = traces.Count;
              Dictionary<DateTime, int> combined = new Dictionary<DateTime, int>();
             traces.OrderBy(k => k.Bubbles);

@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Palantir.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +11,7 @@ namespace Palantir
 {
     internal struct MemberLeagueResult
     {
-        public List<PastDropEntity> LeagueDrops;
+        public List<PastDrop> LeagueDrops;
         public double AverageWeight;
         public double AverageTime;
         public double Score;
@@ -57,15 +58,15 @@ namespace Palantir
 
         public static List<double> GetLeagueDropWeights(string userid)
         {
-            PalantirDbContext palantirDbContext = new PalantirDbContext();
+            PalantirContext palantirDbContext = new PalantirContext();
             var userDrops = palantirDbContext.PastDrops
-                .FromSqlRaw($"SELECT * FROM \"PastDrops\" WHERE LeagueWeight > 0 AND CaughtLobbyPlayerID == \"{userid}\"")
+                .FromSqlRaw($"SELECT * FROM \"PastDrops\" WHERE LeagueWeight > 0 AND CaughtLobbyPlayerID = '{userid}'")
                 .ToList();
             palantirDbContext.Dispose();
             List<double> weights = new();
             foreach (var item in userDrops)
             {
-                if (item.EventDropID == 0) weights.Add(League.Weight(item.LeagueWeight / 1000.0) / 100);
+                if (item.EventDropId == 0) weights.Add(League.Weight(item.LeagueWeight / 1000.0) / 100);
             }
 
             return weights;
@@ -73,37 +74,37 @@ namespace Palantir
 
         public static List<double> GetLeagueEventDropWeights(string userid)
         {
-            PalantirDbContext palantirDbContext = new PalantirDbContext();
+            PalantirContext palantirDbContext = new PalantirContext();
             var userDrops = palantirDbContext.PastDrops
-                .FromSqlRaw($"SELECT * FROM \"PastDrops\" WHERE LeagueWeight > 0 AND EventDropID != 0 AND CaughtLobbyPlayerID == \"{userid}\"")
+                .FromSqlRaw($"SELECT * FROM \"PastDrops\" WHERE LeagueWeight > 0 AND EventDropID != 0 AND CaughtLobbyPlayerID = '{userid}'")
                 .ToList();
             palantirDbContext.Dispose();
             List<double> weights = new();
             foreach (var item in userDrops)
             {
-                if (item.EventDropID > 0) weights.Add(League.Weight(item.LeagueWeight / 1000.0) / 100);
+                if (item.EventDropId > 0) weights.Add(League.Weight(item.LeagueWeight / 1000.0) / 100);
             }
 
             return weights;
         }
 
-        public static List<PastDropEntity> GetLeagueEventDrops(string userid, int[] eventdrops)
+        public static List<PastDrop> GetLeagueEventDrops(string userid, int[] eventdrops)
         {
-            PalantirDbContext palantirDbContext = new PalantirDbContext();
+            PalantirContext palantirDbContext = new PalantirContext();
             var userDrops = palantirDbContext.PastDrops
-                .FromSqlRaw($"SELECT * FROM \"PastDrops\" WHERE EventDropID > 0 AND LeagueWeight > 0 AND CaughtLobbyPlayerID == \"{userid}\"")
+                .FromSqlRaw($"SELECT * FROM \"PastDrops\" WHERE EventDropID > 0 AND LeagueWeight > 0 AND CaughtLobbyPlayerID = '{userid}'")
                 .ToList();
             palantirDbContext.Dispose();
-            List<PastDropEntity> drops = new();
+            List<PastDrop> drops = new();
             foreach (var item in userDrops)
             {
-                if(eventdrops.Contains(item.EventDropID)) drops.Add(item);
+                if(eventdrops.Contains(item.EventDropId)) drops.Add(item);
             }
 
             return drops;
         }
 
-        private List<PastDropEntity> leagueDrops, allDrops;
+        private List<PastDrop> leagueDrops, allDrops;
         private string month, year;
         public string seasonName;
 
@@ -116,12 +117,12 @@ namespace Palantir
             this.year = year;
             this.seasonName = DateTime.Parse("01/" + this.month + "/" + this.year + " +0000").ToString("MMMM yyyy");
 
-            PalantirDbContext palantirDbContext = new PalantirDbContext();
+            PalantirContext palantirDbContext = new PalantirContext();
             this.leagueDrops = palantirDbContext.PastDrops
-                .FromSqlRaw($"SELECT * FROM \"PastDrops\" WHERE LeagueWeight > 0 AND substr(ValidFrom, 6, 2) LIKE \"{month}\" AND substr(ValidFrom, 1, 4) == \"{year}\"")
+                .FromSqlRaw($"SELECT * FROM \"PastDrops\" WHERE LeagueWeight > 0 AND substr(ValidFrom, 6, 2) = '{month}' AND substr(ValidFrom, 1, 4) = '{year}'")
                 .ToList();
             this.allDrops = palantirDbContext.PastDrops
-                .FromSqlRaw($"SELECT * FROM \"PastDrops\" WHERE substr(ValidFrom, 6, 2) LIKE \"{month}\" AND substr(ValidFrom, 1, 4) == \"{year}\"")
+                .FromSqlRaw($"SELECT * FROM \"PastDrops\" WHERE substr(ValidFrom, 6, 2)= '{month}' AND substr(ValidFrom, 1, 4) = '{year}'")
                 .ToList();
             palantirDbContext.Dispose();
             //this.leagueDrops = palantirDbContext.PastDrops.Where(drop => 
@@ -142,19 +143,19 @@ namespace Palantir
         private Dictionary<string, MemberSpanStreak> GetStreaks(long startDropID)
         {
 
-            var participants = this.leagueDrops.Select(d => d.CaughtLobbyPlayerID).Distinct().ToList();
+            var participants = this.leagueDrops.Select(d => d.CaughtLobbyPlayerId).Distinct().ToList();
             int[] streaks = new int[participants.Count];
             int[] startStreaks = new int[participants.Count];
             int[] maxStreaks = new int[participants.Count];
 
             int dropCount = 0;
-            this.allDrops.Where(drop => Convert.ToInt64(drop.DropID) > startDropID).GroupBy(d => d.DropID).ToList().ForEach(drop =>
+            this.allDrops.Where(drop => Convert.ToInt64(drop.DropId) > startDropID).GroupBy(d => d.DropId).ToList().ForEach(drop =>
             {
                 dropCount++;
 
                 for (int i = 0; i < participants.Count; i++)
                 {
-                    if(drop.Any(d => d.CaughtLobbyPlayerID == participants[i] && d.LeagueWeight > 0))
+                    if(drop.Any(d => d.CaughtLobbyPlayerId == participants[i] && d.LeagueWeight > 0))
                     {
                         streaks[i]++;
                         if (startStreaks[i] == dropCount - 1) startStreaks[i] = dropCount;
@@ -197,8 +198,8 @@ namespace Palantir
 
             List<MemberLeagueResult> results = new();
 
-            List<PastDropEntity> uncached = leagueDrops.Where(drop => Convert.ToInt64(drop.DropID) > cached.lastDrop).ToList();
-            leagueDrops.Where(drop => Convert.ToInt64(drop.DropID) > cached.lastDrop).ToList().ConvertAll(drop => drop.CaughtLobbyPlayerID).Distinct().ToList().ForEach(userid =>
+            List<PastDrop> uncached = leagueDrops.Where(drop => Convert.ToInt64(drop.DropId) > cached.lastDrop).ToList();
+            leagueDrops.Where(drop => Convert.ToInt64(drop.DropId) > cached.lastDrop).ToList().ConvertAll(drop => drop.CaughtLobbyPlayerId).Distinct().ToList().ForEach(userid =>
             {
                 MemberLeagueResult result = new MemberLeagueResult();
                 result.Login = BubbleWallet.GetLoginOfMember(userid);
@@ -219,7 +220,7 @@ namespace Palantir
 
                 if (cached.results.Any(c => c.Login == result.Login)) cachedResult = cached.results.FirstOrDefault(c => c.Login == result.Login);
 
-                List<PastDropEntity> uncachedMemerDrops = uncached.Where(drop => drop.CaughtLobbyPlayerID == userid).ToList();
+                List<PastDrop> uncachedMemerDrops = uncached.Where(drop => drop.CaughtLobbyPlayerId == userid).ToList();
 
                 result.LeagueDrops = cachedResult.LeagueDrops.Concat(uncachedMemerDrops).ToList();
                 result.AverageTime = Math.Round(cachedResult.AverageTime * cachedResult.LeagueDrops.Count / result.LeagueDrops.Count + uncachedMemerDrops.Average(drop => drop.LeagueWeight) * uncachedMemerDrops.Count / result.LeagueDrops.Count);
@@ -230,7 +231,7 @@ namespace Palantir
                 result.Streak = new MemberSpanStreak()
                 {
                     streakStart = cachedResult.Streak.streakStart,
-                    streakEnd = hasNewStreak ? streaks[userid].streakEnd : Convert.ToInt64(this.allDrops.Last().DropID) == cached.lastDrop ? cachedResult.Streak.streakEnd : 0,
+                    streakEnd = hasNewStreak ? streaks[userid].streakEnd : Convert.ToInt64(this.allDrops.Last().DropId) == cached.lastDrop ? cachedResult.Streak.streakEnd : 0,
                     streakMax = (new int[] { cachedResult.Streak.streakMax, cachedResult.Streak.streakEnd + (hasNewStreak ? streaks[userid].streakStart : 0), hasNewStreak ? streaks[userid].streakMax : 0 }).Max()
                 };
 
@@ -243,7 +244,7 @@ namespace Palantir
             // update cache
             League.cachedResults[this.seasonName] = new LeagueCache()
             {
-                lastDrop = Convert.ToInt64(this.allDrops.Last().DropID),
+                lastDrop = Convert.ToInt64(this.allDrops.Last().DropId),
                 results = results
             };
 

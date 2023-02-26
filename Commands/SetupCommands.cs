@@ -14,6 +14,7 @@ using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp;
 using System;
 using System.Collections.Generic;
+using Palantir.Model;
 
 namespace Palantir.Commands
 {
@@ -157,12 +158,12 @@ namespace Palantir.Commands
         {
             Program.Feanor.ValidateGuildPalantir(context.Guild.Id.ToString());
 
-            PalantirDbContext db = new PalantirDbContext();
-            db.Webhooks.Add(new WebhookEntity
+            PalantirContext db = new PalantirContext();
+            db.Webhooks.Add(new Model.Webhook
             {
                 Name = name,
-                WebhookURL = url,
-                ServerID = context.Guild.Id.ToString()
+                WebhookUrl = url,
+                ServerId = context.Guild.Id.ToString()
             });
             db.SaveChanges();
             db.Dispose();
@@ -178,17 +179,17 @@ namespace Palantir.Commands
         {
             Program.Feanor.ValidateGuildPalantir(context.Guild.Id.ToString());
 
-            PalantirDbContext db = new PalantirDbContext();
+            PalantirContext db = new PalantirContext();
             string hooks = "";
-            db.Webhooks.Where(w => w.ServerID == context.Guild.Id.ToString()).ForEach(h =>
+            db.Webhooks.Where(w => w.ServerId == context.Guild.Id.ToString()).ForEach(h =>
             {
-                hooks += "- " + h.Name + ": " + h.WebhookURL + "\n";
+                hooks += "- " + h.Name + ": " + h.WebhookUrl + "\n";
             });
             await context.RespondAsync(hooks);
 
             if (clearAll)
             {
-                db.Webhooks.RemoveRange(db.Webhooks.Where(w => w.ServerID == context.Guild.Id.ToString()));
+                db.Webhooks.RemoveRange(db.Webhooks.Where(w => w.ServerId == context.Guild.Id.ToString()));
                 await context.RespondAsync("Those webhooks were removed.");
             }
             db.SaveChanges();

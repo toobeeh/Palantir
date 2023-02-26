@@ -7,6 +7,7 @@ using System.Linq;
 using System.IO;
 using DSharpPlus.Entities;
 using System.Threading.Tasks;
+using Palantir.Model;
 
 namespace Palantir
 {
@@ -25,18 +26,18 @@ namespace Palantir
 
         public void LoadConnections()
         {
-            PalantirDbContext Database = new PalantirDbContext();
+            PalantirContext Database = new PalantirContext();
             PalantirTethers = new List<Tether>();
-            foreach (PalantirEntity palantirEntity in Database.Palantiri)
+            foreach (PalantiriNightly palantirEntity in Database.PalantiriNightlies.ToList())
             {
                 Tether tether;
                 ObservedGuild guild = JsonConvert.DeserializeObject<ObservedGuild>(palantirEntity.Palantir);
                 // if more than one member connected
                 if(Database.Members.Count(
-                    member => member.Member.Contains(guild.GuildID.ToString())) > 0)
+                    member => member.Member1.Contains(guild.GuildID.ToString())) > 0)
                 {
-                    if (Database.GuildSettings.Any(s => s.GuildID == guild.GuildID))
-                        tether = new Tether(guild, JsonConvert.DeserializeObject<GuildSettings>(Database.GuildSettings.FirstOrDefault(s => s.GuildID == guild.GuildID).Settings));
+                    if (Database.GuildSettings.Any(s => s.GuildId == guild.GuildID))
+                        tether = new Tether(guild, JsonConvert.DeserializeObject<GuildSettings>(Database.GuildSettings.FirstOrDefault(s => s.GuildId == guild.GuildID).Settings));
                     else tether = new Tether(guild);
                     PalantirTethers.Add(tether);
                 }
@@ -48,9 +49,9 @@ namespace Palantir
             }
 
             PalantirMembers = new List<Member>();
-            foreach (MemberEntity memberEntity in Database.Members)
+            foreach (Model.Member memberEntity in Database.Members)
             {
-                PalantirMembers.Add(JsonConvert.DeserializeObject<Member>(memberEntity.Member));
+                PalantirMembers.Add(JsonConvert.DeserializeObject<Member>(memberEntity.Member1));
             }
             Database.Dispose();
         }
@@ -61,9 +62,9 @@ namespace Palantir
             PalantirTethers.Remove(PalantirTethers.Find(t => t.PalantirEndpoint.ObserveToken == guild.ObserveToken));
 
             // remove palantir from db
-            PalantirDbContext context = new PalantirDbContext();
-            PalantirEntity e = context.Palantiri.FirstOrDefault(ptr => ptr.Token == guild.ObserveToken);
-            context.Palantiri.Remove(e);
+            PalantirContext context = new PalantirContext();
+            PalantiriNightly e = context.PalantiriNightlies.FirstOrDefault(ptr => ptr.Token == guild.ObserveToken);
+            context.PalantiriNightlies.Remove(e);
             try
             {
                 context.SaveChanges();
@@ -77,8 +78,8 @@ namespace Palantir
 
         public void UpdatePalantirSettings(Tether tether)
         {
-            PalantirDbContext context = new PalantirDbContext();
-            GuildSettingsEntity entity = context.GuildSettings.FirstOrDefault(s => s.GuildID ==tether.PalantirEndpoint.GuildID);
+            PalantirContext context = new PalantirContext();
+            Model.GuildSetting entity = context.GuildSettings.FirstOrDefault(s => s.GuildId ==tether.PalantirEndpoint.GuildID);
 
             if (entity != null)
             {
@@ -87,8 +88,8 @@ namespace Palantir
             }
             else
             {
-                entity = new GuildSettingsEntity();
-                entity.GuildID = tether.PalantirEndpoint.GuildID;
+                entity = new Model.GuildSetting();
+                entity.GuildId = tether.PalantirEndpoint.GuildID;
                 entity.Settings = JsonConvert.SerializeObject(tether.PalantirSettings);
                 context.GuildSettings.Add(entity);
                 context.SaveChanges();
@@ -99,10 +100,10 @@ namespace Palantir
 
         public void UpdateMemberGuilds()
         {
-            PalantirDbContext context = new PalantirDbContext();
-            foreach(MemberEntity memberEntity in context.Members)
+            PalantirContext context = new PalantirContext();
+            foreach(Model.Member memberEntity in context.Members)
             {
-                Member member = JsonConvert.DeserializeObject<Member>(memberEntity.Member);
+                Member member = JsonConvert.DeserializeObject<Member>(memberEntity.Member1);
                 List<ObservedGuild> updatedGuilds = new List<ObservedGuild>();
                 member.Guilds.ForEach((g) =>
                 {
@@ -112,14 +113,14 @@ namespace Palantir
                             .PalantirEndpoint);
                 });
                 member.Guilds = updatedGuilds;
-                if (updatedGuilds.Count > 0) memberEntity.Member = JsonConvert.SerializeObject(member);
+                if (updatedGuilds.Count > 0) memberEntity.Member1 = JsonConvert.SerializeObject(member);
                 else
                 {
                     //MemberEntity rem = new MemberEntity();
                     //rem.Login = member.UserLogin;
                     //context.Members.Remove(rem);
                     //Console.WriteLine("Member " + member.UserName + " was removed.");
-                    memberEntity.Member = JsonConvert.SerializeObject(member);
+                    memberEntity.Member1 = JsonConvert.SerializeObject(member);
                     Console.WriteLine("Member " + member.UserName + " has no verified guilds.");
                 }
             }
@@ -129,7 +130,7 @@ namespace Palantir
         public void SavePalantiri(ObservedGuild guild)
         {
             bool newGuild = true;
-            PalantirDbContext Database = new PalantirDbContext();
+            PalantirContext Database = new PalantirContext();
 
             // If guild of new palantir has already an active palantir, close tether, replace palantir and reopen tether
             PalantirTethers.ForEach((t) => {
@@ -144,11 +145,11 @@ namespace Palantir
 
                    // Console.WriteLine("Change token from " + oldToken + " to " + guild.ObserveToken);
                     // update db entry
-                    Database.Palantiri.Remove(Database.Palantiri.FirstOrDefault(p => p.Token == oldToken));
-                    PalantirEntity entity = new PalantirEntity();
+                    Database.Palantiris.Remove(Database.Palantiris.FirstOrDefault(p => p.Token == oldToken));
+                    Palantiri entity = new Palantiri();
                     entity.Palantir = JsonConvert.SerializeObject(guild);
                     entity.Token = guild.ObserveToken;
-                    Database.Palantiri.Add(entity);
+                    Database.Palantiris.Add(entity);
                     Database.SaveChanges();
                 }
             });
@@ -161,10 +162,10 @@ namespace Palantir
                 PalantirTethers.Add(tether);
 
                 // Add db entry
-                PalantirEntity entity = new PalantirEntity();
+                Palantiri entity = new Palantiri();
                 entity.Token = guild.ObserveToken;
                 entity.Palantir = JsonConvert.SerializeObject(guild);
-                Database.Palantiri.Add(entity);
+                Database.Palantiris.Add(entity);
                 Database.SaveChanges();
             }
             Database.Dispose();
@@ -173,13 +174,13 @@ namespace Palantir
 
         public void AddMember(Member member)
         {
-            PalantirDbContext Database = new PalantirDbContext();
+            PalantirContext Database = new PalantirContext();
             PalantirMembers.Add(member);
 
             // add to db
-            MemberEntity entity = new MemberEntity();
-            entity.Login = member.UserLogin;
-            entity.Member = JsonConvert.SerializeObject(member);
+            Model.Member entity = new Model.Member();
+            entity.Login = Convert.ToInt32(member.UserLogin);
+            entity.Member1 = JsonConvert.SerializeObject(member);
             entity.Bubbles = 0;
             entity.Sprites = "";
             Database.Members.Add(entity);
@@ -187,31 +188,31 @@ namespace Palantir
             Database.Dispose();
         }
 
-        public List<MemberEntity> GetGuildMembers(string guildID)
+        public List<Model.Member> GetGuildMembers(string guildID)
         {
-            PalantirDbContext context = new PalantirDbContext();
-            List<MemberEntity> members = context.Members.Where(m => m.Member.Contains(guildID)).ToList();
+            PalantirContext context = new PalantirContext();
+            List<Model.Member> members = context.Members.Where(m => m.Member1.Contains(guildID)).ToList();
             context.Dispose();
             return members;
         }
-        public MemberEntity GetMemberByLogin(string login)
+        public Model.Member GetMemberByLogin(string login)
         {
-            PalantirDbContext context = new PalantirDbContext();
-            MemberEntity member = context.Members.FirstOrDefault(m => m.Login == login);
+            PalantirContext context = new PalantirContext();
+            Model.Member member = context.Members.FirstOrDefault(m => m.Login.ToString() == login);
             context.Dispose();
             return member;
         }
         public int GetFlagByMember(DiscordUser user)
         {
-            PalantirDbContext context = new PalantirDbContext();
-            MemberEntity member = context.Members.FirstOrDefault(m => m.Member.Contains(user.Id.ToString()));
+            PalantirContext context = new PalantirContext();
+            Model.Member member = context.Members.FirstOrDefault(m => m.Member1.Contains(user.Id.ToString()));
             context.Dispose();
             return member.Flag;
         }
         public void SetFlagByID(string id, int flag)
         {
-            PalantirDbContext context = new PalantirDbContext();
-            MemberEntity member = context.Members.FirstOrDefault(m => m.Member.Contains(id));
+            PalantirContext context = new PalantirContext();
+            Model.Member member = context.Members.FirstOrDefault(m => m.Member1.Contains(id));
             member.Flag = flag;
             context.SaveChanges();
             context.Dispose();
@@ -233,20 +234,20 @@ namespace Palantir
             patrons.Add("502878288360767489");
             patronizer.Add("502878288360767489");
             PatronCount = patrons.Count();
-            PalantirDbContext db = new PalantirDbContext();
+            PalantirContext db = new PalantirContext();
             // iterate through palantir members and set flags
             await db.Members.ForEachAsync(member =>
             {
                 PermissionFlag flag = new PermissionFlag((byte)member.Flag);
-                flag.Patron = patrons.Any(patron => member.Member.Contains(patron));
-                if (patronizer.Any(id => member.Member.Contains(id)))
+                flag.Patron = patrons.Any(patron => member.Member1.Contains(patron));
+                if (patronizer.Any(id => member.Member1.Contains(id)))
                 {
                     flag.Patronizer = true;
                     if (member.Patronize is not null && member.Patronize != "") patronized.Add(member.Patronize.Split("#")[0]);
                 }
                 else flag.Patronizer = false;
                 string emoji = String.IsNullOrEmpty(member.Emoji) ? "" : member.Emoji;
-                if(flag.Patron || flag.BotAdmin) emojis.Add(member.Login, emoji);
+                if(flag.Patron || flag.BotAdmin) emojis.Add(member.Login.ToString(), emoji);
                 member.Flag = flag.CalculateFlag();
             });
             try
@@ -254,15 +255,15 @@ namespace Palantir
                 // set flags of patronized members
                 patronized.ForEach(id =>
                 {
-                    if (db.Members.Any(member => member.Member.Contains(id)))
+                    if (db.Members.Any(member => member.Member1.Contains(id)))
                     {
-                        MemberEntity member = db.Members.FirstOrDefault(member => member.Member.Contains(id));
-                        if (!patrons.Contains(member.Login))
+                        Model.Member member = db.Members.FirstOrDefault(member => member.Member1.Contains(id));
+                        if (!patrons.Contains(member.Login.ToString()))
                         {
                             PermissionFlag flag = new PermissionFlag((byte)member.Flag);
                             flag.Patron = true;
                             string emoji = String.IsNullOrEmpty(member.Emoji) ? "" : member.Emoji;
-                            if (!emojis.ContainsKey(member.Login)) emojis.Add(member.Login, emoji);
+                            if (!emojis.ContainsKey(member.Login.ToString())) emojis.Add(member.Login.ToString(), emoji);
                             member.Flag = flag.CalculateFlag();
                         }
                     }
@@ -305,13 +306,13 @@ namespace Palantir
 
         public double DatabaseReadTime(string id, int reads)
         {
-            PalantirDbContext context = new PalantirDbContext();
+            PalantirContext context = new PalantirContext();
             DateTime now;
             double time = 0;
             for(int i = 0; i < reads; i++)
             {
                 now = DateTime.Now;
-                context.Members.FirstOrDefault(m => m.Member.Contains(id));
+                context.Members.FirstOrDefault(m => m.Member1.Contains(id));
                 time += (DateTime.Now - now).TotalMilliseconds;
             }
             context.Dispose();

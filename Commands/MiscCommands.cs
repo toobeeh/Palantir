@@ -16,6 +16,7 @@ using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats;
 using Microsoft.EntityFrameworkCore;
+using Palantir.Model;
 
 namespace Palantir.Commands
 {
@@ -190,7 +191,7 @@ namespace Palantir.Commands
             List<SceneProperty> sceneInv = BubbleWallet.GetSceneInventory(login, false, false);
             if(sceneInv.Count > 0)
             {
-                embed.AddField("Scenes:", sceneInv.OrderBy(scene => scene.ID).ToList().ConvertAll(scene => "#" + scene.ID + " - " + scene.Name + (scene.Activated ? " (active)" : "")).ToDelimitedString("\n"));
+                embed.AddField("Scenes:", sceneInv.OrderBy(scene => scene.Id).ToList().ConvertAll(scene => "#" + scene.Id + " - " + scene.Name + (scene.Activated ? " (active)" : "")).ToDelimitedString("\n"));
             }
 
             string selected = "";
@@ -278,8 +279,8 @@ namespace Palantir.Commands
             Program.Feanor.UpdateMemberGuilds();
             DiscordMessage leaderboard = await context.RespondAsync("`⏱️` Loading members of `" + context.Guild.Name + "`...");
             var interactivity = context.Client.GetInteractivity();
-            List<MemberEntity> members = Program.Feanor.GetGuildMembers(context.Guild.Id.ToString()).OrderByDescending(m => (mode == "drops" ? m.Drops : m.Bubbles)).Where(m => m.Bubbles > 0).ToList();
-            List<IEnumerable<MemberEntity>> memberBatches = members.Batch(9).ToList();
+            List<Model.Member> members = Program.Feanor.GetGuildMembers(context.Guild.Id.ToString()).OrderByDescending(m => (mode == "drops" ? m.Drops : m.Bubbles)).Where(m => m.Bubbles > 0).ToList();
+            List<IEnumerable<Model.Member>> memberBatches = members.Batch(9).ToList();
             int unranked = 0;
 
             DiscordEmoji down = await (await Program.Client.GetGuildAsync(779435254225698827)).GetEmojiAsync(790349869138968596);
@@ -299,10 +300,10 @@ namespace Palantir.Commands
                 DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
                 embed.Title = "🔮  Leaderboard of " + context.Guild.Name;
                 embed.Color = DiscordColor.Magenta;
-                IEnumerable<MemberEntity> memberBatch = memberBatches[page];
-                foreach (MemberEntity member in memberBatch)
+                IEnumerable<Model.Member> memberBatch = memberBatches[page];
+                foreach (Model.Member member in memberBatch)
                 {
-                    string name = "<@" + JsonConvert.DeserializeObject<Member>(member.Member).UserID + ">";
+                    string name = "<@" + JsonConvert.DeserializeObject<Member>(member.Member1).UserID + ">";
                     PermissionFlag perm = new PermissionFlag((byte)member.Flag);
                     if (perm.BubbleFarming)
                     {
@@ -310,8 +311,8 @@ namespace Palantir.Commands
                         embed.AddField("\u200b", "**`🚩` - " + name + "**\n `This player has been flagged as *bubble farming*`.", true);
                     }
                     else embed.AddField("\u200b", "**#" + (members.IndexOf(member) + 1 - unranked).ToString() + " - " + name + "**" + (perm.BotAdmin ? " ` Admin` " : "") + (perm.Patron ? " ` 🎖️ Patron` " : "") + "\n🔮 " 
-                        + BubbleWallet.GetBubbles(member.Login).ToString() + " Bubbles\n💧 " 
-                        + BubbleWallet.GetDrops(member.Login, JsonConvert.DeserializeObject<Member>(Program.Feanor.GetMemberByLogin(member.Login).Member).UserID).ToString() + " Drops", true
+                        + BubbleWallet.GetBubbles(member.Login.ToString()).ToString() + " Bubbles\n💧 " 
+                        + BubbleWallet.GetDrops(member.Login.ToString(), JsonConvert.DeserializeObject<Member>(Program.Feanor.GetMemberByLogin(member.Login.ToString()).Member1).UserID).ToString() + " Drops", true
                        );
                 }
                 embed.WithFooter(context.Member.DisplayName + " can react within 2 mins to show the next page.");
@@ -350,11 +351,11 @@ namespace Palantir.Commands
             Program.Feanor.UpdateMemberGuilds();
             //DiscordMessage leaderboard = await context.RespondAsync("`⏱️` Loading members of `" + context.Guild.Name + "`...");
             var interactivity = context.Client.GetInteractivity();
-            List<MemberEntity> members = Program.Feanor.GetGuildMembers(context.Guild.Id.ToString()).OrderByDescending(m => (mode == "drops" ? m.Drops : m.Bubbles)).Where(m => m.Bubbles > 0).ToList();
-            List<IEnumerable<MemberEntity>> memberBatches = members.Batch(9).ToList();
+            List<Model.Member> members = Program.Feanor.GetGuildMembers(context.Guild.Id.ToString()).OrderByDescending(m => (mode == "drops" ? m.Drops : m.Bubbles)).Where(m => m.Bubbles > 0).ToList();
+            List<IEnumerable<Model.Member>> memberBatches = members.Batch(9).ToList();
             List<string> ranks = new List<string>();
             members.ForEach(member => {
-                if (!(new PermissionFlag((byte)member.Flag)).BubbleFarming) ranks.Add(member.Login);
+                if (!(new PermissionFlag((byte)member.Flag)).BubbleFarming) ranks.Add(member.Login.ToString());
             });
             int page = 0;
 
@@ -362,7 +363,7 @@ namespace Palantir.Commands
             DiscordButtonComponent btnnext, btnprev;
             DiscordSelectComponent generateSelectWithDefault(int selected = 0, bool disabled = false)
             {
-                var truncBatches = new List<IEnumerable<MemberEntity>>();
+                var truncBatches = new List<IEnumerable<Model.Member>>();
                 if (memberBatches.Count >= 25)
                 {
                     int right = selected + 12;
@@ -403,16 +404,16 @@ namespace Palantir.Commands
                 embed.Title = "🔮  Leaderboard of " + context.Guild.Name;
                 embed.Color = DiscordColor.Magenta;
                 embed.WithDescription("`Note: This leaderboard does not account league drops!`");
-                IEnumerable<MemberEntity> memberBatch = memberBatches[page];
-                foreach (MemberEntity member in memberBatch)
+                IEnumerable<Model.Member> memberBatch = memberBatches[page];
+                foreach (Model.Member member in memberBatch)
                 {
-                    string name = "<@" + JsonConvert.DeserializeObject<Member>(member.Member).UserID + ">";
+                    string name = "<@" + JsonConvert.DeserializeObject<Member>(member.Member1).UserID + ">";
                     PermissionFlag perm = new PermissionFlag((byte)member.Flag);
                     if (perm.BubbleFarming)
                     {
                         embed.AddField("\u200b", "**`🚩` - " + name + "**\n `This player has been flagged as *bubble farming*`.", true);
                     }
-                    else embed.AddField("\u200b", "**#" + (ranks.IndexOf(member.Login) + 1) + " - " + name + "**" + (perm.BotAdmin ? " \n`Admin` " : "") + (perm.Patron ? " \n`🎖️ Patron` " : "") + (perm.Patronizer ? " \n`🎁 Patronizer` " : "") + "\n🔮 " + BubbleWallet.GetBubbles(member.Login).ToString() + " Bubbles\n💧 " + BubbleWallet.GetDrops(member.Login, JsonConvert.DeserializeObject<Member>(Program.Feanor.GetMemberByLogin(member.Login).Member).UserID).ToString() + " Drops", true);
+                    else embed.AddField("\u200b", "**#" + (ranks.IndexOf(member.Login.ToString()) + 1) + " - " + name + "**" + (perm.BotAdmin ? " \n`Admin` " : "") + (perm.Patron ? " \n`🎖️ Patron` " : "") + (perm.Patronizer ? " \n`🎁 Patronizer` " : "") + "\n🔮 " + BubbleWallet.GetBubbles(member.Login.ToString()).ToString() + " Bubbles\n💧 " + BubbleWallet.GetDrops(member.Login.ToString(), JsonConvert.DeserializeObject<Member>(Program.Feanor.GetMemberByLogin(member.Login.ToString()).Member1).UserID).ToString() + " Drops", true);
                 }
                 embed.WithFooter(context.Member.DisplayName + " can react within 10 mins to show the next page.");
 
@@ -545,7 +546,7 @@ namespace Palantir.Commands
                         + TimeSpan.FromHours(hours).Seconds.ToString() + "s on skribbl.io left.");
                     break;
                 case "rank":
-                    List<MemberEntity> members = Program.Feanor.GetGuildMembers(context.Guild.Id.ToString()).OrderByDescending(m => m.Bubbles).Where(m => m.Bubbles > 0).ToList();
+                    List<Model.Member> members = Program.Feanor.GetGuildMembers(context.Guild.Id.ToString()).OrderByDescending(m => m.Bubbles).Where(m => m.Bubbles > 0).ToList();
                     hours = ((double)members[Convert.ToInt32(target) - 1].Bubbles - BubbleWallet.GetBubbles(login)) / 360;
                     await Program.SendEmbed(context.Channel, "🔮  Time catch up #" + target + ":",
                         (TimeSpan.FromHours(hours).Days * 24 + TimeSpan.FromHours(hours).Hours).ToString() + "h "
@@ -624,7 +625,7 @@ namespace Palantir.Commands
             int avgMembers = 0;
             Program.Client.Guilds.ForEach(guild => avgMembers += guild.Value.MemberCount / Program.Client.Guilds.Count);
             embed.AddField("`🗄️` ", "Overall **" + Program.Client.Guilds.Count + " ** servers invited me to join.\nIn average, these servers have " + avgMembers + " members.");
-            PalantirDbContext cont = new PalantirDbContext();
+            PalantirContext cont = new PalantirContext();
             int members = cont.Members.Count();
             cont.Dispose();
             embed.AddField("`👥` ", "**" +  members + " ** people have registered on Palantir.");
@@ -652,8 +653,8 @@ namespace Palantir.Commands
         public async Task Themes(CommandContext context, [Description("The id of the theme")] int id = 0)
         {
             var embed = new DiscordEmbedBuilder();
-            PalantirDbContext db = new();
-            List<TypoThemeEntity> themes = db.Themes.Where(theme => !String.IsNullOrEmpty(theme.Theme)).ToList();
+            PalantirContext db = new();
+            List<Theme> themes = db.Themes.Where(theme => !String.IsNullOrEmpty(theme.Theme1)).ToList();
             db.Dispose();
 
             if(id <= 0 || id > themes.Count)
@@ -667,7 +668,7 @@ namespace Palantir.Commands
             }
             else
             {
-                TypoThemeEntity theme = themes[id - 1];
+                Theme theme = themes[id - 1];
                 embed.WithTitle("Theme **" + theme.Name + "**");
                 embed.WithDescription(theme.Description);
                 embed.AddField("Add the theme:", "https://typo.rip/t?ticket=" + theme.Ticket);
@@ -683,10 +684,10 @@ namespace Palantir.Commands
         public async Task ActiveUsers(CommandContext context)
         {
             string graph = "";
-            PalantirDbContext db = new PalantirDbContext();
-            List<BubbleTraceEntity> traces = db.BubbleTraces.ToList();
+            PalantirContext db = new PalantirContext();
+            List<BubbleTrace> traces = db.BubbleTraces.ToList();
             db.Dispose();
-            List<BubbleTraceEntity> dailyChangedTraces = traces.DistinctBy(t => new { t.Bubbles, t.Login }).ToList();
+            List<BubbleTrace> dailyChangedTraces = MoreLinq.Extensions.DistinctByExtension.DistinctBy(traces, t => new { t.Bubbles, t.Login }).ToList();
             var x = traces.Select(trace => trace.Date).Distinct().ToList().ConvertAll(
                 date => date + "," + dailyChangedTraces.Where(trace => trace.Date == date).Count()
                 );
@@ -703,7 +704,7 @@ namespace Palantir.Commands
         public async Task Cloudsearch(CommandContext context)
         {
             string login = BubbleWallet.GetLoginOfMember(context.User.Id.ToString());
-            ImageDbContext idb = new ImageDbContext("/home/pi/Webroot/rippro/userdb/udb" + login + ".db");
+            DEPRECATED.ImageDbContext idb = new DEPRECATED.ImageDbContext("/home/pi/Webroot/rippro/userdb/udb" + login + ".db");
             int count = idb.Drawings.Count();
             //idb.Drawings.FromSqlInterpolated("select * from drawings where ")
             await Program.SendEmbed(context.Channel,count.ToString(), "");
@@ -717,13 +718,13 @@ namespace Palantir.Commands
             double now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
             double average = 0;
             for (int i = 0; i < attempts; i++) average += Drops.CalculateDropTimeoutSeconds() / attempts;
-            List<BoostEntity> boostlist = Drops.GetActiveBoosts();
+            List<DropBoost> boostlist = Drops.GetActiveBoosts();
             string boosts;
             if (boostlist.Count > 0)
             {
                 boosts = boostlist.ConvertAll(
                 boost => " x" + boost.Factor
-                + " (" + (Math.Round((boost.StartUTCS + boost.DurationS - now)/60000,1) + "min left)")).ToDelimitedString("\n");
+                + " (" + (Math.Round((Convert.ToInt64(boost.StartUtcs) + boost.DurationS - now)/60000,1) + "min left)")).ToDelimitedString("\n");
                 boosts += "\n=============\n **x" + Math.Round(Drops.GetCurrentFactor(),1) + " Boost active**";
             }
             else boosts = "No Drop Boosts active :(";
@@ -773,7 +774,7 @@ namespace Palantir.Commands
                 Comment = "",
                 ValueOverride = -1
             };
-            PalantirDbContext db = new();
+            PalantirContext db = new();
             db.SplitCredits.Add(reward);
             db.SaveChanges();
             db.Dispose();
@@ -876,7 +877,7 @@ namespace Palantir.Commands
 
                 async Task StartBoost()
                 {
-                    BoostEntity boost;
+                    DropBoost boost;
 
                     factor = factor + factorSplits * 0.05;
                     int duration = (60 + durationSplits * 20) * 60;
@@ -942,7 +943,7 @@ namespace Palantir.Commands
                 return;
             }
 
-            PalantirDbContext ctx = new();
+            PalantirContext ctx = new();
 
             if(ctx.Members.Any(m => m.Streamcode == code))
             {
@@ -950,7 +951,7 @@ namespace Palantir.Commands
                 return;
             }
 
-            ctx.Members.FirstOrDefault(m => m.Login == login).Streamcode = code;
+            ctx.Members.FirstOrDefault(m => m.Login.ToString() == login).Streamcode = code;
             ctx.SaveChanges();
             ctx.Dispose();
 

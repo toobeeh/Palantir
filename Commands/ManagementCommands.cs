@@ -13,6 +13,7 @@ using DSharpPlus.Interactivity.Extensions;
 using System.Globalization;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp;
+using Palantir.Model;
 
 namespace Palantir.Commands
 {
@@ -23,11 +24,11 @@ namespace Palantir.Commands
         [RequirePermissionFlag(PermissionFlag.MOD)]
         public async Task CreateThemeTicket(CommandContext context)
         {
-            TypoThemeEntity empty = new TypoThemeEntity();
+            Theme empty = new Theme();
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
             const int length = 6;
             Random random = new Random();
-            PalantirDbContext dbcontext = new PalantirDbContext();
+            PalantirContext dbcontext = new PalantirContext();
             do
             {
                 empty.Ticket = new string(Enumerable.Repeat(chars, length)
@@ -49,10 +50,10 @@ namespace Palantir.Commands
             var interactivity = Program.Client.GetInteractivity();
             await Program.SendEmbed(context.Channel, "Add a theme", "Respond within one minute with your theme ticket.\nThe ticket is a 6-digit code which Palantir moderators can generate.");
             InteractivityResult<DiscordMessage> msgTicket = await interactivity.WaitForMessageAsync(message => message.Author == context.User, TimeSpan.FromMinutes(1));
-            TypoThemeEntity ticket = new TypoThemeEntity();
+            Theme ticket = new Theme();
             ticket.Ticket = msgTicket.TimedOut ? "0" : msgTicket.Result.Content;
-            PalantirDbContext dbcontext = new PalantirDbContext();
-            ticket = dbcontext.Themes.FirstOrDefault(theme => theme.Ticket == ticket.Ticket && theme.Theme != " ");
+            PalantirContext dbcontext = new PalantirContext();
+            ticket = dbcontext.Themes.FirstOrDefault(theme => theme.Ticket == ticket.Ticket && theme.Theme1 != " ");
             dbcontext.Dispose();
             if (ticket is null)
             {
@@ -77,7 +78,7 @@ namespace Palantir.Commands
                 await Program.SendEmbed(context.Channel, "Timed out :(", "");
                 return;
             }
-            ticket.Theme = msgTheme.Result.Content;
+            ticket.Theme1 = msgTheme.Result.Content;
             // get description
             await Program.SendEmbed(context.Channel, "Add a theme", "Respond within five minutes with the theme description.");
             InteractivityResult<DiscordMessage> msgDesc = await interactivity.WaitForMessageAsync(message => message.Author == context.User, TimeSpan.FromMinutes(5));
@@ -106,7 +107,7 @@ namespace Palantir.Commands
             }
             if (msgGame.Result.Attachments.Count > 0) ticket.ThumbnailGame = msgGame.Result.Attachments[0].Url;
 
-            dbcontext = new PalantirDbContext();
+            dbcontext = new PalantirContext();
             dbcontext.Themes.Update(ticket);
             dbcontext.SaveChanges();
             dbcontext.Dispose();

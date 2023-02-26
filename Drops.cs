@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using System.Linq;
 using Newtonsoft.Json;
+using Palantir.Model;
 
 namespace Palantir
 {
@@ -23,7 +24,7 @@ namespace Palantir
         private static void Drop()
         {
             // sync with last drop: get last dispatch time and wait until then
-            PalantirDbContext context = new PalantirDbContext();
+            PalantirContext context = new PalantirContext();
             //DateTime nextDrop = DateTime.ParseExact(context.Drop.First().ValidFrom, "dd/MM/yyyy HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
             //int syncTime = Convert.ToInt32((nextDrop - DateTime.UtcNow).TotalMilliseconds);
             //if(syncTime > 0)
@@ -36,7 +37,7 @@ namespace Palantir
             {
                 try
                 {
-                    context.Drop.RemoveRange(context.Drop);
+                    context.NextDrops.RemoveRange(context.NextDrops);
                     context.SaveChanges();
                 }
                 catch (Microsoft.Data.Sqlite.SqliteException e)
@@ -60,20 +61,20 @@ namespace Palantir
 
                 int dropTimeout = CalculateDropTimeoutSeconds() * 1000;
 
-                DropEntity drop = new DropEntity();
+                NextDrop drop = new NextDrop();
                 drop.CaughtLobbyKey = "";
-                drop.CaughtLobbyPlayerID = "";
-                drop.DropID = DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString();
+                drop.CaughtLobbyPlayerId = "";
+                drop.DropId = DateTimeOffset.Now.ToUnixTimeMilliseconds();
                 drop.ValidFrom = DateTime.UtcNow.AddMilliseconds(dropTimeout).ToString("yyyy-MM-dd HH:mm:ss");
-                drop.EventDropID = Events.GetRandomEventDropID();
+                drop.EventDropId = Events.GetRandomEventDropID();
 
                 Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > Next drop in " + dropTimeout
                     + " ms at " + DateTime.Now.AddMilliseconds(dropTimeout).ToString("HH:mm:ss")
-                    + " for EventDropID #" + drop.EventDropID);
+                    + " for EventDropID #" + drop.EventDropId);
 
                 try
                 {
-                    context.Drop.Add(drop);
+                    context.NextDrops.Add(drop);
                     context.SaveChanges();
                 }
                 catch (Microsoft.Data.Sqlite.SqliteException e )
@@ -100,7 +101,7 @@ namespace Palantir
                 // poll with 200ms to wait until drop was claimed or 5s passed (timeout), then continue loop
                 int timeout = 0;
                 int poll = 200;
-                while (timeout < 5000 && context.Drop.Any(drop => drop.CaughtLobbyPlayerID == ""))
+                while (timeout < 5000 && context.NextDrops.Any(drop => drop.CaughtLobbyPlayerId == ""))
                 {
                     timeout += poll;
                     Thread.Sleep(poll);
@@ -112,17 +113,16 @@ namespace Palantir
 
         public static int CalculateDropTimeoutSeconds()
         {
-            PalantirDbContext context = new PalantirDbContext();
 
             List<string> onlineIDs = new List<string>();
-            PalantirDbContext dbcontext = new PalantirDbContext();
-            dbcontext.Status.ToList().ForEach(status =>
+            PalantirContext dbcontext = new PalantirContext();
+            dbcontext.Statuses.ToList().ForEach(status =>
             {
-                string id = JsonConvert.DeserializeObject<PlayerStatus>(status.Status).PlayerMember.UserID;
+                string id = JsonConvert.DeserializeObject<PlayerStatus>(status.Status1).PlayerMember.UserID;
                 if (!onlineIDs.Contains(id)) onlineIDs.Add(id);
             });
             int count = onlineIDs.Count();
-            context.Dispose();
+            dbcontext.Dispose();
 
             if (count <= 0) count = 1;
             int min = 600 / count;
@@ -137,41 +137,41 @@ namespace Palantir
 
         public static double GetCurrentFactor()
         {
-            List<BoostEntity> boosts = GetActiveBoosts();
+            List<DropBoost> boosts = GetActiveBoosts();
             if (boosts.Count > 0)
             {
-                double factor = GetActiveBoosts().ConvertAll(boost => boost.Factor).Aggregate((a, x) => (a - 1) + x);
+                double factor = GetActiveBoosts().ConvertAll(boost => Convert.ToDouble(boost.Factor)).Aggregate((a, x) => (a - 1) + x);
                 if (factor > 1) return factor;
                 else return 1;
             }
             else return 1;
         }
 
-        public static List<BoostEntity> GetActiveBoosts()
+        public static List<DropBoost> GetActiveBoosts()
         {
             double now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-            PalantirDbContext db = new();
+            PalantirContext db = new();
             // free up boosts that have expired one week, enabling boosting again
-            db.DropBoosts.RemoveRange(db.DropBoosts.Where(boost => boost.StartUTCS + TimeSpan.FromDays(7).TotalMilliseconds - boost.CooldownBonusS < now && boost.StartUTCS + boost.DurationS < now).ToArray());
+            db.DropBoosts.RemoveRange(db.DropBoosts.Where(boost => Convert.ToInt64(boost.StartUtcs) + TimeSpan.FromDays(7).TotalMilliseconds - boost.CooldownBonusS < now && Convert.ToInt64(boost.StartUtcs) + boost.DurationS < now).ToArray());
             db.SaveChanges();
             // get all active boosts
-            List<BoostEntity> boosts = db.DropBoosts.Where(boost => boost.DurationS + boost.StartUTCS > now).ToList();
+            List<DropBoost> boosts = db.DropBoosts.Where(boost => boost.DurationS + Convert.ToInt64(boost.StartUtcs) > now).ToList();
             db.Dispose();
             return boosts;
         }
 
-        public static bool AddBoost(int login, double factor, int duration, int cooldownSubtraction, out BoostEntity currentBoost)
+        public static bool AddBoost(int login, double factor, int duration, int cooldownSubtraction, out DropBoost currentBoost)
         {
-            BoostEntity boost = new()
+            DropBoost boost = new()
             {
                 Login = login,
-                Factor = factor,
+                Factor = factor.ToString(),
                 DurationS = duration * 1000,
-                StartUTCS = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                StartUtcs = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds().ToString(),
                 CooldownBonusS = cooldownSubtraction * 1000
             };
             bool inserted = false;
-            PalantirDbContext db = new();
+            PalantirContext db = new();
             if(!db.DropBoosts.Any(boost => boost.Login == login))
             {
                 db.DropBoosts.Add(boost);
@@ -186,14 +186,14 @@ namespace Palantir
         public static TimeSpan BoostCooldown(int login)
         {
             TimeSpan cooldown = new();
-            PalantirDbContext db = new();
-            BoostEntity boost = db.DropBoosts.FirstOrDefault(boost => boost.Login == login);
+            PalantirContext db = new();
+            DropBoost boost = db.DropBoosts.FirstOrDefault(boost => boost.Login == login);
             if (boost == null) cooldown = TimeSpan.FromSeconds(0);
             else
             {
-                TimeSpan boostRemaining = TimeSpan.FromMilliseconds(boost.StartUTCS + boost.DurationS - DateTimeOffset.UtcNow.ToUnixTimeMilliseconds());
+                TimeSpan boostRemaining = TimeSpan.FromMilliseconds(Convert.ToDouble(boost.StartUtcs) + boost.DurationS - DateTimeOffset.UtcNow.ToUnixTimeMilliseconds());
 
-                cooldown = TimeSpan.FromMilliseconds(boost.StartUTCS + TimeSpan.FromDays(7).TotalMilliseconds - boost.CooldownBonusS - DateTimeOffset.UtcNow.ToUnixTimeMilliseconds());
+                cooldown = TimeSpan.FromMilliseconds(Convert.ToDouble(boost.StartUtcs) + TimeSpan.FromDays(7).TotalMilliseconds - boost.CooldownBonusS - DateTimeOffset.UtcNow.ToUnixTimeMilliseconds());
 
                 if(boostRemaining > cooldown) cooldown = boostRemaining;
             }

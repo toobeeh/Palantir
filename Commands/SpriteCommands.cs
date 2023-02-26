@@ -14,6 +14,7 @@ using System.Globalization;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp;
 using System.Collections.Generic;
+using Palantir.Model;
 
 namespace Palantir.Commands
 {
@@ -45,9 +46,9 @@ namespace Palantir.Commands
                 }
                 else
                 {
-                    EventDropEntity drop = Events.GetEventDrops().FirstOrDefault(d => d.EventDropID == s.EventDropID);
+                    EventDrop drop = Events.GetEventDrops().FirstOrDefault(d => d.EventDropId == s.EventDropID);
                     embed.Description += "**Event Drop Price:** " + s.Cost + " " + drop.Name + "\n**ID**: " + s.ID + (s.Special ? " :sparkles: " : "") + (s.Rainbow ? "  :rainbow: " : "");
-                    embed.WithThumbnail(drop.URL);
+                    embed.WithThumbnail(drop.Url);
                 }
                 int[] score = BubbleWallet.SpriteScoreboard().FirstOrDefault(score => score.Key == s.ID).Value;
                 embed.WithFooter("Bought: " + (score[2] + score[1]) + " | Active: " + score[1]);
@@ -78,7 +79,7 @@ namespace Palantir.Commands
         public async Task Buy(CommandContext context, [Description("The id of the sprite (eg '15')")] int sprite)
         {
             string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
-            MemberEntity member = Program.Feanor.GetMemberByLogin(login);
+            Model.Member member = Program.Feanor.GetMemberByLogin(login);
             List<SpriteProperty> inventory;
             try
             {
@@ -162,7 +163,7 @@ namespace Palantir.Commands
                 return;
             }
 
-            MemberEntity member = Program.Feanor.GetMemberByLogin(login);
+            Model.Member member = Program.Feanor.GetMemberByLogin(login);
             PermissionFlag perm = new PermissionFlag((byte)member.Flag);
 
             if (!perm.BotAdmin && (slot < 1 || slot > BubbleWallet.GetDrops(login, context.User.Id.ToString()) / 1000 + 1 + (perm.Patron ? 1 : 0)))
@@ -216,7 +217,7 @@ namespace Palantir.Commands
                 return;
             }
 
-            MemberEntity member = Program.Feanor.GetMemberByLogin(login);
+            Model.Member member = Program.Feanor.GetMemberByLogin(login);
             PermissionFlag perm = new PermissionFlag((byte)member.Flag);
 
             if (!perm.BotAdmin && (sprites.Length < 1 || sprites.Length > BubbleWallet.GetDrops(login, context.User.Id.ToString()) / 1000 + 1 + (perm.Patron ? 1 : 0)))
@@ -264,13 +265,13 @@ namespace Palantir.Commands
         [Command("scene")]
         public async Task ViewScene(CommandContext context, [Description("The ID of the scene")] int id)
         {
-            PalantirDbContext db = new PalantirDbContext();
-            SceneEntity scene = db.Scenes.FirstOrDefault(scene => scene.ID == id);
+            PalantirContext db = new PalantirContext();
+            Scene scene = db.Scenes.FirstOrDefault(scene => scene.Id == id);
             if (scene is not null)
             {
                 List<SceneProperty> inventory = BubbleWallet.GetSceneInventory(BubbleWallet.GetLoginOfMember(context.User.Id.ToString()), false, false);
                 int sceneCost = BubbleWallet.SceneStartPrice;
-                inventory.Where(s => s.EventID == 0 && !s.Exclusive).ForEach(scene => sceneCost *= BubbleWallet.ScenePriceFactor);
+                inventory.Where(s => s.EventId == 0 && !s.Exclusive).ForEach(scene => sceneCost *= BubbleWallet.ScenePriceFactor);
 
                 if (scene.Color.IndexOf("!") > 0) scene.Color = scene.Color.Substring(0, scene.Color.IndexOf("!"));
                 if (scene.GuessedColor.IndexOf("!") > 0) scene.GuessedColor = scene.GuessedColor.Substring(0, scene.GuessedColor.IndexOf("!"));
@@ -278,10 +279,10 @@ namespace Palantir.Commands
                 DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
                 embed.Title = "**" + scene.Name + "**";
                 embed.Color = DiscordColor.Magenta;
-                if(!scene.Exclusive) embed.AddField("Costs:",  scene.EventID > 0 ? "This is an event scene - check `>event " + scene.EventID + "`" : "Your current scene price is **" + sceneCost + "** bubbles.");
+                if(!scene.Exclusive) embed.AddField("Costs:",  scene.EventId > 0 ? "This is an event scene - check `>event " + scene.EventId + "`" : "Your current scene price is **" + sceneCost + "** bubbles.");
                 else embed.AddField("Exclusive:", "This scene can't be bought regulary.");
-                embed.WithDescription("**ID:** " + scene.ID + "\n" + (scene.Artist != "" ? "**Artist:** " + scene.Artist + "\n" : "") + "**Font color: **" + scene.Color + " / " + scene.GuessedColor + "\n\nBuy the scene: `>paint " + id + "`\nUse the scene: `>show " + id + "`");
-                embed.WithImageUrl(scene.URL);
+                embed.WithDescription("**ID:** " + scene.Id + "\n" + (scene.Artist != "" ? "**Artist:** " + scene.Artist + "\n" : "") + "**Font color: **" + scene.Color + " / " + scene.GuessedColor + "\n\nBuy the scene: `>paint " + id + "`\nUse the scene: `>show " + id + "`");
+                embed.WithImageUrl(scene.Url);
                 await context.Channel.SendMessageAsync(embed: embed);
             }
             else
@@ -297,22 +298,22 @@ namespace Palantir.Commands
         {
             string login = BubbleWallet.GetLoginOfMember(context.User.Id.ToString());
             PermissionFlag flags = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
-            List<SceneEntity> available = BubbleWallet.GetAvailableScenes();
+            List<Scene> available = BubbleWallet.GetAvailableScenes();
             List<SceneProperty> inventory = BubbleWallet.GetSceneInventory(login, false, false);
             int credit = flags.BotAdmin ? int.MaxValue : BubbleWallet.CalculateCredit(login, context.User.Id.ToString());
             int sceneCost = BubbleWallet.SceneStartPrice;
-            inventory.Where(s => s.EventID == 0 && !s.Exclusive).ForEach(scene => sceneCost *= BubbleWallet.ScenePriceFactor);
-            int eventID = available.FirstOrDefault(scene => scene.ID == id).EventID;
+            inventory.Where(s => s.EventId == 0 && !s.Exclusive).ForEach(scene => sceneCost *= BubbleWallet.ScenePriceFactor);
+            int eventID = available.FirstOrDefault(scene => scene.Id == id).EventId;
 
-            if (!available.Any(scene => scene.ID == id))
+            if (!available.Any(scene => scene.Id == id))
             {
                 await Program.SendEmbed(context.Channel, "Uhm..", "I don't know that scene :(\nCheck the ID!");
             }
-            else if (inventory.Any(scene => scene.ID == id))
+            else if (inventory.Any(scene => scene.Id == id))
             {
                 await Program.SendEmbed(context.Channel, "Waiiit :o", "You already own this scene!");
             }
-            else if (available.FirstOrDefault(scene => scene.ID == id).Exclusive)
+            else if (available.FirstOrDefault(scene => scene.Id == id).Exclusive)
             {
                 await Program.SendEmbed(context.Channel, "Oh no, anyway", "This scene can't be bought. Sorry!");
             }
@@ -327,13 +328,13 @@ namespace Palantir.Commands
             else
             {
                 BubbleWallet.BuyScene(login, id);
-                SceneEntity scene = available.FirstOrDefault(scene => scene.ID == id);
+                Scene scene = available.FirstOrDefault(scene => scene.Id == id);
 
                 DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
                 embed.Title = "Hypeeee!";
                 embed.Color = DiscordColor.Magenta;
                 embed.WithDescription("You unlocked ** " + scene.Name + "**!\n" + "Use it with: `>show " + id + "`");
-                embed.WithImageUrl(scene.URL);
+                embed.WithImageUrl(scene.Url);
                 await context.Channel.SendMessageAsync(embed: embed);
             }
         }
@@ -346,21 +347,21 @@ namespace Palantir.Commands
             PermissionFlag flags = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
             List<SceneProperty> inventory = BubbleWallet.GetSceneInventory(login, false, false);
 
-            if (!inventory.Any(scene => scene.ID == id) && id != 0)
+            if (!inventory.Any(scene => scene.Id == id) && id != 0)
             {
                 await Program.SendEmbed(context.Channel, "Yeet!", "You don't own that scene - yet!");
             }
             else
             {
-                inventory.ForEach(scene => scene.Activated = scene.ID == id);
+                inventory.ForEach(scene => scene.Activated = scene.Id == id);
                 BubbleWallet.SetSceneInventory(login, inventory);
 
                 DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
-                SceneProperty scene = inventory.FirstOrDefault(scene => scene.ID == id);
+                SceneProperty scene = inventory.FirstOrDefault(scene => scene.Id == id);
                 embed.Title = id == 0 ? "Ok then" : "So pretty!";
                 embed.Color = DiscordColor.Magenta;
                 embed.WithDescription(id == 0 ? "Unset your skribbl scene." : "Your skribbl scene is now ** " + scene.Name + "**!");
-                if (id != 0) embed.WithImageUrl(scene.URL);
+                if (id != 0) embed.WithImageUrl(scene.Url);
                 await context.Channel.SendMessageAsync(embed: embed);
             }
         }
@@ -370,7 +371,7 @@ namespace Palantir.Commands
         [RequirePermissionFlag((byte)4)] // 4 -> mod
         public async Task AddSprite(CommandContext context, [Description("The name of the sprite")] string name, [Description("The bubble price")] int price, [Description("Any string except '-' if the sprite should replace the avatar")] string special = "", [Description("Any string except '-' if the sprite should be color-customizable")] string rainbow = "", [Description("Any string except '-' to set the sprite artist")] string artist = "")
         {
-            PalantirDbContext dbcontext = new PalantirDbContext();
+            PalantirContext dbcontext = new PalantirContext();
             if (context.Message.Attachments.Count <= 0 || !context.Message.Attachments[0].FileName.EndsWith(".gif"))
             {
                 await Program.SendEmbed(context.Channel, "Hmm...", "There's no valid gif attached.");
@@ -395,7 +396,7 @@ namespace Palantir.Commands
                 name.Replace("_", " "),
                 "https://tobeh.host/regsprites/spt" + name.Replace("'", "-") + ".gif",
                 price,
-                dbcontext.Sprites.Where(s => s.ID < 1000).Max(s => s.ID) + 1,
+                dbcontext.Sprites.Where(s => s.Id < 1000).Max(s => s.Id) + 1,
                 special != "-" && special != "",
                 rainbow != "-" && rainbow != "",
                 0,
@@ -425,7 +426,7 @@ namespace Palantir.Commands
                 return;
             }
 
-            PalantirDbContext dbcontext = new PalantirDbContext();
+            PalantirContext dbcontext = new PalantirContext();
             if (context.Message.Attachments.Count <= 0 || !context.Message.Attachments[0].FileName.EndsWith(".gif"))
             {
                 await Program.SendEmbed(context.Channel, "Hmm...", "There's no valid scene image attached. Scenes need to be a gif.");
@@ -436,7 +437,7 @@ namespace Palantir.Commands
                 await Program.SendEmbed(context.Channel, "Hmm...", "Something went wrong with the scene name.");
                 return;
             }
-            if (eventID != 0 && !Events.GetEvents(false).Any(evt => evt.EventID == eventID))
+            if (eventID != 0 && !Events.GetEvents(false).Any(evt => evt.EventId == eventID))
             {
                 eventID = 0;
             }
@@ -447,13 +448,13 @@ namespace Palantir.Commands
 
             string url = "https://tobeh.host/scenes/scene" + name.Replace("'", "-") + ".gif";
             if (artist == "-") artist = "";
-            SceneEntity scene = BubbleWallet.AddScene(name.Replace("_", " "), color, guessedColor, artist, url, eventID, exclusive);
+            Scene scene = BubbleWallet.AddScene(name.Replace("_", " "), color, guessedColor, artist, url, eventID, exclusive);
 
             DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
-            embed.Title = ":champagne:  Scene **" + name + "** with ID " + scene.ID + " was added" + (eventID > 0 ? " to event #" + eventID : "") + "!";
+            embed.Title = ":champagne:  Scene **" + name + "** with ID " + scene.Id + " was added" + (eventID > 0 ? " to event #" + eventID : "") + "!";
             embed.Color = DiscordColor.Magenta;
-            embed.WithDescription("ID: " + scene.ID + "\nView the scene with `>scene [scene id]`\nBuy the scene with `>paint [scene id]`\nUse a scene with `>show [scene id]`");
-            embed.WithThumbnail(scene.URL);
+            embed.WithDescription("ID: " + scene.Id + "\nView the scene with `>scene [scene id]`\nBuy the scene with `>paint [scene id]`\nUse a scene with `>show [scene id]`");
+            embed.WithThumbnail(scene.Url);
 
             dbcontext.Dispose();
             await context.Channel.SendMessageAsync(embed: embed);
@@ -472,7 +473,7 @@ namespace Palantir.Commands
                 return;
             }
 
-            MemberEntity member = Program.Feanor.GetMemberByLogin(login);
+            Model.Member member = Program.Feanor.GetMemberByLogin(login);
             PermissionFlag perm = new PermissionFlag((byte)member.Flag);
 
             var shifts = BubbleWallet.GetMemberRainbowShifts(login);
@@ -578,7 +579,7 @@ namespace Palantir.Commands
                         if (action == "use" || action == "use-scene")
                         {
                             var sceneinv = BubbleWallet.GetSceneInventory(login, false, false);
-                            sceneinv.ForEach(scene => scene.Activated = scene.ID.ToString() == prof.Scene);
+                            sceneinv.ForEach(scene => scene.Activated = scene.Id.ToString() == prof.Scene);
                             BubbleWallet.SetSceneInventory(login, sceneinv);
                         }  
 

@@ -14,6 +14,7 @@ using System.Globalization;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp;
 using System.Collections.Generic;
+using Palantir.Model;
 
 namespace Palantir.Commands
 {
@@ -48,10 +49,10 @@ namespace Palantir.Commands
             // if target user is patron, load color scheme
             if (perm.Patron || perm.BotAdmin)
             {
-                PalantirDbContext db = new PalantirDbContext();
+                PalantirContext db = new PalantirContext();
                 try
                 {
-                    CustomCard preferences = JsonConvert.DeserializeObject<CustomCard>(db.Members.FirstOrDefault(member => member.Login == login).Customcard);
+                    CustomCard preferences = JsonConvert.DeserializeObject<CustomCard>(db.Members.FirstOrDefault(member => member.Login.ToString() == login).Customcard);
                     cardsettings = preferences;
                 }
                 catch { }
@@ -59,8 +60,8 @@ namespace Palantir.Commands
             }
 
             DiscordMessage response = await context.RespondAsync(">  \n>  \n>   <a:working:857610439588053023> **Building your card afap!!**\n> _ _ \n> _ _ ");
-            MemberEntity member = Program.Feanor.GetMemberByLogin(login);
-            Member memberDetail = JsonConvert.DeserializeObject<Member>(member.Member);
+            Model.Member member = Program.Feanor.GetMemberByLogin(login);
+            Member memberDetail = JsonConvert.DeserializeObject<Member>(member.Member1);
 
             string content = Palantir.Properties.Resources.SVGcardBG;
 
@@ -82,7 +83,7 @@ namespace Palantir.Commands
                 bgheight = 328;
             }
 
-            string combopath = SpriteComboImage.GenerateImage(SpriteComboImage.GetSpriteSources(sprites, BubbleWallet.GetMemberRainbowShifts(member.Login)), "/home/pi/tmpGen/");
+            string combopath = SpriteComboImage.GenerateImage(SpriteComboImage.GetSpriteSources(sprites, BubbleWallet.GetMemberRainbowShifts(member.Login.ToString())), "/home/pi/tmpGen/");
             string spritebase64 = Convert.ToBase64String(System.IO.File.ReadAllBytes(combopath));
             System.IO.File.Delete(combopath);
 
@@ -116,7 +117,7 @@ namespace Palantir.Commands
             System.Net.WebClient client = new System.Net.WebClient();
             byte[] bgbytes = client.DownloadData("https://i.imgur.com/" + (backgroundUrl != "" && backgroundUrl != "-" ? backgroundUrl : "qFmcbT0.png"));
             System.IO.File.WriteAllBytes("/home/pi/cardassets/imgur_" + backgroundUrl + ".bgb", bgbytes);
-            PalantirDbContext db = new PalantirDbContext();
+            PalantirContext db = new PalantirContext();
             CustomCard settings = new CustomCard
             {
                 BackgroundImage = backgroundUrl,
@@ -126,7 +127,7 @@ namespace Palantir.Commands
                 LightTextColor = lightcolor,
                 DarkTextColor = darkcolor
             };
-            db.Members.FirstOrDefault(member => member.Login == login).Customcard = JsonConvert.SerializeObject(settings);
+            db.Members.FirstOrDefault(member => member.Login.ToString() == login).Customcard = JsonConvert.SerializeObject(settings);
             db.SaveChanges();
             db.Dispose();
             string properties = "";
@@ -153,9 +154,9 @@ namespace Palantir.Commands
             }
             else if (gift_id == "none")
             {
-                PalantirDbContext db = new PalantirDbContext();
+                PalantirContext db = new PalantirContext();
                 string login = BubbleWallet.GetLoginOfMember(context.User.Id.ToString());
-                MemberEntity patronizer = db.Members.FirstOrDefault(member => member.Login == login);
+                Model.Member patronizer = db.Members.FirstOrDefault(member => member.Login.ToString() == login);
                 if (patronizer.Patronize is not null && DateTime.Now - DateTime.ParseExact(patronizer.Patronize.Split("#")[1], "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture) < TimeSpan.FromDays(5))
                     await Program.SendEmbed(context.Channel, "Sorry...", "You'll have to wait five days from the date of the gift (" + patronizer.Patronize.Split("#")[1] + ") to remove it!");
                 else
@@ -173,9 +174,9 @@ namespace Palantir.Commands
                     await Program.SendEmbed(context.Channel, "Sorry...", "I don't know this user ID :(\nYour friend has to use the `>patronize` command and tell you his ID!");
                 else
                 {
-                    PalantirDbContext db = new PalantirDbContext();
+                    PalantirContext db = new PalantirContext();
                     string login = BubbleWallet.GetLoginOfMember(context.User.Id.ToString());
-                    MemberEntity patronizer = db.Members.FirstOrDefault(member => member.Login == login);
+                    Model.Member patronizer = db.Members.FirstOrDefault(member => member.Login.ToString() == login);
                     if (patronizer.Patronize is not null && DateTime.Now - DateTime.ParseExact(patronizer.Patronize.Split("#")[1], "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture) < TimeSpan.FromDays(5))
                         await Program.SendEmbed(context.Channel, "Sorry...", "You'll have to wait five days from the date of the gift (" + patronizer.Patronize.Split("#")[1] + ") to change the receiver!");
                     else
@@ -194,7 +195,7 @@ namespace Palantir.Commands
         [RequirePermissionFlag((byte)16)]
         public async Task Patronemoji(CommandContext context, string emoji)
         {
-            PalantirDbContext db = new PalantirDbContext();
+            PalantirContext db = new PalantirContext();
             string login = BubbleWallet.GetLoginOfMember(context.User.Id.ToString());
             string regexEmoji = "(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])";
             List<List<int>> cpByEmojis = Program.SplitCodepointsToEmojis(
@@ -202,7 +203,7 @@ namespace Palantir.Commands
                 .ConvertAll(glyph => glyph.ToCharArray().ToList().ConvertAll(character => (int)character).ToList()));
             string matchedEmoji = cpByEmojis.Count == 0 ? ""
                 : cpByEmojis[0].ConvertAll(point => Convert.ToChar(point)).ToDelimitedString("");
-            db.Members.FirstOrDefault(member => member.Login == login).Emoji = matchedEmoji;
+            db.Members.FirstOrDefault(member => member.Login.ToString() == login).Emoji = matchedEmoji;
             db.SaveChanges();
             db.Dispose();
             await Program.SendEmbed(context.Channel, "Emoji set to: `" + matchedEmoji + "`", "Disable it with the same command without emoji.");
