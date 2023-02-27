@@ -517,6 +517,7 @@ namespace Palantir
             try
             {
                 db.SaveChanges();
+                Console.WriteLine("wrote items for " + login);
             }
             catch (Exception e)
             {
@@ -574,6 +575,7 @@ namespace Palantir
             try
             {
                 db.SaveChanges();
+                Console.WriteLine("wrote items for " + login);
             }
             catch (Exception e) { Console.WriteLine("Error writing item:\n" + e); 
             }
