@@ -28,7 +28,7 @@ namespace Palantir
         {
             PalantirContext Database = new PalantirContext();
             PalantirTethers = new List<Tether>();
-            foreach (PalantiriNightly palantirEntity in Database.PalantiriNightlies.ToList())
+            foreach (Palantiri palantirEntity in Database.Palantiris.ToList())
             {
                 Tether tether;
                 ObservedGuild guild = JsonConvert.DeserializeObject<ObservedGuild>(palantirEntity.Palantir);
@@ -63,8 +63,8 @@ namespace Palantir
 
             // remove palantir from db
             PalantirContext context = new PalantirContext();
-            PalantiriNightly e = context.PalantiriNightlies.FirstOrDefault(ptr => ptr.Token == guild.ObserveToken);
-            context.PalantiriNightlies.Remove(e);
+            Palantiri e = context.Palantiris.FirstOrDefault(ptr => ptr.Token == guild.ObserveToken);
+            context.Palantiris.Remove(e);
             try
             {
                 context.SaveChanges();
