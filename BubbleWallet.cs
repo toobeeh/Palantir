@@ -575,7 +575,7 @@ namespace Palantir
             {
                 db.SaveChanges();
             }
-            catch (Exception e) { Console.WriteLine("Error writing sprite:\n" + e); 
+            catch (Exception e) { Console.WriteLine("Error writing item:\n" + e); 
             }
             db.Dispose();
         }
