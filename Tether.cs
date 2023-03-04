@@ -122,13 +122,13 @@ namespace Palantir
             
             try
             {
-                Program.Feanor.RemovePalantiri(PalantirEndpoint);
+                //Program.Feanor.RemovePalantiri(PalantirEndpoint);
                 StopDataflow();
                 Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > Removed guild " + PalantirEndpoint.GuildID);
             }
             catch
             {
-                Program.Feanor.RemovePalantiri(PalantirEndpoint);
+                //Program.Feanor.RemovePalantiri(PalantirEndpoint);
                 StopDataflow();
                 Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > Removed guild " + PalantirEndpoint.GuildID + PalantirEndpoint.GuildName);
             }
