@@ -81,7 +81,7 @@ namespace Palantir.Commands
                     byte[] bgbytes = client.DownloadData("https://i.imgur.com/" + (cardsettings.BackgroundImage != "" && cardsettings.BackgroundImage != "-" ? cardsettings.BackgroundImage : "qFmcbT0.png"));
                     System.IO.File.WriteAllBytes(bgPath, bgbytes);
                 }
-                Image bg = Image.Load(System.IO.File.OpenRead("/home/pi/cardassets/imgur_" + cardsettings.BackgroundImage + ".bgb"));
+                Image bg = Image.Load("/home/pi/cardassets/imgur_" + cardsettings.BackgroundImage + ".bgb");
                 const double cardRatio = 489.98 / 328.09;
                 SpriteComboImage.GetCropPosition(bg.Width, bg.Height, cardRatio, out double cropX, out double cropY, out double height, out double width);
                 bg.Mutate(img => img.Crop(new Rectangle((int)cropX, (int)cropY, (int)width, (int)height)));
