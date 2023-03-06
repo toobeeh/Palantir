@@ -15,6 +15,7 @@ using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp;
 using System.Collections.Generic;
 using Palantir.Model;
+using System.Net.Http;
 
 namespace Palantir.Commands
 {
@@ -67,9 +68,9 @@ namespace Palantir.Commands
 
             int[] sprites = BubbleWallet.GetInventory(login).Where(spt => spt.Activated).OrderBy(spt => spt.Slot).Select(spt => spt.ID).ToArray();
 
-            System.Net.WebClient client = new System.Net.WebClient();
-            client.Headers.Add("User-Agent: Palantir#8352_by_tobeh#7437");
-            string profilebase64 = Convert.ToBase64String(client.DownloadData(dUser.AvatarUrl));
+            var client = new HttpClient();
+            client.DefaultRequestHeaders.Add("User-Agent", "Palantir#8352_by_tobeh#7437");
+            string profilebase64 = Convert.ToBase64String(await client.GetByteArrayAsync(dUser.AvatarUrl));
             double bgheight = 0;
             string background64 = "";
 
@@ -78,7 +79,7 @@ namespace Palantir.Commands
                 string bgPath = "/home/pi/cardassets/imgur_" + cardsettings.BackgroundImage + ".bgb";
                 if(!System.IO.File.Exists(bgPath)) 
                 {
-                    byte[] bgbytes = client.DownloadData("https://i.imgur.com/" + (cardsettings.BackgroundImage != "" && cardsettings.BackgroundImage != "-" ? cardsettings.BackgroundImage : "qFmcbT0.png"));
+                    byte[] bgbytes = await client.GetByteArrayAsync("https://i.imgur.com/" + (cardsettings.BackgroundImage != "" && cardsettings.BackgroundImage != "-" ? cardsettings.BackgroundImage : "qFmcbT0.png"));
                     System.IO.File.WriteAllBytes(bgPath, bgbytes);
                 }
                 Image bg = Image.Load("/home/pi/cardassets/imgur_" + cardsettings.BackgroundImage + ".bgb");
@@ -120,8 +121,8 @@ namespace Palantir.Commands
             DiscordMessage response = await context.RespondAsync("\n>   <a:working:857610439588053023> **Updating your settings...**\n");
             string login = BubbleWallet.GetLoginOfMember(context.User.Id.ToString());
 
-            System.Net.WebClient client = new System.Net.WebClient();
-            byte[] bgbytes = client.DownloadData("https://i.imgur.com/" + (backgroundUrl != "" && backgroundUrl != "-" ? backgroundUrl : "qFmcbT0.png"));
+            var client = new HttpClient();
+            byte[] bgbytes = await client.GetByteArrayAsync("https://i.imgur.com/" + (backgroundUrl != "" && backgroundUrl != "-" ? backgroundUrl : "qFmcbT0.png"));
             System.IO.File.WriteAllBytes("/home/pi/cardassets/imgur_" + backgroundUrl + ".bgb", bgbytes);
             PalantirContext db = new PalantirContext();
             CustomCard settings = new CustomCard
