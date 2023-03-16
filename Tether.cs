@@ -145,6 +145,7 @@ namespace Palantir
             {
                 Console.WriteLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " > Exception: " + e.ToString() + "at Channel:" + PalantirEndpoint.ChannelID + ", Msg: " + PalantirEndpoint.MessageID + ", Guild:" + PalantirEndpoint.GuildName);
                 RemoveTether();
+                return;
             }
             catch(Exception e)
             {
