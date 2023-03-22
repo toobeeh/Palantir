@@ -127,6 +127,11 @@ namespace Palantir.Commands
             }
 
             int result = Events.TradeLeagueEventDrops(spent, eventDropID, BubbleWallet.GetLoginOfMember(context.User.Id.ToString()));
+            if(result < 0)
+            {
+                await Program.SendEmbed(context.Channel, "Oops", "Something went wrong. Please try again.");
+                return;
+            }
 
             await Program.SendEmbed(context.Channel, "Congrats!", "You traded " + result + " of your Event League Credit to " + drop.Name);
             return;
@@ -223,6 +228,11 @@ namespace Palantir.Commands
 
             if (BubbleWallet.ChangeEventDropCredit(targetLogin, eventDropID, amount - lost))
                 BubbleWallet.ChangeEventDropCredit(login, eventDropID, -amount);
+            else
+            {
+                await Program.SendEmbed(context.Channel, "Oops", "Something went wrong. Please try again.");
+                return;
+            }
 
             DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
             embed.Title = ":champagne: Awww!";

@@ -93,14 +93,23 @@ namespace Palantir
         public static int TradeLeagueEventDrops(List<PastDrop> consumed, int targetDropID, string login)
         {
             int value = Convert.ToInt32(consumed.Sum(drop => League.Weight(drop.LeagueWeight / 1000.0) / 100));
-            BubbleWallet.ChangeEventDropCredit(login, targetDropID, value);
 
-            PalantirContext context = new PalantirContext();
-            consumed.ForEach(drop => {
-                   context.PastDrops.FirstOrDefault(past => past.DropId == drop.DropId && past.CaughtLobbyPlayerId == drop.CaughtLobbyPlayerId).EventDropId *= -1;
-            });
-            context.SaveChanges();
-            context.Dispose();
+            try
+            {
+
+                PalantirContext context = new PalantirContext();
+                consumed.ForEach(drop => {
+                    context.PastDrops.FirstOrDefault(past => past.DropId == drop.DropId && past.CaughtLobbyPlayerId == drop.CaughtLobbyPlayerId).EventDropId *= -1;
+                });
+                context.SaveChanges();
+                context.Dispose();
+            }
+            catch
+            {
+                return -1;
+            }
+
+            BubbleWallet.ChangeEventDropCredit(login, targetDropID, value);
             return value;
         }
 
