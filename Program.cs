@@ -72,6 +72,15 @@ namespace Palantir
             Commands.RegisterCommands<Palantir.Commands.SetupCommands>();
             Commands.RegisterCommands<Palantir.Commands.SpriteCommands>();
 
+            var commandsServant = Servant.UseCommandsNext(new CommandsNextConfiguration
+            {
+                StringPrefixes = new string[] { "rip~" },
+                DmHelp = false,
+                IgnoreExtraArguments = true,
+                CaseSensitive = false
+            });
+            commandsServant.RegisterCommands<Palantir.Commands.ManagementCommands>();
+
             Console.Write("Connecting Client...");
             await Client.ConnectAsync();
 
@@ -153,7 +162,7 @@ namespace Palantir
             Console.WriteLine("All done!");
 
             // let servant listen on beta testing channel and "pin" a sticky message there
-            Servant.MessageCreated += stickyBetaNotes;
+            //Servant.MessageCreated += stickyBetaNotes;
 
             await Task.Delay(-1);
         }
