@@ -439,7 +439,7 @@ namespace Palantir
 
         public override Task<bool> ExecuteCheckAsync(CommandContext ctx, bool help)
         {
-            PermissionFlag userFlag = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(ctx.User));
+            PermissionFlag userFlag = new PermissionFlag(Program.Feanor.GetFlagByMember(ctx.User));
             PermissionFlag requiredFlag = new PermissionFlag(FlagToCheck);
             bool result = userFlag.BotAdmin || userFlag.CheckForPermissionByte(FlagToCheck);
             if(!result && !help)

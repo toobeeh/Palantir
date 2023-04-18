@@ -106,7 +106,7 @@ namespace Palantir.Commands
 
             Sprite target = available.FirstOrDefault(s => s.ID == sprite);
             int credit = BubbleWallet.CalculateCredit(login, context.User.Id.ToString());
-            PermissionFlag perm = new PermissionFlag((byte)member.Flag);
+            PermissionFlag perm = new PermissionFlag(Convert.ToInt16(member.Flag));
             if (target.ID == 1003)
             {
                 if (!perm.Patron)
@@ -164,7 +164,7 @@ namespace Palantir.Commands
             }
 
             Model.Member member = Program.Feanor.GetMemberByLogin(login);
-            PermissionFlag perm = new PermissionFlag((byte)member.Flag);
+            PermissionFlag perm = new PermissionFlag(Convert.ToInt16(member.Flag));
 
             if (!perm.BotAdmin && (slot < 1 || slot > BubbleWallet.GetDrops(login, context.User.Id.ToString()) / 1000 + 1 + (perm.Patron ? 1 : 0)))
             {
@@ -218,7 +218,7 @@ namespace Palantir.Commands
             }
 
             Model.Member member = Program.Feanor.GetMemberByLogin(login);
-            PermissionFlag perm = new PermissionFlag((byte)member.Flag);
+            PermissionFlag perm = new PermissionFlag(Convert.ToInt16(member.Flag));
 
             if (!perm.BotAdmin && (sprites.Length < 1 || sprites.Length > BubbleWallet.GetDrops(login, context.User.Id.ToString()) / 1000 + 1 + (perm.Patron ? 1 : 0)))
             {
@@ -297,7 +297,7 @@ namespace Palantir.Commands
         public async Task BuyScene(CommandContext context, [Description("The ID of the scene")] int id)
         {
             string login = BubbleWallet.GetLoginOfMember(context.User.Id.ToString());
-            PermissionFlag flags = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
+            PermissionFlag flags = new PermissionFlag(Program.Feanor.GetFlagByMember(context.User));
             List<Scene> available = BubbleWallet.GetAvailableScenes();
             List<SceneProperty> inventory = BubbleWallet.GetSceneInventory(login, false, false);
             int credit = flags.BotAdmin ? int.MaxValue : BubbleWallet.CalculateCredit(login, context.User.Id.ToString());
@@ -344,7 +344,7 @@ namespace Palantir.Commands
         public async Task UseScene(CommandContext context, [Description("The ID of the scene")] int id)
         {
             string login = BubbleWallet.GetLoginOfMember(context.User.Id.ToString());
-            PermissionFlag flags = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
+            PermissionFlag flags = new PermissionFlag(Program.Feanor.GetFlagByMember(context.User));
             List<SceneProperty> inventory = BubbleWallet.GetSceneInventory(login, false, false);
 
             if (!inventory.Any(scene => scene.Id == id) && id != 0)
@@ -419,7 +419,7 @@ namespace Palantir.Commands
         [RequirePermissionFlag((byte)2)] // 2 -> admin
         public async Task AddScene(CommandContext context, [Description("The name of the scene")] string name, [Description("A color string (hex, rgb, name..)")] string color, [Description("A color when the player has guessed the word")] string guessedColor, [Description("Any string except '-' to set the sprite artist")] string artist = "", [Description("Event ID or '0' to associate to no event")] int eventID = 0, [Description("If the scene can be bought or only obtained by another way")] bool exclusive = false)
         {
-            PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
+            PermissionFlag perm = new PermissionFlag(Program.Feanor.GetFlagByMember(context.User));
             if (!perm.Moderator && !perm.BotAdmin)
             {
                 await Program.SendEmbed(context.Channel, "Ts ts...", "This command is only available for higher beings.\n||Some call them Bot-Moderators ;))||");
@@ -474,7 +474,7 @@ namespace Palantir.Commands
             }
 
             Model.Member member = Program.Feanor.GetMemberByLogin(login);
-            PermissionFlag perm = new PermissionFlag((byte)member.Flag);
+            PermissionFlag perm = new PermissionFlag(Convert.ToInt16(member.Flag));
 
             var shifts = BubbleWallet.GetMemberRainbowShifts(login);
 

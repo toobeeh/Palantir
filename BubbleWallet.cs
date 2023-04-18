@@ -323,7 +323,7 @@ namespace Palantir
         public static int GlobalRanking(string login, bool drops = false)
         {
             PalantirContext db = new PalantirContext();
-            int index = db.Members.ToList().Where(member=> !(new PermissionFlag((byte)member.Flag).BubbleFarming)).OrderByDescending(member => drops ? member.Drops : member.Bubbles).Select(member => member.Login).ToList().IndexOf(Convert.ToInt32(login)) + 1;
+            int index = db.Members.ToList().Where(member=> !(new PermissionFlag(Convert.ToInt16(member.Flag)).BubbleFarming)).OrderByDescending(member => drops ? member.Drops : member.Bubbles).Select(member => member.Login).ToList().IndexOf(Convert.ToInt32(login)) + 1;
             db.Dispose();
             return index;
         }

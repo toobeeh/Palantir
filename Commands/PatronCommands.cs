@@ -44,7 +44,7 @@ namespace Palantir.Commands
                 dMember = null;
             }
 
-            PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(dUser));
+            PermissionFlag perm = new PermissionFlag(Program.Feanor.GetFlagByMember(dUser));
             string login = BubbleWallet.GetLoginOfMember(dUser.Id.ToString());
 
             // if target user is patron, load color scheme
@@ -150,7 +150,7 @@ namespace Palantir.Commands
         [Command("patronize")]
         public async Task Patronize(CommandContext context, string gift_id = "")
         {
-            PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
+            PermissionFlag perm = new PermissionFlag(Program.Feanor.GetFlagByMember(context.User));
             if (!perm.Patronizer)
             {
                 await Program.SendEmbed(context.Channel, "Gifts are beautiful!", "Looking to get Palantir & Typo Patron perks, but however can't pay a Patreon patronage?\n\nAsk a friend with the `Patronizer Package` subscription on Patreon to patronize you!\nYour friend just has to use the command `>patronize " + context.User.Id + "`.");

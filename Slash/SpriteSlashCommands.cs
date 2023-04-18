@@ -53,7 +53,7 @@ namespace Palantir.Slash
 
             Sprite target = available.FirstOrDefault(s => s.ID == sprite);
             int credit = BubbleWallet.CalculateCredit(login, context.User.Id.ToString());
-            PermissionFlag perm = new PermissionFlag((byte)member.Flag);
+            PermissionFlag perm = new PermissionFlag(Convert.ToInt16(member.Flag));
             if (target.ID == 1003)
             {
                 if (!perm.Patron)
@@ -115,7 +115,7 @@ namespace Palantir.Slash
             }
 
             Model.Member member = Program.Feanor.GetMemberByLogin(login);
-            PermissionFlag perm = new PermissionFlag((byte)member.Flag);
+            PermissionFlag perm = new PermissionFlag(Convert.ToInt16(member.Flag));
 
             if (!perm.BotAdmin && (slot < 1 || slot > BubbleWallet.GetDrops(login, context.User.Id.ToString()) / 1000 + 1 + (perm.Patron ? 1 : 0)))
             {
