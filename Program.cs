@@ -338,9 +338,9 @@ namespace Palantir
         public bool Dropban { get; set; }
         public bool Patronizer { get; set; }
         public bool Booster { get; set; }
-        public PermissionFlag(byte flag)
+        public PermissionFlag(Int16 flag)
         {
-            BitArray flags = new BitArray(new byte[] { flag });
+            var flags = ConvertInt16ToBitArray(flag);
             BubbleFarming = flags[0];
             BotAdmin = flags[1];
             Moderator = flags[2];
@@ -349,7 +349,18 @@ namespace Palantir
             Permanban = flags[5];
             Dropban = flags[6];
             Patronizer = flags[7];
-            Patronizer = flags[8];
+            Booster = flags[8];
+        }
+        private bool[] ConvertInt16ToBitArray(Int16 value)
+        {
+            bool[] bitArray = new bool[16];
+
+            for (int i = 0; i < 16; i++)
+            {
+                bitArray[i] = (value & (1 << i)) != 0;
+            }
+
+            return bitArray;
         }
 
         public int CalculateFlag()
