@@ -433,6 +433,21 @@ namespace Palantir
                 });
             }
 
+            if (flags.Booster)
+            {
+                rewards.Add(new SplitReward()
+                {
+                    Login = login,
+                    Split = -1,
+                    ID = -1,
+                    Value = 2,
+                    Name = "Typo Server Booster",
+                    Description = "Rewarded for as long as you boost the Typo Discord Server.",
+                    Comment = "",
+                    Expired = false
+                });
+            }
+
             return rewards;
         }
 
