@@ -440,7 +440,7 @@ namespace Palantir
                     Login = login,
                     Split = -1,
                     ID = -1,
-                    Value = 2,
+                    Value = 4,
                     Name = "Typo Server Booster",
                     Description = "Rewarded for as long as you boost the Typo Discord Server.",
                     Comment = "",
