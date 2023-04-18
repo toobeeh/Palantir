@@ -99,7 +99,7 @@ namespace Palantir.Commands
 
             string desc = "";
 
-            PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
+            PermissionFlag perm = new PermissionFlag(Program.Feanor.GetFlagByMember(context.User));
             if (perm.BubbleFarming) desc += "`🚩 Flagged as 'bubble farming'.`\n";
             if (perm.BotAdmin) desc += "`✔️ Verified cool guy aka Admin.`\n";
             if (perm.Moderator) desc += "`🛠️ Palantir Moderator.`\n";
@@ -152,7 +152,7 @@ namespace Palantir.Commands
             int bubbles = BubbleWallet.GetBubbles(login);
             int credit = BubbleWallet.CalculateCredit(login, context.User.Id.ToString());
             List<SpriteProperty> inventory = BubbleWallet.GetInventory(login).OrderBy(s => s.ID).ToList();
-            PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
+            PermissionFlag perm = new PermissionFlag(Program.Feanor.GetFlagByMember(context.User));
             int splits = BubbleWallet.GetMemberSplits(Convert.ToInt32(login), perm).Sum(s => s.Value);
             int regLeagueDrops = League.GetLeagueEventDropWeights(context.User.Id.ToString()).Count;
             int leagueDrops = regLeagueDrops + League.GetLeagueDropWeights(context.User.Id.ToString()).Count;
@@ -304,7 +304,7 @@ namespace Palantir.Commands
                 foreach (Model.Member member in memberBatch)
                 {
                     string name = "<@" + JsonConvert.DeserializeObject<Member>(member.Member1).UserID + ">";
-                    PermissionFlag perm = new PermissionFlag((byte)member.Flag);
+                    PermissionFlag perm = new PermissionFlag(Convert.ToInt16(member.Flag));
                     if (perm.BubbleFarming)
                     {
                         unranked++;
@@ -355,7 +355,7 @@ namespace Palantir.Commands
             List<IEnumerable<Model.Member>> memberBatches = members.Batch(9).ToList();
             List<string> ranks = new List<string>();
             members.ForEach(member => {
-                if (!(new PermissionFlag((byte)member.Flag)).BubbleFarming) ranks.Add(member.Login.ToString());
+                if (!(new PermissionFlag(Convert.ToInt16(member.Flag))).BubbleFarming) ranks.Add(member.Login.ToString());
             });
             int page = 0;
 
@@ -408,7 +408,7 @@ namespace Palantir.Commands
                 foreach (Model.Member member in memberBatch)
                 {
                     string name = "<@" + JsonConvert.DeserializeObject<Member>(member.Member1).UserID + ">";
-                    PermissionFlag perm = new PermissionFlag((byte)member.Flag);
+                    PermissionFlag perm = new PermissionFlag(Convert.ToInt16(member.Flag));
                     if (perm.BubbleFarming)
                     {
                         embed.AddField("\u200b", "**`🚩` - " + name + "**\n `This player has been flagged as *bubble farming*`.", true);
@@ -785,7 +785,7 @@ namespace Palantir.Commands
         [Command("splits")]
         public async Task Splits(CommandContext context)
         {
-            PermissionFlag flags = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
+            PermissionFlag flags = new PermissionFlag(Program.Feanor.GetFlagByMember(context.User));
             int login = Convert.ToInt32(BubbleWallet.GetLoginOfMember(context.User.Id.ToString()));
 
             var memberSplits = BubbleWallet.GetMemberSplits(login, flags);
@@ -817,7 +817,7 @@ namespace Palantir.Commands
         [Command("dropboost")]
         public async Task SplitBoost(CommandContext context, int factorSplits = 0, int durationSplits = 0, int cooldownSplits = 0, string modifier = "")
         {
-            PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
+            PermissionFlag perm = new PermissionFlag(Program.Feanor.GetFlagByMember(context.User));
             if (perm.Permanban)
             {
                 await Program.SendEmbed(context.Channel, "So... you're one of the bad guys, huh?", "Users with a permanban obviously cant boost, lol");
@@ -928,7 +928,7 @@ namespace Palantir.Commands
         [Command("streamcode")]
         public async Task Streamcode(CommandContext context, string code = "")
         {
-            PermissionFlag perm = new PermissionFlag((byte)Program.Feanor.GetFlagByMember(context.User));
+            PermissionFlag perm = new PermissionFlag(Program.Feanor.GetFlagByMember(context.User));
             if (perm.Permanban)
             {
                 await Program.SendEmbed(context.Channel, "So... you're one of the bad guys, huh?", "You're permabanned.");

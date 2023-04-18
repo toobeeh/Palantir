@@ -202,12 +202,12 @@ namespace Palantir
             context.Dispose();
             return member;
         }
-        public int GetFlagByMember(DiscordUser user)
+        public Int16 GetFlagByMember(DiscordUser user)
         {
             PalantirContext context = new PalantirContext();
             Model.Member member = context.Members.FirstOrDefault(m => m.Member1.Contains(user.Id.ToString()));
             context.Dispose();
-            return member.Flag;
+            return Convert.ToInt16(member.Flag);
         }
         public void SetFlagByID(string id, int flag)
         {
@@ -240,7 +240,7 @@ namespace Palantir
             // iterate through palantir members and set flags
             await db.Members.ForEachAsync(member =>
             {
-                PermissionFlag flag = new PermissionFlag((byte)member.Flag);
+                PermissionFlag flag = new PermissionFlag(Convert.ToInt16(member.Flag));
                 flag.Patron = patrons.Any(patron => member.Member1.Contains(patron));
                 flag.Booster = boosters.Any(booster => member.Member1.Contains(booster));
                 if (patronizer.Any(id => member.Member1.Contains(id)))
@@ -263,7 +263,7 @@ namespace Palantir
                         Model.Member member = db.Members.FirstOrDefault(member => member.Member1.Contains(id));
                         if (!patrons.Contains(member.Login.ToString()))
                         {
-                            PermissionFlag flag = new PermissionFlag((byte)member.Flag);
+                            PermissionFlag flag = new PermissionFlag(Convert.ToInt16(member.Flag));
                             flag.Patron = true;
                             string emoji = String.IsNullOrEmpty(member.Emoji) ? "" : member.Emoji;
                             if (!emojis.ContainsKey(member.Login.ToString())) emojis.Add(member.Login.ToString(), emoji);
