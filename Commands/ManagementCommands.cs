@@ -151,7 +151,8 @@ namespace Palantir.Commands
                     + getperm.Patron + "\nFlag[5] Permanent Ban - "
                     + getperm.Permanban + "\nFlag[6] Drop Ban - "
                     + getperm.Dropban + "\nFlag[7] Patronizer - "
-                    + getperm.Patronizer;
+                    + getperm.Patronizer + "\nFlag[8] Booster - "
+                    + getperm.Booster; ;
                 await Program.SendEmbed(context.Channel, "The flags of " + target.Username, getDesc);
                 return;
             }
