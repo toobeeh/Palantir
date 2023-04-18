@@ -373,7 +373,7 @@ namespace Palantir
                 + (Permanban ? 32 : 0)
                 + (Dropban ? 64 : 0)
                 + (Patronizer ? 128 : 0)
-                + (Patronizer ? 256 : 0);
+                + (Booster ? 256 : 0);
         }
 
         public bool CheckForPermissionByte(byte permission)
