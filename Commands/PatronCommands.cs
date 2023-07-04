@@ -77,7 +77,7 @@ namespace Palantir.Commands
             if (cardsettings.BackgroundImage != "-")
             {
                 string bgPath = "/home/pi/cardassets/imgur_" + cardsettings.BackgroundImage + ".bgb";
-                if(!System.IO.File.Exists(bgPath)) 
+                if (!System.IO.File.Exists(bgPath))
                 {
                     byte[] bgbytes = await client.GetByteArrayAsync("https://i.imgur.com/" + (cardsettings.BackgroundImage != "" && cardsettings.BackgroundImage != "-" ? cardsettings.BackgroundImage : "qFmcbT0.png"));
                     System.IO.File.WriteAllBytes(bgPath, bgbytes);
@@ -90,7 +90,7 @@ namespace Palantir.Commands
                 bgheight = 328;
             }
 
-            string combopath = SpriteComboImage.GenerateImage(SpriteComboImage.GetSpriteSources(sprites, BubbleWallet.GetMemberRainbowShifts(member.Login.ToString())), "/home/pi/tmpGen/");
+            string combopath = SpriteComboImage.GenerateImage(SpriteComboImage.GetSpriteSources(sprites, BubbleWallet.GetMemberRainbowShifts(member.Login.ToString())), Program.CacheDataPath + "/combos/");
             string spritebase64 = Convert.ToBase64String(System.IO.File.ReadAllBytes(combopath));
             System.IO.File.Delete(combopath);
 
@@ -103,8 +103,9 @@ namespace Palantir.Commands
             SpriteComboImage.FillPlaceholdersBG(ref content, profilebase64, spritebase64, background64, cardsettings.BackgroundOpacity, cardsettings.HeaderOpacity, bgheight.ToString(), cardsettings.HeaderColor, cardsettings.LightTextColor, cardsettings.DarkTextColor, dMember is not null ? dMember.DisplayName : dUser.Username, member.Bubbles.ToString(), (member.Drops + caughtleagueDrops).ToString(), ratio,
                 BubbleWallet.FirstTrace(login), BubbleWallet.GetInventory(login).Count.ToString(), BubbleWallet.ParticipatedEvents(login).Count.ToString() + " (" + caughtEventdrops + " Drops)", Math.Round((double)member.Bubbles * 10 / 3600).ToString(),
                 BubbleWallet.GlobalRanking(login).ToString(), BubbleWallet.GlobalRanking(login, true).ToString(), memberDetail.Guilds.Count.ToString(), perm.Patron, BubbleWallet.IsEarlyUser(login), perm.Moderator);
-            
-            string path = SpriteComboImage.SVGtoPNG(content, "/home/pi/Webroot/files/combos/");
+
+            string path = SpriteComboImage.SVGtoPNG(content, Program.CacheDataPath + "/cards/");
+            /* TODO uplaod image instead link */
             await response.ModifyAsync(content: path.Replace(@"/home/pi/Webroot/", "https://tobeh.host/"));
 
             //System.IO.File.WriteAllText("/home/pi/graph.svg", content);

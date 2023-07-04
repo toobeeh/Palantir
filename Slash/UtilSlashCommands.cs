@@ -77,7 +77,7 @@ namespace Palantir.Slash
             if (guild is null)
             {
                 await context.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().AddEmbed(Program.PalantirEmbed(
-                    "Aw, shoot :(", 
+                    "Aw, shoot :(",
                     "This server is not using Palantir yet :/\nVisit https://typo.rip#admin to find out how!")
                 ));
             }
@@ -279,7 +279,8 @@ namespace Palantir.Slash
             List<Model.Member> members = Program.Feanor.GetGuildMembers(context.Guild.Id.ToString()).OrderByDescending(m => (type == LeaderboardType.drops ? m.Drops : m.Bubbles)).Where(m => m.Bubbles > 0).ToList();
             List<IEnumerable<Model.Member>> memberBatches = members.Batch(9).ToList();
             List<string> ranks = new List<string>();
-            members.ForEach(member => {
+            members.ForEach(member =>
+            {
                 if (!(new PermissionFlag(Convert.ToInt16(member.Flag))).BubbleFarming) ranks.Add(member.Login.ToString());
             });
             int page = 0;
@@ -323,7 +324,7 @@ namespace Palantir.Slash
             await context.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().WithContent("`⏱️` Loading members of `" + context.Guild.Name + "`..."));
             var msg = await context.GetOriginalResponseAsync();
 
-           InteractivityResult <DSharpPlus.EventArgs.ComponentInteractionCreateEventArgs> press;
+            InteractivityResult<DSharpPlus.EventArgs.ComponentInteractionCreateEventArgs> press;
             do
             {
                 DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
@@ -349,7 +350,8 @@ namespace Palantir.Slash
                 await msg.ModifyAsync(leaderboard);
 
                 press = await interactivity.WaitForEventArgsAsync<DSharpPlus.EventArgs.ComponentInteractionCreateEventArgs>(
-                    args => {
+                    args =>
+                    {
                         if (args.Message.Id == msg.Id && args.User.Id != context.User.Id)
                         {
                             args.Interaction.CreateResponseAsync(DSharpPlus.InteractionResponseType.UpdateMessage);
@@ -438,13 +440,13 @@ namespace Palantir.Slash
                 embed.ImageUrl = inventory.FirstOrDefault(s => s.Activated).URL;
             if (inventory.Where(spt => spt.Activated).Count() > 1)
             {
-                embed.ImageUrl = SpriteComboImage.GenerateImage(
+                var comboPath = SpriteComboImage.GenerateImage(
                     SpriteComboImage.GetSpriteSources(
                         inventory.Where(s => s.Activated).OrderBy(s => s.Slot).Select(s => s.ID).ToArray(),
                         BubbleWallet.GetMemberRainbowShifts(login)
                     ),
-                    "/home/pi/Webroot/files/combos/")
-                .Replace(@"/home/pi/Webroot/", "https://tobeh.host/");
+                    Program.CacheDataPath + "/combos/");
+                /* TODO: Upload image */
             }
 
             DiscordEmbedField sleft = embed.AddField("\u200b ", "\u200b ", true).Fields.Last();
@@ -496,7 +498,7 @@ namespace Palantir.Slash
                 setComponents("Navigate Sprites (" + firstbatch.Count() + "/" + spritebatches.Flatten().Count() + ")", false);
                 response.AddEmbed(embed.Build());
                 responseEdit.AddEmbed(embed.Build());
-                if(sent is null)
+                if (sent is null)
                 {
                     await context.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, response);
                     sent = await context.GetOriginalResponseAsync();
@@ -618,7 +620,7 @@ namespace Palantir.Slash
 
                 updateComponents("Start Dropboost", false);
 
-                await context.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource,chooseMessage);
+                await context.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, chooseMessage);
                 var sent = await context.GetOriginalResponseAsync();
 
                 async Task StartBoost()
@@ -637,35 +639,35 @@ namespace Palantir.Slash
 
                 if (now) await StartBoost();
                 else while (true)
-                {
-
-                    var reaction = await Program.Interactivity.WaitForButtonAsync(sent, context.User, TimeSpan.FromSeconds(60));
-                    if (reaction.TimedOut)
                     {
-                        updateComponents("Timed out", true);
+
+                        var reaction = await Program.Interactivity.WaitForButtonAsync(sent, context.User, TimeSpan.FromSeconds(60));
+                        if (reaction.TimedOut)
+                        {
+                            updateComponents("Timed out", true);
+                            await sent.ModifyAsync(chooseMessageEdit);
+                            break;
+                        }
+
+                        await reaction.Result.Interaction.CreateResponseAsync(DSharpPlus.InteractionResponseType.UpdateMessage);
+
+                        if (reaction.Result.Id == "-dur" && durationSplits > 0) durationSplits--;
+                        if (reaction.Result.Id == "-fac" && factorSplits > 1) factorSplits -= 2;
+                        if (reaction.Result.Id == "-cool" && cooldownSplits > 0) cooldownSplits--;
+
+                        if (reaction.Result.Id == "+dur" && (durationSplits + factorSplits + cooldownSplits) < memberAvailableSplits) durationSplits++;
+                        if (reaction.Result.Id == "+fac" && (durationSplits + factorSplits + cooldownSplits) < memberAvailableSplits - 1) factorSplits += 2;
+                        if (reaction.Result.Id == "+cool" && (durationSplits + factorSplits + cooldownSplits) < memberAvailableSplits) cooldownSplits++;
+
+                        if (reaction.Result.Id == "start" || now)
+                        {
+                            await StartBoost();
+                            break;
+                        }
+
+                        updateComponents("Start Dropboost", false);
                         await sent.ModifyAsync(chooseMessageEdit);
-                        break;
                     }
-
-                    await reaction.Result.Interaction.CreateResponseAsync(DSharpPlus.InteractionResponseType.UpdateMessage);
-
-                    if (reaction.Result.Id == "-dur" && durationSplits > 0) durationSplits--;
-                    if (reaction.Result.Id == "-fac" && factorSplits > 1) factorSplits -= 2;
-                    if (reaction.Result.Id == "-cool" && cooldownSplits > 0) cooldownSplits--;
-
-                    if (reaction.Result.Id == "+dur" && (durationSplits + factorSplits + cooldownSplits) < memberAvailableSplits) durationSplits++;
-                    if (reaction.Result.Id == "+fac" && (durationSplits + factorSplits + cooldownSplits) < memberAvailableSplits - 1) factorSplits += 2;
-                    if (reaction.Result.Id == "+cool" && (durationSplits + factorSplits + cooldownSplits) < memberAvailableSplits) cooldownSplits++;
-
-                    if (reaction.Result.Id == "start" || now)
-                    {
-                        await StartBoost();
-                        break;
-                    }
-
-                    updateComponents("Start Dropboost", false);
-                    await sent.ModifyAsync(chooseMessageEdit);
-                }
             }
         }
     }

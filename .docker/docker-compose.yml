@@ -10,4 +10,4 @@ services:
       - DB_HOST=host.name
       - DB_USER=user
       - STATIC_DATA_PATH=/static_data
-      - CACHED_DATA_PATH=/cached_data
+      - CACHE_DATA_PATH=/cache_data

@@ -122,8 +122,8 @@ namespace Palantir.Commands
             });
             if (spriteIDs.Count > 0)
             {
-                string path = SpriteComboImage.GenerateImage(SpriteComboImage.GetSpriteSources(spriteIDs.ToArray()), "/home/pi/Webroot/files/combos/")
-                    .Replace(@"/home/pi/Webroot/", "https://tobeh.host/");
+                string path = SpriteComboImage.GenerateImage(SpriteComboImage.GetSpriteSources(spriteIDs.ToArray()), Program.CacheDataPath + "/combos/");
+                /* TODO upload image */
                 embed.ImageUrl = path;
             }
 
@@ -132,7 +132,7 @@ namespace Palantir.Commands
             if (inventory.Count <= 0) desc = "You haven't unlocked any sprites yet!";
             desc += "\n\n🔮 **" + BubbleWallet.CalculateCredit(login, context.User.Id.ToString()) + "** of " + BubbleWallet.GetBubbles(login) + " collected Bubbles available.";
             desc += "\n\n💧 **" + drops + "** Drops collected.";
-            if(splits >  0 ) desc += "\n\n🏆 **" + splits + "** Splits rewarded.";
+            if (splits > 0) desc += "\n\n🏆 **" + splits + "** Splits rewarded.";
             if (drops >= 1000 || perm.BotAdmin || perm.Patron) desc += "\n\n<a:chest:810521425156636682> **" + (perm.BotAdmin ? "Infinite" : (drops / 1000 + 1 + (perm.Patron ? 1 : 0)).ToString()) + " ** Sprite slots available.";
 
             embed.AddField("\u200b ", desc);
@@ -189,7 +189,7 @@ namespace Palantir.Commands
             if (flags.Length > 0) embed.AddField("Flags:", flags);
 
             List<SceneProperty> sceneInv = BubbleWallet.GetSceneInventory(login, false, false);
-            if(sceneInv.Count > 0)
+            if (sceneInv.Count > 0)
             {
                 embed.AddField("Scenes:", sceneInv.OrderBy(scene => scene.Id).ToList().ConvertAll(scene => "#" + scene.Id + " - " + scene.Name + (scene.Activated ? " (active)" : "")).ToDelimitedString("\n"));
             }
@@ -211,8 +211,8 @@ namespace Palantir.Commands
                         inventory.Where(s => s.Activated).OrderBy(s => s.Slot).Select(s => s.ID).ToArray(),
                         BubbleWallet.GetMemberRainbowShifts(login)
                     ),
-                    "/home/pi/Webroot/files/combos/")
-                .Replace(@"/home/pi/Webroot/", "https://tobeh.host/");
+                    Program.CacheDataPath + "/combos/");
+                /* TODO upload image */
             }
 
             DiscordEmbedField sleft = embed.AddField("\u200b ", "\u200b ", true).Fields.Last();
@@ -310,8 +310,8 @@ namespace Palantir.Commands
                         unranked++;
                         embed.AddField("\u200b", "**`🚩` - " + name + "**\n `This player has been flagged as *bubble farming*`.", true);
                     }
-                    else embed.AddField("\u200b", "**#" + (members.IndexOf(member) + 1 - unranked).ToString() + " - " + name + "**" + (perm.BotAdmin ? " ` Admin` " : "") + (perm.Patron ? " ` 🎖️ Patron` " : "") + "\n🔮 " 
-                        + BubbleWallet.GetBubbles(member.Login.ToString()).ToString() + " Bubbles\n💧 " 
+                    else embed.AddField("\u200b", "**#" + (members.IndexOf(member) + 1 - unranked).ToString() + " - " + name + "**" + (perm.BotAdmin ? " ` Admin` " : "") + (perm.Patron ? " ` 🎖️ Patron` " : "") + "\n🔮 "
+                        + BubbleWallet.GetBubbles(member.Login.ToString()).ToString() + " Bubbles\n💧 "
                         + BubbleWallet.GetDrops(member.Login.ToString(), JsonConvert.DeserializeObject<Member>(Program.Feanor.GetMemberByLogin(member.Login.ToString()).Member1).UserID).ToString() + " Drops", true
                        );
                 }
@@ -332,7 +332,7 @@ namespace Palantir.Commands
         public async Task Serverinvite(CommandContext context)
         {
             ObservedGuild guild = Program.Feanor.PalantirTethers.FirstOrDefault(g => g.PalantirEndpoint.GuildID == context.Guild.Id.ToString()).PalantirEndpoint;
-            if(guild is null)
+            if (guild is null)
             {
                 await Program.SendEmbed(context.Channel, "Aw, shoot :(", "This server is not using Palantir yet :/\nVisit https://typo.rip#admin to find out how!");
             }
@@ -354,7 +354,8 @@ namespace Palantir.Commands
             List<Model.Member> members = Program.Feanor.GetGuildMembers(context.Guild.Id.ToString()).OrderByDescending(m => (mode == "drops" ? m.Drops : m.Bubbles)).Where(m => m.Bubbles > 0).ToList();
             List<IEnumerable<Model.Member>> memberBatches = members.Batch(9).ToList();
             List<string> ranks = new List<string>();
-            members.ForEach(member => {
+            members.ForEach(member =>
+            {
                 if (!(new PermissionFlag(Convert.ToInt16(member.Flag))).BubbleFarming) ranks.Add(member.Login.ToString());
             });
             int page = 0;
@@ -423,8 +424,9 @@ namespace Palantir.Commands
                 await msg.ModifyAsync(leaderboard);
 
                 press = await interactivity.WaitForEventArgsAsync<DSharpPlus.EventArgs.ComponentInteractionCreateEventArgs>(
-                    args => {
-                        if(args.Message.Id == msg.Id && args.User.Id != context.User.Id)
+                    args =>
+                    {
+                        if (args.Message.Id == msg.Id && args.User.Id != context.User.Id)
                         {
                             args.Interaction.CreateResponseAsync(DSharpPlus.InteractionResponseType.UpdateMessage);
                             args.Interaction.CreateFollowupMessageAsync(
@@ -432,13 +434,13 @@ namespace Palantir.Commands
                             );
                         }
                         return args.Message.Id == msg.Id && args.User.Id == context.User.Id;
-                        }, TimeSpan.FromMinutes(10));
+                    }, TimeSpan.FromMinutes(10));
                 if (!press.TimedOut)
                 {
                     await press.Result.Interaction.CreateResponseAsync(DSharpPlus.InteractionResponseType.UpdateMessage);
                     if (press.Result.Id == "lbdprev") page--;
                     else if (press.Result.Id == "lbdnext") page++;
-                    else if (press.Result.Interaction.Data.Values[0].StartsWith("page")) page = Convert.ToInt32(press.Result.Interaction.Data.Values[0].Replace("page",""));
+                    else if (press.Result.Interaction.Data.Values[0].StartsWith("page")) page = Convert.ToInt32(press.Result.Interaction.Data.Values[0].Replace("page", ""));
                     if (page >= memberBatches.Count) page = 0;
                     else if (page < 0) page = memberBatches.Count - 1;
                     leaderboard.Clear();
@@ -477,7 +479,8 @@ namespace Palantir.Commands
                 trace.History = trace.History.Where(
                     t => t.Key.DayOfWeek == DayOfWeek.Monday || t.Key == trace.History.Keys.Min() || t.Key == trace.History.Keys.Max()
                     ).ToDictionary();
-                msg += " Weekly"; }
+                msg += " Weekly";
+            }
             else if (mode == "month")
             {
                 trace = new QuartzJobs.BubbleTrace(login);
@@ -578,7 +581,7 @@ namespace Palantir.Commands
         [Command("parsemoji")]
         public async Task Parsemoji(CommandContext context, string emoji)
         {
-            
+
             string result = emoji + " - length: " + emoji.Length + "\n";
             string regexEmoji = "(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])";
 
@@ -592,7 +595,7 @@ namespace Palantir.Commands
             result += "Independend emojis from codepoints: " + cpByEmojis
                 .ConvertAll(emojiCodepoints => "[" + emojiCodepoints.ToDelimitedString(", ") + "]").ToDelimitedString(" - ") + "\n";
             result += "\nFirst complete emoji: " + cpByEmojis[0].ConvertAll(point => Convert.ToChar(point)).ToDelimitedString("");
-            
+
             await Program.SendEmbed(context.Channel, "Emoji Parse Analysis", result);
         }
 
@@ -628,7 +631,7 @@ namespace Palantir.Commands
             PalantirContext cont = new PalantirContext();
             int members = cont.Members.Count();
             cont.Dispose();
-            embed.AddField("`👥` ", "**" +  members + " ** people have registered on Palantir.");
+            embed.AddField("`👥` ", "**" + members + " ** people have registered on Palantir.");
             embed.AddField("`❤️` ", "**" + Program.Feanor.PatronCount + " ** Patrons are supporting Typo on Patreon.");
             await context.RespondAsync(embed: embed);
         }
@@ -638,7 +641,7 @@ namespace Palantir.Commands
         [Command("combopng")]
         public async Task Combopng(CommandContext context, [Description("The id of the sprites (eg '15 0 16 17')")] params int[] sprites)
         {
-            string path = SpriteComboImage.GenerateImage(SpriteComboImage.GetSpriteSources(sprites), "/home/pi/tmpGen/");
+            string path = SpriteComboImage.GenerateImage(SpriteComboImage.GetSpriteSources(sprites), Program.CacheDataPath + "/combos/"); /* TODO LIEK THIS! */
             using (var fs = new System.IO.FileStream(path, System.IO.FileMode.Open, System.IO.FileAccess.Read))
             {
                 var msg = await new DiscordMessageBuilder()
@@ -657,13 +660,13 @@ namespace Palantir.Commands
             List<Theme> themes = db.Themes.Where(theme => !String.IsNullOrEmpty(theme.Theme1)).ToList();
             db.Dispose();
 
-            if(id <= 0 || id > themes.Count)
+            if (id <= 0 || id > themes.Count)
             {
                 embed.WithTitle("Listing all **Typo Themes**:");
                 embed.WithDescription("Click a link to add the theme or use `>themes [id]` to view theme details!\nTo add your own theme, contact a Palantir mod.");
                 themes.ForEach((theme, index) =>
                 {
-                    embed.AddField("➜ " + theme.Name, "#" + (index + 1) +" - by `" + theme.Author + "` - https://typo.rip/t?ticket=" + theme.Ticket);
+                    embed.AddField("➜ " + theme.Name, "#" + (index + 1) + " - by `" + theme.Author + "` - https://typo.rip/t?ticket=" + theme.Ticket);
                 });
             }
             else
@@ -707,7 +710,7 @@ namespace Palantir.Commands
             DEPRECATED.ImageDbContext idb = new DEPRECATED.ImageDbContext("/home/pi/Webroot/rippro/userdb/udb" + login + ".db");
             int count = idb.Drawings.Count();
             //idb.Drawings.FromSqlInterpolated("select * from drawings where ")
-            await Program.SendEmbed(context.Channel,count.ToString(), "");
+            await Program.SendEmbed(context.Channel, count.ToString(), "");
         }
 
         [Description("Get the average drop frequency")]
@@ -724,15 +727,15 @@ namespace Palantir.Commands
             {
                 boosts = boostlist.ConvertAll(
                 boost => " x" + boost.Factor
-                + " (" + (Math.Round((Convert.ToInt64(boost.StartUtcs) + boost.DurationS - now)/60000,1) + "min left)")).ToDelimitedString("\n");
-                boosts += "\n=============\n **x" + Math.Round(Drops.GetCurrentFactor(),1) + " Boost active**";
+                + " (" + (Math.Round((Convert.ToInt64(boost.StartUtcs) + boost.DurationS - now) / 60000, 1) + "min left)")).ToDelimitedString("\n");
+                boosts += "\n=============\n **x" + Math.Round(Drops.GetCurrentFactor(), 1) + " Boost active**";
             }
             else boosts = "No Drop Boosts active :(";
 
             double mins = Math.Floor(average / 60);
             double secs = Math.Floor(average - mins * 60);
 
-            await Program.SendEmbed(context.Channel, "Current Drop Rate", "ATM, drops appear in an average frequency of about " + mins + "min " + secs + "s.\n\n" + QuartzJobs.StatusUpdaterJob.currentOnlineIDs +" people are playing.\n\nFollowing boosts are active:\n" + boosts + "\n\nYou can boost once a week with `>dropboost`.");
+            await Program.SendEmbed(context.Channel, "Current Drop Rate", "ATM, drops appear in an average frequency of about " + mins + "min " + secs + "s.\n\n" + QuartzJobs.StatusUpdaterJob.currentOnlineIDs + " people are playing.\n\nFollowing boosts are active:\n" + boosts + "\n\nYou can boost once a week with `>dropboost`.");
         }
 
         //[Description("Boost the drop frequency. You can do this once a week.")]
@@ -794,22 +797,22 @@ namespace Palantir.Commands
             message.WithTitle(context.Message.Author.Username + "s Split Achievements");
             message.WithColor(DiscordColor.Magenta);
 
-            if(memberSplits.Count == 0)
+            if (memberSplits.Count == 0)
             {
                 message.WithDescription("You haven't earned any Splits yet :(\n\nSplits are used to make your Drop Boosts more powerful.\nYou get them by occasional giveaways/challenges or by competing in Drop Leagues.");
             }
             else
             {
-                message.AddField(memberSplits.Sum(s => s.Value).ToString(),"total earned Splits\n_ _");
+                message.AddField(memberSplits.Sum(s => s.Value).ToString(), "total earned Splits\n_ _");
 
                 memberSplits.ForEach(split =>
                 {
-                    message.AddField("➜ " + split.Name + (split.RewardDate != null && split.RewardDate != "" ? "  `" + split.RewardDate + "`" : "") + (split.Expired ? " / *expired*" : "" ), split.Description + "\n *worth " + split.Value + " Splits*" + (split.Comment != null && split.Comment.Length > 0 ? " ~ `" + split.Comment + "`" : ""));
+                    message.AddField("➜ " + split.Name + (split.RewardDate != null && split.RewardDate != "" ? "  `" + split.RewardDate + "`" : "") + (split.Expired ? " / *expired*" : ""), split.Description + "\n *worth " + split.Value + " Splits*" + (split.Comment != null && split.Comment.Length > 0 ? " ~ `" + split.Comment + "`" : ""));
                 });
 
                 message.WithDescription("You can use your Splits to customize your Drop Boosts.\nChoose the boost intensity, duration or cooldown individually when using `>dropboost`\n_ _");
             }
-            
+
             await context.Message.RespondAsync(message);
         }
 
@@ -852,7 +855,7 @@ namespace Palantir.Commands
 
                     var minusFactor = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Secondary, "-fac", "-", disable);
                     var plusFactor = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Secondary, "+fac", "+", disable);
-                    var labelFactor = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Primary, "fac", "Boost Factor: " + factorSplits + " Splits (+" + Math.Round(factorSplits * 0.05,1) + "x)", true);
+                    var labelFactor = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Primary, "fac", "Boost Factor: " + factorSplits + " Splits (+" + Math.Round(factorSplits * 0.05, 1) + "x)", true);
 
                     var minusDur = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Secondary, "-dur", "-", disable);
                     var plusDur = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Secondary, "+dur", "+", disable);
@@ -891,36 +894,36 @@ namespace Palantir.Commands
 
                 if (modifier == "now") await StartBoost();
                 else while (true)
-                {
-                    var reaction = await sent.WaitForButtonAsync(context.User, TimeSpan.FromSeconds(60));
-                    if (reaction.TimedOut)
                     {
-                        updateComponents("Timed out", true);
+                        var reaction = await sent.WaitForButtonAsync(context.User, TimeSpan.FromSeconds(60));
+                        if (reaction.TimedOut)
+                        {
+                            updateComponents("Timed out", true);
+                            await sent.ModifyAsync(chooseMessage);
+                            break;
+                        }
+
+                        await reaction.Result.Interaction.CreateResponseAsync(DSharpPlus.InteractionResponseType.UpdateMessage);
+
+                        if (reaction.Result.Id == "-dur" && durationSplits > 0) durationSplits--;
+                        if (reaction.Result.Id == "-fac" && factorSplits > 1) factorSplits -= 2;
+                        if (reaction.Result.Id == "-cool" && cooldownSplits > 0) cooldownSplits--;
+
+                        if (reaction.Result.Id == "+dur" && (durationSplits + factorSplits + cooldownSplits) < memberAvailableSplits) durationSplits++;
+                        if (reaction.Result.Id == "+fac" && (durationSplits + factorSplits + cooldownSplits) < memberAvailableSplits - 1) factorSplits += 2;
+                        if (reaction.Result.Id == "+cool" && (durationSplits + factorSplits + cooldownSplits) < memberAvailableSplits) cooldownSplits++;
+
+                        if (reaction.Result.Id == "start" || modifier == "now")
+                        {
+                            await StartBoost();
+                            break;
+                        }
+
+                        updateComponents("Start Dropboost", false);
                         await sent.ModifyAsync(chooseMessage);
-                        break;
                     }
-
-                    await reaction.Result.Interaction.CreateResponseAsync(DSharpPlus.InteractionResponseType.UpdateMessage);
-
-                    if (reaction.Result.Id == "-dur" && durationSplits > 0) durationSplits--;
-                    if (reaction.Result.Id == "-fac" && factorSplits > 1) factorSplits -= 2;
-                    if (reaction.Result.Id == "-cool" && cooldownSplits > 0) cooldownSplits--;
-
-                    if (reaction.Result.Id == "+dur" && (durationSplits + factorSplits + cooldownSplits) < memberAvailableSplits) durationSplits++;
-                    if (reaction.Result.Id == "+fac" && (durationSplits + factorSplits + cooldownSplits) < memberAvailableSplits - 1) factorSplits += 2;
-                    if (reaction.Result.Id == "+cool" && (durationSplits + factorSplits + cooldownSplits) < memberAvailableSplits) cooldownSplits++;
-
-                    if (reaction.Result.Id == "start" || modifier == "now")
-                    {
-                        await StartBoost();
-                        break;
-                    }
-
-                    updateComponents("Start Dropboost", false);
-                    await sent.ModifyAsync(chooseMessage);
-                }
             }
-            
+
         }
 
 
@@ -945,7 +948,7 @@ namespace Palantir.Commands
 
             PalantirContext ctx = new();
 
-            if(ctx.Members.Any(m => m.Streamcode == code))
+            if (ctx.Members.Any(m => m.Streamcode == code))
             {
                 await Program.SendEmbed(context.Channel, ":/", "This code is already being used by someone else, sorry..");
                 return;
@@ -956,7 +959,7 @@ namespace Palantir.Commands
             ctx.Dispose();
 
 
-            await Program.SendEmbed(context.Channel, "Nice one!", code == "" ? "Your code has been reset. You'll be assigned random codes when streaming." : "Your code is now `"+ code + "`. Dont forget to enable it on skribbl!");
+            await Program.SendEmbed(context.Channel, "Nice one!", code == "" ? "Your code has been reset. You'll be assigned random codes when streaming." : "Your code is now `" + code + "`. Dont forget to enable it on skribbl!");
         }
 
 

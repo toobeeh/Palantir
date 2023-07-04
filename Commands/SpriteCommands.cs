@@ -254,9 +254,8 @@ namespace Palantir.Commands
             embed.Color = DiscordColor.Magenta;
             if (sprites.Length > 0)
             {
-                string path = SpriteComboImage.GenerateImage(SpriteComboImage.GetSpriteSources(sprites, BubbleWallet.GetMemberRainbowShifts(login)), "/home/pi/Webroot/files/combos/")
-                    .Replace(@"/home/pi/Webroot/", "https://tobeh.host/");
-                embed.ImageUrl = path;
+                string path = SpriteComboImage.GenerateImage(SpriteComboImage.GetSpriteSources(sprites, BubbleWallet.GetMemberRainbowShifts(login)), Program.CacheDataPath + "/combos/");
+                /* TODO upload iamge from path */
             }
             await context.Channel.SendMessageAsync(embed: embed);
         }
@@ -279,7 +278,7 @@ namespace Palantir.Commands
                 DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
                 embed.Title = "**" + scene.Name + "**";
                 embed.Color = DiscordColor.Magenta;
-                if(!scene.Exclusive) embed.AddField("Costs:",  scene.EventId > 0 ? "This is an event scene - check `>event " + scene.EventId + "`" : "Your current scene price is **" + sceneCost + "** bubbles.");
+                if (!scene.Exclusive) embed.AddField("Costs:", scene.EventId > 0 ? "This is an event scene - check `>event " + scene.EventId + "`" : "Your current scene price is **" + sceneCost + "** bubbles.");
                 else embed.AddField("Exclusive:", "This scene can't be bought regulary.");
                 embed.WithDescription("**ID:** " + scene.Id + "\n" + (scene.Artist != "" ? "**Artist:** " + scene.Artist + "\n" : "") + "**Font color: **" + scene.Color + " / " + scene.GuessedColor + "\n\nBuy the scene: `>paint " + id + "`\nUse the scene: `>show " + id + "`");
                 embed.WithImageUrl(scene.Url);
@@ -481,12 +480,12 @@ namespace Palantir.Commands
             if (sprite < 0)
             {
                 string only = shifts.Keys.ToList().OrderBy(key => key).Select(key => "**#" + key.ToString() + "**: " + shifts[key].ToString()).ToDelimitedString("\n");
-                if(only == "") only = "You have no color choices set.";
+                if (only == "") only = "You have no color choices set.";
                 await Program.SendEmbed(context.Channel, "Your current color customizations:", only + (perm.BotAdmin || perm.Patron ? "" : "\n\nBecome a patron to customize more than one sprite!"));
                 return;
             }
 
-            if(!inventory.Find(s => s.ID == sprite).Rainbow)
+            if (!inventory.Find(s => s.ID == sprite).Rainbow)
             {
                 await Program.SendEmbed(context.Channel, "Hold up!", "That's not a rainbow sprite :(");
                 return;
@@ -539,7 +538,7 @@ namespace Palantir.Commands
                 case "use":
 
                     var prof = profiles.FirstOrDefault(p => p.Name.ToLower() == profile.ToLower());
-                    if(prof is null)
+                    if (prof is null)
                     {
                         await context.RespondAsync((new DiscordEmbedBuilder()).WithDescription("This profile doesn't exist :(\nTo see all profiles, use `>spriteprofile list`").WithTitle("Oof, typo?"));
                     }
@@ -581,15 +580,15 @@ namespace Palantir.Commands
                             var sceneinv = BubbleWallet.GetSceneInventory(login, false, false);
                             sceneinv.ForEach(scene => scene.Activated = scene.Id.ToString() == prof.Scene);
                             BubbleWallet.SetSceneInventory(login, sceneinv);
-                        }  
+                        }
 
                         string useurl = prof.Combo == "" ? "" : SpriteComboImage.GenerateImage(
                             SpriteComboImage.GetSpriteSources(
                                 prof.Combo.Split(",").Select(id => Convert.ToInt32(id)).ToArray(),
                                 BubbleWallet.GetMemberRainbowShifts(login)
                             ),
-                            "/home/pi/Webroot/files/combos/")
-                        .Replace(@"/home/pi/Webroot/", "https://tobeh.host/");
+                            Program.CacheDataPath + "/combos/");
+                        /* TODO upload image from path */
 
                         await context.RespondAsync((new DiscordEmbedBuilder()).WithImageUrl(useurl).WithDescription(" ").WithTitle($"The profile `{profile}` has been activated!"));
                     }
@@ -605,13 +604,13 @@ namespace Palantir.Commands
 
                     msg += "\n\nTo see all profiles, use `>spriteprofile list`";
 
-                    string url = curr.Combo == "" ? "" :SpriteComboImage.GenerateImage(
+                    string url = curr.Combo == "" ? "" : SpriteComboImage.GenerateImage(
                         SpriteComboImage.GetSpriteSources(
                             curr.Combo.Split(",").Select(id => Convert.ToInt32(id)).ToArray(),
                             BubbleWallet.GetMemberRainbowShifts(login)
                         ),
-                        "/home/pi/Webroot/files/combos/")
-                    .Replace(@"/home/pi/Webroot/", "https://tobeh.host/");
+                        Program.CacheDataPath + "/combos/");
+                    /* TODO upload image from path */
 
                     await context.RespondAsync((new DiscordEmbedBuilder()).WithDescription(msg).WithImageUrl(url).WithTitle($"Your current profile has been saved as `{profile}`!"));
 
@@ -626,7 +625,7 @@ namespace Palantir.Commands
                         msgl += "• " + p.Name + " \n`" + (p.Scene != "" ? "Scene: " + p.Scene + " ~ " : "") + "Combo: " + (p.Combo != "" ? p.Combo.Replace(",", ", ") : "empty") + (p.RainbowSprites != "" ? " ~ Rainbow: " + p.RainbowSprites.Split(",").Length + " colors" : "") + "`\n";
                     }
 
-                    if(msgl == "") msgl += "No profiles saved :(\n\nTo save a profile, use `>spriteprofile save [new-name]`";
+                    if (msgl == "") msgl += "No profiles saved :(\n\nTo save a profile, use `>spriteprofile save [new-name]`";
 
                     msgl += "\n\nTo activate a profile, use `>spriteprofile use [name]`";
 
