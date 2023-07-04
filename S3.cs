@@ -14,6 +14,7 @@ namespace Palantir
         private AmazonS3Config config = new AmazonS3Config()
         {
             ServiceURL = "https://eu2.contabostorage.com/",
+            ForcePathStyle = true,
         };
 
         public async Task<string> UploadPng(string path, string key)
@@ -26,6 +27,7 @@ namespace Palantir
                 Key = key,
                 FilePath = path,
                 ContentType = "image/png",
+                CannedACL = S3CannedACL.PublicRead
             };
 
             PutObjectResponse response = await client.PutObjectAsync(putRequest);
