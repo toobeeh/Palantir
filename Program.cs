@@ -14,6 +14,7 @@ using Quartz;
 using Quartz.Impl;
 using DSharpPlus.Interactivity.Extensions;
 using DSharpPlus.SlashCommands;
+using System.Globalization;
 
 namespace Palantir
 {
@@ -34,6 +35,9 @@ namespace Palantir
         public static readonly String CacheDataPath = Environment.GetEnvironmentVariable("CACHE_DATA_PATH");
         static async Task Main(string[] args)
         {
+            CultureInfo culture = new CultureInfo("de-AT");
+            CultureInfo.DefaultThreadCurrentCulture = culture;
+
             Console.WriteLine($"Initialized with:\n- Palantir Token: {PalantirToken}\n- Servant Token: {ServantToken}\n- Database Host: {DatabaseHost}\n- Database User: {DatabaseUser}\n- Static Data Path: {StaticDataPath}\n- Cache Data Path: {CacheDataPath}\n");
 
             //File.WriteAllText("/home/pi/palantirOutput.log", String.Empty);
