@@ -74,6 +74,8 @@ namespace Palantir.Commands
             double bgheight = 0;
             string background64 = "";
 
+            // make sure path exists
+            System.IO.Directory.CreateDirectory(Program.CacheDataPath + "/card-assets/");
             if (cardsettings.BackgroundImage != "-")
             {
                 string bgPath = Program.CacheDataPath + "/card-assets/imgur_" + cardsettings.BackgroundImage + ".bgb";
@@ -122,6 +124,8 @@ namespace Palantir.Commands
             DiscordMessage response = await context.RespondAsync("\n>   <a:working:857610439588053023> **Updating your settings...**\n");
             string login = BubbleWallet.GetLoginOfMember(context.User.Id.ToString());
 
+            // make sure path exists
+            System.IO.Directory.CreateDirectory(Program.CacheDataPath + "/card-assets/");
             var client = new HttpClient();
             byte[] bgbytes = await client.GetByteArrayAsync("https://i.imgur.com/" + (backgroundUrl != "" && backgroundUrl != "-" ? backgroundUrl : "qFmcbT0.png"));
             System.IO.File.WriteAllBytes(Program.CacheDataPath + "/card-assets/imgur_" + backgroundUrl + ".bgb", bgbytes);

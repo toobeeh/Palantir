@@ -246,6 +246,7 @@ namespace Palantir
                 return;
             }
 
+            Console.WriteLine(e.Exception.ToString());
             DiscordEmbedBuilder embedErr = new DiscordEmbedBuilder();
             embedErr.Title = "Error Executing " + e.Command;
             embedErr.Description = e.Exception.ToString();
