@@ -120,6 +120,9 @@ namespace Palantir
 
                 if (colormods != null && colormods.ContainsKey(id))
                 {
+                    // make sure path exists
+                    System.IO.Directory.CreateDirectory(Program.CacheDataPath + "/sprite-sources/");
+
                     // convert to right color choice
                     string targetPath = Program.CacheDataPath + "/sprite-sources/" + spt.ID + "-colormod-" + colormods[id] + "-" + DateTimeOffset.UtcNow.ToUnixTimeMilliseconds().ToString() + ".gif";
                     string output = $"convert {path}[0] -modulate 100,100,{colormods[id]} {targetPath}".Bash();
