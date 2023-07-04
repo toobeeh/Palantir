@@ -6,9 +6,9 @@ namespace Palantir
 {
     public static class SpriteComboImage
     {
-        public static string GenerateImage(string[] spriteSources, string savePath)
+        public static string GenerateImage(string[] spriteSources)
         {
-            savePath = savePath + DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString() + ".png";
+            var savePath = Program.CacheDataPath + "/combos/combo-" + spriteSources.Length + "-" + DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString() + ".png";
             string svgst = @"<svg xmlns=""http://www.w3.org/2000/svg"" xmlns:xlink=""http://www.w3.org/1999/xlink"" viewBox = ""0 0 80 80"" >";
             foreach (string sprite in spriteSources)
             {
@@ -80,9 +80,9 @@ namespace Palantir
             cropY = (originalHeight - height) / 2;
         }
 
-        public static string SVGtoPNG(string svgst, string savePath)
+        public static string SVGtoPNG(string svgst)
         {
-            savePath = savePath + DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString();
+            var savePath = Program.CacheDataPath + "/svg-png-convert/source-" + DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString();
             System.IO.File.WriteAllText(savePath + ".svg", svgst);
             string command = "sudo inkscape --export-dpi=200 -z " + savePath + ".svg -e " + savePath + ".png";
             command.Bash();
@@ -111,14 +111,14 @@ namespace Palantir
                 {
                     // download sprite
                     System.Net.WebClient client = new System.Net.WebClient();
-                    path = Program.CacheDataPath + "/combos/" + DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString() + ".gif";
+                    path = Program.CacheDataPath + "/sprite-sources/" + spt.ID + "-" + DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString() + ".gif";
                     client.DownloadFile(spt.URL, path);
                 }
 
                 if (colormods != null && colormods.ContainsKey(id))
                 {
                     // convert to right color choice
-                    string targetPath = Program.CacheDataPath + "/combos/" + DateTimeOffset.UtcNow.ToUnixTimeMilliseconds().ToString() + ".gif";
+                    string targetPath = Program.CacheDataPath + "/sprite-sources/" + spt.ID + "-colormod-" + colormods[id] + "-" + DateTimeOffset.UtcNow.ToUnixTimeMilliseconds().ToString() + ".gif";
                     string output = $"convert {path}[0] -modulate 100,100,{colormods[id]} {targetPath}".Bash();
                     path = targetPath;
                 }

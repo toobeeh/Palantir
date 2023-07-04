@@ -254,8 +254,9 @@ namespace Palantir.Commands
             embed.Color = DiscordColor.Magenta;
             if (sprites.Length > 0)
             {
-                string path = SpriteComboImage.GenerateImage(SpriteComboImage.GetSpriteSources(sprites, BubbleWallet.GetMemberRainbowShifts(login)), Program.CacheDataPath + "/combos/");
-                /* TODO upload iamge from path */
+                string path = SpriteComboImage.GenerateImage(SpriteComboImage.GetSpriteSources(sprites, BubbleWallet.GetMemberRainbowShifts(login)));
+                var url = await Program.S3.UploadPng(path, context.Message.Author.Id + "/sprite-combo-" + DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString());
+                embed.ImageUrl = url;
             }
             await context.Channel.SendMessageAsync(embed: embed);
         }

@@ -24,15 +24,19 @@ namespace Palantir
         public static DiscordGuild TypoTestground;
         public static DiscordClient Client { get; private set; }
         public static DiscordClient Servant { get; private set; }
+        public static S3Handler S3 { get; private set; }
         public static CommandsNextExtension Commands { get; private set; }
         public static SlashCommandsExtension Slash { get; private set; }
         public static InteractivityExtension Interactivity;
-        public static readonly String PalantirToken = Environment.GetEnvironmentVariable("PALANTIR_TOKEN");
-        public static readonly String ServantToken = Environment.GetEnvironmentVariable("SERVANT_TOKEN");
-        public static readonly String DatabaseHost = Environment.GetEnvironmentVariable("DB_HOST");
-        public static readonly String DatabaseUser = Environment.GetEnvironmentVariable("DB_USER");
-        public static readonly String StaticDataPath = Environment.GetEnvironmentVariable("STATIC_DATA_PATH");
-        public static readonly String CacheDataPath = Environment.GetEnvironmentVariable("CACHE_DATA_PATH");
+        public static readonly string PalantirToken = Environment.GetEnvironmentVariable("PALANTIR_TOKEN");
+        public static readonly string ServantToken = Environment.GetEnvironmentVariable("SERVANT_TOKEN");
+        public static readonly string DatabaseHost = Environment.GetEnvironmentVariable("DB_HOST");
+        public static readonly string DatabaseUser = Environment.GetEnvironmentVariable("DB_USER");
+        public static readonly string StaticDataPath = Environment.GetEnvironmentVariable("STATIC_DATA_PATH");
+        public static readonly string CacheDataPath = Environment.GetEnvironmentVariable("CACHE_DATA_PATH");
+        public static readonly string S3AccessKey = Environment.GetEnvironmentVariable("S3_ACCESS_KEY");
+        public static readonly string S3SecretKey = Environment.GetEnvironmentVariable("S3_SECRET_KEY");
+
         static async Task Main(string[] args)
         {
             CultureInfo culture = new CultureInfo("de-AT");
@@ -41,6 +45,8 @@ namespace Palantir
             CultureInfo.DefaultThreadCurrentUICulture = culture;
 
             Console.WriteLine($"Initialized with:\n- Palantir Token: {PalantirToken}\n- Servant Token: {ServantToken}\n- Database Host: {DatabaseHost}\n- Database User: {DatabaseUser}\n- Static Data Path: {StaticDataPath}\n- Cache Data Path: {CacheDataPath}\n");
+
+            S3 = new S3Handler();
 
             //File.WriteAllText("/home/pi/palantirOutput.log", String.Empty);
             Console.WriteLine("Huh, it's " + DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " - lemme sleep!!\n");
@@ -153,7 +159,7 @@ namespace Palantir
 
             //Start bubble tracer job
             Console.WriteLine("Starting bubbletracer job\n...");
-            await scheduler.ScheduleJob(tracer, tracerTrigger);
+            //await scheduler.ScheduleJob(tracer, tracerTrigger);
 
             // start status updating
             Console.WriteLine("Starting status updater job\n...");
@@ -166,9 +172,9 @@ namespace Palantir
 
             // start bubble counting
             Console.WriteLine("Starting bubble counter job\n...");
-            await scheduler.ScheduleJob(bubbleCounter, bubbleTrigger);
+           // await scheduler.ScheduleJob(bubbleCounter, bubbleTrigger);
 
-            Drops.StartDropping();
+            //Drops.StartDropping();
             Console.WriteLine("Started dropping cool stuff!");
 
             TypoTestground = await Client.GetGuildAsync(779435254225698827);

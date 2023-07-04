@@ -10,6 +10,12 @@ RUN dotnet publish -c Release -o out
 
 # Build runtime image
 FROM mcr.microsoft.com/dotnet/aspnet:7.0
+
 WORKDIR /App
+
+# add inkscape
+RUN apt-get update \
+    && apt-get install -y inkscape
+
 COPY --from=build-env /App/out .
 ENTRYPOINT ["dotnet", "Palantir.dll"]
