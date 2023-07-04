@@ -8,6 +8,9 @@ namespace Palantir
     {
         public static string GenerateImage(string[] spriteSources)
         {
+            // make sure path exists
+            System.IO.Directory.CreateDirectory(Program.CacheDataPath + "/combos/");
+
             var savePath = Program.CacheDataPath + "/combos/combo-" + spriteSources.Length + "-" + DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString() + ".png";
             string svgst = @"<svg xmlns=""http://www.w3.org/2000/svg"" xmlns:xlink=""http://www.w3.org/1999/xlink"" viewBox = ""0 0 80 80"" >";
             foreach (string sprite in spriteSources)
@@ -82,6 +85,8 @@ namespace Palantir
 
         public static string SVGtoPNG(string svgst)
         {
+            // make sure path exists
+            System.IO.Directory.CreateDirectory(Program.CacheDataPath + "/svg-png-convert/");
             var savePath = Program.CacheDataPath + "/svg-png-convert/source-" + DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString();
             System.IO.File.WriteAllText(savePath + ".svg", svgst);
             string command = "sudo inkscape --export-dpi=200 -z " + savePath + ".svg -e " + savePath + ".png";
@@ -112,6 +117,9 @@ namespace Palantir
                 }
                 else
                 {
+                    // make sure path exists
+                    System.IO.Directory.CreateDirectory(Program.CacheDataPath + "/sprite-sources/");
+
                     // download sprite
                     System.Net.WebClient client = new System.Net.WebClient();
                     path = Program.CacheDataPath + "/sprite-sources/" + spt.ID + "-" + DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString() + ".gif";
