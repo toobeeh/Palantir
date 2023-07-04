@@ -14,7 +14,6 @@ namespace Palantir
         private AmazonS3Config config = new AmazonS3Config()
         {
             ServiceURL = "https://eu2.contabostorage.com/",
-            RegionEndpoint = Amazon.RegionEndpoint.USEast1,
         };
 
         public async Task<string> UploadPng(string path, string key)
