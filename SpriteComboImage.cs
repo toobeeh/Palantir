@@ -89,7 +89,7 @@ namespace Palantir
             System.IO.Directory.CreateDirectory(Program.CacheDataPath + "/svg-png-convert/");
             var savePath = Program.CacheDataPath + "/svg-png-convert/source-" + DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString();
             System.IO.File.WriteAllText(savePath + ".svg", svgst);
-            string command = "inkscape --export-dpi=200 -z " + savePath + ".svg -e " + savePath + ".png";
+            string command = "inkscape --export-dpi=200 " + savePath + ".svg -o " + savePath + ".png";
             command.Bash();
             System.IO.File.Delete(savePath + ".svg");
             return savePath + ".png";
