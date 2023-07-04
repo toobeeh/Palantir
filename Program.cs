@@ -36,7 +36,9 @@ namespace Palantir
         static async Task Main(string[] args)
         {
             CultureInfo culture = new CultureInfo("de-AT");
+            culture.NumberFormat.NumberDecimalSeparator = ".";
             CultureInfo.DefaultThreadCurrentCulture = culture;
+            CultureInfo.DefaultThreadCurrentUICulture = culture;
 
             Console.WriteLine($"Initialized with:\n- Palantir Token: {PalantirToken}\n- Servant Token: {ServantToken}\n- Database Host: {DatabaseHost}\n- Database User: {DatabaseUser}\n- Static Data Path: {StaticDataPath}\n- Cache Data Path: {CacheDataPath}\n");
 
