@@ -15,6 +15,7 @@ using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp;
 using System.Collections.Generic;
 using Palantir.Model;
+using System.IO;
 
 namespace Palantir.Commands
 {
@@ -583,15 +584,19 @@ namespace Palantir.Commands
                             BubbleWallet.SetSceneInventory(login, sceneinv);
                         }
 
-                        string useurl = prof.Combo == "" ? "" : SpriteComboImage.GenerateImage(
+                        var msgurl = "";
+                        if(prof.Combo.Length > 0)
+                        {
+                            string path = SpriteComboImage.GenerateImage(
                             SpriteComboImage.GetSpriteSources(
                                 prof.Combo.Split(",").Select(id => Convert.ToInt32(id)).ToArray(),
                                 BubbleWallet.GetMemberRainbowShifts(login)
-                            ),
-                            Program.CacheDataPath + "/combos/");
-                        /* TODO upload image from path */
+                            ));
 
-                        await context.RespondAsync((new DiscordEmbedBuilder()).WithImageUrl(useurl).WithDescription(" ").WithTitle($"The profile `{profile}` has been activated!"));
+                            msgurl = await Program.S3.UploadPng(path, context.Message.Author.Id + "/sprite-combo-" + DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString());
+                        }
+
+                        await context.RespondAsync((new DiscordEmbedBuilder()).WithImageUrl(msgurl).WithDescription(" ").WithTitle($"The profile `{profile}` has been activated!"));
                     }
 
                     break;
@@ -605,15 +610,21 @@ namespace Palantir.Commands
 
                     msg += "\n\nTo see all profiles, use `>spriteprofile list`";
 
-                    string url = curr.Combo == "" ? "" : SpriteComboImage.GenerateImage(
+
+
+                    var useurl = "";
+                    if (curr.Combo.Length > 0)
+                    {
+                        string path = SpriteComboImage.GenerateImage(
                         SpriteComboImage.GetSpriteSources(
                             curr.Combo.Split(",").Select(id => Convert.ToInt32(id)).ToArray(),
                             BubbleWallet.GetMemberRainbowShifts(login)
-                        ),
-                        Program.CacheDataPath + "/combos/");
-                    /* TODO upload image from path */
+                        ));
 
-                    await context.RespondAsync((new DiscordEmbedBuilder()).WithDescription(msg).WithImageUrl(url).WithTitle($"Your current profile has been saved as `{profile}`!"));
+                        useurl = await Program.S3.UploadPng(path, context.Message.Author.Id + "/sprite-combo-" + DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString());
+                    }
+
+                    await context.RespondAsync((new DiscordEmbedBuilder()).WithDescription(msg).WithImageUrl(useurl).WithTitle($"Your current profile has been saved as `{profile}`!"));
 
                     break;
 

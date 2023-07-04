@@ -17,6 +17,7 @@ using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats;
 using Microsoft.EntityFrameworkCore;
 using Palantir.Model;
+using System.IO;
 
 namespace Palantir.Commands
 {
@@ -122,9 +123,9 @@ namespace Palantir.Commands
             });
             if (spriteIDs.Count > 0)
             {
-                string path = SpriteComboImage.GenerateImage(SpriteComboImage.GetSpriteSources(spriteIDs.ToArray()), Program.CacheDataPath + "/combos/");
-                /* TODO upload image */
-                embed.ImageUrl = path;
+                string path = SpriteComboImage.GenerateImage(SpriteComboImage.GetSpriteSources(spriteIDs.ToArray()));
+                var s3 = await Program.S3.UploadPng(path, context.Message.Author.Id + "/sprite-combo-" + DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString());
+                embed.ImageUrl = s3;
             }
 
             int drops = BubbleWallet.GetDrops(login, context.User.Id.ToString());
@@ -206,13 +207,13 @@ namespace Palantir.Commands
                 embed.ImageUrl = inventory.FirstOrDefault(s => s.Activated).URL;
             if (inventory.Where(spt => spt.Activated).Count() > 1)
             {
-                embed.ImageUrl = SpriteComboImage.GenerateImage(
+                var path = SpriteComboImage.GenerateImage(
                     SpriteComboImage.GetSpriteSources(
                         inventory.Where(s => s.Activated).OrderBy(s => s.Slot).Select(s => s.ID).ToArray(),
                         BubbleWallet.GetMemberRainbowShifts(login)
-                    ),
-                    Program.CacheDataPath + "/combos/");
-                /* TODO upload image */
+                    ));
+                var s3 = await Program.S3.UploadPng(path, context.Message.Author.Id + "/card-" + DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString());
+                embed.ImageUrl = s3;
             }
 
             DiscordEmbedField sleft = embed.AddField("\u200b ", "\u200b ", true).Fields.Last();
@@ -641,13 +642,14 @@ namespace Palantir.Commands
         [Command("combopng")]
         public async Task Combopng(CommandContext context, [Description("The id of the sprites (eg '15 0 16 17')")] params int[] sprites)
         {
-            string path = SpriteComboImage.GenerateImage(SpriteComboImage.GetSpriteSources(sprites), Program.CacheDataPath + "/combos/"); /* TODO LIEK THIS! */
+            string path = SpriteComboImage.GenerateImage(SpriteComboImage.GetSpriteSources(sprites)); 
             using (var fs = new System.IO.FileStream(path, System.IO.FileMode.Open, System.IO.FileAccess.Read))
             {
                 var msg = await new DiscordMessageBuilder()
                     .WithFiles(new Dictionary<string, System.IO.Stream>() { { "combo.png", fs } })
                     .SendAsync(context.Channel);
             }
+            File.Delete(path);
         }
 
         [Description("Show available typo themes.")]
