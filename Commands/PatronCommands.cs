@@ -76,13 +76,13 @@ namespace Palantir.Commands
 
             if (cardsettings.BackgroundImage != "-")
             {
-                string bgPath = Program.CacheDataPath + "card-assets/imgur_" + cardsettings.BackgroundImage + ".bgb";
+                string bgPath = Program.CacheDataPath + "/card-assets/imgur_" + cardsettings.BackgroundImage + ".bgb";
                 if (!System.IO.File.Exists(bgPath))
                 {
                     byte[] bgbytes = await client.GetByteArrayAsync("https://i.imgur.com/" + (cardsettings.BackgroundImage != "" && cardsettings.BackgroundImage != "-" ? cardsettings.BackgroundImage : "qFmcbT0.png"));
                     System.IO.File.WriteAllBytes(bgPath, bgbytes);
                 }
-                Image bg = Image.Load(Program.CacheDataPath + "card-assets/imgur_" + cardsettings.BackgroundImage + ".bgb");
+                Image bg = Image.Load(Program.CacheDataPath + "/card-assets/imgur_" + cardsettings.BackgroundImage + ".bgb");
                 const double cardRatio = 489.98 / 328.09;
                 SpriteComboImage.GetCropPosition(bg.Width, bg.Height, cardRatio, out double cropX, out double cropY, out double height, out double width);
                 bg.Mutate(img => img.Crop(new Rectangle((int)cropX, (int)cropY, (int)width, (int)height)));
@@ -124,7 +124,7 @@ namespace Palantir.Commands
 
             var client = new HttpClient();
             byte[] bgbytes = await client.GetByteArrayAsync("https://i.imgur.com/" + (backgroundUrl != "" && backgroundUrl != "-" ? backgroundUrl : "qFmcbT0.png"));
-            System.IO.File.WriteAllBytes(Program.CacheDataPath + "card-assets/imgur_" + backgroundUrl + ".bgb", bgbytes);
+            System.IO.File.WriteAllBytes(Program.CacheDataPath + "/card-assets/imgur_" + backgroundUrl + ".bgb", bgbytes);
             PalantirContext db = new PalantirContext();
             CustomCard settings = new CustomCard
             {
