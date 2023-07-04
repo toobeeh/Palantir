@@ -8,6 +8,7 @@ using Palantir.Model;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -444,9 +445,9 @@ namespace Palantir.Slash
                     SpriteComboImage.GetSpriteSources(
                         inventory.Where(s => s.Activated).OrderBy(s => s.Slot).Select(s => s.ID).ToArray(),
                         BubbleWallet.GetMemberRainbowShifts(login)
-                    ),
-                    Program.CacheDataPath + "/combos/");
-                /* TODO: Upload image */
+                    ));
+                var s3 = await Program.S3.UploadPng(comboPath, context.User.Id + "/sprite-combo-" + DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString());
+                embed.ImageUrl = s3;
             }
 
             DiscordEmbedField sleft = embed.AddField("\u200b ", "\u200b ", true).Fields.Last();
