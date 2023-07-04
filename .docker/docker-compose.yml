@@ -1,0 +1,13 @@
+version: "3.0"
+
+services:
+  palantir:
+    container_name: palantir
+    image: "ghcr.io/toobeeh/palantir/palantir:latest"
+    environment:
+      - PALANTIR_TOKEN=token
+      - SERVANT_TOKEN=token
+      - DB_HOST=host.name
+      - DB_USER=user
+      - STATIC_DATA_PATH=/static_data
+      - CACHED_DATA_PATH=/cached_data

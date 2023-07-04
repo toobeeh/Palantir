@@ -22,18 +22,27 @@ namespace Palantir
         public static DataManager Feanor;
         public static DiscordGuild TypoTestground;
         public static DiscordClient Client { get; private set; }
-        public static DiscordClient Servant {  get; private set; }
+        public static DiscordClient Servant { get; private set; }
         public static CommandsNextExtension Commands { get; private set; }
         public static SlashCommandsExtension Slash { get; private set; }
         public static InteractivityExtension Interactivity;
+        public static readonly String PalantirToken = Environment.GetEnvironmentVariable("PALANTIR_TOKEN");
+        public static readonly String ServantToken = Environment.GetEnvironmentVariable("SERVANT_TOKEN");
+        public static readonly String DatabaseHost = Environment.GetEnvironmentVariable("DB_HOST");
+        public static readonly String DatabaseUser = Environment.GetEnvironmentVariable("DB_USER");
+        public static readonly String StaticDataPath = Environment.GetEnvironmentVariable("STATIC_DATA_PATH");
+        public static readonly String CacheDataPath = Environment.GetEnvironmentVariable("CACHE_DATA_PATH");
         static async Task Main(string[] args)
         {
+
+            Console.WriteLine($"Initialized with:\n- Palantir Token: {PalantirToken}\n- Servant Token: {ServantToken}\n- Database Host: {DatabaseHost}\n- Database User: {DatabaseUser}\n- Static Data Path: {StaticDataPath}\n- Cache Data Path: {CacheDataPath}\n");
+
             //File.WriteAllText("/home/pi/palantirOutput.log", String.Empty);
             Console.WriteLine("Huh, it's " + DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " - lemme sleep!!\n");
             Console.WriteLine("Initializing servant bot client...\n");
             Servant = new DiscordClient(new DiscordConfiguration
             {
-                Token = File.ReadAllText("/home/pi/servantToken.txt"),
+                Token = Program.ServantToken,
                 TokenType = TokenType.Bot
             });
             await Servant.ConnectAsync();
@@ -41,7 +50,7 @@ namespace Palantir
             Console.WriteLine("Initializing Palantir:\n...");
             Client = new DiscordClient(new DiscordConfiguration
             {
-                Token = File.ReadAllText("/home/pi/palantirToken.txt"),
+                Token = Program.PalantirToken,
                 TokenType = TokenType.Bot,
                 MinimumLogLevel = Microsoft.Extensions.Logging.LogLevel.Information
             });
@@ -91,7 +100,7 @@ namespace Palantir
 
             Console.WriteLine("Stored guilds:");
             Feanor.PalantirTethers.ForEach((t) => { Console.WriteLine("- " + t.PalantirEndpoint.GuildID + " / " + t.PalantirEndpoint.GuildName); });
-            Feanor.ActivatePalantiri();
+            //Feanor.ActivatePalantiri();
             Console.WriteLine("Palantir activated. Fool of a Took!");
 
             // Initialize quartz jobs
@@ -170,12 +179,12 @@ namespace Palantir
         private static async Task stickyBetaNotes(DiscordClient client, MessageCreateEventArgs e)
         {
             // if channel is beta testing and author not bot
-            if(e.Channel.Id == 963172464467279965 && e.Author.Id != Servant.CurrentUser.Id)
+            if (e.Channel.Id == 963172464467279965 && e.Author.Id != Servant.CurrentUser.Id)
             {
 
                 // get last message from servant
                 var lastMsgs = await e.Channel.GetMessagesAsync(100);
-                foreach(var msg in lastMsgs)
+                foreach (var msg in lastMsgs)
                 {
                     if (msg.Author.Id == Servant.CurrentUser.Id) await msg.DeleteAsync();
                 }
@@ -184,7 +193,7 @@ namespace Palantir
                 await e.Channel.SendMessageAsync("Please note any discussed bugs here or check if they already exist: \n<https://newtextdocument.com/editor/e2c3380c04>");
             }
 
-            
+
         }
 
         private static async Task onjoin(DiscordClient client, GuildCreateEventArgs e)
@@ -195,9 +204,10 @@ namespace Palantir
             }
             catch
             {
-                foreach(KeyValuePair<ulong, DiscordChannel> p in e.Guild.Channels)
+                foreach (KeyValuePair<ulong, DiscordChannel> p in e.Guild.Channels)
                 {
-                    try {
+                    try
+                    {
                         await e.Guild.GetChannel(p.Key).SendMessageAsync("Hello there! <a:l33:721872925531308032>\nMy prefix is `>`.\nCheck out `>manual` or `>help`.\nhttps://gph.is/2s4rv0N");
                         return;
                     }
@@ -209,17 +219,19 @@ namespace Palantir
         private static async Task OnCommandErrored(CommandsNextExtension commands, CommandErrorEventArgs e)
         {
             if (e.Exception is DSharpPlus.CommandsNext.Exceptions.CommandNotFoundException) return;
-            if (e.Exception is DSharpPlus.CommandsNext.Exceptions.ChecksFailedException) {
+            if (e.Exception is DSharpPlus.CommandsNext.Exceptions.ChecksFailedException)
+            {
                 string checks = "";
-                e.Command.ExecutionChecks.ToList().ForEach(attr => {
-                    if(!(attr.GetType() == typeof(RequireBeta) || attr.GetType() == typeof(RequirePermissionFlag))) checks += attr.GetType();
+                e.Command.ExecutionChecks.ToList().ForEach(attr =>
+                {
+                    if (!(attr.GetType() == typeof(RequireBeta) || attr.GetType() == typeof(RequirePermissionFlag))) checks += attr.GetType();
                 });
-                if(checks != "") await SendEmbed(e.Context.Channel, e.Command.Name + ": Not allowed", "Some commands require a specific role or being executed in a DM channel. \n\nThis command needs:\n" + checks, "", DiscordColor.Red.Value);
+                if (checks != "") await SendEmbed(e.Context.Channel, e.Command.Name + ": Not allowed", "Some commands require a specific role or being executed in a DM channel. \n\nThis command needs:\n" + checks, "", DiscordColor.Red.Value);
                 return;
             }
             if (e.Exception.ToString().Contains("Could not find a suitable overload for the command"))
             {
-                await SendEmbed(e.Context.Channel, e.Command.Name + ": Invalid arguments", "The given arguments for the command did not fit.\nCheck `>help " + e.Command.Name + "` to see the correct use!","",DiscordColor.Red.Value);
+                await SendEmbed(e.Context.Channel, e.Command.Name + ": Invalid arguments", "The given arguments for the command did not fit.\nCheck `>help " + e.Command.Name + "` to see the correct use!", "", DiscordColor.Red.Value);
                 return;
             }
 
@@ -232,11 +244,11 @@ namespace Palantir
             return;
         }
 
-        public static async Task SendEmbed(DiscordChannel channel, string title, string description, string footer="", int color = -1)
+        public static async Task SendEmbed(DiscordChannel channel, string title, string description, string footer = "", int color = -1)
         {
             DiscordEmbedBuilder embedErr = new DiscordEmbedBuilder();
             embedErr.Title = title;
-            embedErr.Description = description.Length > 2040 ? description.Substring(0,2040) : description;
+            embedErr.Description = description.Length > 2040 ? description.Substring(0, 2040) : description;
             embedErr.Color = color >= 0 ? new DiscordColor(color) : DiscordColor.Magenta;
             if (footer != "") embedErr.WithFooter(footer);
             await channel.SendMessageAsync(embed: embedErr);
@@ -254,7 +266,7 @@ namespace Palantir
         public static void LogError(string message, Exception e)
         {
             int line = new StackTrace(e, true).GetFrame(0).GetFileLineNumber();
-            Client.Logger.Log(Microsoft.Extensions.Logging.LogLevel.Error, -1, message + " @" + line, e, (state, e) =>  state + e.ToString());
+            Client.Logger.Log(Microsoft.Extensions.Logging.LogLevel.Error, -1, message + " @" + line, e, (state, e) => state + e.ToString());
         }
 
         public static async Task RefreshPicture()
@@ -269,8 +281,8 @@ namespace Palantir
                 MemoryStream str = new MemoryStream(data);
                 await Program.Client.UpdateCurrentUserAsync(avatar: str);
             }
-            catch(Exception e) { Console.WriteLine(e.ToString()); }
-            
+            catch (Exception e) { Console.WriteLine(e.ToString()); }
+
         }
 
         public static List<string> StringToGlyphs(string input)
@@ -381,7 +393,7 @@ namespace Palantir
             BitArray presentFlags = new BitArray(new byte[] { (byte)CalculateFlag() });
             BitArray checkFlags = new BitArray(new byte[] { permission });
             bool allMatch = true;
-            for(int flagIndex = 0; flagIndex < checkFlags.Length; flagIndex++)
+            for (int flagIndex = 0; flagIndex < checkFlags.Length; flagIndex++)
             {
                 if (checkFlags[flagIndex] && (presentFlags.Length - 1 < flagIndex || !presentFlags[flagIndex])) allMatch = false;
             }
@@ -424,7 +436,7 @@ namespace Palantir
         {
             bool isBetaTester = Program.TypoTestground.GetMemberAsync(ctx.User.Id).GetAwaiter().GetResult().Roles.Any(role => role.Id == 817758652274311168)
                 || ctx.User.Id == 334048043638849536;
-            if (!isBetaTester && !help) 
+            if (!isBetaTester && !help)
                 Program.SendEmbed(ctx.Channel, "Woah, fragile!", "This command is under development and only available for beta testers.").GetAwaiter();
             return Task.FromResult(isBetaTester);
         }
@@ -432,7 +444,7 @@ namespace Palantir
     public sealed class RequirePermissionFlag : DSharpPlus.CommandsNext.Attributes.CheckBaseAttribute
     {
         private byte FlagToCheck;
-        public  RequirePermissionFlag(byte flagToCheck)
+        public RequirePermissionFlag(byte flagToCheck)
         {
             FlagToCheck = flagToCheck;
         }
@@ -442,12 +454,12 @@ namespace Palantir
             PermissionFlag userFlag = new PermissionFlag(Program.Feanor.GetFlagByMember(ctx.User));
             PermissionFlag requiredFlag = new PermissionFlag(FlagToCheck);
             bool result = userFlag.BotAdmin || userFlag.CheckForPermissionByte(FlagToCheck);
-            if(!result && !help)
+            if (!result && !help)
             {
                 // Send responses if permissions dont match
-                if (requiredFlag.Patron && !userFlag.Patron) 
+                if (requiredFlag.Patron && !userFlag.Patron)
                     Program.SendEmbed(ctx.Channel, "HA, Paywall!!", "This command is only available for Typo Patrons :/\nhttps://patreon.com/skribbltypo").GetAwaiter();
-                else if(requiredFlag.BotAdmin && !userFlag.BotAdmin)
+                else if (requiredFlag.BotAdmin && !userFlag.BotAdmin)
                     Program.SendEmbed(ctx.Channel, "Hands off there :o", "Only Bot Admins may use this command.").GetAwaiter();
                 else if (requiredFlag.Moderator && !userFlag.Moderator)
                     Program.SendEmbed(ctx.Channel, "Ts ts..", "This command is only available for Bot Moderators.").GetAwaiter();

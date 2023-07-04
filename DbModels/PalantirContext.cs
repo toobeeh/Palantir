@@ -68,9 +68,8 @@ namespace Palantir.Model
 
         public virtual DbSet<Webhook> Webhooks { get; set; }
 
-        private readonly string conn = "server=mariadb.typo.rip;user id=palantir;database=palantir";
+        private readonly string conn = $"server={Program.DatabaseHost};user id={Program.DatabaseUser};database=palantir";
         protected override void OnConfiguring(DbContextOptionsBuilder options)
-            // => options.UseSqlite("Data Source=" + path);
             => options.UseMySql(conn, ServerVersion.AutoDetect(conn));
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
