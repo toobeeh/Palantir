@@ -105,7 +105,10 @@ namespace Palantir
                 string path = "";
                 if (spt.URL.Contains("https://tobeh.host/"))
                 {
-                    path = spt.URL.Replace("https://tobeh.host/", Program.StaticDataPath + "/");
+                    path = spt.URL
+                        .Replace("https://tobeh.host/", Program.StaticDataPath + "/")
+                        .Replace("eventsprites", "sprites/event")
+                        .Replace("regsprites", "sprites/regular");
                 }
                 else
                 {
