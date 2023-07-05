@@ -396,7 +396,7 @@ namespace Palantir.Commands
             var tempSavePath = Path.Combine(Program.CacheDataPath, "sprite-sources", spriteFileName);
             client.DownloadFile(context.Message.Attachments[0].Url, tempSavePath);
 
-            StaticData.AddFile(tempSavePath, Path.Combine("sprites/regular", spriteFileName));
+            StaticData.AddFile(tempSavePath, "sprites/regular");
 
             Sprite sprite = new Sprite(
                 name.Replace("_", " "),
