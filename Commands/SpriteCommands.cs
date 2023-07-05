@@ -391,13 +391,18 @@ namespace Palantir.Commands
 
             // download sprite
             System.Net.WebClient client = new System.Net.WebClient();
-            client.DownloadFile(context.Message.Attachments[0].Url, "/home/pi/Webroot/regsprites/spt" + name.Replace("'", "-") + ".gif");
+            var id = dbcontext.Sprites.Where(s => s.Id < 1000).Max(s => s.Id) + 1;
+            var spriteFileName = "spt" + name.Replace("'", "-").Replace(" ", "_") + "-" + id + ".gif";
+            var tempSavePath = Path.Combine(Program.CacheDataPath, "sprite-sources", spriteFileName);
+            client.DownloadFile(context.Message.Attachments[0].Url, tempSavePath);
+
+            StaticData.AddFile(tempSavePath, Path.Combine("sprites/regular", spriteFileName));
 
             Sprite sprite = new Sprite(
                 name.Replace("_", " "),
-                "https://tobeh.host/regsprites/spt" + name.Replace("'", "-") + ".gif",
+                "https://static.typo.ripsprites/regular/" + spriteFileName,
                 price,
-                dbcontext.Sprites.Where(s => s.Id < 1000).Max(s => s.Id) + 1,
+                id,
                 special != "-" && special != "",
                 rainbow != "-" && rainbow != "",
                 0,

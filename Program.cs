@@ -36,6 +36,8 @@ namespace Palantir
         public static readonly string CacheDataPath = Environment.GetEnvironmentVariable("CACHE_DATA_PATH");
         public static readonly string S3AccessKey = Environment.GetEnvironmentVariable("S3_ACCESS_KEY");
         public static readonly string S3SecretKey = Environment.GetEnvironmentVariable("S3_SECRET_KEY");
+        public static readonly string GithubToken = Environment.GetEnvironmentVariable("GITHUB_TOKEN");
+        public static readonly string DataRepoUrl = Environment.GetEnvironmentVariable("DATA_REPO_URL");
 
         static async Task Main(string[] args)
         {

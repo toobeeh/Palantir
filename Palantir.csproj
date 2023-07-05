@@ -27,6 +27,7 @@
     <PackageReference Include="DSharpPlus.CommandsNext" Version="4.3.0-nightly-01173" />
     <PackageReference Include="DSharpPlus.Interactivity" Version="4.3.0-nightly-01173" />
     <PackageReference Include="DSharpPlus.SlashCommands" Version="4.3.0-nightly-01173" />
+    <PackageReference Include="LibGit2Sharp" Version="0.27.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.4" />
     <PackageReference Include="morelinq" Version="3.3.2" />
     <PackageReference Include="MoreLinq.Source.MoreEnumerable.Batch" Version="1.0.2">
