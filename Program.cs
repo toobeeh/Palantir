@@ -53,7 +53,6 @@ namespace Palantir
 
             S3 = new S3Handler();
 
-            //File.WriteAllText("/home/pi/palantirOutput.log", String.Empty);
             Console.WriteLine("Huh, it's " + DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " - lemme sleep!!\n");
             Console.WriteLine("Initializing servant bot client...\n");
             Servant = new DiscordClient(new DiscordConfiguration
@@ -97,14 +96,14 @@ namespace Palantir
             Commands.RegisterCommands<Palantir.Commands.SetupCommands>();
             Commands.RegisterCommands<Palantir.Commands.SpriteCommands>();
 
-            var commandsServant = Servant.UseCommandsNext(new CommandsNextConfiguration
-            {
-                StringPrefixes = new string[] { "rip~" },
-                DmHelp = false,
-                IgnoreExtraArguments = true,
-                CaseSensitive = false
-            });
-            commandsServant.RegisterCommands<Palantir.Commands.ManagementCommands>();
+            //var commandsServant = Servant.UseCommandsNext(new CommandsNextConfiguration
+            //{
+            //    StringPrefixes = new string[] { "rip~" },
+            //    DmHelp = false,
+            //    IgnoreExtraArguments = true,
+            //    CaseSensitive = false
+            //});
+            //commandsServant.RegisterCommands<Palantir.Commands.ManagementCommands>();
 
             Console.Write("Connecting Client...");
             await Client.ConnectAsync();
@@ -116,7 +115,7 @@ namespace Palantir
 
             Console.WriteLine("Stored guilds:");
             Feanor.PalantirTethers.ForEach((t) => { Console.WriteLine("- " + t.PalantirEndpoint.GuildID + " / " + t.PalantirEndpoint.GuildName); });
-            //Feanor.ActivatePalantiri();
+            Feanor.ActivatePalantiri();
             Console.WriteLine("Palantir activated. Fool of a Took!");
 
             // Initialize quartz jobs
@@ -164,7 +163,7 @@ namespace Palantir
 
             //Start bubble tracer job
             Console.WriteLine("Starting bubbletracer job\n...");
-            //await scheduler.ScheduleJob(tracer, tracerTrigger);
+            await scheduler.ScheduleJob(tracer, tracerTrigger);
 
             // start status updating
             Console.WriteLine("Starting status updater job\n...");
@@ -177,39 +176,16 @@ namespace Palantir
 
             // start bubble counting
             Console.WriteLine("Starting bubble counter job\n...");
-           // await scheduler.ScheduleJob(bubbleCounter, bubbleTrigger);
+            await scheduler.ScheduleJob(bubbleCounter, bubbleTrigger);
 
-            //Drops.StartDropping();
+            Drops.StartDropping();
             Console.WriteLine("Started dropping cool stuff!");
 
             TypoTestground = await Client.GetGuildAsync(779435254225698827);
 
             Console.WriteLine("All done!");
 
-            // let servant listen on beta testing channel and "pin" a sticky message there
-            //Servant.MessageCreated += stickyBetaNotes;
-
             await Task.Delay(-1);
-        }
-
-        private static async Task stickyBetaNotes(DiscordClient client, MessageCreateEventArgs e)
-        {
-            // if channel is beta testing and author not bot
-            if (e.Channel.Id == 963172464467279965 && e.Author.Id != Servant.CurrentUser.Id)
-            {
-
-                // get last message from servant
-                var lastMsgs = await e.Channel.GetMessagesAsync(100);
-                foreach (var msg in lastMsgs)
-                {
-                    if (msg.Author.Id == Servant.CurrentUser.Id) await msg.DeleteAsync();
-                }
-
-                // send message with link
-                await e.Channel.SendMessageAsync("Please note any discussed bugs here or check if they already exist: \n<https://newtextdocument.com/editor/e2c3380c04>");
-            }
-
-
         }
 
         private static async Task onjoin(DiscordClient client, GuildCreateEventArgs e)

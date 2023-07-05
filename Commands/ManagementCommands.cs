@@ -19,121 +19,121 @@ namespace Palantir.Commands
 {
     public class ManagementCommands : BaseCommandModule
     {
-        [Description("Creates a new theme ticket which can be used by anyone to add a new theme to typo.")]
-        [Command("themeticket")]
-        [RequirePermissionFlag(PermissionFlag.MOD)]
-        public async Task CreateThemeTicket(CommandContext context)
-        {
-            Theme empty = new Theme();
-            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-            const int length = 6;
-            Random random = new Random();
-            PalantirContext dbcontext = new PalantirContext();
-            do
-            {
-                empty.Ticket = new string(Enumerable.Repeat(chars, length)
-                .Select(s => s[random.Next(s.Length)]).ToArray());
-            }
-            while (dbcontext.Themes.Any(theme => theme.Ticket == empty.Ticket));
-            dbcontext.Themes.Add(empty);
-            dbcontext.SaveChanges();
-            dbcontext.Dispose();
-            string response = "Successfully created theme ticket!\nUse it with the command `>addtheme`.\nTicket: `" + empty.Ticket + "`";
-            if (context.Channel.IsPrivate) await context.RespondAsync(response);
-            else await context.Member.SendMessageAsync(response);
-        }
+        //[Description("Creates a new theme ticket which can be used by anyone to add a new theme to typo.")]
+        //[Command("themeticket")]
+        //[RequirePermissionFlag(PermissionFlag.MOD)]
+        //public async Task CreateThemeTicket(CommandContext context)
+        //{
+        //    Theme empty = new Theme();
+        //    const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        //    const int length = 6;
+        //    Random random = new Random();
+        //    PalantirContext dbcontext = new PalantirContext();
+        //    do
+        //    {
+        //        empty.Ticket = new string(Enumerable.Repeat(chars, length)
+        //        .Select(s => s[random.Next(s.Length)]).ToArray());
+        //    }
+        //    while (dbcontext.Themes.Any(theme => theme.Ticket == empty.Ticket));
+        //    dbcontext.Themes.Add(empty);
+        //    dbcontext.SaveChanges();
+        //    dbcontext.Dispose();
+        //    string response = "Successfully created theme ticket!\nUse it with the command `>addtheme`.\nTicket: `" + empty.Ticket + "`";
+        //    if (context.Channel.IsPrivate) await context.RespondAsync(response);
+        //    else await context.Member.SendMessageAsync(response);
+        //}
 
-        [Description("Adds a new theme. You'll need to have a valid theme ticket.")]
-        [Command("addtheme")]
-        public async Task AddTheme(CommandContext context)
-        {
-            var interactivity = Program.Client.GetInteractivity();
-            await Program.SendEmbed(context.Channel, "Add a theme", "Respond within one minute with your theme ticket.\nThe ticket is a 6-digit code which Palantir moderators can generate.");
-            InteractivityResult<DiscordMessage> msgTicket = await interactivity.WaitForMessageAsync(message => message.Author == context.User, TimeSpan.FromMinutes(1));
-            Theme ticket = new Theme();
-            ticket.Ticket = msgTicket.TimedOut ? "0" : msgTicket.Result.Content;
-            PalantirContext dbcontext = new PalantirContext();
-            ticket = dbcontext.Themes.FirstOrDefault(theme => theme.Ticket == ticket.Ticket && theme.Theme1 != " ");
-            dbcontext.Dispose();
-            if (ticket is null)
-            {
-                await Program.SendEmbed(context.Channel, "Invalid theme ticket :(", "");
-                return;
-            }
-            ticket.Author = context.User.Username;
-            //get name
-            await Program.SendEmbed(context.Channel, "Add a theme", "Respond within five minutes with the theme Name.");
-            InteractivityResult<DiscordMessage> msgName = await interactivity.WaitForMessageAsync(message => message.Author == context.User, TimeSpan.FromMinutes(5));
-            if (msgName.TimedOut)
-            {
-                await Program.SendEmbed(context.Channel, "Timed out :(", "");
-                return;
-            }
-            ticket.Name = msgName.Result.Content;
-            // get theme
-            await Program.SendEmbed(context.Channel, "Add a theme", "Respond within five minutes with the theme text.");
-            InteractivityResult<DiscordMessage> msgTheme = await interactivity.WaitForMessageAsync(message => message.Author == context.User, TimeSpan.FromMinutes(5));
-            if (msgTheme.TimedOut)
-            {
-                await Program.SendEmbed(context.Channel, "Timed out :(", "");
-                return;
-            }
-            ticket.Theme1 = msgTheme.Result.Content;
-            // get description
-            await Program.SendEmbed(context.Channel, "Add a theme", "Respond within five minutes with the theme description.");
-            InteractivityResult<DiscordMessage> msgDesc = await interactivity.WaitForMessageAsync(message => message.Author == context.User, TimeSpan.FromMinutes(5));
-            if (msgDesc.TimedOut)
-            {
-                await Program.SendEmbed(context.Channel, "Timed out :(", "");
-                return;
-            }
-            ticket.Description = msgDesc.Result.Content;
-            // get thumbnail landing
-            await Program.SendEmbed(context.Channel, "Add a theme", "Respond within five minutes with a screenshot from the skribbl landing page.\nRespond without attachment to skip.");
-            InteractivityResult<DiscordMessage> msgLanding = await interactivity.WaitForMessageAsync(message => message.Author == context.User, TimeSpan.FromMinutes(5));
-            if (msgLanding.TimedOut)
-            {
-                await Program.SendEmbed(context.Channel, "Timed out :(", "");
-                return;
-            }
-            if (msgLanding.Result.Attachments.Count > 0) ticket.ThumbnailLanding = msgLanding.Result.Attachments[0].Url;
-            // get thumbnail game
-            await Program.SendEmbed(context.Channel, "Add a theme", "Respond within five minutes with a screenshot from skribbl in-game.\nRespond without attachment to skip.");
-            InteractivityResult<DiscordMessage> msgGame = await interactivity.WaitForMessageAsync(message => message.Author == context.User, TimeSpan.FromMinutes(5));
-            if (msgGame.TimedOut)
-            {
-                await Program.SendEmbed(context.Channel, "Timed out :(", "");
-                return;
-            }
-            if (msgGame.Result.Attachments.Count > 0) ticket.ThumbnailGame = msgGame.Result.Attachments[0].Url;
+        //[Description("Adds a new theme. You'll need to have a valid theme ticket.")]
+        //[Command("addtheme")]
+        //public async Task AddTheme(CommandContext context)
+        //{
+        //    var interactivity = Program.Client.GetInteractivity();
+        //    await Program.SendEmbed(context.Channel, "Add a theme", "Respond within one minute with your theme ticket.\nThe ticket is a 6-digit code which Palantir moderators can generate.");
+        //    InteractivityResult<DiscordMessage> msgTicket = await interactivity.WaitForMessageAsync(message => message.Author == context.User, TimeSpan.FromMinutes(1));
+        //    Theme ticket = new Theme();
+        //    ticket.Ticket = msgTicket.TimedOut ? "0" : msgTicket.Result.Content;
+        //    PalantirContext dbcontext = new PalantirContext();
+        //    ticket = dbcontext.Themes.FirstOrDefault(theme => theme.Ticket == ticket.Ticket && theme.Theme1 != " ");
+        //    dbcontext.Dispose();
+        //    if (ticket is null)
+        //    {
+        //        await Program.SendEmbed(context.Channel, "Invalid theme ticket :(", "");
+        //        return;
+        //    }
+        //    ticket.Author = context.User.Username;
+        //    //get name
+        //    await Program.SendEmbed(context.Channel, "Add a theme", "Respond within five minutes with the theme Name.");
+        //    InteractivityResult<DiscordMessage> msgName = await interactivity.WaitForMessageAsync(message => message.Author == context.User, TimeSpan.FromMinutes(5));
+        //    if (msgName.TimedOut)
+        //    {
+        //        await Program.SendEmbed(context.Channel, "Timed out :(", "");
+        //        return;
+        //    }
+        //    ticket.Name = msgName.Result.Content;
+        //    // get theme
+        //    await Program.SendEmbed(context.Channel, "Add a theme", "Respond within five minutes with the theme text.");
+        //    InteractivityResult<DiscordMessage> msgTheme = await interactivity.WaitForMessageAsync(message => message.Author == context.User, TimeSpan.FromMinutes(5));
+        //    if (msgTheme.TimedOut)
+        //    {
+        //        await Program.SendEmbed(context.Channel, "Timed out :(", "");
+        //        return;
+        //    }
+        //    ticket.Theme1 = msgTheme.Result.Content;
+        //    // get description
+        //    await Program.SendEmbed(context.Channel, "Add a theme", "Respond within five minutes with the theme description.");
+        //    InteractivityResult<DiscordMessage> msgDesc = await interactivity.WaitForMessageAsync(message => message.Author == context.User, TimeSpan.FromMinutes(5));
+        //    if (msgDesc.TimedOut)
+        //    {
+        //        await Program.SendEmbed(context.Channel, "Timed out :(", "");
+        //        return;
+        //    }
+        //    ticket.Description = msgDesc.Result.Content;
+        //    // get thumbnail landing
+        //    await Program.SendEmbed(context.Channel, "Add a theme", "Respond within five minutes with a screenshot from the skribbl landing page.\nRespond without attachment to skip.");
+        //    InteractivityResult<DiscordMessage> msgLanding = await interactivity.WaitForMessageAsync(message => message.Author == context.User, TimeSpan.FromMinutes(5));
+        //    if (msgLanding.TimedOut)
+        //    {
+        //        await Program.SendEmbed(context.Channel, "Timed out :(", "");
+        //        return;
+        //    }
+        //    if (msgLanding.Result.Attachments.Count > 0) ticket.ThumbnailLanding = msgLanding.Result.Attachments[0].Url;
+        //    // get thumbnail game
+        //    await Program.SendEmbed(context.Channel, "Add a theme", "Respond within five minutes with a screenshot from skribbl in-game.\nRespond without attachment to skip.");
+        //    InteractivityResult<DiscordMessage> msgGame = await interactivity.WaitForMessageAsync(message => message.Author == context.User, TimeSpan.FromMinutes(5));
+        //    if (msgGame.TimedOut)
+        //    {
+        //        await Program.SendEmbed(context.Channel, "Timed out :(", "");
+        //        return;
+        //    }
+        //    if (msgGame.Result.Attachments.Count > 0) ticket.ThumbnailGame = msgGame.Result.Attachments[0].Url;
 
-            dbcontext = new PalantirContext();
-            dbcontext.Themes.Update(ticket);
-            dbcontext.SaveChanges();
-            dbcontext.Dispose();
-            await Program.SendEmbed(context.Channel, "Theme successfully added!", "You can now use following link to instantly share your theme:");
-            await context.RespondAsync("https://typo.rip/t?ticket=" + ticket.Ticket);
-        }
+        //    dbcontext = new PalantirContext();
+        //    dbcontext.Themes.Update(ticket);
+        //    dbcontext.SaveChanges();
+        //    dbcontext.Dispose();
+        //    await Program.SendEmbed(context.Channel, "Theme successfully added!", "You can now use following link to instantly share your theme:");
+        //    await context.RespondAsync("https://typo.rip/t?ticket=" + ticket.Ticket);
+        //}
 
-        [Description("Execute a bash command from the pi root")]
-        [Command("bash")]
-        [RequirePermissionFlag(PermissionFlag.ADMIN)]
-        public async Task Bash(CommandContext context, params string[] command)
-        {
-            string commandDelimited = command.ToDelimitedString(" ");
-            string res = ("cd /home/pi/ && " + commandDelimited).Bash();
-            await Program.SendEmbed(context.Channel, "**pi@raspberrypi: ~ $** " + commandDelimited, res != "" ? res : "Error.");
-        }
+        //[Description("Execute a bash command from the pi root")]
+        //[Command("bash")]
+        //[RequirePermissionFlag(PermissionFlag.ADMIN)]
+        //public async Task Bash(CommandContext context, params string[] command)
+        //{
+        //    string commandDelimited = command.ToDelimitedString(" ");
+        //    string res = ("cd /home/pi/ && " + commandDelimited).Bash();
+        //    await Program.SendEmbed(context.Channel, "**pi@raspberrypi: ~ $** " + commandDelimited, res != "" ? res : "Error.");
+        //}
 
-        [Description("Execute a sql command in the palantir database")]
-        [Command("sql")]
-        [RequirePermissionFlag(PermissionFlag.ADMIN)]
-        public async Task Sql(CommandContext context, params string[] sql)
-        {
-            string sqlDelimited = sql.ToDelimitedString(" ");
-            string res = ("sqlite3 /home/pi/Database/palantir.db \"" + sqlDelimited + "\"").Bash();
-            await Program.SendEmbed(context.Channel, sqlDelimited, res != "" ? res : "Error.");
-        }
+        //[Description("Execute a sql command in the palantir database")]
+        //[Command("sql")]
+        //[RequirePermissionFlag(PermissionFlag.ADMIN)]
+        //public async Task Sql(CommandContext context, params string[] sql)
+        //{
+        //    string sqlDelimited = sql.ToDelimitedString(" ");
+        //    string res = ("sqlite3 /home/pi/Database/palantir.db \"" + sqlDelimited + "\"").Bash();
+        //    await Program.SendEmbed(context.Channel, sqlDelimited, res != "" ? res : "Error.");
+        //}
 
         [Description("Set a member flag.")]
         [Command("flag")]
@@ -182,18 +182,18 @@ namespace Palantir.Commands
             await Program.SendEmbed(context.Channel, "*magic happened*", "The flag of " + name + " was set to " + flag + "\n" + desc);
         }
 
-        [Description("Reboots the bot & pulls from git.")]
-        [Command("hardreboot")]
-        [RequirePermissionFlag(PermissionFlag.MOD)]
-        public async Task Reboot(CommandContext context)
-        {
-            string upd = "git -C /home/pi/Palantir pull".Bash();
-            upd += "\n\n Latest commit: " + ("git log --oneline -1".Bash());
-            await Program.SendEmbed(context.Channel, "[literally dies...]", "You made me do this!!!\n\n**Update result:**\n" + upd);
-            "sudo rm /home/pi/palantirOutput.log".Bash();
-            string op = "sudo service palantir restart".Bash();
-            Environment.Exit(0);
-        }
+        //[Description("Reboots the bot & pulls from git.")]
+        //[Command("hardreboot")]
+        //[RequirePermissionFlag(PermissionFlag.MOD)]
+        //public async Task Reboot(CommandContext context)
+        //{
+        //    string upd = "git -C /home/pi/Palantir pull".Bash();
+        //    upd += "\n\n Latest commit: " + ("git log --oneline -1".Bash());
+        //    await Program.SendEmbed(context.Channel, "[literally dies...]", "You made me do this!!!\n\n**Update result:**\n" + upd);
+        //    "sudo rm /home/pi/palantirOutput.log".Bash();
+        //    string op = "sudo service palantir restart".Bash();
+        //    Environment.Exit(0);
+        //}
 
 
         [Description("List servers with palantir and their stats.")]
