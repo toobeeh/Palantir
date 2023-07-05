@@ -9,6 +9,7 @@ using MoreLinq.Extensions;
 using System;
 using System.Collections.Generic;
 using Palantir.Model;
+using System.IO;
 
 namespace Palantir.Commands
 {
@@ -307,15 +308,21 @@ namespace Palantir.Commands
                 return;
             }
 
-            // download sprite
             System.Net.WebClient client = new System.Net.WebClient();
-            client.DownloadFile(context.Message.Attachments[0].Url, "/home/pi/Webroot/eventsprites/evd" + eventDropID + name.Replace("'", "-") + ".gif");
+
+            // download sprite
+            var id = dbcontext.Sprites.Where(s => s.Id < 1000).Max(s => s.Id) + 1;
+            var spriteFileName = "evd" + eventDropID + "-" + name.Replace("'", "-").Replace(" ", "_") + "-" + id + ".gif";
+            var tempSavePath = Path.Combine(Program.CacheDataPath, "sprite-sources", spriteFileName);
+            client.DownloadFile(context.Message.Attachments[0].Url, tempSavePath);
+
+            StaticData.AddFile(tempSavePath, "sprites/event", "add event sprite #" + id);
 
             Sprite eventsprite = new Sprite(
                 name.Replace("_", " "),
-                "https://tobeh.host/eventsprites/evd" + eventDropID + name.Replace("'", "-") + ".gif",
+                "https://static.typo.rip/sprites/event/" + spriteFileName,
                 price,
-                dbcontext.Sprites.Where(s => s.Id < 1000).Max(s => s.Id) + 1,
+                id,
                 special != "-" && special != "",
                 rainbow != "-" && rainbow != "",
                 eventDropID,

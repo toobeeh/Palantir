@@ -46,6 +46,9 @@ namespace Palantir
             CultureInfo.DefaultThreadCurrentCulture = culture;
             CultureInfo.DefaultThreadCurrentUICulture = culture;
 
+            Directory.CreateDirectory(Path.Combine(Program.CacheDataPath, "sprite-sources"));
+            Directory.CreateDirectory(Path.Combine(Program.CacheDataPath, "scene-sources"));
+
             Console.WriteLine($"Initialized with:\n- Palantir Token: {PalantirToken}\n- Servant Token: {ServantToken}\n- Database Host: {DatabaseHost}\n- Database User: {DatabaseUser}\n- Static Data Path: {StaticDataPath}\n- Cache Data Path: {CacheDataPath}\n- S3 Access Key: {S3AccessKey}\n- S3 Secret Key: {S3SecretKey}\n");
 
             S3 = new S3Handler();

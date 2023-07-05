@@ -396,11 +396,11 @@ namespace Palantir.Commands
             var tempSavePath = Path.Combine(Program.CacheDataPath, "sprite-sources", spriteFileName);
             client.DownloadFile(context.Message.Attachments[0].Url, tempSavePath);
 
-            StaticData.AddFile(tempSavePath, "sprites/regular");
+            StaticData.AddFile(tempSavePath, "sprites/regular", "add sprite #" + id);
 
             Sprite sprite = new Sprite(
                 name.Replace("_", " "),
-                "https://static.typo.ripsprites/regular/" + spriteFileName,
+                "https://static.typo.rip/sprites/regular/" + spriteFileName,
                 price,
                 id,
                 special != "-" && special != "",
@@ -411,7 +411,7 @@ namespace Palantir.Commands
             BubbleWallet.AddSprite(sprite);
 
             DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
-            embed.Title = ":champagne:  Sprite **" + name + "** with ID " + sprite.ID + " was added!";
+            embed.Title = ":champagne:  Sprite **" + sprite.Name + "** with ID " + sprite.ID + " was added!";
             embed.Color = DiscordColor.Magenta;
             embed.WithDescription("ID: " + sprite.ID + "\nYou can buy and view the sprite with the usual comands.");
             embed.WithThumbnail(sprite.URL);
@@ -449,10 +449,15 @@ namespace Palantir.Commands
             }
 
             // download scene
+            var id = BubbleWallet.NextSceneId();
             System.Net.WebClient client = new System.Net.WebClient();
-            client.DownloadFile(context.Message.Attachments[0].Url, "/home/pi/Webroot/scenes/scene" + name.Replace("'", "-") + ".gif");
+            var sceneFileName = "scene" + name.Replace("'", "-") + "-" + id + ".gif";
+            var tempSavePath = Path.Combine(Program.CacheDataPath, "scene-sources", sceneFileName);
+            client.DownloadFile(context.Message.Attachments[0].Url, tempSavePath);
 
-            string url = "https://tobeh.host/scenes/scene" + name.Replace("'", "-") + ".gif";
+            StaticData.AddFile(tempSavePath, "scenes", "add scene #" + id);
+
+            string url = "https://static.typo.rip/scenes/" + sceneFileName;
             if (artist == "-") artist = "";
             Scene scene = BubbleWallet.AddScene(name.Replace("_", " "), color, guessedColor, artist, url, eventID, exclusive);
 

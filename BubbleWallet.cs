@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using Quartz;
 using MoreLinq;
 using Palantir.Model;
+using Microsoft.Extensions.Logging;
+using System.Xml.Linq;
 
 namespace Palantir
 {
@@ -197,6 +199,13 @@ namespace Palantir
             context.SaveChanges();
             context.Dispose();
             return scene;
+        }
+
+        public static int NextSceneId()
+        {
+            PalantirContext context = new PalantirContext();
+            int id = context.Scenes.Count() > 0 ? context.Scenes.Select(s => s.Id).Max() + 1 : 1;
+            return id;
         }
 
         public static int CalculateCredit(string login, string userid)

@@ -6,7 +6,7 @@ namespace Palantir
 {
     internal class StaticData
     {
-        public static void AddFile(string filePath, string repoSavePath)
+        public static void AddFile(string filePath, string repoSavePath, string commitMessage)
         {
             // Clone the repository
             var repoPath = Program.CacheDataPath + "/repo-cache/static-data" + DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString();
@@ -32,7 +32,7 @@ namespace Palantir
                 // Create the commit
                 var author = new Signature("Palantir Data Commit", "dev.tobeh@gmail.com", DateTimeOffset.Now);
                 var committer = author;
-                var commit = repo.Commit("Automated commit of data via Palantir command", author, committer);
+                var commit = repo.Commit("[🤖] " + commitMessage, author, committer);
 
                 // Set the remote repository URL
                 var remote = repo.Network.Remotes["origin"];
