@@ -49,11 +49,11 @@ namespace Palantir
             Directory.CreateDirectory(Path.Combine(Program.CacheDataPath, "sprite-sources"));
             Directory.CreateDirectory(Path.Combine(Program.CacheDataPath, "scene-sources"));
 
-            Console.WriteLine($"Initialized with:\n- Palantir Token: {PalantirToken}\n- Servant Token: {ServantToken}\n- Database Host: {DatabaseHost}\n- Database User: {DatabaseUser}\n- Static Data Path: {StaticDataPath}\n- Cache Data Path: {CacheDataPath}\n- S3 Access Key: {S3AccessKey}\n- S3 Secret Key: {S3SecretKey}\n");
+            //Console.WriteLine($"Initialized with:\n- Palantir Token: {PalantirToken}\n- Servant Token: {ServantToken}\n- Database Host: {DatabaseHost}\n- Database User: {DatabaseUser}\n- Static Data Path: {StaticDataPath}\n- Cache Data Path: {CacheDataPath}\n- S3 Access Key: {S3AccessKey}\n- S3 Secret Key: {S3SecretKey}\n");
 
             S3 = new S3Handler();
 
-            Console.WriteLine("Huh, it's " + DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " - lemme sleep!!\n");
+            Console.WriteLine("Huh, it's " + DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " - let me sleep!\n");
             Console.WriteLine("Initializing servant bot client...\n");
             Servant = new DiscordClient(new DiscordConfiguration
             {
