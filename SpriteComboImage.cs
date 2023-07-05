@@ -108,10 +108,11 @@ namespace Palantir
                 catch { continue; }
 
                 string path = "";
-                if (spt.URL.Contains("https://tobeh.host/"))
+                if (spt.URL.Contains("https://tobeh.host/") || spt.URL.Contains("https://static.typo.rip/"))
                 {
                     path = spt.URL
                         .Replace("https://tobeh.host/", Program.StaticDataPath + "/")
+                        .Replace("https://static.typo.rip/", Program.StaticDataPath + "/")
                         .Replace("eventsprites", "sprites/event")
                         .Replace("regsprites", "sprites/regular");
                 }
