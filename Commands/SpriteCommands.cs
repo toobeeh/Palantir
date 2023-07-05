@@ -53,7 +53,7 @@ namespace Palantir.Commands
                 }
                 int[] score = BubbleWallet.SpriteScoreboard().FirstOrDefault(score => score.Key == s.ID).Value;
                 embed.WithFooter("Bought: " + (score[2] + score[1]) + " | Active: " + score[1]);
-                embed.AddField("\u200b", "[View all Sprites](https://typo.rip/#sprites)\n[Try out the sprite](https://tobeh.host/Orthanc/sprites/cabin/?sprite=" + sprite + ")");
+                embed.AddField("\u200b", "[View all Sprites](https://typo.rip/#sprites)");
                 await context.Channel.SendMessageAsync(embed: embed);
             }
             else
