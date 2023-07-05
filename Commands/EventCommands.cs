@@ -334,7 +334,7 @@ namespace Palantir.Commands
             embed.Title = ":champagne:  Sprite added to " + dbcontext.EventDrops.FirstOrDefault(e => e.EventDropId == eventDropID).Name + ": **" + eventsprite.Name + "**";
             embed.Color = DiscordColor.Magenta;
             embed.WithDescription("ID: " + eventsprite.ID + "\nYou can buy and view the sprite with the usual comands.");
-            embed.WithThumbnail(eventsprite.URL);
+            embed.WithThumbnail(context.Message.Attachments[0].Url);
 
             dbcontext.Dispose();
             await context.Channel.SendMessageAsync(embed: embed);

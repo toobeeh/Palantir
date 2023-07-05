@@ -414,7 +414,7 @@ namespace Palantir.Commands
             embed.Title = ":champagne:  Sprite **" + sprite.Name + "** with ID " + sprite.ID + " was added!";
             embed.Color = DiscordColor.Magenta;
             embed.WithDescription("ID: " + sprite.ID + "\nYou can buy and view the sprite with the usual comands.");
-            embed.WithThumbnail(sprite.URL);
+            embed.WithThumbnail(context.Message.Attachments[0].Url);
 
             dbcontext.Dispose();
             await context.Channel.SendMessageAsync(embed: embed);
@@ -465,7 +465,7 @@ namespace Palantir.Commands
             embed.Title = ":champagne:  Scene **" + name + "** with ID " + scene.Id + " was added" + (eventID > 0 ? " to event #" + eventID : "") + "!";
             embed.Color = DiscordColor.Magenta;
             embed.WithDescription("ID: " + scene.Id + "\nView the scene with `>scene [scene id]`\nBuy the scene with `>paint [scene id]`\nUse a scene with `>show [scene id]`");
-            embed.WithThumbnail(scene.Url);
+            embed.WithThumbnail(context.Message.Attachments[0].Url);
 
             dbcontext.Dispose();
             await context.Channel.SendMessageAsync(embed: embed);
