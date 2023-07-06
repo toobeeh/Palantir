@@ -697,10 +697,10 @@ namespace Palantir.Commands
                 date => date + "," + dailyChangedTraces.Where(trace => trace.Date == date).Count()
                 );
             graph = x.ToDelimitedString("\n");
-            System.IO.File.WriteAllText("/home/pi/graph.csv", graph);
-            var msg = new DiscordMessageBuilder().WithFile(System.IO.File.OpenRead("/home/pi/graph.csv"));
+            System.IO.File.WriteAllText(Program.CacheDataPath + "/graph.csv", graph);
+            var msg = new DiscordMessageBuilder().WithFile(System.IO.File.OpenRead(Program.CacheDataPath + "/graph.csv"));
             await context.RespondAsync(msg);
-            System.IO.File.Delete("/home/pi/graph.csv");
+            System.IO.File.Delete(Program.CacheDataPath + "/graph.csv");
         }
 
         [Description("Search the image cloud for an image")]
