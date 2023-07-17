@@ -297,7 +297,7 @@ namespace Palantir
             PalantirContext database = new PalantirContext();
 
             List<Lobby> Lobbies = new List<Lobby>();
-            List<Report> reports = database.Reports.Distinct().Where(r=>r.ObserveToken.ToString() == PalantirEndpoint.ObserveToken).ToList();
+            List<Report> reports = database.Reports.Distinct().Where(r=>r.ObserveToken.ToString().PadLeft(8, '0') == PalantirEndpoint.ObserveToken).ToList();
 
             List<PlayerStatus> OnlinePlayers = new List<PlayerStatus>();
             List<Status> playerstatus = database.Statuses.Distinct().ToList();
