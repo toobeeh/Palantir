@@ -158,6 +158,8 @@ namespace Palantir.Commands
             int regLeagueDrops = League.GetLeagueEventDropWeights(context.User.Id.ToString()).Count;
             int leagueDrops = regLeagueDrops + League.GetLeagueDropWeights(context.User.Id.ToString()).Count;
 
+            DiscordMessageBuilder response = new DiscordMessageBuilder();
+
             DiscordEmbedBuilder embed = new DiscordEmbedBuilder()
                 .WithColor(DiscordColor.Magenta)
                 .WithTitle("🔮  " + context.Message.Author.Username + "s Inventory");
@@ -212,8 +214,12 @@ namespace Palantir.Commands
                         inventory.Where(s => s.Activated).OrderBy(s => s.Slot).Select(s => s.ID).ToArray(),
                         BubbleWallet.GetMemberRainbowShifts(login)
                     ));
-                var s3 = await Program.S3.UploadPng(path, context.Message.Author.Id + "/card-" + DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString());
-                embed.ImageUrl = s3;
+
+                response.WithFile(File.OpenRead(path));
+                embed.ImageUrl = "attachment://" + Path.GetFileName(path);
+
+                //var s3 = await Program.S3.UploadPng(path, context.Message.Author.Id + "/card-" + DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString());
+                //embed.ImageUrl = s3;
             }
 
             DiscordEmbedField sleft = embed.AddField("\u200b ", "\u200b ", true).Fields.Last();
@@ -223,7 +229,6 @@ namespace Palantir.Commands
 
             if (inventory.Count < 5) embed.AddField("Command help: ", "Use `>use [id]` to select your Sprite!\n`>use 0` will set no Sprite.\nBuy a Sprite with `>buy [id]`.\nSpecial Sprites :sparkles: replace your whole avatar! \nRainbow Sprites :rainbow: can be color-customized! (`>rainbow`) ");
             embed.AddField("\u200b", "[View all Sprites](https://typo.rip/#sprites)");
-            DiscordMessageBuilder response = new DiscordMessageBuilder();
 
             Action<string, bool> setComponents = (string navText, bool disabled) =>
             {
