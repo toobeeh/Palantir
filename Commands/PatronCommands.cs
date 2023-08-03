@@ -193,7 +193,7 @@ namespace Palantir.Commands
                         await Program.SendEmbed(context.Channel, "Sorry...", "You'll have to wait five days from the date of the gift (" + patronizer.Patronize.Split("#")[1] + ") to change the receiver!");
                     else
                     {
-                        patronizer.Patronize = gift_id + "#" + DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss");
+                        patronizer.Patronize = gift_id + "#" + DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
                         await Program.SendEmbed(context.Channel, "You're awesome!!", "You just gifted " + patronized.Username + " patron perks as long as you have the patronizer subscription!\nAfter a cooldown of five days, you can change the receiver with the same command or revoke it with `>patronize none`.");
                     }
                     db.SaveChanges();
