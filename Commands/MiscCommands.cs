@@ -243,6 +243,7 @@ namespace Palantir.Commands
             DSharpPlus.Interactivity.InteractivityResult<DSharpPlus.EventArgs.ComponentInteractionCreateEventArgs> result;
             int direction = 0;
             IEnumerable<string> firstbatch;
+            string comboUrl = "";
             do
             {
                 // rotate batch so relevant is always first index 1 2 3 4 5 6 7 8 9 10 11 
@@ -270,7 +271,7 @@ namespace Palantir.Commands
                 }
                 else
                 {
-                    Console.WriteLine(sent.ToString() + "\n" + sent.Attachments.ToString());
+                    Console.WriteLine(sent?.ToString() + "\n" + sent?.Attachments.ToString());
                 }
                 response.Embed = embed.Build();
                 sent = sent is null ? await response.SendAsync(context.Channel) : await sent.ModifyAsync(response);
