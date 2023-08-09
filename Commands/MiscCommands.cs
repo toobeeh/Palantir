@@ -215,8 +215,9 @@ namespace Palantir.Commands
                         BubbleWallet.GetMemberRainbowShifts(login)
                     ));
 
-                response.AddFile(File.OpenRead(path));
-                embed.ImageUrl = "attachment://" + Path.GetFileName(path);
+                response.AddFile("combo.png", File.OpenRead(path));
+           
+                embed.ImageUrl = "attachment://combo.png";
 
                 //var s3 = await Program.S3.UploadPng(path, context.Message.Author.Id + "/card-" + DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString());
                 //embed.ImageUrl = s3;
