@@ -185,7 +185,7 @@ namespace Palantir.Commands
             if (perm.BubbleFarming) flags += "`🚩 Bubble Farming`\n";
             if (perm.BotAdmin) flags += "`✔️ Verified cool guy aka Admin`\n";
             if (perm.Moderator) flags += "`🛠️ Palantir Moderator`\n";
-            if (perm.CloudUnlimited || perm.Patron) flags += "`📦 Unlimited cloud storage`\n";
+            //if (perm.CloudUnlimited || perm.Patron) flags += "`📦 Unlimited cloud storage`\n";
             if (BubbleWallet.IsEarlyUser(login)) flags += "`💎 Early User`\n";
             if (perm.Patron) flags += "`💖️ Patreon Subscriber`\n";
             if (perm.Patronizer) flags += "`🎁 Patronizer`\n";
