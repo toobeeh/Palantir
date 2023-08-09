@@ -23,10 +23,10 @@
 
   <ItemGroup>
     <PackageReference Include="AWSSDK.S3" Version="3.7.107.1" />
-    <PackageReference Include="DSharpPlus" Version="4.3.0-nightly-01173" />
-    <PackageReference Include="DSharpPlus.CommandsNext" Version="4.3.0-nightly-01173" />
-    <PackageReference Include="DSharpPlus.Interactivity" Version="4.3.0-nightly-01173" />
-    <PackageReference Include="DSharpPlus.SlashCommands" Version="4.3.0-nightly-01173" />
+    <PackageReference Include="DSharpPlus" Version="4.4.2" />
+    <PackageReference Include="DSharpPlus.CommandsNext" Version="4.4.2" />
+    <PackageReference Include="DSharpPlus.Interactivity" Version="4.4.2" />
+    <PackageReference Include="DSharpPlus.SlashCommands" Version="4.4.2" />
     <PackageReference Include="LibGit2Sharp" Version="0.27.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.4" />
     <PackageReference Include="morelinq" Version="3.3.2" />
@@ -34,7 +34,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="7.0.0" />
     <PackageReference Include="Quartz" Version="3.3.3" />
     <PackageReference Include="SixLabors.ImageSharp" Version="3.0.0" />

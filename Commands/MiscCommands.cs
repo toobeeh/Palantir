@@ -215,7 +215,7 @@ namespace Palantir.Commands
                         BubbleWallet.GetMemberRainbowShifts(login)
                     ));
 
-                response.WithFile(File.OpenRead(path));
+                response.AddFile(File.OpenRead(path));
                 embed.ImageUrl = "attachment://" + Path.GetFileName(path);
 
                 //var s3 = await Program.S3.UploadPng(path, context.Message.Author.Id + "/card-" + DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString());
@@ -651,7 +651,7 @@ namespace Palantir.Commands
             using (var fs = new System.IO.FileStream(path, System.IO.FileMode.Open, System.IO.FileAccess.Read))
             {
                 var msg = await new DiscordMessageBuilder()
-                    .WithFiles(new Dictionary<string, System.IO.Stream>() { { "combo.png", fs } })
+                    .AddFiles(new Dictionary<string, System.IO.Stream>() { { "combo.png", fs } })
                     .SendAsync(context.Channel);
             }
             File.Delete(path);
@@ -703,21 +703,9 @@ namespace Palantir.Commands
                 );
             graph = x.ToDelimitedString("\n");
             System.IO.File.WriteAllText(Program.CacheDataPath + "/graph.csv", graph);
-            var msg = new DiscordMessageBuilder().WithFile(System.IO.File.OpenRead(Program.CacheDataPath + "/graph.csv"));
+            var msg = new DiscordMessageBuilder().AddFile(System.IO.File.OpenRead(Program.CacheDataPath + "/graph.csv"));
             await context.RespondAsync(msg);
             System.IO.File.Delete(Program.CacheDataPath + "/graph.csv");
-        }
-
-        [Description("Search the image cloud for an image")]
-        [Command("cloudsearch")]
-        [RequireBeta()]
-        public async Task Cloudsearch(CommandContext context)
-        {
-            string login = BubbleWallet.GetLoginOfMember(context.User.Id.ToString());
-            DEPRECATED.ImageDbContext idb = new DEPRECATED.ImageDbContext("/home/pi/Webroot/rippro/userdb/udb" + login + ".db");
-            int count = idb.Drawings.Count();
-            //idb.Drawings.FromSqlInterpolated("select * from drawings where ")
-            await Program.SendEmbed(context.Channel, count.ToString(), "");
         }
 
         [Description("Get the average drop frequency")]
