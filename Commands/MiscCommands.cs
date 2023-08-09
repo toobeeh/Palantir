@@ -264,14 +264,14 @@ namespace Palantir.Commands
                 sright.Value = fielded[2].Count() > 0 ? fielded[2].ToDelimitedString("\n") : "\u200b ";
 
                 setComponents("Navigate Sprites (" + firstbatch.Count() + "/" + spritebatches.Flatten().Count() + ")", false);
-                if (sent is not null && sent.Attachments.Count > 0)
+                if (sent is not null && sent.Embeds.Count > 0 && sent.Embeds[0].Image is not null)
                 {
-                    embed.ImageUrl = sent.Attachments[0].Url;
-                    Console.WriteLine(embed.ImageUrl);
+                    embed.ImageUrl = sent.Embeds[0].Image.Url.ToString();
+                    Console.WriteLine(sent?.ToString() + "\n" + sent?.Attachments.ToString());
                 }
                 else
                 {
-                    Console.WriteLine(sent?.ToString() + "\n" + sent?.Attachments.ToString());
+                    Console.WriteLine(sent?.ToString() + "\n" + sent?.Embeds.ToString());
                 }
                 response.Embed = embed.Build();
                 sent = sent is null ? await response.SendAsync(context.Channel) : await sent.ModifyAsync(response);
