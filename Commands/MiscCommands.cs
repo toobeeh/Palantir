@@ -265,7 +265,7 @@ namespace Palantir.Commands
                 setComponents("Navigate Sprites (" + firstbatch.Count() + "/" + spritebatches.Flatten().Count() + ")", false);
                 if (sent is not null && sent.Embeds.Count > 0 && sent.Embeds[0].Image is not null)
                 {
-                    embed.ImageUrl = "attachment://combo.png";
+                    embed.ImageUrl = $"https://cdn.discordapp.com/attachments/{sent.ChannelId}/{sent.Id}/combo.png";
                 }
                 response.Embed = embed.Build();
                 sent = sent is null ? await response.SendAsync(context.Channel) : await sent.ModifyAsync(response, false, sent.Attachments);
