@@ -268,7 +268,7 @@ namespace Palantir.Commands
                     embed.ImageUrl = "attachment://combo.png";
                 }
                 response.Embed = embed.Build();
-                sent = sent is null ? await response.SendAsync(context.Channel) : await sent.ModifyAsync(response);
+                sent = sent is null ? await response.SendAsync(context.Channel) : await sent.ModifyAsync(response, false, sent.Attachments);
                 result = await Program.Interactivity.WaitForButtonAsync(sent, context.User, TimeSpan.FromMinutes(2));
                 if (!result.TimedOut)
                 {

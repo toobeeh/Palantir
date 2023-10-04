@@ -12,22 +12,23 @@ namespace Palantir.Slash
 {
     internal class AdminSlashCommands : ApplicationCommandModule
     {
-        [SlashCommand("hardreboot", "Update and reboot Palantir")]
-        [RequireSlashPermissionFlag(PermissionFlag.MOD)]
-        public async Task Reboot(InteractionContext context)
-        {
-            string upd = "git -C /home/pi/Palantir pull".Bash();
-            upd += "\n\n Latest commit: " + ("git log --oneline -1".Bash());
+        //[SlashCommand("hardreboot", "Update and reboot Palantir")]
+        //[RequireSlashPermissionFlag(PermissionFlag.MOD)]
+        //public async Task Reboot(InteractionContext context)
+        //{
 
-            await context.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().AddEmbed(Program.PalantirEmbed(
-                 "[literally dies...]",
-                 "You made me do this!!!\n\n**Update result:**\n" + upd
-            )));
+        //    string upd = "git -C /home/pi/Palantir pull".Bash();
+        //    upd += "\n\n Latest commit: " + ("git log --oneline -1".Bash());
 
-            "sudo rm /home/pi/palantirOutput.log".Bash();
-            string op = "sudo service palantir restart".Bash();
-            Environment.Exit(0);
-        }
+        //    await context.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().AddEmbed(Program.PalantirEmbed(
+        //         "[literally dies...]",
+        //         "You made me do this!!!\n\n**Update result:**\n" + upd
+        //    )));
+
+        //    "sudo rm /home/pi/palantirOutput.log".Bash();
+        //    string op = "sudo service palantir restart".Bash();
+        //    Environment.Exit(0);
+        //}
 
 
     }
