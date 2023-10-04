@@ -243,7 +243,6 @@ namespace Palantir.Commands
             DSharpPlus.Interactivity.InteractivityResult<DSharpPlus.EventArgs.ComponentInteractionCreateEventArgs> result;
             int direction = 0;
             IEnumerable<string> firstbatch;
-            string comboUrl = "";
             do
             {
                 // rotate batch so relevant is always first index 1 2 3 4 5 6 7 8 9 10 11 
@@ -266,12 +265,7 @@ namespace Palantir.Commands
                 setComponents("Navigate Sprites (" + firstbatch.Count() + "/" + spritebatches.Flatten().Count() + ")", false);
                 if (sent is not null && sent.Embeds.Count > 0 && sent.Embeds[0].Image is not null)
                 {
-                    embed.ImageUrl = sent.Embeds[0].Image.Url.ToString();
-                    Console.WriteLine(sent?.ToString() + "\n" + sent?.Attachments.ToString());
-                }
-                else
-                {
-                    Console.WriteLine(sent?.ToString() + "\n" + sent?.Embeds.ToString());
+                    embed.ImageUrl = "attachment://combo.png";
                 }
                 response.Embed = embed.Build();
                 sent = sent is null ? await response.SendAsync(context.Channel) : await sent.ModifyAsync(response);
@@ -668,36 +662,36 @@ namespace Palantir.Commands
             File.Delete(path);
         }
 
-        [Description("Show available typo themes.")]
-        [Command("themes")]
-        [Aliases("theme")]
-        public async Task Themes(CommandContext context, [Description("The id of the theme")] int id = 0)
-        {
-            var embed = new DiscordEmbedBuilder();
-            PalantirContext db = new();
-            List<Theme> themes = db.Themes.Where(theme => !String.IsNullOrEmpty(theme.Theme1)).ToList();
-            db.Dispose();
+        //[Description("Show available typo themes.")]
+        //[Command("themes")]
+        //[Aliases("theme")]
+        //public async Task Themes(CommandContext context, [Description("The id of the theme")] int id = 0)
+        //{
+        //    var embed = new DiscordEmbedBuilder();
+        //    PalantirContext db = new();
+        //    List<Theme> themes = db.Themes.Where(theme => !String.IsNullOrEmpty(theme.Theme1)).ToList();
+        //    db.Dispose();
 
-            if (id <= 0 || id > themes.Count)
-            {
-                embed.WithTitle("Listing all **Typo Themes**:");
-                embed.WithDescription("Click a link to add the theme or use `>themes [id]` to view theme details!\nTo add your own theme, contact a Palantir mod.");
-                themes.ForEach((theme, index) =>
-                {
-                    embed.AddField("➜ " + theme.Name, "#" + (index + 1) + " - by `" + theme.Author + "` - https://typo.rip/t?ticket=" + theme.Ticket);
-                });
-            }
-            else
-            {
-                Theme theme = themes[id - 1];
-                embed.WithTitle("Theme **" + theme.Name + "**");
-                embed.WithDescription(theme.Description);
-                embed.AddField("Add the theme:", "https://typo.rip/t?ticket=" + theme.Ticket);
-                embed.WithFooter("Created by " + theme.Author);
-                embed.WithImageUrl(theme.ThumbnailLanding);
-            }
-            await context.RespondAsync(embed);
-        }
+        //    if (id <= 0 || id > themes.Count)
+        //    {
+        //        embed.WithTitle("Listing all **Typo Themes**:");
+        //        embed.WithDescription("Click a link to add the theme or use `>themes [id]` to view theme details!\nTo add your own theme, contact a Palantir mod.");
+        //        themes.ForEach((theme, index) =>
+        //        {
+        //            embed.AddField("➜ " + theme.Name, "#" + (index + 1) + " - by `" + theme.Author + "` - https://typo.rip/t?ticket=" + theme.Ticket);
+        //        });
+        //    }
+        //    else
+        //    {
+        //        Theme theme = themes[id - 1];
+        //        embed.WithTitle("Theme **" + theme.Name + "**");
+        //        embed.WithDescription(theme.Description);
+        //        embed.AddField("Add the theme:", "https://typo.rip/t?ticket=" + theme.Ticket);
+        //        embed.WithFooter("Created by " + theme.Author);
+        //        embed.WithImageUrl(theme.ThumbnailLanding);
+        //    }
+        //    await context.RespondAsync(embed);
+        //}
 
         [Description("See the trend of ppl using Palantir")]
         [Command("trend")]
@@ -933,40 +927,40 @@ namespace Palantir.Commands
         }
 
 
-        [Description("Set your unique typo lobby stream code.")]
-        [Command("streamcode")]
-        public async Task Streamcode(CommandContext context, string code = "")
-        {
-            PermissionFlag perm = new PermissionFlag(Program.Feanor.GetFlagByMember(context.User));
-            if (perm.Permanban)
-            {
-                await Program.SendEmbed(context.Channel, "So... you're one of the bad guys, huh?", "You're permabanned.");
-                return;
-            }
+        //[Description("Set your unique typo lobby stream code.")]
+        //[Command("streamcode")]
+        //public async Task Streamcode(CommandContext context, string code = "")
+        //{
+        //    PermissionFlag perm = new PermissionFlag(Program.Feanor.GetFlagByMember(context.User));
+        //    if (perm.Permanban)
+        //    {
+        //        await Program.SendEmbed(context.Channel, "So... you're one of the bad guys, huh?", "You're permabanned.");
+        //        return;
+        //    }
 
-            string login = BubbleWallet.GetLoginOfMember(context.User.Id.ToString());
+        //    string login = BubbleWallet.GetLoginOfMember(context.User.Id.ToString());
 
-            if (code.StartsWith("typoStrm_"))
-            {
-                await Program.SendEmbed(context.Channel, "Sneak over 9000?", "Your code may not start with the random identifier.");
-                return;
-            }
+        //    if (code.StartsWith("typoStrm_"))
+        //    {
+        //        await Program.SendEmbed(context.Channel, "Sneak over 9000?", "Your code may not start with the random identifier.");
+        //        return;
+        //    }
 
-            PalantirContext ctx = new();
+        //    PalantirContext ctx = new();
 
-            if (ctx.Members.Any(m => m.Streamcode == code))
-            {
-                await Program.SendEmbed(context.Channel, ":/", "This code is already being used by someone else, sorry..");
-                return;
-            }
+        //    if (ctx.Members.Any(m => m.Streamcode == code))
+        //    {
+        //        await Program.SendEmbed(context.Channel, ":/", "This code is already being used by someone else, sorry..");
+        //        return;
+        //    }
 
-            ctx.Members.FirstOrDefault(m => m.Login.ToString() == login).Streamcode = code;
-            ctx.SaveChanges();
-            ctx.Dispose();
+        //    ctx.Members.FirstOrDefault(m => m.Login.ToString() == login).Streamcode = code;
+        //    ctx.SaveChanges();
+        //    ctx.Dispose();
 
 
-            await Program.SendEmbed(context.Channel, "Nice one!", code == "" ? "Your code has been reset. You'll be assigned random codes when streaming." : "Your code is now `" + code + "`. Dont forget to enable it on skribbl!");
-        }
+        //    await Program.SendEmbed(context.Channel, "Nice one!", code == "" ? "Your code has been reset. You'll be assigned random codes when streaming." : "Your code is now `" + code + "`. Dont forget to enable it on skribbl!");
+        //}
 
 
     }
