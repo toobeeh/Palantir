@@ -265,6 +265,7 @@ namespace Palantir.Commands
                 setComponents("Navigate Sprites (" + firstbatch.Count() + "/" + spritebatches.Flatten().Count() + ")", false);
                 if (sent is not null && sent.Embeds.Count > 0 && sent.Embeds[0].Image is not null)
                 {
+                    // tried using attachment scheme, url of sent message, modifying without specifying attachments...
                     embed.ImageUrl = $"https://cdn.discordapp.com/attachments/{sent.ChannelId}/{sent.Id}/combo.png";
                 }
                 response.Embed = embed.Build();
@@ -571,21 +572,6 @@ namespace Palantir.Commands
                     await Program.SendEmbed(context.Channel, "🔮  Calculate following things:", "➜ `>calc sprite 1` Calculate remaining hours to get Sprite 1 depending on your actual Bubbles left.\n➜ `>calc bubbles 1000` Calculate remaining hours to get 1000 more bubbles.\n➜ `>calc rank 4` Calculate remaining hours to catch up the 4rd ranked member.");
                     break;
             }
-        }
-
-        [Description("Calulate random loss average")]
-        [Command("loss")]
-        public async Task Loss(CommandContext context, [Description("The amount of a single gift")] int amount, [Description("The total drop amount with repeated gifts of before specified amount")] int total = 0)
-        {
-            int sum = 0;
-            for (int i = 0; i < 100; i++) sum += (new Random()).Next(0, amount / 3 + 1);
-            string totalres = "";
-            if (total > amount)
-            {
-                int times = total / amount + (total % amount > 0 ? 1 : 0);
-                totalres = "\nTo gift a total of " + total + " Drops " + times + " gifts of each " + amount + " Drops are required, which equals a loss of " + Math.Round((sum * times) / 100.0, 2) + " Drops.";
-            }
-            await Program.SendEmbed(context.Channel, "Such a nerd...", "With 100 random tries, an average of " + Math.Round(sum / 100.0, 2) + " Drops of " + amount + " gifted Drops is lost." + totalres);
         }
 
         [Description("HAHAH some nerd stuff, shows EXACTLY what the emoji(s) consist of & how they're bound together")]

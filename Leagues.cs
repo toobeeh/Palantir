@@ -60,13 +60,13 @@ namespace Palantir
         {
             PalantirContext palantirDbContext = new PalantirContext();
             var userDrops = palantirDbContext.PastDrops
-                .FromSqlRaw($"SELECT * FROM \"PastDrops\" WHERE LeagueWeight > 0 AND CaughtLobbyPlayerID = '{userid}'")
+                .FromSqlRaw($"SELECT * FROM \"PastDrops\" WHERE LeagueWeight > 0 AND EventDropID = 0 AND CaughtLobbyPlayerID = '{userid}'")
                 .ToList();
             palantirDbContext.Dispose();
             List<double> weights = new();
             foreach (var item in userDrops)
             {
-                if (item.EventDropId == 0) weights.Add(League.Weight(item.LeagueWeight / 1000.0) / 100);
+               weights.Add(League.Weight(item.LeagueWeight / 1000.0) / 100);
             }
 
             return weights;
@@ -82,7 +82,7 @@ namespace Palantir
             List<double> weights = new();
             foreach (var item in userDrops)
             {
-                if (item.EventDropId > 0) weights.Add(League.Weight(item.LeagueWeight / 1000.0) / 100);
+                weights.Add(League.Weight(item.LeagueWeight / 1000.0) / 100);
             }
 
             return weights;

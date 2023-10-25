@@ -204,7 +204,6 @@ namespace Palantir.Commands
             //    await Program.SendEmbed(context.Channel, "That's all you got?", "With more than 3 drops collected, the minimal gift amount is 3 event drops.");
             //    return;
             //}
-            List<SpriteProperty> inv = BubbleWallet.GetInventory(login);
 
             List<EventDrop> drops = Events.GetEventDrops();
             var drop = drops.FirstOrDefault(d => d.EventDropId == eventDropID);
