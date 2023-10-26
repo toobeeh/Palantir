@@ -14,10 +14,11 @@ using System.Globalization;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp;
 using Palantir.Model;
+using Palantir.PalantirCommandModule;
 
 namespace Palantir.Commands
 {
-    public class ManagementCommands : BaseCommandModule
+    public class ManagementCommands : PalantirCommandModule.PalantirCommandModule
     {
         //[Description("Creates a new theme ticket which can be used by anyone to add a new theme to typo.")]
         //[Command("themeticket")]
@@ -182,18 +183,13 @@ namespace Palantir.Commands
             await Program.SendEmbed(context.Channel, "*magic happened*", "The flag of " + name + " was set to " + flag + "\n" + desc);
         }
 
-        //[Description("Reboots the bot & pulls from git.")]
-        //[Command("hardreboot")]
-        //[RequirePermissionFlag(PermissionFlag.MOD)]
-        //public async Task Reboot(CommandContext context)
-        //{
-        //    string upd = "git -C /home/pi/Palantir pull".Bash();
-        //    upd += "\n\n Latest commit: " + ("git log --oneline -1".Bash());
-        //    await Program.SendEmbed(context.Channel, "[literally dies...]", "You made me do this!!!\n\n**Update result:**\n" + upd);
-        //    "sudo rm /home/pi/palantirOutput.log".Bash();
-        //    string op = "sudo service palantir restart".Bash();
-        //    Environment.Exit(0);
-        //}
+        [Description("Tests concurrency locks.")]
+        [Command("concurrency")]
+        [Synchronized]
+        public async Task Concurrency(CommandContext context)
+        {
+            await Task.Delay(1000 * 10);
+        }
 
 
         [Description("List servers with palantir and their stats.")]
