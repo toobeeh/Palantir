@@ -23,12 +23,11 @@ namespace Palantir.PalantirCommandModule
                 var userId = ctx.User.Id;
 
                 var lockedUsers = commandLocks.GetOrAdd(commandName, new ConcurrentDictionary<ulong, bool>());
-                var userIsLocked = lockedUsers.GetOrAdd(userId, false);
+                var userIsLocked = lockedUsers.GetOrAdd(userId, true);
 
                 if (userIsLocked)
                 {
-                    throw new Exception("User <@" + userId + "> is already executing the command `" + commandName + "`.");
-                    ctx.RespondAsync("locked");
+                    throw new TaskCanceledException("User <@" + userId + "> is already executing the command `" + commandName + "`.");
                 }
             }
 
