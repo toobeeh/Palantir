@@ -16,10 +16,11 @@ using SixLabors.ImageSharp;
 using System.Collections.Generic;
 using Palantir.Model;
 using System.IO;
+using Palantir.PalantirCommandModule;
 
 namespace Palantir.Commands
 {
-    public class SpriteCommands : BaseCommandModule
+    public class SpriteCommands : PalantirCommandModule.PalantirCommandModule
     {
 
         [Description("Get a list of all sprites in the store.")]
@@ -76,6 +77,7 @@ namespace Palantir.Commands
         }
 
         [Description("Buy a sprite.")]
+        [Synchronized]
         [Command("buy")]
         public async Task Buy(CommandContext context, [Description("The id of the sprite (eg '15')")] int sprite)
         {
@@ -294,6 +296,7 @@ namespace Palantir.Commands
         }
 
         [Description("Buy a scene")]
+        [Synchronized]
         [Command("paint")]
         public async Task BuyScene(CommandContext context, [Description("The ID of the scene")] int id)
         {

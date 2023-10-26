@@ -177,24 +177,6 @@ namespace Palantir.Slash
             await (await context.GetOriginalResponseAsync()).ModifyAsync(msg);
         }
 
-        [SlashCommand("loss", "Calculate average event drop gift loss.")]
-        public async Task Loss(InteractionContext context, [Option("Drops", "The amount of gifted drops")] long drops, [Option("Loss-Base", "Your loss ratio base, find in >event")] double lossBase)
-        {
-            int sum = 0;
-            for (int i = 0; i < 100; i++)
-            {
-                int lossMin = Convert.ToInt16(Math.Round(lossBase * drops * 0.7));
-                int lossMax = Convert.ToInt16(Math.Round(lossBase * drops * 1.1));
-                if (lossMax < 1) lossMax = 1;
-                int lost = new Random().Next(lossMin, lossMax);
-                sum += lost;
-            }
-            await context.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().AddEmbed(Program.PalantirEmbed(
-                "Such a nerd...",
-                "With 100 random tries, an average of " + Math.Round(sum / 100.0, 2) + " Drops of " + drops + " gifted Drops is lost."
-            )));
-        }
-
         [SlashCommand("themes", "Show verified typo themes")]
         public async Task Themes(InteractionContext context, [Option("Theme", "Show details of a specific theme")] long id = 0)
         {

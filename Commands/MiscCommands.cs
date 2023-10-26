@@ -18,10 +18,11 @@ using SixLabors.ImageSharp.Formats;
 using Microsoft.EntityFrameworkCore;
 using Palantir.Model;
 using System.IO;
+using Palantir.PalantirCommandModule;
 
 namespace Palantir.Commands
 {
-    public class MiscCommands : BaseCommandModule
+    public class MiscCommands : PalantirCommandModule.PalantirCommandModule
     {
 
         [Command("manual")]
@@ -803,6 +804,7 @@ namespace Palantir.Commands
         }
 
         [Description("Boost the drop rate. You can do this once a week.")]
+        [Synchronized]
         [Command("dropboost")]
         public async Task SplitBoost(CommandContext context, int factorSplits = 0, int durationSplits = 0, int cooldownSplits = 0, string modifier = "")
         {

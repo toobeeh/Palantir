@@ -10,10 +10,11 @@ using System;
 using System.Collections.Generic;
 using Palantir.Model;
 using System.IO;
+using Palantir.PalantirCommandModule;
 
 namespace Palantir.Commands
 {
-    public class EventCommands : BaseCommandModule
+    public class EventCommands : PalantirCommandModule.PalantirCommandModule
     {
         [Description("Show event info")]
         [Command("event")]
@@ -82,6 +83,7 @@ namespace Palantir.Commands
         }
 
         [Description("Swap League Event Drop credit to  Event Drops")]
+        [Synchronized]
         [Command("redeem")]
         public async Task Redeem(CommandContext context, int amount, int eventDropID)
         {
@@ -181,6 +183,7 @@ namespace Palantir.Commands
         }
 
         [Description("Gift event drops")]
+        [Synchronized]
         [Command("gift")]
         public async Task Gift(CommandContext context, [Description("The gift receiver (@member)")] DiscordMember target, [Description("The amount of gifted event drops")] int amount, [Description("The id of the sprite which can be bought with the gifted event drops")] int eventSpriteID)
         {
