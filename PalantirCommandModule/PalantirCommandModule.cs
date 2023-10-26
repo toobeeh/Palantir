@@ -15,6 +15,7 @@ namespace Palantir.PalantirCommandModule
 
         public override Task BeforeExecutionAsync(CommandContext ctx)
         {
+            base.BeforeExecutionAsync(ctx);
             var isSynchronized = ctx.Command.ExecutionChecks.Any(check => check is SynchronizedAttribute);
             if(isSynchronized)
             {
@@ -26,7 +27,8 @@ namespace Palantir.PalantirCommandModule
 
                 if (userIsLocked)
                 {
-                    throw new TaskCanceledException("User <@" + userId + "> is already executing the command `" + commandName + "`.");
+                    throw new Exception("User <@" + userId + "> is already executing the command `" + commandName + "`.");
+                    ctx.RespondAsync("locked");
                 }
             }
 
@@ -35,6 +37,7 @@ namespace Palantir.PalantirCommandModule
 
         public override Task AfterExecutionAsync(CommandContext ctx)
         {
+            base.AfterExecutionAsync(ctx);
             var isSynchronized = ctx.Command.ExecutionChecks.Any(check => check is SynchronizedAttribute);
             if (isSynchronized)
             {
