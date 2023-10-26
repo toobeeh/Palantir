@@ -23,7 +23,7 @@ namespace Palantir.PalantirCommandModule
                 var userId = ctx.User.Id;
 
                 var lockedUsers = commandLocks.GetOrAdd(commandName, new ConcurrentDictionary<ulong, bool>());
-                var userIsLocked = lockedUsers.GetOrAdd(userId, true);
+                var userIsLocked = lockedUsers.AddOrUpdate(userId, _ => false, (_, __) => true);
 
                 if (userIsLocked)
                 {
