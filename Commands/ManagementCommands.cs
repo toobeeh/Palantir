@@ -15,6 +15,7 @@ using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp;
 using Palantir.Model;
 using Palantir.PalantirCommandModule;
+using System.Xml.Linq;
 
 namespace Palantir.Commands
 {
@@ -188,7 +189,9 @@ namespace Palantir.Commands
         [Synchronized]
         public async Task Concurrency(CommandContext context)
         {
+            var a = await context.RespondAsync("hello there");
             await Task.Delay(1000 * 10);
+            await a.RespondAsync("general kenobi!");
         }
 
 
