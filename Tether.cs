@@ -155,7 +155,7 @@ namespace Palantir
 
 
             // get split messages, if available, and check if they are currently used 
-            var messagesAfter = (await TargetChannel.GetMessagesAfterAsync(TargetMessage.Id, 1)).Where(msg => msg.Author.Id == Program.Client.CurrentUser.Id);
+            var messagesAfter = (await TargetChannel.GetMessagesAfterAsync(TargetMessage.Id, 100)).Where(msg => msg.Author.Id == Program.Client.CurrentUser.Id);
 
             // add split messages to dict
             Dictionary<DiscordMessage, bool> splitMessages = new Dictionary<DiscordMessage, bool>();
@@ -181,7 +181,6 @@ namespace Palantir
                     // if content didnt change, dont edit - else set last content
                     if (content == lastContent)
                     {
-                        await TargetChannel.TriggerTypingAsync();
                         Thread.Sleep(5000);
                         continue;
                     }
