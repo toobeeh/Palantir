@@ -11,11 +11,10 @@ namespace Palantir.PalantirCommandModule
     public class PalantirCommandModule : BaseCommandModule
     {
 
-        ConcurrentDictionary<String, ConcurrentDictionary<ulong, bool>> commandLocks = new();
+        ConcurrentDictionary<string, ConcurrentDictionary<ulong, bool>> commandLocks = new();
 
         public override Task BeforeExecutionAsync(CommandContext ctx)
         {
-            base.BeforeExecutionAsync(ctx);
             var isSynchronized = ctx.Command.ExecutionChecks.Any(check => check is SynchronizedAttribute);
             if(isSynchronized)
             {
@@ -23,7 +22,11 @@ namespace Palantir.PalantirCommandModule
                 var userId = ctx.User.Id;
 
                 var lockedUsers = commandLocks.GetOrAdd(commandName, new ConcurrentDictionary<ulong, bool>());
-                var userIsLocked = lockedUsers.AddOrUpdate(userId, _ => false, (_, __) => true);
+                var userIsLocked = false;
+                lockedUsers.AddOrUpdate(userId, true, (key, value) => {
+                   userIsLocked = value;
+                   return true; 
+                });
 
                 if (userIsLocked)
                 {
@@ -31,12 +34,11 @@ namespace Palantir.PalantirCommandModule
                 }
             }
 
-            return Task.Delay(0);
+            return base.BeforeExecutionAsync(ctx);
         }
 
         public override Task AfterExecutionAsync(CommandContext ctx)
         {
-            base.AfterExecutionAsync(ctx);
             var isSynchronized = ctx.Command.ExecutionChecks.Any(check => check is SynchronizedAttribute);
             if (isSynchronized)
             {
@@ -47,17 +49,15 @@ namespace Palantir.PalantirCommandModule
 
                 if(lockedUsers != null)
                 {
-                    bool removedUser;
-                    lockedUsers.Remove(userId, out removedUser);
-                    if(lockedUsers.IsEmpty)
-                    {
-                        ConcurrentDictionary<ulong, bool> removedCommand;
-                        commandLocks.Remove(commandName, out removedCommand);
-                    }
+                    lockedUsers.Remove(userId, out var removedUser);
+                    //if(lockedUsers.IsEmpty)
+                    //{
+                    //    commandLocks.Remove(commandName, out var removedCommand);
+                    //}
                 }
             }
 
-            return Task.Delay(0);
+            return base.AfterExecutionAsync(ctx);
         }
 
     }
