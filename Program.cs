@@ -15,6 +15,7 @@ using Quartz.Impl;
 using DSharpPlus.Interactivity.Extensions;
 using DSharpPlus.SlashCommands;
 using System.Globalization;
+using Palantir.PalantirCommandModule;
 
 namespace Palantir
 {
@@ -235,6 +236,12 @@ namespace Palantir
             embedErr.Color = DiscordColor.Red;
             embedErr.WithFooter("If this error is persistent, message @tobeh#7437.");
             await e.Context.Channel.SendMessageAsync(embed: embedErr);
+
+            var mod = e.Command.Module;
+            if (mod is PalantirCommandModule.PalantirCommandModule)
+            {
+                ((PalantirCommandModule.PalantirCommandModule)mod).UnlockCommand(e.Context);
+            }
             return;
         }
 

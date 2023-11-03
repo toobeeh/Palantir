@@ -13,10 +13,10 @@ namespace Palantir.PalantirCommandModule
 
         ConcurrentDictionary<string, ConcurrentDictionary<ulong, bool>> commandLocks = new();
 
-        public override Task BeforeExecutionAsync(CommandContext ctx)
+        public void LockCommand(CommandContext ctx)
         {
             var isSynchronized = ctx.Command.ExecutionChecks.Any(check => check is SynchronizedAttribute);
-            if(isSynchronized)
+            if (isSynchronized)
             {
                 var commandName = ctx.Command.Name;
                 var userId = ctx.User.Id;
@@ -24,8 +24,8 @@ namespace Palantir.PalantirCommandModule
                 var lockedUsers = commandLocks.GetOrAdd(commandName, new ConcurrentDictionary<ulong, bool>());
                 var userIsLocked = false;
                 lockedUsers.AddOrUpdate(userId, true, (key, value) => {
-                   userIsLocked = value;
-                   return true; 
+                    userIsLocked = value;
+                    return true;
                 });
 
                 if (userIsLocked)
@@ -33,11 +33,9 @@ namespace Palantir.PalantirCommandModule
                     throw new TaskCanceledException("User <@" + userId + "> is already executing the command `" + commandName + "`.");
                 }
             }
-
-            return base.BeforeExecutionAsync(ctx);
         }
 
-        public override Task AfterExecutionAsync(CommandContext ctx)
+        public void UnlockCommand(CommandContext ctx)
         {
             var isSynchronized = ctx.Command.ExecutionChecks.Any(check => check is SynchronizedAttribute);
             if (isSynchronized)
@@ -47,7 +45,7 @@ namespace Palantir.PalantirCommandModule
 
                 var lockedUsers = commandLocks[commandName];
 
-                if(lockedUsers != null)
+                if (lockedUsers != null)
                 {
                     lockedUsers.Remove(userId, out var removedUser);
                     //if(lockedUsers.IsEmpty)
@@ -56,6 +54,18 @@ namespace Palantir.PalantirCommandModule
                     //}
                 }
             }
+        }
+
+        public override Task BeforeExecutionAsync(CommandContext ctx)
+        {
+            LockCommand(ctx);
+
+            return base.BeforeExecutionAsync(ctx);
+        }
+
+        public override Task AfterExecutionAsync(CommandContext ctx)
+        {
+            UnlockCommand(ctx);
 
             return base.AfterExecutionAsync(ctx);
         }
