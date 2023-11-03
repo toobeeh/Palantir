@@ -214,10 +214,10 @@ namespace Palantir
         {
             if (e.Exception is DSharpPlus.CommandsNext.Exceptions.CommandNotFoundException) return;
 
-            var mod = e.Command.Module;
-            if (mod is PalantirCommandModule.PalantirCommandModule)
+            if (e.Command.Module is PalantirCommandModule.PalantirCommandModule module)
             {
-                ((PalantirCommandModule.PalantirCommandModule)mod).UnlockCommand(e.Context);
+                Console.WriteLine("Unlocked command after failure");
+                module.UnlockCommand(e.Context);
             }
 
             if (e.Exception is DSharpPlus.CommandsNext.Exceptions.ChecksFailedException)
