@@ -155,7 +155,7 @@ namespace Palantir
 
 
             // get split messages, if available, and check if they are currently used 
-            var messagesAfter = (await TargetChannel.GetMessagesAfterAsync(TargetMessage.Id, 100)).Where(msg => msg.Author.Id == Program.Client.CurrentUser.Id);
+            var messagesAfter = (await TargetChannel.GetMessagesAfterAsync(TargetMessage.Id, 100)).Where(msg => msg.Author.Id == Program.Client.CurrentUser.Id).Reverse();
 
             // add split messages to dict
             Dictionary<DiscordMessage, bool> splitMessages = new Dictionary<DiscordMessage, bool>();
