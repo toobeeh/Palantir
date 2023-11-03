@@ -190,6 +190,7 @@ namespace Palantir.Commands
         public async Task Concurrency(CommandContext context)
         {
             var a = await context.RespondAsync("hello there");
+            throw new Exception("test");
             await Task.Delay(1000 * 10);
             await a.RespondAsync("general kenobi!");
         }
