@@ -213,6 +213,13 @@ namespace Palantir
         private static async Task OnCommandErrored(CommandsNextExtension commands, CommandErrorEventArgs e)
         {
             if (e.Exception is DSharpPlus.CommandsNext.Exceptions.CommandNotFoundException) return;
+
+            var mod = e.Command.Module;
+            if (mod is PalantirCommandModule.PalantirCommandModule)
+            {
+                ((PalantirCommandModule.PalantirCommandModule)mod).UnlockCommand(e.Context);
+            }
+
             if (e.Exception is DSharpPlus.CommandsNext.Exceptions.ChecksFailedException)
             {
                 string checks = "";
@@ -236,12 +243,6 @@ namespace Palantir
             embedErr.Color = DiscordColor.Red;
             embedErr.WithFooter("If this error is persistent, message @tobeh#7437.");
             await e.Context.Channel.SendMessageAsync(embed: embedErr);
-
-            var mod = e.Command.Module;
-            if (mod is PalantirCommandModule.PalantirCommandModule)
-            {
-                ((PalantirCommandModule.PalantirCommandModule)mod).UnlockCommand(e.Context);
-            }
             return;
         }
 
