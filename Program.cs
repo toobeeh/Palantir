@@ -24,6 +24,7 @@ namespace Palantir
         public static DataManager Feanor;
         public static DiscordGuild TypoTestground;
         public static DiscordClient Client { get; private set; }
+        public static CommandLock CommandLock { get; private set; }
         public static DiscordClient Servant { get; private set; }
         public static S3Handler S3 { get; private set; }
         public static CommandsNextExtension Commands { get; private set; }
@@ -64,6 +65,7 @@ namespace Palantir
             await Servant.ConnectAsync();
 
             Console.WriteLine("Initializing Palantir:\n...");
+            CommandLock = new CommandLock();
             Client = new DiscordClient(new DiscordConfiguration
             {
                 Token = Program.PalantirToken,
@@ -216,7 +218,7 @@ namespace Palantir
 
             if (e.Command.Module.ModuleType.IsSubclassOf(typeof(PalantirCommandModule.PalantirCommandModule)))
             {
-                ((PalantirCommandModule.PalantirCommandModule)e.Command.Module).UnlockCommand(e.Context);
+                Program.CommandLock.UnlockCommand(e.Context);
             }
 
             if (e.Exception is DSharpPlus.CommandsNext.Exceptions.ChecksFailedException)
