@@ -216,6 +216,7 @@ namespace Palantir
 
             Console.WriteLine(e.Command.Module.ModuleType);
             Console.WriteLine(e.Command.Module.ModuleType == typeof(PalantirCommandModule.PalantirCommandModule));
+            Console.WriteLine(e.Command.Module.ModuleType.IsSubclassOf(typeof(PalantirCommandModule.PalantirCommandModule)));
             Console.WriteLine(e.Command.Module.GetType().IsSubclassOf(typeof(PalantirCommandModule.PalantirCommandModule)));
             if (e.Command.Module is PalantirCommandModule.PalantirCommandModule module)
             {
