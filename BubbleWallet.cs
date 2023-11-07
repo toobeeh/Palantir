@@ -592,7 +592,7 @@ namespace Palantir
                 }
             }
 
-            db.OnlineItems.RemoveRange(db.OnlineItems.Where(o => o.LobbyKey == lobbyKey && Convert.ToInt32(lobbyPlayerID) == o.LobbyPlayerId));
+            db.OnlineItems.RemoveRange(db.OnlineItems.Where(o => o.LobbyKey == lobbyKey && Convert.ToInt32(lobbyPlayerID) == o.LobbyPlayerId && (o.ItemType == "scene" || o.ItemType == "sprite")));
             db.OnlineItems.AddRange(items);
 
             try
