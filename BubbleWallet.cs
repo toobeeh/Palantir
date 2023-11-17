@@ -10,6 +10,7 @@ using MoreLinq;
 using Palantir.Model;
 using Microsoft.Extensions.Logging;
 using System.Xml.Linq;
+using Palantir.NewDbModels;
 
 namespace Palantir
 {
@@ -726,6 +727,44 @@ namespace Palantir
             db.Dispose();
             return cooldown;
         }
+
+        public static List<MappedAwardInv> GetAwardInventory(int login)
+        {
+
+            PalantirContext db = new PalantirContext();
+            var inv = db.Awardees.Where(p => p.OwnerLogin == login).ToList();
+            db.Dispose();
+            var awards = GetAwards();
+
+            return inv.ConvertAll(i => new MappedAwardInv() { inv = i, award = awards.FirstOrDefault(a => a.Id == i.Award)});
+        }
+
+        public static List<Award> GetAwards()
+        {
+
+            PalantirContext db = new PalantirContext();
+            var awards = db.Awards.ToList();
+            db.Dispose();
+
+            return awards;
+        }
+
+        public static List<MappedAwardInv> GetReceivedAwards(int login)
+        {
+
+            PalantirContext db = new PalantirContext();
+            var inv = db.Awardees.Where(p => p.AwardeeLogin == login).ToList();
+            db.Dispose();
+            var awards = GetAwards();
+
+            return inv.ConvertAll(i => new MappedAwardInv() { inv = i, award = awards.FirstOrDefault(a => a.Id == i.Award) });
+        }
+    }
+
+    public class MappedAwardInv
+    {
+        public Awardee inv;
+        public Award award;
     }
 
     public class Sprite

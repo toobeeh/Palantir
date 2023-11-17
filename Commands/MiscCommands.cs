@@ -19,6 +19,7 @@ using Microsoft.EntityFrameworkCore;
 using Palantir.Model;
 using System.IO;
 using Palantir.PalantirCommandModule;
+using MoreLinq;
 
 namespace Palantir.Commands
 {
@@ -920,6 +921,8 @@ namespace Palantir.Commands
         {
             PermissionFlag flags = new PermissionFlag(Program.Feanor.GetFlagByMember(context.User));
             int login = Convert.ToInt32(BubbleWallet.GetLoginOfMember(context.User.Id.ToString()));
+            var inv = BubbleWallet.GetAwardInventory(login);
+            var received = BubbleWallet.GetReceivedAwards(login);
 
             var message = new DiscordMessageBuilder();
 
@@ -927,12 +930,33 @@ namespace Palantir.Commands
             embed.WithTitle(context.Message.Author.Username + "s Award Inventory");
             embed.WithColor(DiscordColor.Magenta);
 
+            var awardInvString = string.Join("\n_ _\n", inv.GroupBy(i => i.award.Rarity).OrderBy(g => g.FirstOrDefault().award.Rarity).ToList().ConvertAll(group =>
+            {
+                var groupAward = group.FirstOrDefault().award;
+                var distincts = System.Linq.Enumerable.DistinctBy(group, i => i.award.Id).ToList();
+                var awards = string.Join("\n", distincts.ConvertAll(item => "- " + item.award.Name + " (x" + group.Where(i => i.award.Id == item.award.Id).Count() + ")"));
+                return "**" + groupAward.Rarity + "**:\n" + awards;
+            }));
+            embed.AddField("Available Awards", awardInvString);
+
+            var awardReceivedString = string.Join("\n", inv.GroupBy(i => i.award.Rarity).OrderBy(g => g.FirstOrDefault().award.Rarity).ToList().ConvertAll(group =>
+            {
+                var groupAward = group.FirstOrDefault().award;
+                var count = group.Count();
+                return "**" + groupAward.Rarity + "**: " + count + " awarded";
+            }));
+            embed.AddField("Received Awards", awardReceivedString);
+
             var cooldown = BubbleWallet.AwardPackCooldown(login);
             if(cooldown.TotalSeconds == 0)
             {
                 var button = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Primary, "openPack", "✨ Open Award Pack");
-
-                //message.AddComponents();
+                embed.AddField("Award Pack", "You can open your award pack now!");
+                message.AddComponents(button);
+            }
+            else
+            {
+                embed.AddField("Award Pack", "You need to wait " + cooldown.ToString(@"dd\d\ hh\h\ mm\m\ ss\s") + " to open your next Award Pack.\nYou can open a pack once a week. \nThe more Bubbles you have collected in the past week, the better are the chances to get rare awards!");
             }
 
             var sent = await context.Message.RespondAsync(message);
@@ -944,7 +968,7 @@ namespace Palantir.Commands
             }
             else
             {
-
+                // do cool stuff here
             }
         }
 

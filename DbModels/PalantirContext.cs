@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.Extensions.Options;
 using Palantir.Model;
+using Palantir.NewDbModels;
 
 namespace Palantir.Model
 {
@@ -17,6 +18,9 @@ namespace Palantir.Model
             : base(options)
         {
         }
+
+        public virtual DbSet<Award> Awards { get; set; }
+        public virtual DbSet<Awardee> Awardees { get; set; }
 
         public virtual DbSet<AccessToken> AccessTokens { get; set; }
 
@@ -89,6 +93,47 @@ namespace Palantir.Model
                     .HasColumnType("text")
                     .HasColumnName("AccessToken");
                 entity.Property(e => e.CreatedAt).HasDefaultValueSql("current_timestamp()");
+            });
+
+            modelBuilder.Entity<Award>(entity =>
+            {
+                entity.Property(e => e.Id)
+                    .HasColumnType("int(11)")
+                    .HasColumnName("ID");
+
+                entity.Property(e => e.Description)
+                    .IsRequired()
+                    .HasColumnType("text");
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasColumnType("text");
+
+                entity.Property(e => e.Rarity).HasColumnType("tinyint(4)");
+
+                entity.Property(e => e.Url)
+                    .IsRequired()
+                    .HasColumnType("text")
+                    .HasColumnName("URL");
+            });
+
+            modelBuilder.Entity<Awardee>(entity =>
+            {
+                entity.Property(e => e.Id)
+                    .HasColumnType("int(11)")
+                    .HasColumnName("ID");
+
+                entity.Property(e => e.Award).HasColumnType("smallint(6)");
+
+                entity.Property(e => e.AwardeeLogin).HasColumnType("int(6)");
+
+                entity.Property(e => e.Date).HasColumnType("bigint(20)");
+
+                entity.Property(e => e.ImageId)
+                    .HasColumnType("bigint(20)")
+                    .HasColumnName("ImageID");
+
+                entity.Property(e => e.OwnerLogin).HasColumnType("int(6)");
             });
 
             modelBuilder.Entity<BoostSplit>(entity =>
