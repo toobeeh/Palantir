@@ -7,9 +7,9 @@ using Newtonsoft.Json;
 using System.Threading.Tasks;
 using Quartz;
 using MoreLinq;
-using Palantir.Model;
 using Microsoft.Extensions.Logging;
 using System.Xml.Linq;
+using Palantir.Model;
 
 namespace Palantir
 {
@@ -555,7 +555,7 @@ namespace Palantir
                 {
                     LobbyKey = lobbyKey,
                     LobbyPlayerId = Convert.ToInt32(lobbyPlayerID),
-                    Date = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds(),
+                    Date = Convert.ToInt32(new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds()),
                     Slot = 0,
                     ItemType = "scene",
                     ItemId = scenes[0].Id,
@@ -571,7 +571,7 @@ namespace Palantir
                 {
                     LobbyKey = lobbyKey,
                     LobbyPlayerId = Convert.ToInt32(lobbyPlayerID),
-                    Date = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds(),
+                    Date = Convert.ToInt32(new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds()),
                     Slot = slot.Slot + 1,
                     ItemType = "sprite",
                     ItemId = slot is object ? slot.ID : 0
@@ -584,7 +584,7 @@ namespace Palantir
                     {
                         LobbyKey = lobbyKey,
                         LobbyPlayerId = Convert.ToInt32(lobbyPlayerID),
-                        Date = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds(),
+                        Date = Convert.ToInt32(new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds()),
                         Slot = slot.Slot + 1,
                         ItemType = "shift",
                         ItemId = rainbowSprites[slot.ID]
@@ -592,7 +592,7 @@ namespace Palantir
                 }
             }
 
-            db.OnlineItems.RemoveRange(db.OnlineItems.Where(o => o.LobbyKey == lobbyKey && Convert.ToInt32(lobbyPlayerID) == o.LobbyPlayerId && (o.ItemType == "scene" || o.ItemType == "sprite")));
+            db.OnlineItems.RemoveRange(db.OnlineItems.Where(o => o.LobbyKey == lobbyKey && Convert.ToInt32(lobbyPlayerID) == o.LobbyPlayerId && (o.ItemType == "scene" || o.ItemType == "sprite" || o.ItemType == "shift")));
             db.OnlineItems.AddRange(items);
 
             try
@@ -711,6 +711,59 @@ namespace Palantir
             return profiles;
         }
 
+        public static TimeSpan AwardPackCooldown(int login)
+        {
+            TimeSpan cooldown = new();
+            PalantirContext db = new();
+            var member = db.Members.FirstOrDefault(m => m.Login == login);
+            var flags = new PermissionFlag(Convert.ToInt16(member.Flag));
+            if (member.AwardPackOpened == null || flags.BotAdmin) cooldown = TimeSpan.FromSeconds(0);
+            else
+            {
+                cooldown = TimeSpan.FromMilliseconds(TimeSpan.FromDays(7).TotalMilliseconds - (DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - Convert.ToDouble(member.AwardPackOpened)));
+                if (cooldown.TotalSeconds < 0) cooldown = TimeSpan.FromSeconds(0);
+            }
+            db.Dispose();
+            return cooldown;
+        }
+
+        public static List<MappedAwardInv> GetAwardInventory(int login)
+        {
+
+            PalantirContext db = new PalantirContext();
+            var inv = db.Awardees.Where(p => p.OwnerLogin == login).ToList();
+            db.Dispose();
+            var awards = GetAwards();
+
+            return inv.ConvertAll(i => new MappedAwardInv() { inv = i, award = awards.FirstOrDefault(a => a.Id == i.Award)});
+        }
+
+        public static List<Award> GetAwards()
+        {
+
+            PalantirContext db = new PalantirContext();
+            var awards = db.Awards.ToList();
+            db.Dispose();
+
+            return awards;
+        }
+
+        public static List<MappedAwardInv> GetReceivedAwards(int login)
+        {
+
+            PalantirContext db = new PalantirContext();
+            var inv = db.Awardees.Where(p => p.AwardeeLogin == login).ToList();
+            db.Dispose();
+            var awards = GetAwards();
+
+            return inv.ConvertAll(i => new MappedAwardInv() { inv = i, award = awards.FirstOrDefault(a => a.Id == i.Award) });
+        }
+    }
+
+    public class MappedAwardInv
+    {
+        public Awardee inv;
+        public Award award;
     }
 
     public class Sprite

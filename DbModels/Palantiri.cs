@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Palantir.Model;
+#nullable disable
 
-public partial class Palantiri
+namespace Palantir.Model
 {
-    public string Token { get; set; } = null!;
-
-    public string Palantir { get; set; } = null!;
+    public partial class Palantiri
+    {
+        public string Token { get; set; }
+        public string Palantir { get; set; }
+    }
 }

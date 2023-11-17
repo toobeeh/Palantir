@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Palantir.Model;
+#nullable disable
 
-public partial class GuildSetting
+namespace Palantir.Model
 {
-    public string GuildId { get; set; } = null!;
-
-    public string Settings { get; set; } = null!;
+    public partial class GuildSetting
+    {
+        public string GuildId { get; set; }
+        public string Settings { get; set; }
+    }
 }

@@ -5,12 +5,12 @@ using System.Collections.Generic;
 
 namespace Palantir.Model
 {
-    public partial class BoostSplit
+    public partial class Award
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public string Url { get; set; }
+        public sbyte Rarity { get; set; }
         public string Description { get; set; }
-        public string Date { get; set; }
-        public int Value { get; set; }
     }
 }

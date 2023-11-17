@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Palantir.Model;
+#nullable disable
 
-public partial class Status
+namespace Palantir.Model
 {
-    public string SessionId { get; set; } = null!;
-
-    public string Status1 { get; set; } = null!;
-
-    public string Date { get; set; } = null!;
+    public partial class Status
+    {
+        public string SessionId { get; set; }
+        public string Status1 { get; set; }
+        public string Date { get; set; }
+    }
 }

@@ -1,19 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Palantir.Model;
+#nullable disable
 
-public partial class NextDrop
+namespace Palantir.Model
 {
-    public long DropId { get; set; }
-
-    public string CaughtLobbyKey { get; set; } = null!;
-
-    public string CaughtLobbyPlayerId { get; set; } = null!;
-
-    public string ValidFrom { get; set; } = null!;
-
-    public int EventDropId { get; set; }
-
-    public int LeagueWeight { get; set; }
+    public partial class NextDrop
+    {
+        public long DropId { get; set; }
+        public string CaughtLobbyKey { get; set; }
+        public string CaughtLobbyPlayerId { get; set; }
+        public string ValidFrom { get; set; }
+        public int EventDropId { get; set; }
+        public int LeagueWeight { get; set; }
+    }
 }

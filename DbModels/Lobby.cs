@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Palantir.Model;
+#nullable disable
 
-public partial class Lobby
+namespace Palantir.Model
 {
-    public string LobbyId { get; set; } = null!;
-
-    public string Lobby1 { get; set; } = null!;
+    public partial class Lobby
+    {
+        public string LobbyId { get; set; }
+        public string Lobby1 { get; set; }
+    }
 }

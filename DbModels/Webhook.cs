@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Palantir.Model;
+#nullable disable
 
-public partial class Webhook
+namespace Palantir.Model
 {
-    public string ServerId { get; set; } = null!;
-
-    public string Name { get; set; } = null!;
-
-    public string WebhookUrl { get; set; } = null!;
+    public partial class Webhook
+    {
+        public string ServerId { get; set; }
+        public string Name { get; set; }
+        public string WebhookUrl { get; set; }
+    }
 }

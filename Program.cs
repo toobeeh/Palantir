@@ -16,6 +16,13 @@ using DSharpPlus.Interactivity.Extensions;
 using DSharpPlus.SlashCommands;
 using System.Globalization;
 using Palantir.PalantirCommandModule;
+using Palantir.Model;
+
+
+
+//private readonly string conn = $"server={Program.DatabaseHost};user id={Program.DatabaseUser};database=palantir";
+//protected override void OnConfiguring(DbContextOptionsBuilder options)
+//    => options.UseMySql(conn, ServerVersion.AutoDetect(conn));
 
 namespace Palantir
 {
