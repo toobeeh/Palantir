@@ -1,17 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Palantir.Model;
+#nullable disable
 
-public partial class SplitCredit
+namespace Palantir.Model
 {
-    public int Login { get; set; }
-
-    public int Split { get; set; }
-
-    public string RewardDate { get; set; } = null!;
-
-    public string Comment { get; set; } = null!;
-
-    public int ValueOverride { get; set; }
+    public partial class SplitCredit
+    {
+        public int Login { get; set; }
+        public int Split { get; set; }
+        public string RewardDate { get; set; }
+        public string Comment { get; set; }
+        public int ValueOverride { get; set; }
+    }
 }

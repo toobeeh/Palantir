@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 #nullable disable
 
-namespace Palantir.NewDbModels
+namespace Palantir.Model
 {
     public partial class Award
     {

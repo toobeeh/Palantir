@@ -7,10 +7,9 @@ using Newtonsoft.Json;
 using System.Threading.Tasks;
 using Quartz;
 using MoreLinq;
-using Palantir.Model;
 using Microsoft.Extensions.Logging;
 using System.Xml.Linq;
-using Palantir.NewDbModels;
+using Palantir.Model;
 
 namespace Palantir
 {
@@ -556,7 +555,7 @@ namespace Palantir
                 {
                     LobbyKey = lobbyKey,
                     LobbyPlayerId = Convert.ToInt32(lobbyPlayerID),
-                    Date = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds(),
+                    Date = Convert.ToInt32(new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds()),
                     Slot = 0,
                     ItemType = "scene",
                     ItemId = scenes[0].Id,
@@ -572,7 +571,7 @@ namespace Palantir
                 {
                     LobbyKey = lobbyKey,
                     LobbyPlayerId = Convert.ToInt32(lobbyPlayerID),
-                    Date = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds(),
+                    Date = Convert.ToInt32(new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds()),
                     Slot = slot.Slot + 1,
                     ItemType = "sprite",
                     ItemId = slot is object ? slot.ID : 0
@@ -585,7 +584,7 @@ namespace Palantir
                     {
                         LobbyKey = lobbyKey,
                         LobbyPlayerId = Convert.ToInt32(lobbyPlayerID),
-                        Date = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds(),
+                        Date = Convert.ToInt32(new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds()),
                         Slot = slot.Slot + 1,
                         ItemType = "shift",
                         ItemId = rainbowSprites[slot.ID]

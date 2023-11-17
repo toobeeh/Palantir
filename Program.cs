@@ -16,6 +16,7 @@ using DSharpPlus.Interactivity.Extensions;
 using DSharpPlus.SlashCommands;
 using System.Globalization;
 using Palantir.PalantirCommandModule;
+using Palantir.Model;
 
 
 

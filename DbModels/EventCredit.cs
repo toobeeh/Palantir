@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Palantir.Model;
+#nullable disable
 
-public partial class EventCredit
+namespace Palantir.Model
 {
-    public int Login { get; set; }
-
-    public int EventDropId { get; set; }
-
-    public int Credit { get; set; }
+    public partial class EventCredit
+    {
+        public int Login { get; set; }
+        public int EventDropId { get; set; }
+        public int Credit { get; set; }
+    }
 }

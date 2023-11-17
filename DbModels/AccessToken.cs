@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Palantir.Model;
+#nullable disable
 
-public partial class AccessToken
+namespace Palantir.Model
 {
-    public int Login { get; set; }
-
-    public string AccessToken1 { get; set; } = null!;
-
-    public DateOnly CreatedAt { get; set; }
+    public partial class AccessToken
+    {
+        public int Login { get; set; }
+        public string AccessToken1 { get; set; }
+        public DateTime CreatedAt { get; set; }
+    }
 }
