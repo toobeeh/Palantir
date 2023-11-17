@@ -19,7 +19,6 @@ using Microsoft.EntityFrameworkCore;
 using Palantir.Model;
 using System.IO;
 using Palantir.PalantirCommandModule;
-using MoreLinq;
 
 namespace Palantir.Commands
 {
@@ -917,6 +916,7 @@ namespace Palantir.Commands
 
         [Description("Show your awards inventory and open your weekly award pack.")]
         [Command("awards")]
+        [RequireBeta]
         public async Task Awards(CommandContext context)
         {
             PermissionFlag flags = new PermissionFlag(Program.Feanor.GetFlagByMember(context.User));
