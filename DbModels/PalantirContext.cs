@@ -54,7 +54,7 @@ namespace Palantir.Model
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseMySql("server=mariadb.typo.rip;database=palantir;user=tobeh;password=CanyonUltimateCFSL7", Microsoft.EntityFrameworkCore.ServerVersion.Parse("10.11.3-mariadb"));
+                optionsBuilder.UseMySql($"server={Program.DatabaseHost};database=palantir;user={Program.DatabaseUser};", Microsoft.EntityFrameworkCore.ServerVersion.Parse("10.11.3-mariadb"));
             }
         }
 

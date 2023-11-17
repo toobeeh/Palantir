@@ -50,6 +50,7 @@ namespace Palantir
 
         static async Task Main(string[] args)
         {
+
             CultureInfo culture = new CultureInfo("de-AT");
             culture.NumberFormat.NumberDecimalSeparator = ".";
             CultureInfo.DefaultThreadCurrentCulture = culture;
