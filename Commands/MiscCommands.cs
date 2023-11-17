@@ -959,6 +959,8 @@ namespace Palantir.Commands
                 embed.AddField("Award Pack", "You need to wait " + cooldown.ToString(@"dd\d\ hh\h\ mm\m\ ss\s") + " to open your next Award Pack.\nYou can open a pack once a week. \nThe more Bubbles you have collected in the past week, the better are the chances to get rare awards!");
             }
 
+            message.WithEmbed(embed.Build());
+
             var sent = await context.Message.RespondAsync(message);
             var result = await sent.WaitForButtonAsync(TimeSpan.FromMinutes(1));
             if(result.TimedOut)
