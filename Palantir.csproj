@@ -28,6 +28,10 @@
     <PackageReference Include="DSharpPlus.Interactivity" Version="4.4.2" />
     <PackageReference Include="DSharpPlus.SlashCommands" Version="4.4.2" />
     <PackageReference Include="LibGit2Sharp" Version="0.27.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.0">
+      <!--<PrivateAssets>all</PrivateAssets>-->
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.4" />
     <PackageReference Include="morelinq" Version="3.3.2" />
     <PackageReference Include="MoreLinq.Source.MoreEnumerable.Batch" Version="1.0.2">
@@ -35,7 +39,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="7.0.0" />
+    <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="5.0.0" />
     <PackageReference Include="Quartz" Version="3.3.3" />
     <PackageReference Include="SixLabors.ImageSharp" Version="3.0.0" />
     <PackageReference Include="SkiaSharp" Version="2.88.0-preview.127" />

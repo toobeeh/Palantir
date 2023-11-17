@@ -711,6 +711,21 @@ namespace Palantir
             return profiles;
         }
 
+        public static TimeSpan AwardPackCooldown(int login)
+        {
+            TimeSpan cooldown = new();
+            PalantirContext db = new();
+            var member = db.Members.FirstOrDefault(m => m.Login == login);
+            var flags = new PermissionFlag(Convert.ToInt16(member.Flag));
+            if (member.AwardPackOpened == null || flags.BotAdmin) cooldown = TimeSpan.FromSeconds(0);
+            else
+            {
+                cooldown = TimeSpan.FromMilliseconds(TimeSpan.FromDays(7).TotalMilliseconds - (DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - Convert.ToDouble(member.AwardPackOpened)));
+                if (cooldown.TotalSeconds < 0) cooldown = TimeSpan.FromSeconds(0);
+            }
+            db.Dispose();
+            return cooldown;
+        }
     }
 
     public class Sprite

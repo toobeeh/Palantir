@@ -28,4 +28,5 @@ public partial class Member
     public string Streamcode { get; set; } = null!;
 
     public string? RainbowSprites { get; set; }
+    public long? AwardPackOpened { get; set; }
 }

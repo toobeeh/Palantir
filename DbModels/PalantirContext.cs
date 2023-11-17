@@ -232,6 +232,7 @@ namespace Palantir.Model
                     .HasColumnName("Member");
                 entity.Property(e => e.Patronize).HasColumnType("text");
                 entity.Property(e => e.RainbowSprites).HasColumnType("text");
+                entity.Property(e => e.AwardPackOpened).HasColumnType("bigint(20)");
                 entity.Property(e => e.Scenes)
                     .HasDefaultValueSql("''")
                     .HasColumnType("text");

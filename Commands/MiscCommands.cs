@@ -914,6 +914,40 @@ namespace Palantir.Commands
 
         }
 
+        [Description("Show your awards inventory and open your weekly award pack.")]
+        [Command("awards")]
+        public async Task Awards(CommandContext context)
+        {
+            PermissionFlag flags = new PermissionFlag(Program.Feanor.GetFlagByMember(context.User));
+            int login = Convert.ToInt32(BubbleWallet.GetLoginOfMember(context.User.Id.ToString()));
+
+            var message = new DiscordMessageBuilder();
+
+            var embed = new DiscordEmbedBuilder();
+            embed.WithTitle(context.Message.Author.Username + "s Award Inventory");
+            embed.WithColor(DiscordColor.Magenta);
+
+            var cooldown = BubbleWallet.AwardPackCooldown(login);
+            if(cooldown.TotalSeconds == 0)
+            {
+                var button = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Primary, "openPack", "✨ Open Award Pack");
+
+                //message.AddComponents();
+            }
+
+            var sent = await context.Message.RespondAsync(message);
+            var result = await sent.WaitForButtonAsync(TimeSpan.FromMinutes(1));
+            if(result.TimedOut)
+            {
+                message.ClearComponents();
+                await sent.ModifyAsync(message);
+            }
+            else
+            {
+
+            }
+        }
+
 
         //[Description("Set your unique typo lobby stream code.")]
         //[Command("streamcode")]
