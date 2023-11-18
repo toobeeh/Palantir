@@ -783,10 +783,10 @@ namespace Palantir
 
     public enum AwardRarity
     {
-        Common,
-        Special,
-        Epic,
-        Legendary
+        Common = 1,
+        Special = 2,
+        Epic = 3,
+        Legendary = 4
     }
 
     public class MappedAwardInv
