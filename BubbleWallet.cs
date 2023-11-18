@@ -777,7 +777,7 @@ namespace Palantir
                 "<a:special_award:1175247327309598730> ",
                 "<a:epic_award:1175247311660658709> ",
                 "<a:legendary_award:1175245828189859930>"
-            } [rarity + 1];
+            } [rarity - 1];
         }
     }
 
