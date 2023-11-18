@@ -983,6 +983,75 @@ namespace Palantir.Commands
             }
         }
 
+        [Description("Show your received awards and the images.")]
+        [Command("gallery")]
+        [RequireBeta]
+        public async Task Gallery(CommandContext context)
+        {
+            PermissionFlag flags = new PermissionFlag(Program.Feanor.GetFlagByMember(context.User));
+            int login = Convert.ToInt32(BubbleWallet.GetLoginOfMember(context.User.Id.ToString()));
+            var inv = BubbleWallet.GetAwardInventory(login);
+            var received = BubbleWallet.GetReceivedAwards(login);
+            var given = BubbleWallet.GetGivendAwards(login);
+
+            var message = new DiscordMessageBuilder();
+
+            var embed = new DiscordEmbedBuilder();
+            embed.WithTitle(context.Message.Author.Username + "s Award Inventory");
+            embed.WithColor(DiscordColor.Magenta);
+
+            var awardReceivedString = string.Join("\n", received.GroupBy(i => i.award.Rarity).OrderBy(g => g.FirstOrDefault().award.Rarity).ToList().ConvertAll(group =>
+            {
+                var groupAward = group.FirstOrDefault().award;
+                var count = group.Count();
+                return "- " + count + " " + ((AwardRarity)groupAward.Rarity) + " awarded";
+            }));
+            embed.AddField("`🎁`  **Received Awards**", awardReceivedString, true);
+
+            var awardGivenString = string.Join("\n", given.GroupBy(i => i.award.Rarity).OrderBy(g => g.FirstOrDefault().award.Rarity).ToList().ConvertAll(group =>
+            {
+                var groupAward = group.FirstOrDefault().award;
+                var count = group.Count();
+                return "- " + count + " " + ((AwardRarity)groupAward.Rarity) + " given";
+            }));
+            embed.AddField("`👏`  **Given Awards** ", awardGivenString, true);
+
+            var awardInvString = string.Join("\n", inv.GroupBy(i => i.award.Rarity).OrderBy(g => g.FirstOrDefault().award.Rarity).ToList().ConvertAll(group =>
+            {
+                var groupAward = group.FirstOrDefault().award;
+                var distincts = System.Linq.Enumerable.DistinctBy(group, i => i.award.Id).ToList();
+                var awards = string.Join("\n", distincts.ConvertAll(item => "> " + item.award.Name + " (x" + group.Where(i => i.award.Id == item.award.Id).Count() + ")"));
+                return "_ _ _ _" + BubbleWallet.GetRarityIcon(groupAward.Rarity) + " **" + ((AwardRarity)groupAward.Rarity) + "**\n" + awards + "\n_ _";
+            }));
+            embed.AddField("\n_ _\n`📦`  **Available Awards**", awardInvString, false);
+
+            var cooldown = BubbleWallet.AwardPackCooldown(login);
+            if (cooldown.TotalSeconds == 0)
+            {
+                var button = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Primary, "openPack", "✨ Open Award Pack");
+                embed.AddField("Award Pack", "You can open your award pack now!");
+                message.AddComponents(button);
+            }
+            else
+            {
+                embed.AddField("Award Pack", "You need to wait " + cooldown.ToString(@"dd\d\ hh\h\ mm\m\ ss\s") + " to open your next Award Pack.\nYou can open a pack once a week. \nThe more Bubbles you have collected in the past week, the better are the chances to get rare awards!");
+            }
+
+            message.WithEmbed(embed.Build());
+
+            var sent = await context.Message.RespondAsync(message);
+            var result = await sent.WaitForButtonAsync(TimeSpan.FromMinutes(1));
+            if (result.TimedOut)
+            {
+                message.ClearComponents();
+                await sent.ModifyAsync(message);
+            }
+            else
+            {
+                // do cool stuff here
+            }
+        }
+
 
         //[Description("Set your unique typo lobby stream code.")]
         //[Command("streamcode")]
