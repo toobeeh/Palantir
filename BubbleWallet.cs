@@ -748,6 +748,17 @@ namespace Palantir
             return awards;
         }
 
+        public static List<MappedAwardInv> GetGivendAwards(int login)
+        {
+
+            PalantirContext db = new PalantirContext();
+            var inv = db.Awardees.Where(p => p.OwnerLogin == login && p.AwardeeLogin != null).ToList();
+            db.Dispose();
+            var awards = GetAwards();
+
+            return inv.ConvertAll(i => new MappedAwardInv() { inv = i, award = awards.FirstOrDefault(a => a.Id == i.Award) });
+        }
+
         public static List<MappedAwardInv> GetReceivedAwards(int login)
         {
 
@@ -758,6 +769,24 @@ namespace Palantir
 
             return inv.ConvertAll(i => new MappedAwardInv() { inv = i, award = awards.FirstOrDefault(a => a.Id == i.Award) });
         }
+
+        public static string GetRarityIcon(int rarity)
+        {
+            return new string[] {
+                "<a:common_award:1175247351359737926>",
+                "<a:special_award:1175247327309598730> ",
+                "<a:epic_award:1175247311660658709> ",
+                "<a:legendary_award:1175245828189859930>"
+            } [rarity];
+        }
+    }
+
+    public enum AwardRarity
+    {
+        Common,
+        Special,
+        Epic,
+        Legendary
     }
 
     public class MappedAwardInv

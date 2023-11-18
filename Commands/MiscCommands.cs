@@ -923,6 +923,7 @@ namespace Palantir.Commands
             int login = Convert.ToInt32(BubbleWallet.GetLoginOfMember(context.User.Id.ToString()));
             var inv = BubbleWallet.GetAwardInventory(login);
             var received = BubbleWallet.GetReceivedAwards(login);
+            var given = BubbleWallet.GetGivendAwards(login);
 
             var message = new DiscordMessageBuilder();
 
@@ -930,22 +931,30 @@ namespace Palantir.Commands
             embed.WithTitle(context.Message.Author.Username + "s Award Inventory");
             embed.WithColor(DiscordColor.Magenta);
 
-            var awardInvString = string.Join("\n_ _\n", inv.GroupBy(i => i.award.Rarity).OrderBy(g => g.FirstOrDefault().award.Rarity).ToList().ConvertAll(group =>
+            var awardInvString = string.Join("\n", inv.GroupBy(i => i.award.Rarity).OrderBy(g => g.FirstOrDefault().award.Rarity).ToList().ConvertAll(group =>
             {
                 var groupAward = group.FirstOrDefault().award;
                 var distincts = System.Linq.Enumerable.DistinctBy(group, i => i.award.Id).ToList();
                 var awards = string.Join("\n", distincts.ConvertAll(item => "- " + item.award.Name + " (x" + group.Where(i => i.award.Id == item.award.Id).Count() + ")"));
-                return "**" + groupAward.Rarity + "**:\n" + awards;
+                return BubbleWallet.GetRarityIcon(groupAward.Rarity) + "**" + ((AwardRarity)groupAward.Rarity) + "**:\n" + awards;
             }));
-            embed.AddField("Available Awards", awardInvString);
+            embed.AddField("📦 Available Awards", awardInvString, true);
 
-            var awardReceivedString = string.Join("\n", inv.GroupBy(i => i.award.Rarity).OrderBy(g => g.FirstOrDefault().award.Rarity).ToList().ConvertAll(group =>
+            var awardReceivedString = string.Join("\n", received.GroupBy(i => i.award.Rarity).OrderBy(g => g.FirstOrDefault().award.Rarity).ToList().ConvertAll(group =>
             {
                 var groupAward = group.FirstOrDefault().award;
                 var count = group.Count();
-                return "**" + groupAward.Rarity + "**: " + count + " awarded";
+                return count + "x " + BubbleWallet.GetRarityIcon(groupAward.Rarity) +  " " + ((AwardRarity) groupAward.Rarity) + " awarded";
             }));
-            embed.AddField("Received Awards", awardReceivedString);
+            embed.AddField("🎁 Received Awards", awardReceivedString, true);
+
+            var awardGivenString = string.Join("\n", given.GroupBy(i => i.award.Rarity).OrderBy(g => g.FirstOrDefault().award.Rarity).ToList().ConvertAll(group =>
+            {
+                var groupAward = group.FirstOrDefault().award;
+                var count = group.Count();
+                return count + "x " + BubbleWallet.GetRarityIcon(groupAward.Rarity) + " " + ((AwardRarity)groupAward.Rarity) + " given";
+            }));
+            embed.AddField("👏 Given Awards", awardGivenString, true);
 
             var cooldown = BubbleWallet.AwardPackCooldown(login);
             if(cooldown.TotalSeconds == 0)
