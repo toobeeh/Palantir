@@ -20,6 +20,7 @@ using Palantir.Model;
 using System.IO;
 using Palantir.PalantirCommandModule;
 using DSharpPlus.Interactivity.EventHandling;
+using DSharpPlus.EventArgs;
 
 namespace Palantir.Commands
 {
@@ -980,13 +981,12 @@ namespace Palantir.Commands
             message.WithEmbed(embed.Build());
 
             var sent = await context.Message.RespondAsync(message);
-            var result = await sent.WaitForButtonAsync(context.User, TimeSpan.FromMinutes(1));
-            if(result.TimedOut)
-            {
-                message.ClearComponents();
-                await sent.ModifyAsync(message);
-            }
-            else
+
+            InteractivityResult<ComponentInteractionCreateEventArgs> result;
+            if (sent.Components.Count() > 0) result = await sent.WaitForButtonAsync(context.User, TimeSpan.FromMinutes(1));
+            else return;
+
+            if (!result.TimedOut)
             {
                 var newAwards = BubbleWallet.OpenAwardPack(login, packLevel);
                 var builder = new DiscordInteractionResponseBuilder();
@@ -1005,6 +1005,9 @@ namespace Palantir.Commands
 
                 await result.Result.Interaction.CreateResponseAsync(DSharpPlus.InteractionResponseType.ChannelMessageWithSource, builder);
             }
+            
+            message.ClearComponents();
+            await sent.ModifyAsync(message);
         }
 
         [Description("Show your received awards and the images.")]
