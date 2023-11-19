@@ -173,7 +173,7 @@ namespace Palantir
                 try
                 {
                     // show as typing 
-                    await TargetChannel.TriggerTypingAsync();
+                    //await TargetChannel.TriggerTypingAsync();
 
                     // try to build lobby message
                     string content = BuildLobbyContent();

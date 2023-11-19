@@ -19,6 +19,7 @@ using Microsoft.EntityFrameworkCore;
 using Palantir.Model;
 using System.IO;
 using Palantir.PalantirCommandModule;
+using DSharpPlus.Interactivity.EventHandling;
 
 namespace Palantir.Commands
 {
@@ -924,12 +925,15 @@ namespace Palantir.Commands
             var inv = BubbleWallet.GetAwardInventory(login);
             var received = BubbleWallet.GetReceivedAwards(login);
             var given = BubbleWallet.GetGivendAwards(login);
+            var packLevel = BubbleWallet.GetAwardPackLevel(login);
 
             var message = new DiscordMessageBuilder();
 
             var embed = new DiscordEmbedBuilder();
             embed.WithTitle(context.Message.Author.Username + "s Award Inventory");
             embed.WithColor(DiscordColor.Magenta);
+
+            embed.WithDescription("Awards are items that you can give on skribbl to special drawings.\nThe person who receives the award will see it in their gallery.\n");
 
             var awardReceivedString = string.Join("\n", received.GroupBy(i => i.award.Rarity).OrderBy(g => g.FirstOrDefault().award.Rarity).ToList().ConvertAll(group =>
             {
@@ -951,10 +955,12 @@ namespace Palantir.Commands
             {
                 var groupAward = group.FirstOrDefault().award;
                 var distincts = System.Linq.Enumerable.DistinctBy(group, i => i.award.Id).ToList();
-                var awards = string.Join("\n", distincts.ConvertAll(item => "> " + item.award.Name + " (x" + group.Where(i => i.award.Id == item.award.Id).Count() + ")"));
-                return BubbleWallet.GetRarityIcon(groupAward.Rarity) + " **" + ((AwardRarity)groupAward.Rarity) + "**\n" + awards + "\n_ _\n";
+                var awards = string.Join("\n", distincts.ConvertAll(item => "> " + item.award.Name + " `(x" + group.Where(i => i.award.Id == item.award.Id).Count() + ")`"));
+                return "‎ " + BubbleWallet.GetRarityIcon(groupAward.Rarity) +  " ‎  **" + ((AwardRarity)groupAward.Rarity) + "**\n" + awards + "\n" ;
             }));
-            embed.AddField("\n_ _\n`📦`  **Available Awards**", awardInvString, false);
+            embed.AddField("\n_ _\n**Available Awards**", "You have following awards ready to gift on skribbl:\n_ _\n _ _" + awardInvString, false);
+
+            embed.AddField("_ _\nAward Gallery", "You can see all your awarded drawings with `>gallery`");
 
             var cooldown = BubbleWallet.AwardPackCooldown(login);
             if(cooldown.TotalSeconds == 0)
@@ -968,10 +974,12 @@ namespace Palantir.Commands
                 embed.AddField("Award Pack", "You need to wait " + cooldown.ToString(@"dd\d\ hh\h\ mm\m\ ss\s") + " to open your next Award Pack.\nYou can open a pack once a week. \nThe more Bubbles you have collected in the past week, the better are the chances to get rare awards!");
             }
 
+            embed.WithFooter("Award pack level: " + packLevel.Rarity + " (" + packLevel.CollectedBubbles + " Bubbles)");
+
             message.WithEmbed(embed.Build());
 
             var sent = await context.Message.RespondAsync(message);
-            var result = await sent.WaitForButtonAsync(TimeSpan.FromMinutes(1));
+            var result = await sent.WaitForButtonAsync(context.User, TimeSpan.FromMinutes(1));
             if(result.TimedOut)
             {
                 message.ClearComponents();
@@ -979,77 +987,78 @@ namespace Palantir.Commands
             }
             else
             {
-                // do cool stuff here
+                var newAwards = BubbleWallet.OpenAwardPack(login, packLevel);
+                var builder = new DiscordInteractionResponseBuilder();
+
+                builder.WithContent("### " + context.User.Username + " opened their " + packLevel + " award pack:");
+
+                foreach(var award in newAwards)
+                {
+                    builder.AddEmbed(new DiscordEmbedBuilder()
+                        .WithTitle("You pulled a **" + award.award.Name + "**!")
+                        .WithDescription(award.award.Description + "\n \n" + BubbleWallet.GetRarityIcon(award.award.Rarity) + "  " + ((AwardRarity)award.award.Rarity) + " Award")
+                        .WithThumbnail(award.award.Url)
+                        .WithColor(DiscordColor.Magenta)
+                    );
+                }
+
+                await result.Result.Interaction.CreateResponseAsync(DSharpPlus.InteractionResponseType.ChannelMessageWithSource, builder);
             }
         }
 
         [Description("Show your received awards and the images.")]
         [Command("gallery")]
         [RequireBeta]
-        public async Task Gallery(CommandContext context)
+        public async Task Gallery(CommandContext context, int? id = null)
         {
-            PermissionFlag flags = new PermissionFlag(Program.Feanor.GetFlagByMember(context.User));
             int login = Convert.ToInt32(BubbleWallet.GetLoginOfMember(context.User.Id.ToString()));
-            var inv = BubbleWallet.GetAwardInventory(login);
-            var received = BubbleWallet.GetReceivedAwards(login);
-            var given = BubbleWallet.GetGivendAwards(login);
+            var list = BubbleWallet.GetAwardGallery(login);
 
-            var message = new DiscordMessageBuilder();
-
-            var embed = new DiscordEmbedBuilder();
-            embed.WithTitle(context.Message.Author.Username + "s Award Inventory");
-            embed.WithColor(DiscordColor.Magenta);
-
-            var awardReceivedString = string.Join("\n", received.GroupBy(i => i.award.Rarity).OrderBy(g => g.FirstOrDefault().award.Rarity).ToList().ConvertAll(group =>
+            if(id is null)
             {
-                var groupAward = group.FirstOrDefault().award;
-                var count = group.Count();
-                return "- " + count + " " + ((AwardRarity)groupAward.Rarity) + " awarded";
-            }));
-            embed.AddField("`🎁`  **Received Awards**", awardReceivedString, true);
+                var items = list.ConvertAll(award =>
+                    award.image is not null ?
+                    $"- {BubbleWallet.GetRarityIcon(award.award.Rarity)} {award.award.Name}: [{award.image.Title}](https://eu2.contabostorage.com/45a0651c8baa459daefd432c0307bb5b:cloud/{context.User.Id}/{award.image.ImageId}/image.png)" :
+                    $"- {BubbleWallet.GetRarityIcon(award.award.Rarity)} {award.award.Name}: No image found :(");
 
-            var awardGivenString = string.Join("\n", given.GroupBy(i => i.award.Rarity).OrderBy(g => g.FirstOrDefault().award.Rarity).ToList().ConvertAll(group =>
-            {
-                var groupAward = group.FirstOrDefault().award;
-                var count = group.Count();
-                return "- " + count + " " + ((AwardRarity)groupAward.Rarity) + " given";
-            }));
-            embed.AddField("`👏`  **Given Awards** ", awardGivenString, true);
+                var pages = list.Batch(25).ToList().Select((batch, index) =>
+                {
+                    var builder = new DiscordEmbedBuilder()
+                        .WithColor(DiscordColor.Magenta)
+                        .WithFooter("To view a single item, use >gallery [id]")
+                        .WithTitle(context.User.Username + "s Award Gallery");
+                    var pageIndex = index * 25;
 
-            var awardInvString = string.Join("\n", inv.GroupBy(i => i.award.Rarity).OrderBy(g => g.FirstOrDefault().award.Rarity).ToList().ConvertAll(group =>
-            {
-                var groupAward = group.FirstOrDefault().award;
-                var distincts = System.Linq.Enumerable.DistinctBy(group, i => i.award.Id).ToList();
-                var awards = string.Join("\n", distincts.ConvertAll(item => "> " + item.award.Name + " (x" + group.Where(i => i.award.Id == item.award.Id).Count() + ")"));
-                return "_ _ _ _" + BubbleWallet.GetRarityIcon(groupAward.Rarity) + " **" + ((AwardRarity)groupAward.Rarity) + "**\n" + awards + "\n_ _";
-            }));
-            embed.AddField("\n_ _\n`📦`  **Available Awards**", awardInvString, false);
+                    foreach (var item in batch) {
 
-            var cooldown = BubbleWallet.AwardPackCooldown(login);
-            if (cooldown.TotalSeconds == 0)
-            {
-                var button = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Primary, "openPack", "✨ Open Award Pack");
-                embed.AddField("Award Pack", "You can open your award pack now!");
-                message.AddComponents(button);
+                        pageIndex++;
+                        if (item.image is not null) builder.AddField(
+                            "`#" + pageIndex + "` " + item.image.Title, 
+                            $"{BubbleWallet.GetRarityIcon(item.award.Rarity)}  {item.award.Name}\n`🫂`‎ By {BubbleWallet.GetUsername(item.inv.OwnerLogin)}‎ ‎ ‎ \n`📅`‎ On <t:{(int)(item.inv.Date/1000)}:d>\n`\U0001fa9f`‎ [Show Image](https://eu2.contabostorage.com/45a0651c8baa459daefd432c0307bb5b:cloud/{context.User.Id}/{item.image.ImageId}/image.png)", 
+                            true);
+                        else builder.AddField("Unknown Image :(", $"{BubbleWallet.GetRarityIcon(item.award.Rarity)}  {item.award.Name}\n`\U0001fac2`‎ By {BubbleWallet.GetUsername(item.inv.OwnerLogin)}‎ ‎ ‎  \n`📅`‎ On <t:{(int)(item.inv.Date / 1000)}:d>", true);
+                    }
+                    return new Page(embed: builder);
+                });
+
+                await context.Client.GetInteractivity().SendPaginatedMessageAsync(context.Channel, context.User, pages);
             }
             else
             {
-                embed.AddField("Award Pack", "You need to wait " + cooldown.ToString(@"dd\d\ hh\h\ mm\m\ ss\s") + " to open your next Award Pack.\nYou can open a pack once a week. \nThe more Bubbles you have collected in the past week, the better are the chances to get rare awards!");
-            }
+                id--;
+                if (id < 0 || id > list.Count) await Program.SendEmbed(context.Channel, "Oopsie", "There's now image for this ID. Check >gallery again!");
+                var item = list[(int)id];
 
-            message.WithEmbed(embed.Build());
+                var embed = new DiscordEmbedBuilder()
+                    .WithTitle(item.image.Title + " by " + context.User.Username)
+                    .WithImageUrl($"https://eu2.contabostorage.com/45a0651c8baa459daefd432c0307bb5b:cloud/{context.User.Id}/{item.image.ImageId}/image.png")
+                    .WithThumbnail(item.award.Url)
+                    .WithColor(DiscordColor.Magenta)
+                    .WithDescription($"‎‎{BubbleWallet.GetRarityIcon(item.award.Rarity)}  **{item.award.Name}**\n> {item.award.Description}\n> \\- {BubbleWallet.GetUsername(item.inv.OwnerLogin)} on <t:{(int)(item.inv.Date / 1000)}:d>\n");
 
-            var sent = await context.Message.RespondAsync(message);
-            var result = await sent.WaitForButtonAsync(TimeSpan.FromMinutes(1));
-            if (result.TimedOut)
-            {
-                message.ClearComponents();
-                await sent.ModifyAsync(message);
+                await context.RespondAsync(embed);
             }
-            else
-            {
-                // do cool stuff here
-            }
+              
         }
 
 

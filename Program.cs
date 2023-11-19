@@ -39,7 +39,7 @@ namespace Palantir
         public static InteractivityExtension Interactivity;
         public static readonly string PalantirToken = Environment.GetEnvironmentVariable("PALANTIR_TOKEN");
         public static readonly string ServantToken = Environment.GetEnvironmentVariable("SERVANT_TOKEN");
-        public static readonly string DatabaseHost = Environment.GetEnvironmentVariable("DB_HOST");
+        public static string DatabaseHost = Environment.GetEnvironmentVariable("DB_HOST");
         public static readonly string DatabaseUser = Environment.GetEnvironmentVariable("DB_USER");
         public static readonly string StaticDataPath = Environment.GetEnvironmentVariable("STATIC_DATA_PATH");
         public static readonly string CacheDataPath = Environment.GetEnvironmentVariable("CACHE_DATA_PATH");
@@ -50,6 +50,8 @@ namespace Palantir
 
         static async Task Main(string[] args)
         {
+
+            //await RunNightlyTest();
 
             CultureInfo culture = new CultureInfo("de-AT");
             culture.NumberFormat.NumberDecimalSeparator = ".";
@@ -197,6 +199,30 @@ namespace Palantir
 
             Console.WriteLine("All done!");
 
+            await Task.Delay(-1);
+        }
+
+        private static async Task RunNightlyTest()
+        {
+            var client = new DiscordClient(new DiscordConfiguration
+            {
+                Token = "xx",
+                TokenType = TokenType.Bot
+            });
+            await client.ConnectAsync();
+            client.UseInteractivity();
+            CommandLock = new CommandLock();
+            var commands = client.UseCommandsNext(new CommandsNextConfiguration
+            {
+                StringPrefixes = new string[] { ">" },
+                DmHelp = false,
+                IgnoreExtraArguments = true,
+                CaseSensitive = false
+            });
+            TypoTestground = await client.GetGuildAsync(779435254225698827);
+            Feanor = new();
+
+            commands.RegisterCommands<Palantir.Commands.MiscCommands>();
             await Task.Delay(-1);
         }
 

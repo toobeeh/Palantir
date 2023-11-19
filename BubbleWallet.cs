@@ -54,7 +54,12 @@ namespace Palantir
         public static int GetBubbles(string login)
         {
             int bubbles = 0;
-            BubbleCache.TryGetValue(login, out bubbles);
+            if(! BubbleCache.TryGetValue(login, out bubbles))
+            {
+                var ctx = new PalantirContext();
+                bubbles = ctx.Members.FirstOrDefault(m => m.Login.ToString() == login).Bubbles;
+                ctx.Dispose();
+            }
             return bubbles;
         }
 
@@ -720,11 +725,68 @@ namespace Palantir
             if (member.AwardPackOpened == null || flags.BotAdmin) cooldown = TimeSpan.FromSeconds(0);
             else
             {
-                cooldown = TimeSpan.FromMilliseconds(TimeSpan.FromDays(7).TotalMilliseconds - (DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - Convert.ToDouble(member.AwardPackOpened)));
+                cooldown = TimeSpan.FromMilliseconds(TimeSpan.FromDays(flags.Patron ? 5 : 7).TotalMilliseconds - (DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - Convert.ToDouble(member.AwardPackOpened)));
                 if (cooldown.TotalSeconds < 0) cooldown = TimeSpan.FromSeconds(0);
             }
             db.Dispose();
             return cooldown;
+        }
+
+        public static AwardPackLevel GetAwardPackLevel(int login)
+        {
+            var bubbles = GetCollectedBubblesInTimespan(DateTime.Now.AddDays(-7), DateTime.Now.AddDays(1), login.ToString());
+
+            var level = new AwardPackLevel();
+            level.CollectedBubbles = bubbles;
+            if (bubbles > 15000) level.Rarity = AwardRarity.Legendary;
+            if (bubbles > 5000) level.Rarity = AwardRarity.Epic;
+            if (bubbles > 2500) level.Rarity = AwardRarity.Special;
+            else level.Rarity = AwardRarity.Common;
+            return level;
+        }
+
+        public static List<MappedAwardInv> OpenAwardPack(int login, AwardPackLevel packLevel)
+        {
+            double[] range =  
+                packLevel.Rarity == AwardRarity.Common ? new double[] { 0.55, 0.8, 0.95 } :
+                packLevel.Rarity == AwardRarity.Common ? new double[] { 0.4, 0.7, 0.9 } :
+                packLevel.Rarity == AwardRarity.Common ? new double[] { 0.3, 0.5, 0.85 } :
+                new double[] { 0.2, 0.5, 0.7 };
+
+            var available = GetAwards();
+
+            Award GetAward()
+            {
+                var result = new Random().NextDouble();
+
+                AwardRarity awardRarity;
+                if (result > range[2]) awardRarity = AwardRarity.Legendary;
+                else if (result > range[1]) awardRarity = AwardRarity.Epic;
+                else if (result > range[0]) awardRarity = AwardRarity.Special;
+                else awardRarity = AwardRarity.Common;
+
+                var awardResult = available.Where(a => a.Rarity == (int)awardRarity).RandomSubset(1).First();
+                return awardResult;
+            }
+
+            var drawnAwards = (new List<Award>() { GetAward(), GetAward() }).ConvertAll(award =>
+            {
+                var awardee = new Awardee();
+                awardee.Award = Convert.ToInt16(award.Id);
+                awardee.OwnerLogin = login;
+
+                var inv = new MappedAwardInv();
+                inv.award = award;
+                inv.inv = awardee;
+                return inv;
+            });
+
+            var context = new PalantirContext();
+            context.Awardees.AddRange(drawnAwards.ConvertAll(a => a.inv));
+            context.SaveChanges();
+            context.Dispose();
+
+            return drawnAwards;
         }
 
         public static List<MappedAwardInv> GetAwardInventory(int login)
@@ -770,6 +832,17 @@ namespace Palantir
             return inv.ConvertAll(i => new MappedAwardInv() { inv = i, award = awards.FirstOrDefault(a => a.Id == i.Award) });
         }
 
+        public static List<MappedAwardGalleryInv> GetAwardGallery(int login)
+        {
+            var awards = GetReceivedAwards(login);
+            var imageIds = awards.Select(a => a.inv.ImageId);
+            var ctx = new PalantirContext();
+            var tags = ctx.CloudTags.Where(t => t.Owner == login && imageIds.Any(id => id == t.ImageId)).ToList();
+            ctx.Dispose();
+
+            return awards.ConvertAll(a => new MappedAwardGalleryInv() { inv= a.inv, award= a.award, image= tags.Find(t => t.ImageId == a.inv.ImageId) });
+        }
+
         public static string GetRarityIcon(int rarity)
         {
             return new string[] {
@@ -779,6 +852,21 @@ namespace Palantir
                 "<a:legendary_award:1175245828189859930>"
             } [rarity - 1];
         }
+
+        public static string GetUsername(int login)
+        {
+            var ctx = new PalantirContext();
+            var user = ctx.Members.FirstOrDefault(u => u.Login == login).Member1;
+            ctx.Dispose();
+
+            return JsonConvert.DeserializeObject<Member>(user).UserName;
+        }
+    }
+
+    public class AwardPackLevel
+    {
+        public AwardRarity Rarity;
+        public int CollectedBubbles;
     }
 
     public enum AwardRarity
@@ -793,6 +881,11 @@ namespace Palantir
     {
         public Awardee inv;
         public Award award;
+    }
+
+    public class MappedAwardGalleryInv : MappedAwardInv
+    {
+        public CloudTag image;
     }
 
     public class Sprite

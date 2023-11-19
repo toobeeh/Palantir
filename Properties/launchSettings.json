@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "Palantir": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "DB_HOST": "mariadb.typo.rip",
+        "DB_USER": "palantir"
+      }
+    }
+  }
+}
