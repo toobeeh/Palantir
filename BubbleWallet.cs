@@ -774,8 +774,8 @@ namespace Palantir
         {
             return new string[] {
                 "<a:common_award:1175247351359737926>",
-                "<a:special_award:1175247327309598730> ",
-                "<a:epic_award:1175247311660658709> ",
+                "<a:special_award:1175247327309598730>",
+                "<a:epic_award:1175247311660658709>",
                 "<a:legendary_award:1175245828189859930>"
             } [rarity - 1];
         }

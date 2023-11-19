@@ -15,7 +15,8 @@ using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp;
 using Palantir.Model;
 using Palantir.PalantirCommandModule;
-using System.Xml.Linq;
+using Microsoft.CodeAnalysis.CSharp.Scripting;
+using Microsoft.CodeAnalysis.Scripting;
 
 namespace Palantir.Commands
 {
@@ -193,6 +194,24 @@ namespace Palantir.Commands
             throw new Exception("test");
             await Task.Delay(1000 * 10);
             await a.RespondAsync("general kenobi!");
+        }
+
+        [Description("Evaluate C# code in the command context.")]
+        [Command("evaluate")]
+        [RequirePermissionFlag(PermissionFlag.ADMIN)]
+        public async Task EvaluateCs(CommandContext context, string code)
+        {
+            if (code.StartsWith("```cs") && code.EndsWith("```")) code = code.Substring(5, code.Length - 8);
+
+            // Define any necessary references and using directives
+            var references = AppDomain.CurrentDomain.GetAssemblies();
+            var options = ScriptOptions.Default
+                .WithReferences(references)
+                .WithImports("System", "System.Threading.Tasks");
+
+            // Evaluate and run the code
+            var globals = new { context };
+            await CSharpScript.EvaluateAsync(code, options, globals);
         }
 
 
