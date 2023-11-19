@@ -949,7 +949,7 @@ namespace Palantir.Commands
                 var count = group.Count();
                 return "- " + count + " " + ((AwardRarity)groupAward.Rarity) + " given";
             }));
-            embed.AddField("`👏`  **Given Awards** ", .Length > 0 ? awardGivenString : "You haven't given any awards yet.", true);
+            embed.AddField("`👏`  **Given Awards** ", awardGivenString.Length > 0 ? awardGivenString : "You haven't given any awards yet.", true);
 
             var awardInvString = string.Join("\n", inv.GroupBy(i => i.award.Rarity).OrderBy(g => g.FirstOrDefault().award.Rarity).ToList().ConvertAll(group =>
             {
