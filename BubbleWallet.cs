@@ -790,6 +790,7 @@ namespace Palantir
 
             var context = new PalantirContext();
             context.Awardees.AddRange(drawnAwards.ConvertAll(a => a.inv));
+            context.Members.FirstOrDefault(m => m.Login == login).AwardPackOpened = DateTimeOffset.Now.ToUnixTimeMilliseconds();
             context.SaveChanges();
             context.Dispose();
 

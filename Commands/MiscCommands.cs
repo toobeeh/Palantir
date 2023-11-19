@@ -20,6 +20,7 @@ using Palantir.Model;
 using System.IO;
 using Palantir.PalantirCommandModule;
 using DSharpPlus.Interactivity.EventHandling;
+using MoreLinq;
 
 namespace Palantir.Commands
 {
@@ -991,7 +992,7 @@ namespace Palantir.Commands
                 var newAwards = BubbleWallet.OpenAwardPack(login, packLevel);
                 var builder = new DiscordInteractionResponseBuilder();
 
-                builder.WithContent("### " + context.User.Username + " opened their " + packLevel + " award pack:");
+                builder.WithContent("### " + context.User.Username + " opened their " + packLevel.Rarity + " award pack:");
 
                 foreach(var award in newAwards)
                 {
@@ -1041,6 +1042,16 @@ namespace Palantir.Commands
                     }
                     return new Page(embed: builder);
                 });
+
+                if(pages.Count() == 0)
+                {
+                    var builder = new DiscordEmbedBuilder()
+                       .WithColor(DiscordColor.Magenta)
+                       .WithFooter("To view a single item, use >gallery [id]")
+                       .WithDescription("You haven't received any awards yet.\nPeople can give you awards when you're drawing on skribbl.")
+                       .WithTitle(context.User.Username + "s Award Gallery");
+                    pages.Append(new Page(embed: builder));
+                }
 
                 await context.Client.GetInteractivity().SendPaginatedMessageAsync(context.Channel, context.User, pages);
             }
