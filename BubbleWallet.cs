@@ -734,7 +734,11 @@ namespace Palantir
 
         public static AwardPackLevel GetAwardPackLevel(int login)
         {
-            var bubbles = GetCollectedBubblesInTimespan(DateTime.Now.AddDays(-7), DateTime.Now.AddDays(1), login.ToString());
+            PalantirContext ctx = new();
+            var startBubbles = ctx.BubbleTraces.Where(t => t.Login == login).Select(t => t.Bubbles).OrderByDescending(t => t).ToList().ElementAt(6);
+            var endBubbles = ctx.Members.FirstOrDefault(m => m.Login == login).Bubbles;
+            var bubbles = endBubbles - startBubbles;
+            ctx.Dispose();
 
             var level = new AwardPackLevel();
             level.CollectedBubbles = bubbles;

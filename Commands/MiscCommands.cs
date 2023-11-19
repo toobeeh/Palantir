@@ -1034,9 +1034,9 @@ namespace Palantir.Commands
                         pageIndex++;
                         if (item.image is not null) builder.AddField(
                             "`#" + pageIndex + "` " + item.image.Title, 
-                            $"{BubbleWallet.GetRarityIcon(item.award.Rarity)}  {item.award.Name}\n`🫂`‎ By {BubbleWallet.GetUsername(item.inv.OwnerLogin)}‎ ‎ ‎ \n`📅`‎ On <t:{(int)(item.inv.Date/1000)}:d>\n`\U0001fa9f`‎ [Show Image](https://eu2.contabostorage.com/45a0651c8baa459daefd432c0307bb5b:cloud/{context.User.Id}/{item.image.ImageId}/image.png)", 
+                            $"> {BubbleWallet.GetRarityIcon(item.award.Rarity)}  {item.award.Name}\n> By {BubbleWallet.GetUsername(item.inv.OwnerLogin)}‎ ‎ ‎ \n> On <t:{(int)(item.inv.Date/1000)}:d>\n> [Show Image](https://eu2.contabostorage.com/45a0651c8baa459daefd432c0307bb5b:cloud/{context.User.Id}/{item.image.ImageId}/image.png)", 
                             true);
-                        else builder.AddField("Unknown Image :(", $"{BubbleWallet.GetRarityIcon(item.award.Rarity)}  {item.award.Name}\n`\U0001fac2`‎ By {BubbleWallet.GetUsername(item.inv.OwnerLogin)}‎ ‎ ‎  \n`📅`‎ On <t:{(int)(item.inv.Date / 1000)}:d>", true);
+                        else builder.AddField("Unknown Image :(", $"> {BubbleWallet.GetRarityIcon(item.award.Rarity)}  {item.award.Name}\n> By {BubbleWallet.GetUsername(item.inv.OwnerLogin)}‎ ‎ ‎  \n> <t:{(int)(item.inv.Date / 1000)}:d>", true);
                     }
                     return new Page(embed: builder);
                 });
