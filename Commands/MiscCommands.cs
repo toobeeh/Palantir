@@ -941,7 +941,7 @@ namespace Palantir.Commands
                 var count = group.Count();
                 return "- " + count + " " + ((AwardRarity) groupAward.Rarity) + " awarded";
             }));
-            embed.AddField("`🎁`  **Received Awards**", awardReceivedString, true);
+            embed.AddField("`🎁`  **Received Awards**", awardReceivedString.Length > 0 ? awardReceivedString : "You haven't received any awards yet.", true);
 
             var awardGivenString = string.Join("\n", given.GroupBy(i => i.award.Rarity).OrderBy(g => g.FirstOrDefault().award.Rarity).ToList().ConvertAll(group =>
             {
@@ -949,7 +949,7 @@ namespace Palantir.Commands
                 var count = group.Count();
                 return "- " + count + " " + ((AwardRarity)groupAward.Rarity) + " given";
             }));
-            embed.AddField("`👏`  **Given Awards** ", awardGivenString, true);
+            embed.AddField("`👏`  **Given Awards** ", .Length > 0 ? awardGivenString : "You haven't given any awards yet.", true);
 
             var awardInvString = string.Join("\n", inv.GroupBy(i => i.award.Rarity).OrderBy(g => g.FirstOrDefault().award.Rarity).ToList().ConvertAll(group =>
             {
@@ -958,7 +958,8 @@ namespace Palantir.Commands
                 var awards = string.Join("\n", distincts.ConvertAll(item => "> " + item.award.Name + " `(x" + group.Where(i => i.award.Id == item.award.Id).Count() + ")`"));
                 return "‎ " + BubbleWallet.GetRarityIcon(groupAward.Rarity) +  " ‎  **" + ((AwardRarity)groupAward.Rarity) + "**\n" + awards + "\n" ;
             }));
-            embed.AddField("\n_ _\n**Available Awards**", "You have following awards ready to gift on skribbl:\n_ _\n _ _" + awardInvString, false);
+           if(awardInvString.Length > 0) embed.AddField("\n_ _\n**Available Awards**", "You have following awards ready to gift on skribbl:\n_ _\n _ _" + awardInvString, false);
+           else embed.AddField("\n_ _\n**Available Awards**", "You have no awards in your inventory. Open an award pack to get some!", false);
 
             embed.AddField("_ _\nAward Gallery", "You can see all your awarded drawings with `>gallery`");
 
