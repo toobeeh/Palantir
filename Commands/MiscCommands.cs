@@ -973,7 +973,7 @@ namespace Palantir.Commands
             }
             else
             {
-                embed.AddField("Award Pack", "You need to wait " + cooldown.ToString(@"dd\d\ hh\h\ mm\m\ ss\s") + " to open your next Award Pack.\nYou can open a pack once a week. \nThe more Bubbles you have collected in the past week, the better are the chances to get rare awards!");
+                embed.AddField("Award Pack", "You need to wait until <d:" + DateTimeOffset.UtcNow.Add(cooldown).ToUnixTimeSeconds()  + ":R> to open your next Award Pack.\nYou can open a pack once a week. \nThe more Bubbles you have collected in the past week, the better are the chances to get rare awards!");
             }
 
             embed.WithFooter("Award pack level: " + packLevel.Rarity + " (" + packLevel.CollectedBubbles + " Bubbles)");
