@@ -918,7 +918,7 @@ namespace Palantir.Commands
 
         [Description("Show your awards inventory and open your weekly award pack.")]
         [Command("awards")]
-        [RequireBeta]
+        [Synchronized]
         public async Task Awards(CommandContext context)
         {
             PermissionFlag flags = new PermissionFlag(Program.Feanor.GetFlagByMember(context.User));
@@ -1012,7 +1012,6 @@ namespace Palantir.Commands
 
         [Description("Show your received awards and the images.")]
         [Command("gallery")]
-        [RequireBeta]
         public async Task Gallery(CommandContext context, int? id = null)
         {
             int login = Convert.ToInt32(BubbleWallet.GetLoginOfMember(context.User.Id.ToString()));
