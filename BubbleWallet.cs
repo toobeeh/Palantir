@@ -738,7 +738,8 @@ namespace Palantir
         public static AwardPackLevel GetAwardPackLevel(int login)
         {
             PalantirContext ctx = new();
-            var startBubbles = ctx.BubbleTraces.Where(t => t.Login == login).Select(t => t.Bubbles).OrderByDescending(t => t).ToList().ElementAt(6);
+            var lastTraces = ctx.BubbleTraces.Where(t => t.Login == login).Select(t => t.Bubbles).OrderByDescending(t => t).ToList();
+            var startBubbles = lastTraces.Count() > 6 ? lastTraces.ElementAt(6) : 0;
             var endBubbles = ctx.Members.FirstOrDefault(m => m.Login == login).Bubbles;
             var bubbles = endBubbles - startBubbles;
             ctx.Dispose();
@@ -755,9 +756,9 @@ namespace Palantir
         public static List<MappedAwardInv> OpenAwardPack(int login, AwardPackLevel packLevel)
         {
             double[] range =  
-                packLevel.Rarity == AwardRarity.Common ? new double[] { 0.55, 0.8, 0.97 } :
-                packLevel.Rarity == AwardRarity.Special ? new double[] { 0.4, 0.7, 0.95 } :
-                packLevel.Rarity == AwardRarity.Epic ? new double[] { 0.3, 0.5, 0.9 } :
+                packLevel.Rarity == AwardRarity.Common ? new double[] { 0.55, 0.8, 0.96 } :
+                packLevel.Rarity == AwardRarity.Special ? new double[] { 0.4, 0.7, 0.93 } :
+                packLevel.Rarity == AwardRarity.Epic ? new double[] { 0.3, 0.5, 0.89 } :
                 new double[] { 0.2, 0.5, 0.8 };
 
             var available = GetAwards();

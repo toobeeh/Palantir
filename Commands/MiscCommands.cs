@@ -991,7 +991,7 @@ namespace Palantir.Commands
                 var newAwards = BubbleWallet.OpenAwardPack(login, packLevel);
                 var builder = new DiscordInteractionResponseBuilder();
 
-                builder.WithContent("### " + context.User.Username + " opened their " + packLevel.Rarity + " award pack:");
+                builder.WithContent("### " + (context.Member is not null ? context.Member.Nickname : context.User.Username) + " opened their " + packLevel.Rarity + " award pack:");
 
                 foreach(var award in newAwards)
                 {
@@ -1029,7 +1029,7 @@ namespace Palantir.Commands
                     var builder = new DiscordEmbedBuilder()
                         .WithColor(DiscordColor.Magenta)
                         .WithFooter("To view a single item, use >gallery [id]")
-                        .WithTitle(context.User.Username + "s Award Gallery");
+                        .WithTitle((context.Member is not null ? context.Member.Nickname : context.User.Username) + "s Award Gallery");
                     var pageIndex = index * 25;
 
                     foreach (var item in batch) {
@@ -1050,7 +1050,7 @@ namespace Palantir.Commands
                        .WithColor(DiscordColor.Magenta)
                        .WithFooter("To view a single item, use >gallery [id]")
                        .WithDescription("You haven't received any awards yet.\nPeople can give you awards when you're drawing on skribbl.")
-                       .WithTitle(context.User.Username + "s Award Gallery");
+                       .WithTitle((context.Member is not null ? context.Member.Nickname : context.User.Username) + "s Award Gallery");
                     pages = new List<Page>() { new Page(embed: builder) };
                 }
 
