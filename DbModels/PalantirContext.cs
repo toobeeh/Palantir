@@ -54,7 +54,7 @@ namespace Palantir.Model
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseMySql($"server={Program.DatabaseHost};database=palantir;user={Program.DatabaseUser};", Microsoft.EntityFrameworkCore.ServerVersion.Parse("10.11.3-mariadb"));
+                optionsBuilder.UseMySql($"server={Program.DatabaseHost};user id={Program.DatabaseUser};database=palantir", Microsoft.EntityFrameworkCore.ServerVersion.Parse("10.11.3-mariadb"));
             }
         }
 
@@ -604,22 +604,22 @@ namespace Palantir.Model
 
             modelBuilder.Entity<SplitCredit>(entity =>
             {
-                entity.HasKey(e => new { e.Login, e.Split })
-                    .HasName("PRIMARY")
-                    .HasAnnotation("MySql:IndexPrefixLength", new[] { 0, 0 });
-
-                entity.Property(e => e.Login).HasColumnType("int(11)");
-
-                entity.Property(e => e.Split).HasColumnType("int(11)");
+                entity.Property(e => e.Id)
+                    .HasColumnType("int(11)")
+                    .HasColumnName("ID");
 
                 entity.Property(e => e.Comment)
                     .IsRequired()
                     .HasColumnType("text")
                     .HasDefaultValueSql("''");
 
+                entity.Property(e => e.Login).HasColumnType("int(11)");
+
                 entity.Property(e => e.RewardDate)
                     .IsRequired()
                     .HasColumnType("text");
+
+                entity.Property(e => e.Split).HasColumnType("int(11)");
 
                 entity.Property(e => e.ValueOverride)
                     .HasColumnType("int(11)")
