@@ -756,10 +756,10 @@ namespace Palantir
         public static List<MappedAwardInv> OpenAwardPack(int login, AwardPackLevel packLevel)
         {
             double[] range =  
-                packLevel.Rarity == AwardRarity.Common ? new double[] { 0.55, 0.8, 0.96 } :
-                packLevel.Rarity == AwardRarity.Special ? new double[] { 0.4, 0.7, 0.93 } :
-                packLevel.Rarity == AwardRarity.Epic ? new double[] { 0.3, 0.5, 0.89 } :
-                new double[] { 0.2, 0.5, 0.8 };
+                packLevel.Rarity == AwardRarity.Common ? new double[] { 0.55, 0.8, 0.97 } :
+                packLevel.Rarity == AwardRarity.Special ? new double[] { 0.4, 0.7, 0.95 } :
+                packLevel.Rarity == AwardRarity.Epic ? new double[] { 0.3, 0.5, 0.91 } :
+                new double[] { 0.2, 0.4, 0.85 };
 
             var available = GetAwards();
 
