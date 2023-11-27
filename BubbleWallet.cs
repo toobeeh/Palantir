@@ -802,7 +802,7 @@ namespace Palantir
         {
 
             PalantirContext db = new PalantirContext();
-            var inv = db.Awardees.Where(p => p.OwnerLogin == login).ToList();
+            var inv = db.Awardees.Where(p => p.OwnerLogin == login && p.AwardeeLogin == null).ToList();
             db.Dispose();
             var awards = GetAwards();
 
