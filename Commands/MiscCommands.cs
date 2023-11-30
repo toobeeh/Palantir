@@ -925,7 +925,7 @@ namespace Palantir.Commands
             int login = Convert.ToInt32(BubbleWallet.GetLoginOfMember(context.User.Id.ToString()));
             var inv = BubbleWallet.GetAwardInventory(login);
             var received = BubbleWallet.GetReceivedAwards(login);
-            var given = BubbleWallet.GetGivendAwards(login);
+            var given = BubbleWallet.GetGivenAwards(login);
             var packLevel = BubbleWallet.GetAwardPackLevel(login);
 
             var message = new DiscordMessageBuilder();

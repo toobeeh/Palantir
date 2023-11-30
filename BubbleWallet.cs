@@ -819,7 +819,7 @@ namespace Palantir
             return awards;
         }
 
-        public static List<MappedAwardInv> GetGivendAwards(int login)
+        public static List<MappedAwardInv> GetGivenAwards(int login)
         {
 
             PalantirContext db = new PalantirContext();
@@ -849,7 +849,7 @@ namespace Palantir
             var tags = ctx.CloudTags.Where(t => t.Owner == login && imageIds.Any(id => id == t.ImageId)).ToList();
             ctx.Dispose();
 
-            return awards.ConvertAll(a => new MappedAwardGalleryInv() { inv= a.inv, award= a.award, image= tags.Find(t => t.ImageId == a.inv.ImageId) });
+            return awards.ConvertAll(a => new MappedAwardGalleryInv() { inv= a.inv, award= a.award, image= tags.Find(t => t.ImageId == a.inv.ImageId) }).OrderBy(a => a.image.Date).ToList();
         }
 
         public static string GetRarityIcon(int rarity)
