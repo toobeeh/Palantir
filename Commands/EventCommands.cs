@@ -29,11 +29,13 @@ namespace Palantir.Commands
             else evt = events.FirstOrDefault(e => e.EventId == eventID);
             if (evt != null)
             {
-                DateTime eventStart = Convert.ToDateTime(evt.ValidFrom);
+                DateTime eventStart = Program.ParseDateAsUtc(evt.ValidFrom);
                 DateTime eventEnd = eventStart.AddDays(evt.DayLength);
                 embed.Title = ":champagne: " + evt.EventName;
                 embed.Color = DiscordColor.Magenta;
-                embed.WithDescription(evt.Description + "\nLasts from " + eventStart.ToString("MMMM dd") + " until " + eventEnd.ToString("MMMM dd") + "\n");
+                embed.WithDescription(evt.Description + 
+                    "\nLasts from <t:" + new DateTimeOffset(eventStart).ToUnixTimeSeconds() + ":D> until <t:" 
+                    + new DateTimeOffset(eventEnd).ToUnixTimeSeconds() + ":D>\n");
 
                 string dropList = "";
                 List<Model.Sprite> eventsprites = new List<Model.Sprite>();
@@ -48,7 +50,7 @@ namespace Palantir.Commands
 
                     if(evt.Progressive == 1 && !progressiveDropInfo.isRevealed)
                     {
-                        dropList += $"\n> Will be collectible from <t:{progressiveDropInfo.revealTimeStamp}:d> to <t:{progressiveDropInfo.endTimestamp}:d>\n";
+                        dropList += $"\n> Will be collectable from <t:{progressiveDropInfo.revealTimeStamp}:d> to <t:{progressiveDropInfo.endTimestamp}:d>\n";
                     }
                     else
                     {
@@ -187,10 +189,10 @@ namespace Palantir.Commands
         {
             List<Event> events = Events.GetEvents(false);
             string eventsList = "";
-            events = events.Where(e => Convert.ToDateTime(e.ValidFrom).AddDays(e.DayLength) < DateTime.Now).OrderByDescending(e => Convert.ToDateTime(e.ValidFrom)).ToList();
+            events = events.Where(e => Program.ParseDateAsUtc(e.ValidFrom).AddDays(e.DayLength) < DateTime.Now).OrderByDescending(e => Program.ParseDateAsUtc(e.ValidFrom)).ToList();
             events.ForEach(e =>
             {
-                eventsList += "➜ **" + e.EventName + "** [#" + e.EventId + "]: " + e.ValidFrom + " to " + Convert.ToDateTime(e.ValidFrom).AddDays(e.DayLength).ToShortDateString() + "\n";
+                eventsList += "➜ **" + e.EventName + "** [#" + e.EventId + "]: " + Program.DateTimeToStamp(e.ValidFrom,"d") + " to " + Program.DateTimeToStamp(Program.ParseDateAsUtc(e.ValidFrom).AddDays(e.DayLength),"d") + "\n";
                 //eventsList += e.Description + "\n\n";
             });
             if (eventsList == "") eventsList = "There have no events passed.";
@@ -208,10 +210,10 @@ namespace Palantir.Commands
         {
             List<Event> events = Events.GetEvents(false);
             string eventsList = "";
-            events = events.Where(e => Convert.ToDateTime(e.ValidFrom) >= DateTime.Now).OrderByDescending(e => Convert.ToDateTime(e.ValidFrom)).ToList();
+            events = events.Where(e => Program.ParseDateAsUtc(e.ValidFrom) >= DateTime.Now).OrderByDescending(e => Program.ParseDateAsUtc(e.ValidFrom)).ToList();
             events.ForEach(e =>
             {
-                eventsList += "➜ **" + e.EventName + "**: " + e.ValidFrom + " to " + Convert.ToDateTime(e.ValidFrom).AddDays(e.DayLength).ToShortDateString() + "\n";
+                eventsList += "➜ **" + e.EventName + "**: " + Program.DateTimeToStamp(e.ValidFrom, "d") + " to " + Program.DateTimeToStamp(Program.ParseDateAsUtc(e.ValidFrom).AddDays(e.DayLength), "d") + "\n";
                 eventsList += e.Description + "\n\n";
             });
             if (eventsList == "") eventsList = "There are no upcoming events :( \nAsk a responsible person to create one!";
@@ -302,8 +304,8 @@ namespace Palantir.Commands
             else newEvent.EventId = dbcontext.Events.Max(e => e.EventId) + 1;
 
             if (dbcontext.Events.ToList().Any(otherEvent =>
-                    !((Convert.ToDateTime(newEvent.ValidFrom) > Convert.ToDateTime(otherEvent.ValidFrom).AddDays(otherEvent.DayLength)) || // begin after end
-                    (Convert.ToDateTime(otherEvent.ValidFrom) > Convert.ToDateTime(newEvent.ValidFrom).AddDays(newEvent.DayLength)))      // end before begin
+                    !((Program.ParseDateAsUtc(newEvent.ValidFrom) > Program.ParseDateAsUtc(otherEvent.ValidFrom).AddDays(otherEvent.DayLength)) || // begin after end
+                    (Program.ParseDateAsUtc(otherEvent.ValidFrom) > Program.ParseDateAsUtc(newEvent.ValidFrom).AddDays(newEvent.DayLength)))      // end before begin
                 )
              )
             {
@@ -318,7 +320,7 @@ namespace Palantir.Commands
             DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
             embed.Title = ":champagne:  Event created: **" + newEvent.EventName + "**";
             embed.Color = DiscordColor.Magenta;
-            embed.WithDescription("The event lasts from  " + newEvent.ValidFrom + " to " + Convert.ToDateTime(newEvent.ValidFrom).AddDays(newEvent.DayLength).ToShortDateString());
+            embed.WithDescription("The event lasts from  " + Program.DateTimeToStamp(newEvent.ValidFrom, "D") + " to " + Program.DateTimeToStamp(Program.ParseDateAsUtc(newEvent.ValidFrom).AddDays(newEvent.DayLength), "D"));
             embed.AddField("Make the event fancy!", "➜ `>eventdrop " + newEvent.EventId + " coolname` Send this command with an attached gif to add a event drop.");
 
             await context.Channel.SendMessageAsync(embed: embed);

@@ -23,7 +23,7 @@ namespace Palantir
         {
             PalantirContext context = new PalantirContext();
             List<Event> events = context.Events.ToList();
-            if (active) events = events.Where(e => Convert.ToDateTime(e.ValidFrom) <= DateTime.Now && Convert.ToDateTime(e.ValidFrom).AddDays(e.DayLength) >= DateTime.Now).ToList();
+            if (active) events = events.Where(e => Program.ParseDateAsUtc(e.ValidFrom) <= DateTime.UtcNow && Program.ParseDateAsUtc(e.ValidFrom).AddDays(e.DayLength) >= DateTime.UtcNow).ToList();
             context.Dispose();
             return events;
         }
@@ -55,7 +55,7 @@ namespace Palantir
                 lastDropRemainder--;
             }
 
-            var startDate = Convert.ToDateTime(evt.ValidFrom);
+            var startDate = Program.ParseDateAsUtc(evt.ValidFrom);
             var timeSinceStart = startDate.Subtract(now);
             var daysPassed = timeSinceStart.TotalDays;
 
@@ -109,7 +109,7 @@ namespace Palantir
         public static bool EligibleForEventScene(string login, int eventID)
         {
             Event evt = GetEvents(false).FirstOrDefault(evt => evt.EventId == eventID);
-            DateTime eventStart = Convert.ToDateTime(evt.ValidFrom);
+            DateTime eventStart = Program.ParseDateAsUtc(evt.ValidFrom);
             DateTime eventEnd = eventStart.AddDays(evt.DayLength);
             int bubblesDuringEvent = BubbleWallet.GetCollectedBubblesInTimespan(eventStart, eventEnd.AddDays(-1), login);
             int eventSceneValue = evt.DayLength * eventSceneDayValue;

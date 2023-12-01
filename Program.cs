@@ -206,7 +206,7 @@ namespace Palantir
         {
             var client = new DiscordClient(new DiscordConfiguration
             {
-                Token = "MTA3MTE0MjQxNzk4NzgxMzM3Ng.G1Rjof.iwG6iJ6nf17fO3s9sDLIV0eG9HJPEpym7WO8Uo",
+                Token = "MxTA3MTE0MjQxNzk4NzgxMzM3Ng.GxGzjR.7GH5hlMal4nt-2VRqmN49lxvblOyoudL7CKXjM",
                 TokenType = TokenType.Bot
             });
             await client.ConnectAsync();
@@ -223,6 +223,7 @@ namespace Palantir
             Feanor = new();
 
             commands.RegisterCommands<Palantir.Commands.MiscCommands>();
+            commands.RegisterCommands<Palantir.Commands.EventCommands>();
             await Task.Delay(-1);
         }
 
@@ -276,7 +277,7 @@ namespace Palantir
             embedErr.Title = "Error Executing " + e.Command;
             embedErr.Description = e.Exception.ToString();
             embedErr.Color = DiscordColor.Red;
-            embedErr.WithFooter("If this error is persistent, message @tobeh#7437.");
+            embedErr.WithFooter("If this error is persistent, message @tobeh");
             await e.Context.Channel.SendMessageAsync(embed: embedErr);
             return;
         }
@@ -360,6 +361,21 @@ namespace Palantir
                 }
             }
             return emojis;
+        }
+
+        public static DateTime ParseDateAsUtc(string date)
+        {
+            return DateTime.SpecifyKind(Convert.ToDateTime(date), DateTimeKind.Utc);
+        }
+
+        public static string DateTimeToStamp(DateTime date, string format)
+        {
+            return $"<t:{new DateTimeOffset(date).ToUnixTimeSeconds()}:{format}>";
+        }
+
+        public static string DateTimeToStamp(string date, string format)
+        {
+            return DateTimeToStamp(ParseDateAsUtc(date), format);
         }
 
     }
