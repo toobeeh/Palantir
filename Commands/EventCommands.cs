@@ -48,7 +48,7 @@ namespace Palantir.Commands
 
                     if(evt.Progressive == 1 && !progressiveDropInfo.isRevealed)
                     {
-                        dropList += $"> Will be revealed from <t:{progressiveDropInfo.revealTimeStamp}:d> to <t:{progressiveDropInfo.endTimestamp}:d>\n";
+                        dropList += $"\n> Will be collectible from <t:{progressiveDropInfo.revealTimeStamp}:d> to <t:{progressiveDropInfo.endTimestamp}:d>\n";
                     }
                     else
                     {
