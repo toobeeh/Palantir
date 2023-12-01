@@ -85,7 +85,7 @@ namespace Palantir.Commands
                     //if (credit > 0) embed.AddField("\n\u200b \nLeague Event Drops", "> You have " + Math.Round(credit, 1, MidpointRounding.ToZero).ToString() + " League Drops to redeem! \n> You can swap them with the command `>redeem [amount] [event drop id]` to any of this event's Event Drops.");
                     if(credits.Values.Any(v => v > 0))
                     {
-                        var creditInfo = string.Join("\n> ", credits.Keys.ToList().ConvertAll(key => $"`{key.EventDropId}` {key.Name}: {Math.Round(credits[key], 1, MidpointRounding.ToZero)}"));
+                        var creditInfo = string.Join("\n> ", credits.Keys.ToList().ConvertAll(key => $"`#{key}` {eventdrops.FirstOrDefault(d=>d.EventDropId==key).Name}: {Math.Round(credits[key], 1, MidpointRounding.ToZero)}"));
                         embed.AddField("\n\u200b \nLeague Event Drops", $"> You have following League Drops to redeem: \n{creditInfo}\n> \n> You can swap them with the command `>redeem [amount] [event drop id]`.");
                     }
                 }

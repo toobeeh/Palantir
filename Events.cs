@@ -127,7 +127,7 @@ namespace Palantir
             return weight;
         }
 
-        public static Dictionary<EventDrop, double> GetAvailableProgressiveLeagueTradeDrops(string userid, Event evt, out System.Collections.Concurrent.ConcurrentDictionary<EventDrop, List<PastDrop>> consumable)
+        public static Dictionary<int, double> GetAvailableProgressiveLeagueTradeDrops(string userid, Event evt, out System.Collections.Concurrent.ConcurrentDictionary<int, List<PastDrop>> consumable)
         {
             var drops = GetEventDrops(new List<Event>() { evt });
             var dropIds = drops.ConvertAll(drop => drop.EventDropId).ToArray();
@@ -137,10 +137,10 @@ namespace Palantir
             foreach(var c in caught)
             {
                 var drop = drops.FirstOrDefault(drop => drop.EventDropId == c.EventDropId);
-                consumable.AddOrUpdate(drop, drop => new List<PastDrop> { c }, (drop, list) => { list.Add(c); return list; });
+                consumable.AddOrUpdate(drop.EventDropId, drop => new List<PastDrop> { c }, (drop, list) => { list.Add(c); return list; });
             }
 
-            var weights = new Dictionary<EventDrop, double>();
+            var weights = new Dictionary<int, double>();
             foreach(var key in consumable.Keys)
             {
                 weights[key] = consumable[key].Sum(result => League.Weight(result.LeagueWeight / 1000.0) / 100);
