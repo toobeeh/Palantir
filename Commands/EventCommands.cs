@@ -37,28 +37,59 @@ namespace Palantir.Commands
 
                 string dropList = "";
                 List<Model.Sprite> eventsprites = new List<Model.Sprite>();
+                var progressiveDrops = Events.GetProgressiveEventDrops(evt);
                 List<EventDrop> eventdrops = Events.GetEventDrops(new List<Event> { evt });
                 eventdrops.ForEach(e =>
                 {
+                    var progressiveDropInfo = progressiveDrops.FirstOrDefault(d => d.drop.EventDropId == e.EventDropId);
                     List<Model.Sprite> sprites = Events.GetEventSprites(e.EventDropId);
                     eventsprites.AddRange(sprites);
                     dropList += "\n**" + e.Name + " Drop**  (" + BubbleWallet.GetEventCredit(login, e.EventDropId) + " caught) (`#" + e.EventDropId + "`)";
-                    int spent = inv.Where(spt => sprites.Any(eventsprite => eventsprite.Id == spt.ID)).Sum(spt => spt.Cost);
-                    sprites.OrderBy(sprite => sprite.Id).ForEach(sprite =>
-                       dropList += "\n> ‎ \n> ➜ **" + sprite.Name + "** (`#" + sprite.Id + "`)\n> "
-                        + (inv.Any(s => s.ID == sprite.Id) ? ":package: " : (BubbleWallet.GetEventCredit(login, sprite.EventDropId) - spent + " / "))
-                        + sprite.Cost + " " + e.Name + " Drops "
-                    );
-                    dropList += "\n";
+
+                    if(evt.Progressive == 1 && !progressiveDropInfo.isRevealed)
+                    {
+                        dropList += $"> Will be revealed from <t:{progressiveDropInfo.revealTimeStamp}:d> to <t:{progressiveDropInfo.endTimestamp}:d>\n";
+                    }
+                    else
+                    {
+                        int spent = inv.Where(spt => sprites.Any(eventsprite => eventsprite.Id == spt.ID)).Sum(spt => spt.Cost);
+                        sprites.OrderBy(sprite => sprite.Id).ForEach(sprite =>
+                           dropList += "\n> ‎ \n> ➜ **" + sprite.Name + "** (`#" + sprite.Id + "`)\n> "
+                            + (inv.Any(s => s.ID == sprite.Id) ? ":package: " : (BubbleWallet.GetEventCredit(login, sprite.EventDropId) - spent + " / "))
+                            + sprite.Cost + " " + e.Name + " Drops "
+                        );
+                        dropList += "\n";
+                    }
                 });
                 embed.AddField("Event Sprites", dropList == "" ? "No drops added yet." : dropList);
                 embed.AddField("\u200b", "Use `>sprite [id]` to see the event drop and sprite!");
 
-                // league stuff
-                List<PastDrop> leaguedrops = new List<PastDrop>();
-                var credit = Events.GetAvailableLeagueTradeDrops(context.User.Id.ToString(), evt, out leaguedrops);
-                if (credit > 0) embed.AddField("\n\u200b \nLeague Event Drops", "> You have " + Math.Round(credit, 1, MidpointRounding.ToZero).ToString() + " League Drops to redeem! \n> You can swap them with the command `>redeem [amount] [event drop id]` to any of this event's Event Drops.");
-                
+                // progressive event info
+                if (evt.Progressive == 1)
+                {
+                    embed.AddField("Progressive event", "The eventdrops unveil sequentially during the event - you can only collect them on certain days!");
+                }
+
+                // league stuff: for regular events
+                if(evt.Progressive == 0)
+                {
+                    List<PastDrop> leaguedrops = new List<PastDrop>();
+                    var credit = Events.GetAvailableLeagueTradeDrops(context.User.Id.ToString(), evt, out leaguedrops);
+                    if (credit > 0) embed.AddField("\n\u200b \nLeague Event Drops", "> You have " + Math.Round(credit, 1, MidpointRounding.ToZero).ToString() + " League Drops to redeem! \n> You can swap them with the command `>redeem [amount] [event drop id]` to any of this event's Event Drops.");
+                }
+
+                // league stuff: for progressive events
+                if (evt.Progressive == 1)
+                {
+                    var credits = Events.GetAvailableProgressiveLeagueTradeDrops(context.User.Id.ToString(), evt, out var leaguedrops);
+                    //if (credit > 0) embed.AddField("\n\u200b \nLeague Event Drops", "> You have " + Math.Round(credit, 1, MidpointRounding.ToZero).ToString() + " League Drops to redeem! \n> You can swap them with the command `>redeem [amount] [event drop id]` to any of this event's Event Drops.");
+                    if(credits.Values.Any(v => v > 0))
+                    {
+                        var creditInfo = string.Join("\n> ", credits.Keys.ToList().ConvertAll(key => $"`{key.EventDropId}` {key.Name}: {Math.Round(credits[key], 1, MidpointRounding.ToZero)}"));
+                        embed.AddField("\n\u200b \nLeague Event Drops", $"> You have following League Drops to redeem: \n{creditInfo}\n> \n> You can swap them with the command `>redeem [amount] [event drop id]`.");
+                    }
+                }
+
                 Scene scene = BubbleWallet.GetAvailableScenes().FirstOrDefault(scene => scene.EventId == evt.EventId);
                 if (scene != null)
                 {
@@ -110,7 +141,17 @@ namespace Palantir.Commands
 
             var target = events.Find(evt => evt.EventId == drop.EventId);
             List<PastDrop> consumable;
-            double credit = Events.GetAvailableLeagueTradeDrops(context.User.Id.ToString(), target, out consumable);
+            double credit = 0;
+            if(target.Progressive == 1)
+            {
+                var credits = Events.GetAvailableProgressiveLeagueTradeDrops(context.User.Id.ToString(), target, out var consumables);
+                credit = credits[drop.EventDropId];
+                consumable = consumables[drop.EventDropId];
+            }
+            else
+            {
+                credit = Events.GetAvailableLeagueTradeDrops(context.User.Id.ToString(), target, out consumable);
+            }
 
             if (credit < amount)
             {
@@ -247,13 +288,14 @@ namespace Palantir.Commands
         [Description("Create a new seasonal event")]
         [Command("newevent")]
         [RequirePermissionFlag((byte)4)]
-        public async Task CreateEvent(CommandContext context, [Description("The event name")] string name, [Description("The duration of the event in days")] int duration, [Description("The count of days when the event will start")] int validInDays, [Description("The event description")] params string[] description)
+        public async Task CreateEvent(CommandContext context, [Description("The event name")] string name, [Description("The duration of the event in days")] int duration, [Description("The count of days when the event will start")] int validInDays, [Description("Indicator whether the event should be held progressive (0: false, other: true)")] int progressive, [Description("The event description")] params string[] description)
         {
             PalantirContext dbcontext = new PalantirContext();
 
             Event newEvent = new Event();
             newEvent.EventName = name.Replace("_", " ");
             newEvent.DayLength = duration;
+            newEvent.Progressive = Convert.ToSByte(progressive == 0 ? 0 : 1);
             newEvent.ValidFrom = DateTime.Now.AddDays(validInDays).ToShortDateString();
             newEvent.Description = description.ToDelimitedString(" ");
             if (dbcontext.Events.Count() <= 0) newEvent.EventId = 0;

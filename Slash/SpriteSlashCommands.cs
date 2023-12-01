@@ -78,6 +78,19 @@ namespace Palantir.Slash
             }
             else
             {
+                EventDrop drop = Events.GetEventDrops().FirstOrDefault(d => d.EventDropId == target.EventDropID);
+                var evt = Events.GetEvents().FirstOrDefault(e => e.EventId == drop.EventId);
+
+                if (evt.Progressive == 1)
+                {
+                    var progressiveDrop = Events.GetProgressiveEventDrops(evt).FirstOrDefault(d => d.drop.EventDropId == drop.EventDropId);
+                    if (!progressiveDrop.isRevealed)
+                    {
+                        await Program.SendEmbed(context.Channel, "Stay tuned!", $"This sprite will be revealed on <t:{progressiveDrop.revealTimeStamp}:d>!");
+                        return;
+                    }
+                }
+
                 if (BubbleWallet.GetRemainingEventDrops(login, target.EventDropID) < target.Cost && !perm.BotAdmin)
                 {
                     await context.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().AddEmbed(Program.PalantirEmbed(

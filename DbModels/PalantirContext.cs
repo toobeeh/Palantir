@@ -227,6 +227,8 @@ namespace Palantir.Model
                     .IsRequired()
                     .HasColumnType("text");
 
+                entity.Property(e => e.Progressive).HasColumnType("tinyint(4)");
+
                 entity.Property(e => e.ValidFrom)
                     .IsRequired()
                     .HasColumnType("text");

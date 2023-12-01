@@ -12,5 +12,6 @@ namespace Palantir.Model
         public int DayLength { get; set; }
         public string Description { get; set; }
         public string ValidFrom { get; set; }
+        public sbyte Progressive { get; set; }
     }
 }
