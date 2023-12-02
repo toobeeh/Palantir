@@ -54,6 +54,7 @@ namespace Palantir
                 daySplits[i]++;
                 lastDropRemainder--;
             }
+            daySplits.Reverse(); // let last sprites have more time
 
             var startDate = Program.ParseDateAsUtc(evt.ValidFrom);
             var timeSinceStart = startDate.Subtract(now);
