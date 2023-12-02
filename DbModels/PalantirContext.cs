@@ -54,7 +54,10 @@ namespace Palantir.Model
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseMySql($"server={Program.DatabaseHost};user id={Program.DatabaseUser};database=palantir", Microsoft.EntityFrameworkCore.ServerVersion.Parse("10.11.3-mariadb"));
+                optionsBuilder.UseMySql($"server={Program.DatabaseHost};user id={Program.DatabaseUser};database=palantir", Microsoft.EntityFrameworkCore.ServerVersion.Parse("10.11.3-mariadb"), config => config.EnableRetryOnFailure(
+                    maxRetryCount: 10,
+                    maxRetryDelay: TimeSpan.FromSeconds(30),
+                    errorNumbersToAdd: null));
             }
         }
 
