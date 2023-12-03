@@ -51,7 +51,7 @@ namespace Palantir
         static async Task Main(string[] args)
         {
 
-            //await RunNightlyTest();
+            await RunNightlyTest();
 
             CultureInfo culture = new CultureInfo("de-AT");
             culture.NumberFormat.NumberDecimalSeparator = ".";
@@ -206,7 +206,7 @@ namespace Palantir
         {
             var client = new DiscordClient(new DiscordConfiguration
             {
-                Token = "MxTA3MTE0MjQxNzk4NzgxMzM3Ng.GxGzjR.7GH5hlMal4nt-2VRqmN49lxvblOyoudL7CKXjM",
+                Token = "MTA3MTE0MjQxNzk4NzgxMzM3Ng.GxGzjR.7GH5hlMal4nt-2VRqmN49lxvblOyoudL7CKXjM",
                 TokenType = TokenType.Bot
             });
             await client.ConnectAsync();
@@ -223,6 +223,7 @@ namespace Palantir
             Feanor = new();
 
             commands.RegisterCommands<Palantir.Commands.MiscCommands>();
+            commands.RegisterCommands<Palantir.Commands.SpriteCommands>();
             commands.RegisterCommands<Palantir.Commands.EventCommands>();
             await Task.Delay(-1);
         }

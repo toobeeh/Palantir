@@ -69,7 +69,7 @@ namespace Palantir
                 var info = new ProgressiveEventDropInfo
                 {
                     drop= drop,
-                    isRevealed= (startDate < now),
+                    isRevealed= (startDate.AddDays(requiredDays) < now),
                     revealTimeStamp= new DateTimeOffset(startDate.AddDays(requiredDays)).ToUnixTimeSeconds(),
                     endTimestamp = new DateTimeOffset(startDate.AddDays(requiredDays + activeDays)).ToUnixTimeSeconds()
                 };
