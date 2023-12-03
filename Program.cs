@@ -51,7 +51,7 @@ namespace Palantir
         static async Task Main(string[] args)
         {
 
-            await RunNightlyTest();
+            //await RunNightlyTest();
 
             CultureInfo culture = new CultureInfo("de-AT");
             culture.NumberFormat.NumberDecimalSeparator = ".";
