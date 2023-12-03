@@ -88,7 +88,7 @@ namespace Palantir
             if (events[0].Progressive == 1)
             {
                 var progressiveDrops = GetProgressiveEventDrops(events[0]);
-                drops = progressiveDrops.Where(d => d.isRevealed).Select(d => d.drop).ToList();
+                drops = progressiveDrops.Where(d => d.isRevealed).Select(d => d.drop).TakeLast(1).ToList();
             }
             else
             {
