@@ -275,7 +275,7 @@ namespace Palantir.Commands
             }
             else
             {
-                new Random().Next(lossMin, lossMax + 1);
+                lost = new Random().Next(lossMin, lossMax + 1);
             }
 
 
