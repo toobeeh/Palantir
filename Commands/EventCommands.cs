@@ -266,8 +266,17 @@ namespace Palantir.Commands
             double lossBase = Events.CurrentGiftLossRate(eventsprites, collected);
             int lossMin = Convert.ToInt16(Math.Round(lossBase * amount * 0.7));
             int lossMax = Convert.ToInt16(Math.Round(lossBase * amount * 1.1));
-            if (lossMax < 1) lossMax = 1;
-            int lost = new Random().Next(lossMin, lossMax);
+
+            int lost = 0;
+            if (lossMax <= 1)
+            {
+                double loseProb = new Random().NextDouble();
+                if (loseProb <= lossBase) lost = 1;
+            }
+            else
+            {
+                new Random().Next(lossMin, lossMax + 1);
+            }
 
 
             string targetLogin = BubbleWallet.GetLoginOfMember(target.Id.ToString());
