@@ -141,7 +141,7 @@ namespace Palantir.Commands
             else
             {
                 EventDrop drop = Events.GetEventDrops().FirstOrDefault(d => d.EventDropId == target.EventDropID);
-                var evt = Events.GetEvents().FirstOrDefault(e => e.EventId == drop.EventId);
+                var evt = Events.GetEvents(false).FirstOrDefault(e => e.EventId == drop.EventId);
 
                 if (evt.Progressive == 1)
                 {
