@@ -782,27 +782,40 @@ namespace Palantir.Commands
 
             var memberSplits = BubbleWallet.GetMemberSplits(login, flags);
 
-            var message = new DiscordEmbedBuilder();
-            message.WithTitle(context.Message.Author.Username + "s Split Achievements");
-            message.WithColor(DiscordColor.Magenta);
+            var pages = new List<Page>();
 
-            if (memberSplits.Count == 0)
+            foreach (var batch in memberSplits.Batch(20))
             {
-                message.WithDescription("You haven't earned any Splits yet :(\n\nSplits are used to make your Drop Boosts more powerful.\nYou get them by occasional giveaways/challenges or by competing in Drop Leagues.");
+                var message = new DiscordEmbedBuilder();
+                message.WithTitle(context.Message.Author.Username + "s Split Achievements");
+                message.WithColor(DiscordColor.Magenta);
+
+                if (memberSplits.Count == 0)
+                {
+                    message.WithDescription("You haven't earned any Splits yet :(\n\nSplits are used to make your Drop Boosts more powerful.\nYou get them by occasional giveaways/challenges or by competing in Drop Leagues.");
+                }
+                else
+                {
+                    message.AddField(memberSplits.Sum(s => s.Value).ToString() + " total earned Splits", memberSplits.Where(s => !s.Expired).Sum(s => s.Value).ToString() + " Splits available");
+
+                    batch.ForEach(split =>
+                    {
+                        message.AddField("➜ " + split.Name + (split.RewardDate != null && split.RewardDate != "" ? "  `" + split.RewardDate + "`" : "") + (split.Expired ? " / *expired*" : ""), split.Description + "\n *worth " + split.Value + " Splits*" + (split.Comment != null && split.Comment.Length > 0 ? " ~ `" + split.Comment + "`" : ""));
+                    });
+
+                    message.WithDescription("You can use your Splits to customize your Drop Boosts.\nChoose the boost intensity, duration or cooldown individually when using `>dropboost`\n_ _");
+                }
+                pages.Add(new Page(embed: message));
+            }
+
+            if (pages.Count == 1)
+            {
+                await context.Message.RespondAsync(pages[0].Embed);
             }
             else
             {
-                message.AddField(memberSplits.Sum(s => s.Value).ToString(), "total earned Splits\n_ _");
-
-                memberSplits.ForEach(split =>
-                {
-                    message.AddField("➜ " + split.Name + (split.RewardDate != null && split.RewardDate != "" ? "  `" + split.RewardDate + "`" : "") + (split.Expired ? " / *expired*" : ""), split.Description + "\n *worth " + split.Value + " Splits*" + (split.Comment != null && split.Comment.Length > 0 ? " ~ `" + split.Comment + "`" : ""));
-                });
-
-                message.WithDescription("You can use your Splits to customize your Drop Boosts.\nChoose the boost intensity, duration or cooldown individually when using `>dropboost`\n_ _");
+                await context.Client.GetInteractivity().SendPaginatedMessageAsync(context.Channel, context.User, pages);
             }
-
-            await context.Message.RespondAsync(message);
         }
 
         [Description("Boost the drop rate. You can do this once a week.")]
