@@ -66,7 +66,7 @@ namespace Palantir.Commands
                 }
                 int[] score = BubbleWallet.SpriteScoreboard().FirstOrDefault(score => score.Key == s.ID).Value;
                 embed.WithFooter("Bought: " + (score[2] + score[1]) + " | Active: " + score[1]);
-                embed.AddField("\u200b", "[View all Sprites](https://typo.rip/#sprites)");
+                embed.AddField("\u200b", "[View all Sprites](https://www.typo.rip/tools/sprites)");
                 await context.Channel.SendMessageAsync(embed: embed);
             }
             else
@@ -83,7 +83,7 @@ namespace Palantir.Commands
                     list.AddField("**#" + rank + ": " + spt.Name + "** ", "ID: " + spt.ID + (spt.Special ? " :sparkles: " : "") + " - Active: " + score.Value[1] + ", Bought: " + (score.Value[2] + score.Value[1]));
                     rank++;
                 });
-                list.AddField("\u200b", "[View all Sprites](https://typo.rip/#sprites)");
+                list.AddField("\u200b", "[View all Sprites](https://www.typo.rip/tools/sprites)");
                 await context.Channel.SendMessageAsync(embed: list);
             }
         }
@@ -311,6 +311,7 @@ namespace Palantir.Commands
                 else embed.AddField("Exclusive:", "This scene can't be bought regulary.");
                 embed.WithDescription("**ID:** " + scene.Id + "\n" + (scene.Artist != "" ? "**Artist:** " + scene.Artist + "\n" : "") + "**Font color: **" + scene.Color + " / " + scene.GuessedColor + "\n\nBuy the scene: `>paint " + id + "`\nUse the scene: `>show " + id + "`");
                 embed.WithImageUrl(scene.Url);
+                embed.AddField("\u200b", "[View all Scenes](https://www.typo.rip/tools/scenes)");
                 await context.Channel.SendMessageAsync(embed: embed);
             }
             else

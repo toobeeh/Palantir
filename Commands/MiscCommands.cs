@@ -33,7 +33,7 @@ namespace Palantir.Commands
         {
             string msg = "";
             msg += "**Visit the website:**\n";
-            msg += "https://typo.rip\n";
+            msg += "https://www.typo.rip\n";
             msg += "**Connect to the bot**\n";
             msg += " - Message the bot in DM `>login`\n";
             msg += " - Copy the login number\n";
@@ -41,7 +41,6 @@ namespace Palantir.Commands
             msg += " - Copy the server token (from the bot message or ask your admin)\n";
             msg += " - Enter the server token in the browser extension popup\n\n";
             msg += " Now all your added servers will display when you're online. \n";
-            msg += "https://media.giphy.com/media/UuviRqel88ryGaL8cg/giphy.gif";
 
             await context.RespondAsync(msg);
         }
@@ -142,7 +141,7 @@ namespace Palantir.Commands
             embed.AddField("\u200b ", desc);
 
             if (inventory.Count < 5) embed.AddField("\u200b ", "Use `>use [id]` to select your Sprite!\n`>use 0` will set no Sprite.\nBuy a Sprite with `>buy [id]`.\nSpecial Sprites :sparkles: replace your whole avatar! ");
-            embed.AddField("\u200b", "[View all Sprites](https://typo.rip/#sprites)");
+            embed.AddField("\u200b", "[View all Sprites](https://www.typo.rip/tools/sprites)");
             await context.Channel.SendMessageAsync(embed: embed);
         }
 
@@ -232,7 +231,7 @@ namespace Palantir.Commands
             var spritebatches = sprites.Batch(batchsize * 3);
 
             if (inventory.Count < 5) embed.AddField("Command help: ", "Use `>use [id]` to select your Sprite!\n`>use 0` will set no Sprite.\nBuy a Sprite with `>buy [id]`.\nSpecial Sprites :sparkles: replace your whole avatar! \nRainbow Sprites :rainbow: can be color-customized! (`>rainbow`) ");
-            embed.AddField("\u200b", "[View all Sprites](https://typo.rip/#sprites)");
+            embed.AddField("\u200b", "[View all Sprites](https://www.typo.rip/tools/sprites)");
 
             Action<string, bool> setComponents = (string navText, bool disabled) =>
             {
@@ -349,11 +348,11 @@ namespace Palantir.Commands
             ObservedGuild guild = Program.Feanor.PalantirTethers.FirstOrDefault(g => g.PalantirEndpoint.GuildID == context.Guild.Id.ToString()).PalantirEndpoint;
             if (guild is null)
             {
-                await Program.SendEmbed(context.Channel, "Aw, shoot :(", "This server is not using Palantir yet :/\nVisit https://typo.rip#admin to find out how!");
+                await Program.SendEmbed(context.Channel, "Aw, shoot :(", "This server is not using Palantir yet :/\nVisit https://www.typo.rip/help/palantir to find out how!");
             }
             else
             {
-                await context.RespondAsync("https://typo.rip/i?invite=" + guild.ObserveToken);
+                await context.RespondAsync("https://www.typo.rip/invite/" + guild.ObserveToken);
             }
         }
 
