@@ -300,7 +300,7 @@ namespace Palantir
         public void ValidateGuildPalantir(string guildid)
         {
             if(!PalantirTethers.Any(p => p.PalantirEndpoint.GuildID == guildid)){
-                throw new Exception("This server isn't using Palantir yet!\nVisit https://typo.rip to learn how to set up Palantir.");
+                throw new Exception("This server isn't using Palantir yet!\nVisit https://www.typo.rip/help/palantir to learn how to set up Palantir.");
             }
         }
 

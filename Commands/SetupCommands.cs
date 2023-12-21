@@ -43,7 +43,7 @@ namespace Palantir.Commands
                 guild.ObserveToken = token;
             }
             while (Program.Feanor.PalantirTokenExists(token));
-            await context.Message.RespondAsync("Active lobbies will now be observed in " + context.Message.MentionedChannels[0].Mention + ".\nUsers need following token to connect the browser extension: ```fix\n" + token + "\n```Pin this message or save the token!\n\nFor further instructions, users can visit the website https://typo.rip.\nMaybe include the link in the bot message!");
+            await context.Message.RespondAsync("Active lobbies will now be observed in " + context.Message.MentionedChannels[0].Mention + ".\nUsers need following link to connect their account to this server: ```fix\nhttps://www.typo.rip/invite/" + token + "\n```\n\nFor further instructions, users can visit the website https://www.typo.rip.");
             // save observed
             Program.Feanor.SavePalantiri(guild);
         }

@@ -342,7 +342,7 @@ namespace Palantir
 
             message += PalantirSettings.Header + "\n";
             if (PalantirSettings.ShowRefreshed) message += "Refreshed: <t:" + (DateTimeOffset.UtcNow.ToUnixTimeSeconds() - 20) + ":R> \n";//+ DateTime.UtcNow.AddHours(PalantirSettings.Timezone).ToShortTimeString() + " (UTC " + PalantirSettings.Timezone.ToString("+0;-#") + ")\n"; 
-            if(PalantirSettings.ShowToken) message += "Click to connect: <https://typo.rip/i?invite="+ PalantirEndpoint.ObserveToken + ">\n";
+            if(PalantirSettings.ShowToken) message += "Click to connect: <https://www.typo.rip/invite/"+ PalantirEndpoint.ObserveToken + ">\n";
 
             message += "\n";
             
