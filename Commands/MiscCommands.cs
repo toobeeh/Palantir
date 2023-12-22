@@ -1071,7 +1071,7 @@ namespace Palantir.Commands
             else
             {
                 id--;
-                if (id < 0 || id > list.Count || (id is not null && list[id??0].image is null)) await Program.SendEmbed(context.Channel, "Oopsie", "There's now image for this ID. Check >gallery again!");
+                if (id < 0 || id > list.Count || (id is not null && list[id??0].image is null)) await Program.SendEmbed(context.Channel, "Oopsie", "There's no image for this ID. Check >gallery again!");
                 var item = list[(int)id];
 
                 var embed = new DiscordEmbedBuilder()
