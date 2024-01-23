@@ -232,6 +232,10 @@ namespace Palantir
                 if (member.Roles.Any(role => role.Id == 859100010184572938)) patronizer.Add(member.Id.ToString());
                 if (member.Roles.Any(role => role.Id == 983922288208531466)) boosters.Add(member.Id.ToString());
             };
+
+            // add static patrons
+            patrons.Add("728726204080848917"); // moni
+
             PatronCount = patrons.Count();
             PalantirContext db = new PalantirContext();
             // iterate through palantir members and set flags
