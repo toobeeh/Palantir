@@ -1031,12 +1031,7 @@ namespace Palantir.Commands
 
             if(id is null)
             {
-                var items = list.ConvertAll(award =>
-                    award.image is not null ?
-                    $"- {BubbleWallet.GetRarityIcon(award.award.Rarity)} {award.award.Name}: [{award.image.Title}](https://eu2.contabostorage.com/45a0651c8baa459daefd432c0307bb5b:cloud/{context.User.Id}/{award.image.ImageId}/image.png)" :
-                    $"- {BubbleWallet.GetRarityIcon(award.award.Rarity)} {award.award.Name}: No image found :(");
-
-                var pages = list.Batch(25).ToList().Select((batch, index) =>
+                var pages = list.Batch(20).ToList().Select((batch, index) =>
                 {
                     var builder = new DiscordEmbedBuilder()
                         .WithColor(DiscordColor.Magenta)
@@ -1049,7 +1044,7 @@ namespace Palantir.Commands
                         pageIndex++;
                         if (item.image is not null) builder.AddField(
                             "`#" + pageIndex + "` " + item.image.Title, 
-                            $"> {BubbleWallet.GetRarityIcon(item.award.Rarity)}  {item.award.Name}\n> By {BubbleWallet.GetUsername(item.inv.OwnerLogin)}‎ ‎ ‎ \n> On <t:{(int)(item.inv.Date/1000)}:d>\n> [Show Image](https://eu2.contabostorage.com/45a0651c8baa459daefd432c0307bb5b:cloud/{context.User.Id}/{item.image.ImageId}/image.png)", 
+                            $"> {BubbleWallet.GetRarityIcon(item.award.Rarity)}  {item.award.Name}\n> By {BubbleWallet.GetUsername(item.inv.OwnerLogin)}‎ ‎ ‎ \n> On <t:{(int)(item.inv.Date/1000)}:d>\n> [Show Image](https://cloud.typo.rip/{context.User.Id}/{item.image.ImageId}/image.png)", 
                             true);
                         else builder.AddField("Unknown Image :(", $"> {BubbleWallet.GetRarityIcon(item.award.Rarity)}  {item.award.Name}\n> By {BubbleWallet.GetUsername(item.inv.OwnerLogin)}‎ ‎ ‎  \n> <t:{(int)(item.inv.Date / 1000)}:d>", true);
                     }
