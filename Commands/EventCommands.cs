@@ -11,6 +11,8 @@ using System.Collections.Generic;
 using Palantir.Model;
 using System.IO;
 using Palantir.PalantirCommandModule;
+using DSharpPlus.Interactivity.Extensions;
+using DSharpPlus.Interactivity;
 
 namespace Palantir.Commands
 {
@@ -21,7 +23,6 @@ namespace Palantir.Commands
         public async Task ShowEvent(CommandContext context, int eventID = 0)
         {
             List<Event> events = Events.GetEvents(false);
-            DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
             string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
             List<SpriteProperty> inv = BubbleWallet.GetInventory(login);
             Event evt;
@@ -31,45 +32,64 @@ namespace Palantir.Commands
             {
                 DateTime eventStart = Program.ParseDateAsUtc(evt.ValidFrom);
                 DateTime eventEnd = eventStart.AddDays(evt.DayLength);
-                embed.Title = ":champagne: " + evt.EventName;
-                embed.Color = DiscordColor.Magenta;
-                embed.WithDescription(evt.Description + 
-                    "\nLasts from <t:" + new DateTimeOffset(eventStart).ToUnixTimeSeconds() + ":D> until <t:" 
-                    + new DateTimeOffset(eventEnd).ToUnixTimeSeconds() + ":D>\n");
-
-                string dropList = "";
                 List<Model.Sprite> eventsprites = new List<Model.Sprite>();
                 var progressiveDrops = Events.GetProgressiveEventDrops(evt);
                 List<EventDrop> eventdrops = Events.GetEventDrops(new List<Event> { evt });
+                Scene scene = BubbleWallet.GetAvailableScenes().FirstOrDefault(scene => scene.EventId == evt.EventId);
+                var collected = Events.GetCollectedEventDrops(context.Message.Author.Id.ToString(), evt);
+
+                // build pages of drop info
+                List<string> dropInfoPages= new List<string>() { ""};
                 eventdrops.ForEach(e =>
                 {
+                    string dropInfo = "";
                     var progressiveDropInfo = progressiveDrops.FirstOrDefault(d => d.drop.EventDropId == e.EventDropId);
                     List<Model.Sprite> sprites = Events.GetEventSprites(e.EventDropId);
                     eventsprites.AddRange(sprites);
-                    dropList += "\n**" + e.Name + " Drop**  (" + BubbleWallet.GetEventCredit(login, e.EventDropId) + " caught) (`#" + e.EventDropId + "`)";
+                    dropInfo += "\n**" + e.Name + " Drop**  (" + BubbleWallet.GetEventCredit(login, e.EventDropId) + " caught) (`#" + e.EventDropId + "`)";
 
                     if(evt.Progressive == 1 && !progressiveDropInfo.isRevealed)
                     {
-                        dropList += $"\n> Will be collectable from <t:{progressiveDropInfo.revealTimeStamp}:d> to <t:{progressiveDropInfo.endTimestamp}:d>\n";
+                        dropInfo += $"\n> Will be collectable from <t:{progressiveDropInfo.revealTimeStamp}:d> to <t:{progressiveDropInfo.endTimestamp}:d>\n";
                     }
                     else
                     {
                         int spent = inv.Where(spt => sprites.Any(eventsprite => eventsprite.Id == spt.ID)).Sum(spt => spt.Cost);
                         sprites.OrderBy(sprite => sprite.Id).ForEach(sprite =>
-                           dropList += "\n> ‎ \n> ➜ **" + sprite.Name + "** (`#" + sprite.Id + "`)\n> "
+                           dropInfo += "\n> ‎ \n> ➜ **" + sprite.Name + "** (`#" + sprite.Id + "`)\n> "
                             + (inv.Any(s => s.ID == sprite.Id) ? ":package: " : (BubbleWallet.GetEventCredit(login, sprite.EventDropId) - spent + " / "))
                             + sprite.Cost + " " + e.Name + " Drops "
                         );
-                        dropList += "\n";
+                        dropInfo += "\n";
                     }
+
+                    if(dropInfoPages[dropInfoPages.Count - 1].Length + dropInfo.Length > 400) dropInfoPages.Add(dropInfo);
+                    else dropInfoPages[dropInfoPages.Count - 1] +=  dropInfo;
                 });
-                embed.AddField("Event Sprites", dropList == "" ? "No drops added yet." : dropList);
-                embed.AddField("\u200b", "Use `>sprite [id]` to see the event drop and sprite!");
+
+                // build embed pages
+                var pages = dropInfoPages.ConvertAll(page =>
+                {
+                    var pageEmbed = new DiscordEmbedBuilder()
+                        .WithTitle(":champagne: " + evt.EventName)
+                        .WithDescription(evt.Description +
+                            "\nLasts from <t:" + new DateTimeOffset(eventStart).ToUnixTimeSeconds() + ":D> until <t:"
+                            + new DateTimeOffset(eventEnd).ToUnixTimeSeconds() + ":D>\n")
+                        .WithColor(DiscordColor.Magenta)
+                        .WithFooter(Math.Round(collected) + " Drops total collected ~ Current gift loss rate: " + Math.Round(Events.CurrentGiftLossRate(eventsprites, collected), 3))
+                        .AddField("Event Sprites", page.Length == 0 ? "No drops added yet." : page)
+                        .AddField("\u200b", "Use `>sprite [id]` to see the event drop and sprite!");
+
+                    return pageEmbed;
+                });
 
                 // progressive event info
                 if (evt.Progressive == 1)
                 {
-                    embed.AddField("Progressive event", "The eventdrops unveil sequentially during the event - you can only collect them on certain days!");
+                    pages.ForEach(page =>
+                    {
+                        page.AddField("Progressive event", "The eventdrops unveil sequentially during the event - you can only collect them on certain days!");
+                    });
                 }
 
                 // league stuff: for regular events
@@ -77,7 +97,13 @@ namespace Palantir.Commands
                 {
                     List<PastDrop> leaguedrops = new List<PastDrop>();
                     var credit = Events.GetAvailableLeagueTradeDrops(context.User.Id.ToString(), evt, out leaguedrops);
-                    if (credit > 0) embed.AddField("\n\u200b \nLeague Event Drops", "> You have " + Math.Round(credit, 1, MidpointRounding.ToZero).ToString() + " League Drops to redeem! \n> You can swap them with the command `>redeem [amount] [event drop id]` to any of this event's Event Drops.");
+                    if (credit > 0)
+                    {
+                        pages.ForEach(page =>
+                        {
+                            page.AddField("\n\u200b \nLeague Event Drops", "> You have " + Math.Round(credit, 1, MidpointRounding.ToZero).ToString() + " League Drops to redeem! \n> You can swap them with the command `>redeem [amount] [event drop id]` to any of this event's Event Drops.");
+                        });
+                    }
                 }
 
                 // league stuff: for progressive events
@@ -88,31 +114,39 @@ namespace Palantir.Commands
                     if(credits.Values.Any(v => v > 0))
                     {
                         var creditInfo = string.Join("\n", credits.Keys.ToList().ConvertAll(key => $"> - `#{key}` {eventdrops.FirstOrDefault(d=>d.EventDropId==key).Name}: {Math.Round(credits[key], 1, MidpointRounding.ToZero)}"));
-                        embed.AddField("\n\u200b \nLeague Event Drops", $"> You have following League Drops to redeem: \n{creditInfo}\n> \n> You can swap them with the command `>redeem [amount] [event drop id]`.");
+                        pages.ForEach(page =>
+                        {
+                            page.AddField("\n\u200b \nLeague Event Drops", $"> You have following League Drops to redeem: \n{creditInfo}\n> \n> You can swap them with the command `>redeem [amount] [event drop id]`.");
+                        });    
                     }
                 }
 
-                Scene scene = BubbleWallet.GetAvailableScenes().FirstOrDefault(scene => scene.EventId == evt.EventId);
                 if (scene != null)
                 {
                     int collectedBubbles = BubbleWallet.GetCollectedBubblesInTimespan(eventStart, eventEnd.AddDays(-1), login);
                     bool hasScene = BubbleWallet.GetSceneInventory(login, false, false).Any(prop => prop.Id == scene.Id);
-                    embed.WithImageUrl(scene.Url);
-                    embed.AddField("\n\u200b \nEvent Scene: **" + scene.Name + "**", "> \n> " + (hasScene ? ":package:" : "") + collectedBubbles + " / " + (((evt.EventId == 15 ? -2 : 0) + evt.DayLength) * Events.eventSceneDayValue) + " Bubbles collected");
+
+                    pages.ForEach(page =>
+                    {
+                        page.WithImageUrl(scene.Url);
+                        page.AddField("\n\u200b \nEvent Scene: **" + scene.Name + "**", "> \n> " + (hasScene ? ":package:" : "") + collectedBubbles + " / " + (((evt.EventId == 15 ? -2 : 0) + evt.DayLength) * Events.eventSceneDayValue) + " Bubbles collected");
+                    });
                 }
 
-                var collected = Events.GetCollectedEventDrops(context.Message.Author.Id.ToString(), evt);
-                embed.WithFooter(Math.Round(collected) + " Drops total collected ~ Current gift loss rate: " + Math.Round(Events.CurrentGiftLossRate(eventsprites, collected), 3));
+                var paginatablePages = pages.ConvertAll(page => new Page() { Embed = page });
 
+                if (pages.Count > 1) await context.Client.GetInteractivity().SendPaginatedMessageAsync(context.Channel, context.User, paginatablePages);
+                else await context.Channel.SendMessageAsync(embed: pages[0]);
             }
             else
             {
+                DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
                 embed.Title = ":champagne: No Event active :(";
                 embed.Color = DiscordColor.Magenta;
                 embed.WithDescription("Check new events with `>upcoming`.\nSee all past events with `>passed` and a specific with `>event [id]`.\nGift event drops with `>gift [@person] [amount of drops] [id of the sprite]`.\nBtw - I keep up to 50% of the gift for myself! ;)");
-            }
 
-            await context.Channel.SendMessageAsync(embed: embed);
+                await context.Channel.SendMessageAsync(embed: embed);
+            }
         }
 
         [Description("Swap League Event Drop credit to  Event Drops")]
