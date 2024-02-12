@@ -63,7 +63,7 @@ namespace Palantir.Commands
                         dropInfo += "\n";
                     }
 
-                    if(dropInfoPages[dropInfoPages.Count - 1].Length + dropInfo.Length > 400) dropInfoPages.Add(dropInfo);
+                    if(dropInfoPages[dropInfoPages.Count - 1].Length + dropInfo.Length > 300) dropInfoPages.Add(dropInfo);
                     else dropInfoPages[dropInfoPages.Count - 1] +=  dropInfo;
                 });
 
