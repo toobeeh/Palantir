@@ -17,6 +17,7 @@ using DSharpPlus.SlashCommands;
 using System.Globalization;
 using Palantir.PalantirCommandModule;
 using Palantir.Model;
+using DSharpPlus.Exceptions;
 
 
 
@@ -255,6 +256,12 @@ namespace Palantir
             if (e.Command.Module.ModuleType.IsSubclassOf(typeof(PalantirCommandModule.PalantirCommandModule)))
             {
                 Program.CommandLock.UnlockCommand(e.Context);
+            }
+
+            if (e.Exception is DSharpPlus.Exceptions.BadRequestException)
+            {
+                string msg = ((BadRequestException)e.Exception).Errors;
+                LogError(msg, e.Exception);
             }
 
             if (e.Exception is DSharpPlus.CommandsNext.Exceptions.ChecksFailedException)
