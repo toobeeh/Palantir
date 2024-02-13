@@ -27,30 +27,30 @@ namespace Palantir.Commands
     public class MiscCommands : PalantirCommandModule.PalantirCommandModule
     {
 
-        [Command("manual")]
-        [Description("Show the manual for bot usage")]
-        public async Task Manual(CommandContext context)
-        {
-            string msg = "";
-            msg += "**Visit the website:**\n";
-            msg += "https://www.typo.rip\n";
-            msg += "**Connect to the bot**\n";
-            msg += " - Message the bot in DM `>login`\n";
-            msg += " - Copy the login number\n";
-            msg += " - Enter the login number in the browser extension popup\n";
-            msg += " - Copy the server token (from the bot message or ask your admin)\n";
-            msg += " - Enter the server token in the browser extension popup\n\n";
-            msg += " Now all your added servers will display when you're online. \n";
+        //[Command("manual")]
+        //[Description("Show the manual for bot usage")]
+        //public async Task Manual(CommandContext context)
+        //{
+        //    string msg = "";
+        //    msg += "**Visit the website:**\n";
+        //    msg += "https://www.typo.rip\n";
+        //    msg += "**Connect to the bot**\n";
+        //    msg += " - Message the bot in DM `>login`\n";
+        //    msg += " - Copy the login number\n";
+        //    msg += " - Enter the login number in the browser extension popup\n";
+        //    msg += " - Copy the server token (from the bot message or ask your admin)\n";
+        //    msg += " - Enter the server token in the browser extension popup\n\n";
+        //    msg += " Now all your added servers will display when you're online. \n";
 
-            await context.RespondAsync(msg);
-        }
+        //    await context.RespondAsync(msg);
+        //}
 
-        [Description("Get your login data to connect the extension.")]
-        [Command("login")]
-        public async Task Login(CommandContext context)
-        {
-            await context.RespondAsync("Check out the new way to create & connect your Palantir account: \nhttps://youtu.be/Th1sanNw-EY");
-        }
+        //[Description("Get your login data to connect the extension.")]
+        //[Command("login")]
+        //public async Task Login(CommandContext context)
+        //{
+        //    await context.RespondAsync("Check out the new way to create & connect your Palantir account: \nhttps://youtu.be/Th1sanNw-EY");
+        //}
 
         [Description("Get a overview of your inventory. (old layout)")]
         [Command("oldinventory")]
@@ -1029,7 +1029,7 @@ namespace Palantir.Commands
             int login = Convert.ToInt32(BubbleWallet.GetLoginOfMember(context.User.Id.ToString()));
             var list = BubbleWallet.GetAwardGallery(login);
 
-            if(id is null)
+            if(id is null || id < 1)
             {
                 var pages = list.Batch(20).ToList().Select((batch, index) =>
                 {
@@ -1066,12 +1066,17 @@ namespace Palantir.Commands
             else
             {
                 id--;
-                if (id < 0 || id > list.Count || (id is not null && list[id??0].image is null)) await Program.SendEmbed(context.Channel, "Oopsie", "There's no image for this ID. Check >gallery again!");
+                if (id < 0 || id >= list.Count || list[(int)id].image is null)
+                {
+                    await Program.SendEmbed(context.Channel, "Oopsie", "There's no image for this ID. Check >gallery again!");
+                    return;
+                }
+
                 var item = list[(int)id];
 
                 var embed = new DiscordEmbedBuilder()
                     .WithTitle(item.image.Title + " by " + context.User.Username)
-                    .WithImageUrl($"https://eu2.contabostorage.com/45a0651c8baa459daefd432c0307bb5b:cloud/{context.User.Id}/{item.image.ImageId}/image.png")
+                    .WithImageUrl($"https://cloud.typo.rip/{context.User.Id}/{item.image.ImageId}/image.png")
                     .WithThumbnail(item.award.Url)
                     .WithColor(DiscordColor.Magenta)
                     .WithDescription($"‎‎{BubbleWallet.GetRarityIcon(item.award.Rarity)}  **{item.award.Name}**\n> {item.award.Description}\n> \\- {BubbleWallet.GetUsername(item.inv.OwnerLogin)} on <t:{(int)(item.inv.Date / 1000)}:d>\n");
