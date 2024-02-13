@@ -713,10 +713,9 @@ namespace Palantir.Commands
             string boosts;
             if (boostlist.Count > 0)
             {
-                boosts = boostlist.ConvertAll(
-                boost => " x" + boost.Factor
-                + " (" + (Math.Round((Convert.ToInt64(boost.StartUtcs) + boost.DurationS - now) / 60000, 1) + "min left)")).ToDelimitedString("\n");
-                boosts += "\n=============\n **x" + Math.Round(Drops.GetCurrentFactor(), 1) + " Boost active**";
+                boosts = boostlist.ConvertAll(boost => " x" + Math.Round(Convert.ToDouble(boost.Factor), 1)
+                    + " (" + (Math.Round((Convert.ToInt64(boost.StartUtcs) + boost.DurationS - now) / 60000, 1) + "min left)")).ToDelimitedString("\n");
+                    boosts += "\n=============\n **x" + Math.Round(Drops.GetCurrentFactor(), 1) + " Boost active**";
             }
             else boosts = "No Drop Boosts active :(";
 
