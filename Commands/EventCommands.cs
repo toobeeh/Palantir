@@ -569,6 +569,7 @@ namespace Palantir.Commands
             results.Batch(1).ForEach((batch, i) =>
             {
                 var aBatch = batch.ToArray();
+                Console.WriteLine(aBatch[0].Login);
                 var rank1 = Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(Program.Feanor.GetMemberByLogin(aBatch[0].Login).Member1).UserName;
                 ranks += $"｜#{ i + 1,3 }｜{ Regex.Replace(rank1, @"p{Cs}", ""),15 }｜{ aBatch[0].Score,6 } ｜{ aBatch[0].AverageWeight,6 }% ｜{ aBatch[0].Streak.streakMax,5 }";
 
