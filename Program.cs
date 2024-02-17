@@ -204,7 +204,7 @@ namespace Palantir
             {
                 Token = BabyPalantirToken,
                 TokenType = TokenType.Bot,
-                Intents = DiscordIntents.MessageContents
+                Intents = DiscordIntents.All
             });
             await client.ConnectAsync();
             Interactivity = client.UseInteractivity();
