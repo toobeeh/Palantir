@@ -58,7 +58,8 @@ namespace Palantir
 
             S3 = new S3Handler();
             
-            if (BabyPalantirToken is not null) await RunBabyPalantir();
+            Console.WriteLine(BabyPalantirToken);
+            if (!String.IsNullOrWhiteSpace(BabyPalantirToken)) await RunBabyPalantir();
 
             Console.WriteLine("Huh, it's " + DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " - let me sleep!\n");
             Console.WriteLine("Initializing servant bot client...\n");
