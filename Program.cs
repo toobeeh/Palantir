@@ -203,7 +203,8 @@ namespace Palantir
             var client = new DiscordClient(new DiscordConfiguration
             {
                 Token = BabyPalantirToken,
-                TokenType = TokenType.Bot
+                TokenType = TokenType.Bot,
+                Intents = DiscordIntents.MessageContents
             });
             await client.ConnectAsync();
             Interactivity = client.UseInteractivity();
@@ -213,7 +214,7 @@ namespace Palantir
                 StringPrefixes = new string[] { ">" },
                 DmHelp = false,
                 IgnoreExtraArguments = true,
-                CaseSensitive = false
+                CaseSensitive = false,
             });
             Commands.CommandErrored += OnCommandErrored;
             TypoTestground = await client.GetGuildAsync(779435254225698827);
