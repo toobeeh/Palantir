@@ -19,12 +19,6 @@ using Palantir.PalantirCommandModule;
 using Palantir.Model;
 using DSharpPlus.Exceptions;
 
-
-
-//private readonly string conn = $"server={Program.DatabaseHost};user id={Program.DatabaseUser};database=palantir";
-//protected override void OnConfiguring(DbContextOptionsBuilder options)
-//    => options.UseMySql(conn, ServerVersion.AutoDetect(conn));
-
 namespace Palantir
 {
     class Program
@@ -39,6 +33,7 @@ namespace Palantir
         public static SlashCommandsExtension Slash { get; private set; }
         public static InteractivityExtension Interactivity;
         public static readonly string PalantirToken = Environment.GetEnvironmentVariable("PALANTIR_TOKEN");
+        public static readonly string? BabyPalantirToken = Environment.GetEnvironmentVariable("BABY_PALANTIR_TOKEN");
         public static readonly string ServantToken = Environment.GetEnvironmentVariable("SERVANT_TOKEN");
         public static string DatabaseHost = Environment.GetEnvironmentVariable("DB_HOST");
         public static readonly string DatabaseUser = Environment.GetEnvironmentVariable("DB_USER");
@@ -51,9 +46,6 @@ namespace Palantir
 
         static async Task Main(string[] args)
         {
-
-            //await RunNightlyTest();
-
             CultureInfo culture = new CultureInfo("de-AT");
             culture.NumberFormat.NumberDecimalSeparator = ".";
             CultureInfo.DefaultThreadCurrentCulture = culture;
@@ -65,6 +57,8 @@ namespace Palantir
             //Console.WriteLine($"Initialized with:\n- Palantir Token: {PalantirToken}\n- Servant Token: {ServantToken}\n- Database Host: {DatabaseHost}\n- Database User: {DatabaseUser}\n- Static Data Path: {StaticDataPath}\n- Cache Data Path: {CacheDataPath}\n- S3 Access Key: {S3AccessKey}\n- S3 Secret Key: {S3SecretKey}\n");
 
             S3 = new S3Handler();
+            
+            if (BabyPalantirToken is not null) await RunBabyPalantir();
 
             Console.WriteLine("Huh, it's " + DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + " - let me sleep!\n");
             Console.WriteLine("Initializing servant bot client...\n");
@@ -203,29 +197,33 @@ namespace Palantir
             await Task.Delay(-1);
         }
 
-        private static async Task RunNightlyTest()
+        private static async Task RunBabyPalantir()
         {
             var client = new DiscordClient(new DiscordConfiguration
             {
-                Token = "MTA3MTE0MjQxNzk4NzgxMzM3Ng.GxGzjR.7GH5hlMal4nt-2VRqmN49lxvblOyoudL7CKXjM",
+                Token = BabyPalantirToken,
                 TokenType = TokenType.Bot
             });
             await client.ConnectAsync();
-            client.UseInteractivity();
+            Interactivity = client.UseInteractivity();
             CommandLock = new CommandLock();
-            var commands = client.UseCommandsNext(new CommandsNextConfiguration
+            Commands = client.UseCommandsNext(new CommandsNextConfiguration
             {
                 StringPrefixes = new string[] { ">" },
                 DmHelp = false,
                 IgnoreExtraArguments = true,
                 CaseSensitive = false
             });
+            Commands.CommandErrored += OnCommandErrored;
             TypoTestground = await client.GetGuildAsync(779435254225698827);
             Feanor = new();
-
-            commands.RegisterCommands<Palantir.Commands.MiscCommands>();
-            commands.RegisterCommands<Palantir.Commands.SpriteCommands>();
-            commands.RegisterCommands<Palantir.Commands.EventCommands>();
+            
+            Commands.RegisterCommands<Palantir.Commands.MiscCommands>();
+            Commands.RegisterCommands<Palantir.Commands.EventCommands>();
+            Commands.RegisterCommands<Palantir.Commands.ManagementCommands>();
+            Commands.RegisterCommands<Palantir.Commands.PatronCommands>();
+            Commands.RegisterCommands<Palantir.Commands.SetupCommands>();
+            Commands.RegisterCommands<Palantir.Commands.SpriteCommands>();
             await Task.Delay(-1);
         }
 
