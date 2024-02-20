@@ -747,8 +747,8 @@ namespace Palantir
             var level = new AwardPackLevel();
             level.CollectedBubbles = bubbles;
             if (bubbles > 15000) level.Rarity = AwardRarity.Legendary;
-            if (bubbles > 5000) level.Rarity = AwardRarity.Epic;
-            if (bubbles > 2500) level.Rarity = AwardRarity.Special;
+            else if (bubbles > 5000) level.Rarity = AwardRarity.Epic;
+            else if (bubbles > 2500) level.Rarity = AwardRarity.Special;
             else level.Rarity = AwardRarity.Common;
             return level;
         }
