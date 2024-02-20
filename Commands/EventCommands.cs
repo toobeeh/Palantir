@@ -67,6 +67,9 @@ namespace Palantir.Commands
                     else dropInfoPages[dropInfoPages.Count - 1] +=  dropInfo;
                 });
 
+                var rate = Events.CurrentGiftLossRate(eventsprites, collected);
+                Console.WriteLine($"Loss Collection Debug [event]: userid: {context.Message.Author.Id}, collected: {collected}, loss: {rate}, event: {evt.EventId}, eventsprites: {String.Join("", eventsprites.ConvertAll(s=>s.Id))}");
+
                 // build embed pages
                 var pages = dropInfoPages.ConvertAll(page =>
                 {
@@ -76,7 +79,7 @@ namespace Palantir.Commands
                             "\nLasts from <t:" + new DateTimeOffset(eventStart).ToUnixTimeSeconds() + ":D> until <t:"
                             + new DateTimeOffset(eventEnd).ToUnixTimeSeconds() + ":D>\n")
                         .WithColor(DiscordColor.Magenta)
-                        .WithFooter(Math.Round(collected) + " Drops total collected ~ Current gift loss rate: " + Math.Round(Events.CurrentGiftLossRate(eventsprites, collected), 3))
+                        .WithFooter(Math.Round(collected) + " Drops total collected ~ Current gift loss rate: " + Math.Round(rate, 3))
                         .AddField("Event Sprites", page.Length == 0 ? "No drops added yet." : page)
                         .AddField("\u200b", "Use `>sprite [id]` to see the event drop and sprite!");
 
@@ -278,7 +281,7 @@ namespace Palantir.Commands
             int eventDropID = sprites.FirstOrDefault(s => s.ID == eventSpriteID).EventDropID;
             string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
             int credit = BubbleWallet.GetRemainingEventDrops(login, eventDropID);
-            int total = BubbleWallet.GetEventCredit(login, eventDropID);
+            //int total = BubbleWallet.GetEventCredit(login, eventDropID);
             //if (amount < 3 && total >= 3)
             //{
             //    await Program.SendEmbed(context.Channel, "That's all you got?", "With more than 3 drops collected, the minimal gift amount is 3 event drops.");
@@ -295,11 +298,15 @@ namespace Palantir.Commands
                 await Program.SendEmbed(context.Channel, "You can't trick me!", "Your event credit is too few. You have only " + credit + " " + name + " left.");
                 return;
             }
-            var collected = Events.GetCollectedEventDrops(context.Message.Author.Id.ToString(), Events.GetEvents(false).FirstOrDefault(e => e.EventId == drop.EventId));
+
+            var evt = Events.GetEvents(false).FirstOrDefault(e => e.EventId == drop.EventId);
+            var collected = Events.GetCollectedEventDrops(context.Message.Author.Id.ToString(), evt);
 
             double lossBase = Events.CurrentGiftLossRate(eventsprites, collected);
             int lossMin = Convert.ToInt16(Math.Round(lossBase * amount * 0.7));
             int lossMax = Convert.ToInt16(Math.Round(lossBase * amount * 1.1));
+            
+            Console.WriteLine($"Loss Collection Debug [gift]: userid: {context.Message.Author.Id}, collected: {collected}, loss: {lossBase}, event: {evt.EventId}, eventsprites: {String.Join("", eventsprites.ConvertAll(s=>s.Id))}");
 
             int lost = 0;
             if (lossMax <= 1)
