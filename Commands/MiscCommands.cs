@@ -1036,7 +1036,7 @@ namespace Palantir.Commands
                         .WithColor(DiscordColor.Magenta)
                         .WithFooter("To view a single item, use >gallery [id]")
                         .WithTitle((context.Member is not null ? context.Member.DisplayName : context.User.Username) + "s Award Gallery");
-                    var pageIndex = index * 25;
+                    var pageIndex = index * 20;
 
                     foreach (var item in batch) {
 
