@@ -291,7 +291,7 @@ namespace Palantir.Commands
             List<EventDrop> drops = Events.GetEventDrops();
             var drop = drops.FirstOrDefault(d => d.EventDropId == eventDropID);
             var eventdrops = drops.Where(d => d.EventId == drop.EventId).ToList();
-            var eventsprites = eventdrops.ConvertAll(d => Events.GetEventSprites(drop.EventDropId)).SelectMany(s => s).ToList();
+            var eventsprites = eventdrops.ConvertAll(d => Events.GetEventSprites(d.EventDropId)).SelectMany(s => s).ToList();
             string name = drop.Name;
             if (credit - amount < 0)
             {
