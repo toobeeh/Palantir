@@ -91,7 +91,7 @@ namespace Palantir.Slash
         [SlashCommand("splits", "Show your earned boost splits.")]
         public async Task Splits(InteractionContext context)
         {
-            PermissionFlag flags = new PermissionFlag(Program.Feanor.GetFlagByMember(context.User));
+            PermissionFlag flags = new PermissionFlag(Program.Feanor.GetFlagByMemberId(context.User.Id.ToString()));
             int login = Convert.ToInt32(BubbleWallet.GetLoginOfMember(context.User.Id.ToString()));
 
             var memberSplits = BubbleWallet.GetMemberSplits(login, flags);
@@ -369,7 +369,7 @@ namespace Palantir.Slash
             int bubbles = BubbleWallet.GetBubbles(login);
             int credit = BubbleWallet.CalculateCredit(login, context.User.Id.ToString());
             List<SpriteProperty> inventory = BubbleWallet.GetInventory(login).OrderBy(s => s.ID).ToList();
-            PermissionFlag perm = new PermissionFlag(Program.Feanor.GetFlagByMember(context.User));
+            PermissionFlag perm = new PermissionFlag(Program.Feanor.GetFlagByMemberId(context.User.Id.ToString()));
             int splits = BubbleWallet.GetMemberSplits(Convert.ToInt32(login), perm).Sum(s => s.Value);
             int regLeagueDrops = League.GetLeagueEventDropWeights(context.User.Id.ToString()).Count;
             int leagueDrops = regLeagueDrops + League.GetLeagueDropWeights(context.User.Id.ToString()).Count;
@@ -538,7 +538,7 @@ namespace Palantir.Slash
         [SlashCommand("dropboost", "Boost the current droprate for a while")]
         public async Task Dropboost(InteractionContext context, [Option("factor", "Amount of splits to increase boost factor")] long factorSplits = 0, [Option("duration", "Amount of splits to increase boost duration")] long durationSplits = 0, [Option("cooldown", "Amount of splits to lower boost cooldown")] long cooldownSplits = 0, [Option("instant", "Set to start the boost instantly")] bool now = false)
         {
-            PermissionFlag perm = new PermissionFlag(Program.Feanor.GetFlagByMember(context.User));
+            PermissionFlag perm = new PermissionFlag(Program.Feanor.GetFlagByMemberId(context.User.Id.ToString()));
             if (perm.Permanban)
             {
                 await Program.SendEmbed(context.Channel, "So... you're one of the bad guys, huh?", "Users with a permanban obviously cant boost, lol");

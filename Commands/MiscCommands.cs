@@ -102,7 +102,7 @@ namespace Palantir.Commands
 
             string desc = "";
 
-            PermissionFlag perm = new PermissionFlag(Program.Feanor.GetFlagByMember(context.User));
+            PermissionFlag perm = new PermissionFlag(Program.Feanor.GetFlagByMemberId(context.User.Id.ToString()));
             if (perm.BubbleFarming) desc += "`🚩 Flagged as 'bubble farming'.`\n";
             if (perm.BotAdmin) desc += "`✔️ Verified cool guy aka Admin.`\n";
             if (perm.Moderator) desc += "`🛠️ Palantir Moderator.`\n";
@@ -155,7 +155,7 @@ namespace Palantir.Commands
             int bubbles = BubbleWallet.GetBubbles(login);
             int credit = BubbleWallet.CalculateCredit(login, context.User.Id.ToString());
             List<SpriteProperty> inventory = BubbleWallet.GetInventory(login).OrderBy(s => s.ID).ToList();
-            PermissionFlag perm = new PermissionFlag(Program.Feanor.GetFlagByMember(context.User));
+            PermissionFlag perm = new PermissionFlag(Program.Feanor.GetFlagByMemberId(context.User.Id.ToString()));
             int splits = BubbleWallet.GetMemberSplits(Convert.ToInt32(login), perm).Sum(s => s.Value);
             int regLeagueDrops = League.GetLeagueEventDropWeights(context.User.Id.ToString()).Count;
             int leagueDrops = regLeagueDrops + League.GetLeagueDropWeights(context.User.Id.ToString()).Count;
@@ -775,7 +775,7 @@ namespace Palantir.Commands
         [Command("splits")]
         public async Task Splits(CommandContext context)
         {
-            PermissionFlag flags = new PermissionFlag(Program.Feanor.GetFlagByMember(context.User));
+            PermissionFlag flags = new PermissionFlag(Program.Feanor.GetFlagByMemberId(context.User.Id.ToString()));
             int login = Convert.ToInt32(BubbleWallet.GetLoginOfMember(context.User.Id.ToString()));
 
             var memberSplits = BubbleWallet.GetMemberSplits(login, flags);
@@ -821,7 +821,7 @@ namespace Palantir.Commands
         [Command("dropboost")]
         public async Task SplitBoost(CommandContext context, int factorSplits = 0, int durationSplits = 0, int cooldownSplits = 0, string modifier = "")
         {
-            PermissionFlag perm = new PermissionFlag(Program.Feanor.GetFlagByMember(context.User));
+            PermissionFlag perm = new PermissionFlag(Program.Feanor.GetFlagByMemberId(context.User.Id.ToString()));
             if (perm.Permanban)
             {
                 await Program.SendEmbed(context.Channel, "So... you're one of the bad guys, huh?", "Users with a permanban obviously cant boost, lol");
@@ -932,7 +932,7 @@ namespace Palantir.Commands
         [Synchronized]
         public async Task Awards(CommandContext context)
         {
-            PermissionFlag flags = new PermissionFlag(Program.Feanor.GetFlagByMember(context.User));
+            PermissionFlag flags = new PermissionFlag(Program.Feanor.GetFlagByMemberId(context.User.Id.ToString()));
             int login = Convert.ToInt32(BubbleWallet.GetLoginOfMember(context.User.Id.ToString()));
             var inv = BubbleWallet.GetAwardInventory(login);
             var received = BubbleWallet.GetReceivedAwards(login);

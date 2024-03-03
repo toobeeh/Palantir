@@ -17,7 +17,7 @@ namespace Palantir.Slash
 
         public override async Task<bool> ExecuteChecksAsync(InteractionContext ctx)
         {
-            PermissionFlag userFlag = new PermissionFlag(Program.Feanor.GetFlagByMember(ctx.User));
+            PermissionFlag userFlag = new PermissionFlag(Program.Feanor.GetFlagByMemberId(ctx.User.Id.ToString()));
             PermissionFlag requiredFlag = new PermissionFlag(FlagToCheck);
             bool result = userFlag.BotAdmin || userFlag.CheckForPermissionByte(FlagToCheck);
             return result;

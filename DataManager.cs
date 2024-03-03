@@ -202,10 +202,10 @@ namespace Palantir
             context.Dispose();
             return member;
         }
-        public Int16 GetFlagByMember(DiscordUser user)
+        public Int16 GetFlagByMemberId(string userId)
         {
             PalantirContext context = new PalantirContext();
-            Model.Member member = context.Members.FirstOrDefault(m => m.Member1.Contains(user.Id.ToString()));
+            Model.Member member = context.Members.FirstOrDefault(m => m.Member1.Contains(userId));
             context.Dispose();
             return Convert.ToInt16(member.Flag);
         }

@@ -327,7 +327,7 @@ namespace Palantir.Commands
         public async Task BuyScene(CommandContext context, [Description("The ID of the scene")] int id)
         {
             string login = BubbleWallet.GetLoginOfMember(context.User.Id.ToString());
-            PermissionFlag flags = new PermissionFlag(Program.Feanor.GetFlagByMember(context.User));
+            PermissionFlag flags = new PermissionFlag(Program.Feanor.GetFlagByMemberId(context.User.Id.ToString()));
             List<Scene> available = BubbleWallet.GetAvailableScenes();
             List<SceneProperty> inventory = BubbleWallet.GetSceneInventory(login, false, false);
             int credit = flags.BotAdmin ? int.MaxValue : BubbleWallet.CalculateCredit(login, context.User.Id.ToString());
@@ -374,7 +374,7 @@ namespace Palantir.Commands
         public async Task UseScene(CommandContext context, [Description("The ID of the scene")] int id)
         {
             string login = BubbleWallet.GetLoginOfMember(context.User.Id.ToString());
-            PermissionFlag flags = new PermissionFlag(Program.Feanor.GetFlagByMember(context.User));
+            PermissionFlag flags = new PermissionFlag(Program.Feanor.GetFlagByMemberId(context.User.Id.ToString()));
             List<SceneProperty> inventory = BubbleWallet.GetSceneInventory(login, false, false);
 
             if (!inventory.Any(scene => scene.Id == id) && id != 0)
@@ -454,7 +454,7 @@ namespace Palantir.Commands
         [RequirePermissionFlag((byte)2)] // 2 -> admin
         public async Task AddScene(CommandContext context, [Description("The name of the scene")] string name, [Description("A color string (hex, rgb, name..)")] string color, [Description("A color when the player has guessed the word")] string guessedColor, [Description("Any string except '-' to set the sprite artist")] string artist = "", [Description("Event ID or '0' to associate to no event")] int eventID = 0, [Description("If the scene can be bought or only obtained by another way")] bool exclusive = false)
         {
-            PermissionFlag perm = new PermissionFlag(Program.Feanor.GetFlagByMember(context.User));
+            PermissionFlag perm = new PermissionFlag(Program.Feanor.GetFlagByMemberId(context.User.Id.ToString()));
             if (!perm.Moderator && !perm.BotAdmin)
             {
                 await Program.SendEmbed(context.Channel, "Ts ts...", "This command is only available for higher beings.\n||Some call them Bot-Moderators ;))||");

@@ -204,6 +204,8 @@ namespace Palantir
                 MemberLeagueResult result = new MemberLeagueResult();
                 result.Login = BubbleWallet.GetLoginOfMember(userid);
 
+                if(new PermissionFlag(Program.Feanor.GetFlagByMemberId(userid)).Dropban) return;
+
                 MemberLeagueResult cachedResult = new()
                 {
                     LeagueDrops = new(),

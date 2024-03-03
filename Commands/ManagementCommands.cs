@@ -145,7 +145,7 @@ namespace Palantir.Commands
             if (flag == -1)
             {
                 DiscordUser target = await Program.Client.GetUserAsync(id);
-                PermissionFlag getperm = new PermissionFlag(Program.Feanor.GetFlagByMember(target));
+                PermissionFlag getperm = new PermissionFlag(Program.Feanor.GetFlagByMemberId(target.Id.ToString()));
                 string getDesc = "Flag[0] Bubble Farming - "
                     + getperm.BubbleFarming + "\nFlag[1] Bot Admin - "
                     + getperm.BotAdmin + "\nFlag[2] Moderator - "
@@ -159,7 +159,7 @@ namespace Palantir.Commands
                 await Program.SendEmbed(context.Channel, "The flags of " + target.Username, getDesc);
                 return;
             }
-            PermissionFlag perm = new PermissionFlag(Program.Feanor.GetFlagByMember(context.User));
+            PermissionFlag perm = new PermissionFlag(Program.Feanor.GetFlagByMemberId(context.User.Id.ToString()));
             if (!perm.BotAdmin && !perm.Moderator)
             {
                 await Program.SendEmbed(context.Channel, "o_o", "You can't set other's flags!");
