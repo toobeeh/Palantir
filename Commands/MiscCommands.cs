@@ -844,7 +844,11 @@ namespace Palantir.Commands
                 var memberSplits = BubbleWallet.GetMemberSplits(login, perm).Where(split => !split.Expired).ToList();
                 int memberAvailableSplits = memberSplits.Sum(s => s.Value);
 
-                if (factorSplits + durationSplits + cooldownSplits > memberAvailableSplits) factorSplits = durationSplits = cooldownSplits = 0;
+                if (factorSplits + durationSplits + cooldownSplits > memberAvailableSplits)
+                {
+                    await Program.SendEmbed(context.Channel, "Careful!", "You don't have that many splits available. Your current inventory is " + memberAvailableSplits + " splits.");
+                    return;
+                }
 
 
                 var chooseMessage = new DiscordMessageBuilder()
