@@ -147,15 +147,16 @@ namespace Palantir.Commands
                 DiscordUser target = await Program.Client.GetUserAsync(id);
                 PermissionFlag getperm = new PermissionFlag(Program.Feanor.GetFlagByMemberId(target.Id.ToString()));
                 string getDesc = "Flag[0] Bubble Farming - "
-                    + getperm.BubbleFarming + "\nFlag[1] Bot Admin - "
-                    + getperm.BotAdmin + "\nFlag[2] Moderator - "
-                    + getperm.Moderator + "\nFlag[3] Unlimited Cloud - "
-                    + getperm.CloudUnlimited + "\nFlag[4] Patron - "
-                    + getperm.Patron + "\nFlag[5] Permanent Ban - "
-                    + getperm.Permanban + "\nFlag[6] Drop Ban - "
-                    + getperm.Dropban + "\nFlag[7] Patronizer - "
-                    + getperm.Patronizer + "\nFlag[8] Booster - "
-                    + getperm.Booster; ;
+                                 + getperm.BubbleFarming + "\nFlag[1] Bot Admin - "
+                                 + getperm.BotAdmin + "\nFlag[2] Moderator - "
+                                 + getperm.Moderator + "\nFlag[3] Unlimited Cloud - "
+                                 + getperm.CloudUnlimited + "\nFlag[4] Patron - "
+                                 + getperm.Patron + "\nFlag[5] Permanent Ban - "
+                                 + getperm.Permanban + "\nFlag[6] Drop Ban - "
+                                 + getperm.Dropban + "\nFlag[7] Patronizer - "
+                                 + getperm.Patronizer + "\nFlag[8] Booster - "
+                                 + getperm.Booster + "\nFlag[9] Beta - "
+                                 + getperm.Beta;
                 await Program.SendEmbed(context.Channel, "The flags of " + target.Username, getDesc);
                 return;
             }
@@ -181,7 +182,9 @@ namespace Palantir.Commands
                     + newFlag.Patron + "\nFlag[5] Permanent Ban - "
                     + newFlag.Permanban + "\nFlag[6] Drop Ban - "
                     + newFlag.Dropban + "\nFlag[7] Patronizer - "
-                    + newFlag.Patronizer;
+                    + newFlag.Patronizer + "\nFlag[8] Booster - "
+                    + newFlag.Booster + "\nFlag[9] Beta - "
+                    + newFlag.Beta;
             await Program.SendEmbed(context.Channel, "*magic happened*", "The flag of " + name + " was set to " + flag + "\n" + desc);
         }
 

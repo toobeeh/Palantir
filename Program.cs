@@ -411,6 +411,7 @@ namespace Palantir
         public bool Dropban { get; set; }
         public bool Patronizer { get; set; }
         public bool Booster { get; set; }
+        public bool Beta { get; set; }
         public PermissionFlag(Int16 flag)
         {
             var flags = ConvertInt16ToBitArray(flag);
@@ -423,6 +424,7 @@ namespace Palantir
             Dropban = flags[6];
             Patronizer = flags[7];
             Booster = flags[8];
+            Beta = flags[9];
         }
         private bool[] ConvertInt16ToBitArray(Int16 value)
         {
@@ -446,7 +448,8 @@ namespace Palantir
                 + (Permanban ? 32 : 0)
                 + (Dropban ? 64 : 0)
                 + (Patronizer ? 128 : 0)
-                + (Booster ? 256 : 0);
+                + (Booster ? 256 : 0)
+                + (Beta ? 512 : 0);
         }
 
         public bool CheckForPermissionByte(byte permission)
