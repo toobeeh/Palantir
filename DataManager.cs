@@ -220,10 +220,12 @@ namespace Palantir
         public async Task<int> UpdatePatrons(DSharpPlus.DiscordClient client)
         {
             PalantirContext ct = new();
-            Program.Feanor.PatronEmojis = ct.Members
+            PatronEmojis = ct.Members
                 .Where(member => (member.Flag & (1 << PermissionFlag.PATRON)) != 0)
                 .ToDictionary(m => m.Login.ToString(), m => m.Emoji ?? "");
 
+            Console.WriteLine("deb emoji count: " + PatronEmojis.Count);
+            
             return 0;
             
             List<string> patrons = new List<string>();
