@@ -445,7 +445,8 @@ namespace Palantir
                         }
                         line += new string(' ', (32 - line.Length) < 0 ? 0 : (32 - line.Length));
                         string patronEmoji = "";
-                        if (Program.Feanor.PatronEmojis.Count > 0 && Program.Feanor.PatronEmojis.Keys.Any(key => key == login)) patronEmoji = Program.Feanor.PatronEmojis[login];
+                        if (Program.Feanor.PatronEmojis.ContainsKey(login)) patronEmoji = Program.Feanor.PatronEmojis[login];
+                        Console.WriteLine(Program.Feanor.PatronEmojis[login]);
                         if (patronEmoji.Length > 0)
                         {
                             line += "  " + patronEmoji + " ";

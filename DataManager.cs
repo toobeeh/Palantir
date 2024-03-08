@@ -226,7 +226,7 @@ namespace Palantir
                 .Where(member => new PermissionFlag((short)member.Flag).Patron)
                 .ToDictionary(m => m.Login.ToString(), m => m.Emoji ?? "");
 
-            Console.WriteLine("deb emoji count: " + PatronEmojis.Count);
+            Console.WriteLine("deb emoji count: " + PatronEmojis.ToString());
             
             return 0;
             
