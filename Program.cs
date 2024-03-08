@@ -188,7 +188,7 @@ namespace Palantir
             Console.WriteLine("Starting bubble counter job\n...");
             await scheduler.ScheduleJob(bubbleCounter, bubbleTrigger);
 
-            Drops.StartDropping();
+            //Drops.StartDropping();
             Console.WriteLine("Started dropping cool stuff!");
 
             TypoTestground = await Client.GetGuildAsync(779435254225698827);
