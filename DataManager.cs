@@ -221,7 +221,9 @@ namespace Palantir
         {
             PalantirContext ct = new();
             PatronEmojis = ct.Members
-                .Where(member => (member.Flag & (1 << PermissionFlag.PATRON)) != 0)
+                .Where(m => m.Emoji != null)
+                .ToList()
+                .Where(member => new PermissionFlag((short)member.Flag).Patron)
                 .ToDictionary(m => m.Login.ToString(), m => m.Emoji ?? "");
 
             Console.WriteLine("deb emoji count: " + PatronEmojis.Count);
