@@ -223,11 +223,9 @@ namespace Palantir
             PatronEmojis = ct.Members
                 .Where(m => m.Emoji != null)
                 .ToList()
-                .Where(member => new PermissionFlag((short)member.Flag).Patron)
+                .Where(member => new PermissionFlag((short)member.Flag).Patron || new PermissionFlag((short)member.Flag).BotAdmin)
                 .ToDictionary(m => m.Login.ToString(), m => m.Emoji ?? "");
 
-            Console.WriteLine("deb emoji count: " + String.Join(", ",  PatronEmojis.Keys.Select(k=>k.ToString()+PatronEmojis[k])));
-            
             return 0;
             
             List<string> patrons = new List<string>();
