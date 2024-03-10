@@ -133,7 +133,7 @@ namespace Palantir
             ISchedulerFactory schedFact = new StdSchedulerFactory();
             IScheduler scheduler = await schedFact.GetScheduler();
             await scheduler.Start();
-            IJobDetail tracer = JobBuilder.Create<QuartzJobs.TracerJob>()
+            /*IJobDetail tracer = JobBuilder.Create<QuartzJobs.TracerJob>()
                 .WithIdentity("Bubble Tracer")
                 .Build();
             ITrigger tracerTrigger = TriggerBuilder.Create()
@@ -143,7 +143,7 @@ namespace Palantir
                     .WithIntervalInHours(24)
                     .StartingDailyAt(TimeOfDay.HourAndMinuteOfDay(23, 59))
                 )
-                .Build();
+                .Build();*/
             IJobDetail statusUpdater = JobBuilder.Create<QuartzJobs.StatusUpdaterJob>()
                 .WithIdentity("Status Updater")
                 .Build();
@@ -172,8 +172,8 @@ namespace Palantir
                 .Build();
 
             //Start bubble tracer job
-            Console.WriteLine("Starting bubbletracer job\n...");
-            await scheduler.ScheduleJob(tracer, tracerTrigger);
+            /*Console.WriteLine("Starting bubbletracer job\n...");
+            await scheduler.ScheduleJob(tracer, tracerTrigger);*/
 
             // start status updating
             Console.WriteLine("Starting status updater job\n...");
