@@ -160,16 +160,16 @@ namespace Palantir
             ITrigger pictureTrigger = TriggerBuilder.Create()
                 .StartNow().WithCronSchedule("0 0 8,20 ? * * *")
                 .Build();
-            IJobDetail bubbleCounter = JobBuilder.Create<BubbleCounter>()
+            /*IJobDetail bubbleCounter = JobBuilder.Create<BubbleCounter>()
                 .WithIdentity("Bubble Counter")
-                .Build();
-            ITrigger bubbleTrigger = TriggerBuilder.Create()
+                .Build();*/
+            /*ITrigger bubbleTrigger = TriggerBuilder.Create()
                 .StartNow()
                 .WithDailyTimeIntervalSchedule
                 (t => t
                     .WithIntervalInSeconds(10)
                 )
-                .Build();
+                .Build();*/
 
             //Start bubble tracer job
             /*Console.WriteLine("Starting bubbletracer job\n...");
@@ -185,8 +185,8 @@ namespace Palantir
             await RefreshPicture();
 
             // start bubble counting
-            Console.WriteLine("Starting bubble counter job\n...");
-            await scheduler.ScheduleJob(bubbleCounter, bubbleTrigger);
+            /*Console.WriteLine("Starting bubble counter job\n...");
+            await scheduler.ScheduleJob(bubbleCounter, bubbleTrigger);*/
 
             //Drops.StartDropping();
             Console.WriteLine("Started dropping cool stuff!");

@@ -397,7 +397,7 @@ namespace Palantir
                         login = match.PlayerMember.UserLogin;
                         if (l.Host == "skribbl.io")
                         {
-                            try
+                            /*try
                             {
                                 BubbleWallet.AddBubble(login);
                             }
@@ -411,7 +411,7 @@ namespace Palantir
                             catch (Exception e)
                             {
                                 Console.WriteLine("Unhandled error adding Bubble for login " + login + " : \n" + e.ToString());
-                            }
+                            }*/
                             try
                             {
                                 BubbleWallet.SetOnlineSprite(login, l.Key, player.LobbyPlayerID);
