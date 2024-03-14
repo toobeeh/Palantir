@@ -500,7 +500,9 @@ namespace Palantir
             db.Dispose();
         }
 
-        public static void SetOnlineSprite(string login, string lobbyKey, string lobbyPlayerID){
+        public static void SetOnlineSprite(string login, string lobbyKey, string lobbyPlayerID)
+        {
+            return;
             List<SpriteProperty> playersprites = GetInventory(login).Where(i => i.Activated).ToList();
             List<SceneProperty> scenes = GetSceneInventory(login, true, false);
             PalantirContext db = new PalantirContext();
