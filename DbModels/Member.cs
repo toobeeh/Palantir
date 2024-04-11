@@ -17,7 +17,6 @@ namespace Palantir.Model
         public string Patronize { get; set; }
         public string Customcard { get; set; }
         public string Scenes { get; set; }
-        public string Streamcode { get; set; }
         public string RainbowSprites { get; set; }
         public long? AwardPackOpened { get; set; }
     }

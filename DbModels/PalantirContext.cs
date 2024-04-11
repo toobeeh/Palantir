@@ -381,11 +381,6 @@ namespace Palantir.Model
                     .IsRequired()
                     .HasColumnType("text")
                     .HasDefaultValueSql("''");
-
-                entity.Property(e => e.Streamcode)
-                    .IsRequired()
-                    .HasColumnType("text")
-                    .HasDefaultValueSql("''");
             });
 
             modelBuilder.Entity<NextDrop>(entity =>
