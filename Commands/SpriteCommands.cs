@@ -94,6 +94,7 @@ namespace Palantir.Commands
         [Command("buy")]
         public async Task Buy(CommandContext context, [Description("The id of the sprite (eg '15')")] int sprite)
         {
+            await Program.SendNewPalantirInformation(context, ">sprite buy <id>");
             string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
             Model.Member member = Program.Feanor.GetMemberByLogin(login);
             List<SpriteProperty> inventory;
@@ -178,6 +179,7 @@ namespace Palantir.Commands
         [Command("use")]
         public async Task Use(CommandContext context, [Description("The id of the sprite (eg '15')")] int sprite, [Description("The sprite-slot which will be set. Starts at slot 1.")] int slot = 1, [Description("A timeout in seconds when the action will be performed")] int timeoutSeconds = 0)
         {
+            await Program.SendNewPalantirInformation(context, ">sprite use <id>");
             if (timeoutSeconds > 0)
             {
                 await Program.SendEmbed(context.Channel, "Tick tock...", "The command will be executed in " + timeoutSeconds + "s.", "", DiscordColor.Green.Value);
@@ -238,6 +240,7 @@ namespace Palantir.Commands
         [Command("combo")]
         public async Task Combo(CommandContext context, [Description("The id of the sprites (eg '15 0 16 17')")] params int[] sprites)
         {
+            await Program.SendNewPalantirInformation(context, ">sprite combo <...ids>");
             string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
             List<SpriteProperty> inventory = BubbleWallet.GetInventory(login);
             if (sprites.Any(sprite => sprite != 0 && !inventory.Any(item => item.ID == sprite)))
@@ -294,6 +297,7 @@ namespace Palantir.Commands
         [Command("scene")]
         public async Task ViewScene(CommandContext context, [Description("The ID of the scene")] int id)
         {
+            await Program.SendNewPalantirInformation(context, ">scene view <id>");
             PalantirContext db = new PalantirContext();
             Scene scene = db.Scenes.FirstOrDefault(scene => scene.Id == id);
             if (scene is not null)
@@ -327,6 +331,7 @@ namespace Palantir.Commands
         [Command("paint")]
         public async Task BuyScene(CommandContext context, [Description("The ID of the scene")] int id)
         {
+            await Program.SendNewPalantirInformation(context, ">scene buy <id>");
             string login = BubbleWallet.GetLoginOfMember(context.User.Id.ToString());
             PermissionFlag flags = new PermissionFlag(Program.Feanor.GetFlagByMemberId(context.User.Id.ToString()));
             List<Scene> available = BubbleWallet.GetAvailableScenes();
@@ -374,6 +379,7 @@ namespace Palantir.Commands
         [Command("show")]
         public async Task UseScene(CommandContext context, [Description("The ID of the scene")] int id)
         {
+            await Program.SendNewPalantirInformation(context, ">scene show <id>");
             string login = BubbleWallet.GetLoginOfMember(context.User.Id.ToString());
             PermissionFlag flags = new PermissionFlag(Program.Feanor.GetFlagByMemberId(context.User.Id.ToString()));
             List<SceneProperty> inventory = BubbleWallet.GetSceneInventory(login, false, false);
@@ -505,6 +511,7 @@ namespace Palantir.Commands
         [Command("rainbow")]
         public async Task Rainbow(CommandContext context, [Description("The id of the sprite (eg '15')")] int sprite = -1, [Description("The rainbow shift from 0-200. -1 to remove it.")] int shift = -1)
         {
+            await Program.SendNewPalantirInformation(context, ">sprite color <id> [color]");
             string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
             List<SpriteProperty> inventory;
             inventory = BubbleWallet.GetInventory(login);
@@ -554,6 +561,7 @@ namespace Palantir.Commands
         [Aliases("spf")]
         public async Task SpriteProfile(CommandContext context, [Description("What do you want to do? 'list', 'use' ('use-scene', 'use-combo', 'use-color'), 'save', 'delete'")] string action = "list", [Description("The target profile.")] string profile = "")
         {
+            await Program.SendNewPalantirInformation(context, ">outfit list/save/view/delete <name>");
             string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
             var profiles = BubbleWallet.GetSpriteProfiles(login).OrderBy(s => s.Name);
 

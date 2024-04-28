@@ -57,6 +57,7 @@ namespace Palantir.Commands
         [Aliases("oldinv")]
         public async Task OldInventory(CommandContext context)
         {
+            await Program.SendNewPalantirInformation(context, ">inventory");
             string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
             List<SpriteProperty> inventory;
             try
@@ -150,6 +151,7 @@ namespace Palantir.Commands
         [Aliases("inv")]
         public async Task Inventory(CommandContext context, int batchsize = 7)
         {
+            await Program.SendNewPalantirInformation(context, ">inventory");
             string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
             int drops = BubbleWallet.GetDrops(login, context.User.Id.ToString());
             int bubbles = BubbleWallet.GetBubbles(login);
@@ -289,6 +291,7 @@ namespace Palantir.Commands
         [Aliases("oldlbd", "oldldb")]
         public async Task Leaderboard(CommandContext context, string mode = "bubbles")
         {
+            await Program.SendNewPalantirInformation(context, ">leaderboard [mode]");
             Program.Feanor.ValidateGuildPalantir(context.Guild.Id.ToString());
             Program.Feanor.UpdateMemberGuilds();
             DiscordMessage leaderboard = await context.RespondAsync("`⏱️` Loading members of `" + context.Guild.Name + "`...");
@@ -361,6 +364,7 @@ namespace Palantir.Commands
         [Aliases("lbd", "ldb")]
         public async Task NewLeaderboard(CommandContext context, string mode = "bubbles")
         {
+            await Program.SendNewPalantirInformation(context, ">leaderboard [mode]");
             Program.Feanor.ValidateGuildPalantir(context.Guild.Id.ToString());
             Program.Feanor.UpdateMemberGuilds();
             //DiscordMessage leaderboard = await context.RespondAsync("`⏱️` Loading members of `" + context.Guild.Name + "`...");
@@ -483,6 +487,7 @@ namespace Palantir.Commands
         [Command("stat")]
         public async Task Stat(CommandContext context, [Description("Time span mode: 'day', 'week' or 'month'.")] string mode = "day")
         {
+            await Program.SendNewPalantirInformation(context, ">statistics [mode]");
             CultureInfo iv = CultureInfo.InvariantCulture;
             string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
             string msg = "```css\n";
@@ -540,6 +545,7 @@ namespace Palantir.Commands
         [Command("calc")]
         public async Task Calc(CommandContext context, [Description("Calc mode: bubbles, rank or sprite")] string mode = "", [Description("Whatever fits your mode.")] double target = 0)
         {
+            await Program.SendNewPalantirInformation(context, ">calculate <mode> <rank/amount>");
             double hours = 0;
 
             string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
@@ -705,6 +711,7 @@ namespace Palantir.Commands
         [Command("droprate")]
         public async Task DropRate(CommandContext context)
         {
+            await Program.SendNewPalantirInformation(context, ">boost rate");
             const int attempts = 10;
             double now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
             double average = 0;
@@ -775,6 +782,7 @@ namespace Palantir.Commands
         [Command("splits")]
         public async Task Splits(CommandContext context)
         {
+            await Program.SendNewPalantirInformation(context, ">boost splits");
             PermissionFlag flags = new PermissionFlag(Program.Feanor.GetFlagByMemberId(context.User.Id.ToString()));
             int login = Convert.ToInt32(BubbleWallet.GetLoginOfMember(context.User.Id.ToString()));
 
@@ -823,6 +831,7 @@ namespace Palantir.Commands
         [Command("dropboost")]
         public async Task SplitBoost(CommandContext context, int factorSplits = 0, int durationSplits = 0, int cooldownSplits = 0, string modifier = "")
         {
+            await Program.SendNewPalantirInformation(context, ">boost");
             PermissionFlag perm = new PermissionFlag(Program.Feanor.GetFlagByMemberId(context.User.Id.ToString()));
             if (perm.Permanban)
             {
@@ -938,6 +947,7 @@ namespace Palantir.Commands
         [Synchronized]
         public async Task Awards(CommandContext context)
         {
+            await Program.SendNewPalantirInformation(context, ">award");
             PermissionFlag flags = new PermissionFlag(Program.Feanor.GetFlagByMemberId(context.User.Id.ToString()));
             int login = Convert.ToInt32(BubbleWallet.GetLoginOfMember(context.User.Id.ToString()));
             var inv = BubbleWallet.GetAwardInventory(login);
@@ -1031,6 +1041,7 @@ namespace Palantir.Commands
         [Command("gallery")]
         public async Task Gallery(CommandContext context, int? id = null)
         {
+            await Program.SendNewPalantirInformation(context, ">award gallery");
             int login = Convert.ToInt32(BubbleWallet.GetLoginOfMember(context.User.Id.ToString()));
             var list = BubbleWallet.GetAwardGallery(login);
 

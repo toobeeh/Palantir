@@ -26,6 +26,7 @@ namespace Palantir.Commands
         [RequirePermissionFlag(PermissionFlag.PATRON)]
         public async Task Card(CommandContext context)
         {
+            await Program.SendNewPalantirInformation(context, ">card");
             DiscordMember dMember = context.Member;
             DiscordUser dUser = context.User;
             CustomCard cardsettings = new CustomCard
@@ -121,6 +122,7 @@ namespace Palantir.Commands
         [RequirePermissionFlag((byte)16)]
         public async Task Customcard(CommandContext context, [Description("The color theme (color name or color code)")] string color = "black", [Description("Primary information color")] string lightcolor = "white", [Description("Secondary information color")] string darkcolor = "white", [Description("The URL of the background - only the filename on imgur, eg: '7pnIfgB.png'")] string backgroundUrl = "", [Description("The opacity of the background (0-1)")] double backgroundOpacity = 0.7, [Description("The opacity of the background (0-1)")] double headerOpacity = 1)
         {
+            await Program.SendNewPalantirInformation(context, ">card customize");
             DiscordMessage response = await context.RespondAsync("\n>   <a:working:857610439588053023> **Updating your settings...**\n");
             string login = BubbleWallet.GetLoginOfMember(context.User.Id.ToString());
 
@@ -155,6 +157,7 @@ namespace Palantir.Commands
         [Command("patronize")]
         public async Task Patronize(CommandContext context, string gift_id = "")
         {
+            await Program.SendNewPalantirInformation(context, ">patron gift");
             PermissionFlag perm = new PermissionFlag(Program.Feanor.GetFlagByMemberId(context.User.Id.ToString()));
             if (!perm.Patronizer)
             {
@@ -207,6 +210,7 @@ namespace Palantir.Commands
         [RequirePermissionFlag((byte)16)]
         public async Task Patronemoji(CommandContext context, string emoji)
         {
+            await Program.SendNewPalantirInformation(context, ">patron emoji [emoji]");
             PalantirContext db = new PalantirContext();
             string login = BubbleWallet.GetLoginOfMember(context.User.Id.ToString());
             string regexEmoji = "(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])";
