@@ -28,6 +28,7 @@ namespace Palantir.Commands
         [Aliases("spt", "sprite")]
         public async Task Sprites(CommandContext context, [Description("The id of the sprite (eg '15')")] int sprite = 0)
         {
+            await Program.SendNewPalantirInformation(context, ">sprite list");
             List<Sprite> sprites = BubbleWallet.GetAvailableSprites();
 
             if (sprites.Any(s => s.ID == sprite))

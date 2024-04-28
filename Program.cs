@@ -198,6 +198,24 @@ namespace Palantir
             await Task.Delay(-1);
         }
 
+        public static async Task SendNewPalantirInformation(CommandContext context, string newCommand)
+        {
+            var embed = new DiscordEmbedBuilder()
+                .WithAuthor("Palantir is getting old... 😴")
+                .WithTitle("`⚠️` Outdated command")
+                .WithDescription("Good news! Palantir is getting an upgrade - the new version is already available!\n" +
+                                 "This command will work for a few more days.\n" +
+                                 "In the meantime, make sure to [click here & add the new bot to your server!](https://discord.com/oauth2/authorize?client_id=1071142417987813376&scope=bot&permissions=2147747840)\n" +
+                                 "If you have any questions about the new bot, [join the Typo Discord server.](https://discord.com/invite/pAapmUmWAM)");
+
+            embed.AddField("New Bot Command",
+                "You can use the following command in the new bot - it is also available as slash command:\n" +
+                $"`{newCommand}`");
+
+            embed.Color = DiscordColor.IndianRed;
+            await context.RespondAsync(embed);
+        }
+
         private static async Task RunBabyPalantir()
         {
             var client = new DiscordClient(new DiscordConfiguration
