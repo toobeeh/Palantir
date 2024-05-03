@@ -198,14 +198,16 @@ namespace Palantir
             await Task.Delay(-1);
         }
 
-        public static async Task SendNewPalantirInformation(CommandContext context, string newCommand)
+        public static async Task SendNewPalantirInformation(CommandContext context, string newCommand, bool terminate = false)
         {
             var embed = new DiscordEmbedBuilder()
                 .WithAuthor("Palantir is getting old... 😴")
                 .WithTitle("`⚠️` Outdated command")
                 .WithDescription("Good news! Palantir is getting an upgrade - the new version is already available!\n" +
-                                 "This command will work for a few more days.\n" +
-                                 "In the meantime, make sure to [click here & add the new bot to your server!](https://discord.com/oauth2/authorize?client_id=1071142417987813376&scope=bot&permissions=2147747840)\n" +
+                                 (terminate
+                                     ? "This command cannot be used anymore."
+                                     : "This command will work for a few more days.\n" +
+                                       "In the meantime, make sure to [click here & add the new bot to your server!](https://discord.com/oauth2/authorize?client_id=1071142417987813376&scope=bot&permissions=2147747840)\n") +
                                  "If you have any questions about the new bot, [join the Typo Discord server.](https://discord.com/invite/pAapmUmWAM)");
 
             embed.AddField("New Bot Command",
@@ -214,6 +216,8 @@ namespace Palantir
 
             embed.Color = DiscordColor.IndianRed;
             await context.RespondAsync(embed);
+
+            if (terminate) throw new Exception("Command is not available for use anymore.");
         }
 
         private static async Task RunBabyPalantir()

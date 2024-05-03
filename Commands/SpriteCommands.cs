@@ -94,7 +94,7 @@ namespace Palantir.Commands
         [Command("buy")]
         public async Task Buy(CommandContext context, [Description("The id of the sprite (eg '15')")] int sprite)
         {
-            await Program.SendNewPalantirInformation(context, ">sprite buy <id>");
+            await Program.SendNewPalantirInformation(context, ">sprite buy <id>", true);
             string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
             Model.Member member = Program.Feanor.GetMemberByLogin(login);
             List<SpriteProperty> inventory;
@@ -179,7 +179,7 @@ namespace Palantir.Commands
         [Command("use")]
         public async Task Use(CommandContext context, [Description("The id of the sprite (eg '15')")] int sprite, [Description("The sprite-slot which will be set. Starts at slot 1.")] int slot = 1, [Description("A timeout in seconds when the action will be performed")] int timeoutSeconds = 0)
         {
-            await Program.SendNewPalantirInformation(context, ">sprite use <id>");
+            await Program.SendNewPalantirInformation(context, ">sprite use <id>", true);
             if (timeoutSeconds > 0)
             {
                 await Program.SendEmbed(context.Channel, "Tick tock...", "The command will be executed in " + timeoutSeconds + "s.", "", DiscordColor.Green.Value);
@@ -240,7 +240,7 @@ namespace Palantir.Commands
         [Command("combo")]
         public async Task Combo(CommandContext context, [Description("The id of the sprites (eg '15 0 16 17')")] params int[] sprites)
         {
-            await Program.SendNewPalantirInformation(context, ">sprite combo <...ids>");
+            await Program.SendNewPalantirInformation(context, ">sprite combo <...ids>", true);
             string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
             List<SpriteProperty> inventory = BubbleWallet.GetInventory(login);
             if (sprites.Any(sprite => sprite != 0 && !inventory.Any(item => item.ID == sprite)))
@@ -331,7 +331,7 @@ namespace Palantir.Commands
         [Command("paint")]
         public async Task BuyScene(CommandContext context, [Description("The ID of the scene")] int id)
         {
-            await Program.SendNewPalantirInformation(context, ">scene buy <id>");
+            await Program.SendNewPalantirInformation(context, ">scene buy <id>", true);
             string login = BubbleWallet.GetLoginOfMember(context.User.Id.ToString());
             PermissionFlag flags = new PermissionFlag(Program.Feanor.GetFlagByMemberId(context.User.Id.ToString()));
             List<Scene> available = BubbleWallet.GetAvailableScenes();
