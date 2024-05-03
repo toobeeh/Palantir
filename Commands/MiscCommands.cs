@@ -57,7 +57,7 @@ namespace Palantir.Commands
         [Aliases("oldinv")]
         public async Task OldInventory(CommandContext context)
         {
-            await Program.SendNewPalantirInformation(context, ">inventory");
+            await Program.SendNewPalantirInformation(context, ">inventory", true);
             string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
             List<SpriteProperty> inventory;
             try
@@ -151,7 +151,7 @@ namespace Palantir.Commands
         [Aliases("inv")]
         public async Task Inventory(CommandContext context, int batchsize = 7)
         {
-            await Program.SendNewPalantirInformation(context, ">inventory");
+            await Program.SendNewPalantirInformation(context, ">inventory", true);
             string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
             int drops = BubbleWallet.GetDrops(login, context.User.Id.ToString());
             int bubbles = BubbleWallet.GetBubbles(login);
@@ -291,7 +291,7 @@ namespace Palantir.Commands
         [Aliases("oldlbd", "oldldb")]
         public async Task Leaderboard(CommandContext context, string mode = "bubbles")
         {
-            await Program.SendNewPalantirInformation(context, ">leaderboard [mode]");
+            await Program.SendNewPalantirInformation(context, ">leaderboard [mode]", true);
             Program.Feanor.ValidateGuildPalantir(context.Guild.Id.ToString());
             Program.Feanor.UpdateMemberGuilds();
             DiscordMessage leaderboard = await context.RespondAsync("`⏱️` Loading members of `" + context.Guild.Name + "`...");
@@ -364,7 +364,7 @@ namespace Palantir.Commands
         [Aliases("lbd", "ldb")]
         public async Task NewLeaderboard(CommandContext context, string mode = "bubbles")
         {
-            await Program.SendNewPalantirInformation(context, ">leaderboard [mode]");
+            await Program.SendNewPalantirInformation(context, ">leaderboard [mode]", true);
             Program.Feanor.ValidateGuildPalantir(context.Guild.Id.ToString());
             Program.Feanor.UpdateMemberGuilds();
             //DiscordMessage leaderboard = await context.RespondAsync("`⏱️` Loading members of `" + context.Guild.Name + "`...");

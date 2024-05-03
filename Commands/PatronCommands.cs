@@ -26,7 +26,7 @@ namespace Palantir.Commands
         [RequirePermissionFlag(PermissionFlag.PATRON)]
         public async Task Card(CommandContext context)
         {
-            await Program.SendNewPalantirInformation(context, ">card");
+            await Program.SendNewPalantirInformation(context, ">card", true);
             DiscordMember dMember = context.Member;
             DiscordUser dUser = context.User;
             CustomCard cardsettings = new CustomCard
