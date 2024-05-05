@@ -55,7 +55,7 @@ namespace Palantir.QuartzJobs
         public static int currentOnlineIDs;
         public async Task Execute(IJobExecutionContext context)
         {
-            List<string> onlineIDs = new List<string>();
+            /*List<string> onlineIDs = new List<string>();
             PalantirContext dbcontext = new PalantirContext();
             dbcontext.Statuses.ToList().ForEach(status =>
             {
@@ -67,7 +67,7 @@ namespace Palantir.QuartzJobs
             dbcontext.Dispose();
             double boost = Math.Round(Drops.GetCurrentFactor(), 1);
             string status = " " + count + " ppl " + (boost <= 1 ? "on skribbl.io" : "(" + boost + " Boost)");
-            await Program.Client.UpdateStatusAsync(new DiscordActivity(status, ActivityType.Watching));
+            await Program.Client.UpdateStatusAsync(new DiscordActivity(status, ActivityType.Watching));*/
             await Program.Feanor.UpdatePatrons(Program.Servant);
         }
     }
