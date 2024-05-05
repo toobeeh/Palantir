@@ -71,7 +71,7 @@ namespace Palantir
 
             if (entity != null)
             {
-                drops = entity.Drops;
+                drops = (int)entity.Drops;
             }
             context.SaveChanges();
             context.Dispose();
