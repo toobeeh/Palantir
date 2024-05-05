@@ -11,7 +11,7 @@ namespace Palantir.Model
         public string Member1 { get; set; }
         public int Bubbles { get; set; }
         public string Sprites { get; set; }
-        public int Drops { get; set; }
+        public double Drops { get; set; }
         public int Flag { get; set; }
         public string Emoji { get; set; }
         public string Patronize { get; set; }
