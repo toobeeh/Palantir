@@ -358,7 +358,7 @@ namespace Palantir.Model
 
                 entity.Property(e => e.Customcard).HasColumnType("text");
 
-                entity.Property(e => e.Drops).HasColumnType("int(11)");
+                entity.Property(e => e.Drops).HasColumnType("double");
 
                 entity.Property(e => e.Emoji).HasColumnType("text");
 
