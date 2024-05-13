@@ -348,6 +348,7 @@ namespace Palantir.Commands
         [Command("invite")]
         public async Task Serverinvite(CommandContext context)
         {
+            await Program.SendNewPalantirInformation(context, "-", true);
             ObservedGuild guild = Program.Feanor.PalantirTethers.FirstOrDefault(g => g.PalantirEndpoint.GuildID == context.Guild.Id.ToString()).PalantirEndpoint;
             if (guild is null)
             {

@@ -22,7 +22,7 @@ namespace Palantir.Commands
         [Command("event")]
         public async Task ShowEvent(CommandContext context, int eventID = 0)
         {
-            await Program.SendNewPalantirInformation(context, ">event [id]");
+            await Program.SendNewPalantirInformation(context, ">event [id]", true);
             List<Event> events = Events.GetEvents(false);
             string login = BubbleWallet.GetLoginOfMember(context.Message.Author.Id.ToString());
             List<SpriteProperty> inv = BubbleWallet.GetInventory(login);
@@ -158,6 +158,7 @@ namespace Palantir.Commands
         [Command("redeem")]
         public async Task Redeem(CommandContext context, int amount, int eventDropID)
         {
+            await Program.SendNewPalantirInformation(context, "-", true);
             if (amount < 0)
             {
                 await Program.SendEmbed(context.Channel, "What's that supposed to mean?", "no comment");
@@ -225,7 +226,7 @@ namespace Palantir.Commands
         [Command("passed")]
         public async Task PassedEvents(CommandContext context)
         {
-            await Program.SendNewPalantirInformation(context, ">event list");
+            await Program.SendNewPalantirInformation(context, ">event list", true);
             List<Event> events = Events.GetEvents(false);
             string eventsList = "";
             events = events.Where(e => Program.ParseDateAsUtc(e.ValidFrom).AddDays(e.DayLength) < DateTime.Now).OrderByDescending(e => Program.ParseDateAsUtc(e.ValidFrom)).ToList();
@@ -247,7 +248,7 @@ namespace Palantir.Commands
         [Command("upcoming")]
         public async Task UpcomingEvents(CommandContext context)
         {
-            await Program.SendNewPalantirInformation(context, ">event list");
+            await Program.SendNewPalantirInformation(context, ">event list", true);
             List<Event> events = Events.GetEvents(false);
             string eventsList = "";
             events = events.Where(e => Program.ParseDateAsUtc(e.ValidFrom) >= DateTime.Now).OrderByDescending(e => Program.ParseDateAsUtc(e.ValidFrom)).ToList();
@@ -270,7 +271,7 @@ namespace Palantir.Commands
         [Command("gift")]
         public async Task Gift(CommandContext context, [Description("The gift receiver (@member)")] DiscordMember target, [Description("The amount of gifted event drops")] int amount, [Description("The id of the sprite which can be bought with the gifted event drops")] int eventSpriteID)
         {
-            await Program.SendNewPalantirInformation(context, ">event gift <@user>");
+            await Program.SendNewPalantirInformation(context, ">event gift <@user>", true);
             if (amount < 0)
             {
                 await Program.SendEmbed(context.Channel, "LOL!", "Your'e tryna steal some stuff, huh?");
