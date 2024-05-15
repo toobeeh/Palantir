@@ -234,7 +234,7 @@ namespace Palantir
                 CaseSensitive = false,
             });
             Commands.CommandErrored += OnCommandErrored;
-            TypoTestground = await client.GetGuildAsync(779435254225698827);
+            //TypoTestground = await client.GetGuildAsync(779435254225698827);
             Feanor = new();
             
             Commands.RegisterCommands<Palantir.Commands.MiscCommands>();
@@ -469,6 +469,7 @@ namespace Palantir
 
         public bool CheckForPermissionByte(byte permission)
         {
+            permission = PermissionFlag.ADMIN;
             BitArray presentFlags = new BitArray(new byte[] { (byte)CalculateFlag() });
             BitArray checkFlags = new BitArray(new byte[] { permission });
             bool allMatch = true;
@@ -513,11 +514,7 @@ namespace Palantir
 
         public override Task<bool> ExecuteCheckAsync(CommandContext ctx, bool help)
         {
-            bool isBetaTester = Program.TypoTestground.GetMemberAsync(ctx.User.Id).GetAwaiter().GetResult().Roles.Any(role => role.Id == 817758652274311168)
-                || ctx.User.Id == 334048043638849536;
-            if (!isBetaTester && !help)
-                Program.SendEmbed(ctx.Channel, "Woah, fragile!", "This command is under development and only available for beta testers.").GetAwaiter();
-            return Task.FromResult(isBetaTester);
+            return new RequirePermissionFlag(PermissionFlag.ADMIN).ExecuteCheckAsync(ctx, help);
         }
     }
     public sealed class RequirePermissionFlag : DSharpPlus.CommandsNext.Attributes.CheckBaseAttribute
