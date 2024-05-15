@@ -240,8 +240,6 @@ namespace Palantir
             Commands.RegisterCommands<Palantir.Commands.MiscCommands>();
             Commands.RegisterCommands<Palantir.Commands.EventCommands>();
             Commands.RegisterCommands<Palantir.Commands.ManagementCommands>();
-            Commands.RegisterCommands<Palantir.Commands.PatronCommands>();
-            Commands.RegisterCommands<Palantir.Commands.SetupCommands>();
             Commands.RegisterCommands<Palantir.Commands.SpriteCommands>();
             await Task.Delay(-1);
         }
