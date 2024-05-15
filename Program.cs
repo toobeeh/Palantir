@@ -234,7 +234,7 @@ namespace Palantir
                 CaseSensitive = false,
             });
             Commands.CommandErrored += OnCommandErrored;
-            TypoTestground = await client.GetGuildAsync(779435254225698827);
+            //TypoTestground = await client.GetGuildAsync(779435254225698827);
             Feanor = new();
             
             Commands.RegisterCommands<Palantir.Commands.MiscCommands>();
