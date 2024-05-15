@@ -299,13 +299,13 @@ namespace Palantir
                          $"You can **add the new Palantir to your server now!**\n" +
                          $"- [Invite link](https://discord.com/oauth2/authorize?client_id=1071142417987813376&scope=bot&permissions=2147747840)\n" +
                          $"- Help article for the [updated bot commands](https://www.typo.rip/help/new-palantir)\n\n" +
-                         $"To use Palantir Lobbies on your server, follow this:\n" +
-                         $"- Add the regular Palantir to the server" +
-                         $"- A patron has to use `/patron home` in your server\n" +
+                         $"To use **Palantir Lobbies on your server**, follow this:\n" +
+                         $"- Add the regular Palantir to the server\n" +
+                         $"- A typo Patreon subscriber has to use the command `/patron home` in your server\n" +
                          $"- This gives an invite link for a dedicated bot, add the bot to the server\n" +
                          $"- Use the command `/server lobbies #some-channel` to start lobbies in a channel\n\n" +
                          $"There is a [help article](https://www.typo.rip/help/lobby-bot) and a [video guide](https://youtu.be/Th1sanNw-EY) to help with the setup.\n" +
-                         $"You can kick the old Palantir - this one - now :)\n" +
+                         $"You can kick the old Palantir - this one - now :)\n\n" +
                          $"*See you! <3*";
 
             return seeYou;
