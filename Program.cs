@@ -99,8 +99,6 @@ namespace Palantir
             Commands.RegisterCommands<Palantir.Commands.MiscCommands>();
             Commands.RegisterCommands<Palantir.Commands.EventCommands>();
             Commands.RegisterCommands<Palantir.Commands.ManagementCommands>();
-            Commands.RegisterCommands<Palantir.Commands.PatronCommands>();
-            Commands.RegisterCommands<Palantir.Commands.SetupCommands>();
             Commands.RegisterCommands<Palantir.Commands.SpriteCommands>();
 
             //var commandsServant = Servant.UseCommandsNext(new CommandsNextConfiguration
