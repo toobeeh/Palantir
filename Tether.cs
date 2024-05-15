@@ -291,6 +291,25 @@ namespace Palantir
 
         private string BuildLobbyContent()
         {
+            // byebye, legacy :')
+
+            var seeYou = $"## Palantir is dead, long live Palantir!\n" +
+                         $"This **old version of Palantir** has reached its end of life. \n" +
+                         $"Thank you for using it all the years!\n\n" +
+                         $"You can **add the new Palantir to your server now!**\n" +
+                         $"- [Invite link](https://discord.com/oauth2/authorize?client_id=1071142417987813376&scope=bot&permissions=2147747840)\n" +
+                         $"- Help article for the [updated bot commands](https://www.typo.rip/help/new-palantir)\n\n" +
+                         $"To use Palantir Lobbies on your server, follow this:\n" +
+                         $"- Add the regular Palantir to the server" +
+                         $"- A patron has to use `/patron home` in your server\n" +
+                         $"- This gives an invite link for a dedicated bot, add the bot to the server\n" +
+                         $"- Use the command `/server lobbies #some-channel` to start lobbies in a channel\n\n" +
+                         $"There is a [help article](https://www.typo.rip/help/lobby-bot) and a [video guide](https://youtu.be/Th1sanNw-EY) to help with the setup.\n" +
+                         $"You can kick the old Palantir - this one - now :)\n" +
+                         $"*See you! <3*";
+
+            return seeYou;
+            
             //return "```Discord lobbies are currently under maintenance. \nThis can take up to 48 hours.\nSorry & see ya!```";
             string message = "";
             PalantirContext database = new PalantirContext();
