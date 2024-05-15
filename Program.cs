@@ -96,9 +96,6 @@ namespace Palantir
 
 
             Console.WriteLine("Registering commands\n...");
-            Slash.RegisterCommands<Palantir.Slash.UtilSlashCommands>(779435254225698827);
-            Slash.RegisterCommands<Palantir.Slash.AdminSlashCommands>(779435254225698827);
-            Slash.RegisterCommands<Palantir.Slash.SpriteSlashCommands>(779435254225698827);
             Commands.RegisterCommands<Palantir.Commands.MiscCommands>();
             Commands.RegisterCommands<Palantir.Commands.EventCommands>();
             Commands.RegisterCommands<Palantir.Commands.ManagementCommands>();
