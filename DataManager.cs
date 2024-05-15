@@ -78,6 +78,7 @@ namespace Palantir
 
         public void UpdatePalantirSettings(Tether tether)
         {
+            return;
             PalantirContext context = new PalantirContext();
             Model.GuildSetting entity = context.GuildSettings.FirstOrDefault(s => s.GuildId ==tether.PalantirEndpoint.GuildID);
 
@@ -100,6 +101,7 @@ namespace Palantir
 
         public void UpdateMemberGuilds()
         {
+            return;
             PalantirContext context = new PalantirContext();
             foreach(Model.Member memberEntity in context.Members)
             {
@@ -129,6 +131,7 @@ namespace Palantir
         }
         public void SavePalantiri(ObservedGuild guild)
         {
+            return;
             bool newGuild = true;
             PalantirContext Database = new PalantirContext();
 
@@ -174,6 +177,7 @@ namespace Palantir
 
         public void AddMember(Member member)
         {
+            return;
             PalantirContext Database = new PalantirContext();
             PalantirMembers.Add(member);
 
@@ -190,6 +194,7 @@ namespace Palantir
 
         public List<Model.Member> GetGuildMembers(string guildID)
         {
+            return new List<Model.Member>();
             PalantirContext context = new PalantirContext();
             List<Model.Member> members = context.Members.Where(m => m.Member1.Contains(guildID)).ToList();
             context.Dispose();
