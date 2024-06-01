@@ -358,6 +358,64 @@ namespace Palantir.Commands
             dbcontext.Dispose();
             await context.Channel.SendMessageAsync(embed: embed);
         }
+        
+        [Description("Evaluates a league and rewards splits")]
+        [Command("league-eval")]
+        [RequirePermissionFlag(PermissionFlag.ADMIN)]
+        public async Task EvalLeague(CommandContext context, int month, int year, bool apply = false)
+        {
+            var season = new League(month.ToString(), year.ToString());
+            string text = "**Evaluation of League Season " + season.seasonName + "**\n\n\n";
+
+
+            var rewards = season.Evaluate();
+
+            
+            List<SplitCredit> splits = new List<SplitCredit>();
+
+            rewards.ForEach(reward =>
+            {
+                var name = Newtonsoft.Json.JsonConvert.DeserializeObject<Member>(Program.Feanor.GetMemberByLogin(reward.result.Login).Member1).UserName.Replace("`","");
+                text += name + ": `" + reward.rewards.ToDelimitedString(", ") + " `=> " + reward.splits + " Splits\n";
+            });
+
+            await context.RespondAsync(text);
+
+            if (apply)
+            {
+                PalantirContext db = new();
+                int id = db.BoostSplits.Max(s => s.Id) + 1;
+
+                BoostSplit leagueSplit = new BoostSplit()
+                {
+                    Date = "01/" + month.ToString().PadLeft(2, '0') + "/" + year.ToString(),
+                    Id = id,
+                    Description = "You have been ranked in the leaderboard of that season." ,
+                    Value = 0,
+                    Name = "<a:league_rnk1:987699431350632518> League " + season.seasonName
+                };
+
+                db.BoostSplits.Add(leagueSplit);
+
+                rewards.ForEach((reward) =>
+                {
+                    db.SplitCredits.Add(new SplitCredit()
+                    {
+                        ValueOverride = reward.splits,
+                        Login = Convert.ToInt32(reward.result.Login),
+                        RewardDate = DateTime.UtcNow.ToShortDateString(),
+                        Split = id,
+                        Comment = reward.rewards.ToDelimitedString(", ")
+                    });
+                });
+
+                db.SaveChanges();
+                db.Dispose();
+
+                await context.RespondAsync("Rewarded splits.");
+            }
+        }
+            
 
     }
 }
